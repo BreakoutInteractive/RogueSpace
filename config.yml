@@ -1,0 +1,25 @@
+---
+name:   RogueSpace                   # The application display name
+short:  RS                        # A shortened name for reference
+appid:  breakout.interactive.rogue.space  # Application identifier for Mac, iOS, Android
+suffix: GE0BE59F
+
+build:  build                       # The build directory (targets are each a subdirectory)
+assets: assets                      # The folder with the game assets (do not list asset)
+icon:   dummy.png
+
+orientation: landscape              # The orientation for mobile devices
+
+sources:                            # The list of the source code files
+    - source/*.cpp
+    - source/*.h
+    - source/controllers/*
+    - source/models/*
+    - source/scenes/*
+
+# This must be one of portrait, landscape, portrait-flipped, landscape-flipped,
+targets:                        # The target platforms to build for
+    - android                   # Android Studio
+    - apple                     # XCode (note macOS and iOS use one project)
+    - windows                   # Windows Sisual Studio
+    - cmake                     # This supports all Desktop platfor GB9E2BC GE0BE59F
