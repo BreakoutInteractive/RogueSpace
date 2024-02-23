@@ -219,9 +219,9 @@ void GameScene::preUpdate(float dt) {
 
     // Apply the force to the rocket
     std::shared_ptr<RocketModel> rocket = _level->getRocket();
-    rocket->setFX(_input.getHorizontal() * rocket->getThrust());
-    rocket->setFY(_input.getVertical() * rocket->getThrust());
-    rocket->applyForce();
+//    rocket->setFX(_input.getHorizontal() * rocket->getThrust());
+//    rocket->setFY(_input.getVertical() * rocket->getThrust());
+//    rocket->applyForce();
 
     // Animate the three burners
     updateBurner(RocketModel::Burner::MAIN,  rocket->getFY() >  1);

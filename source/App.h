@@ -12,11 +12,11 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 3/12/17
 //
-#ifndef __JS_APP_H__
-#define __JS_APP_H__
+#ifndef __APP_H__
+#define __APP_H__
 #include <cugl/cugl.h>
-#include "GameScene.h"
-#include "LoadingScene.h"
+#include "scenes/GameScene.h"
+#include "scenes/LoadingScene.h"
 
 /**
  * This class represents the application root for the ship demo.
@@ -208,4 +208,4 @@ public:
      */
     virtual void draw() override;
 };
-#endif /* __JS_APP_H__ */
+#endif /* __APP_H__ */

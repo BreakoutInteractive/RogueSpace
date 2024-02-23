@@ -33,7 +33,7 @@ protected:
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    JsonInput _input;
+    InputController _input;
     
     // VIEW
     /** Reference to the physics root of the scene graph */

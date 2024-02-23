@@ -1,19 +1,14 @@
 //
-//  JSInput.h
-//  JSON Demo
+//  InputController.h
 //
-//  This input controller is primarily designed for keyboard control.  On mobile
-//  you will notice that we use gestures to emulate keyboard commands. They even
-//  use the same variables (though we need other variables for internal keyboard
-//  emulation).  This simplifies our design quite a bit.
+//  This input controller is primarily designed for mobile control.
+//  There is support for keyboard inputs.
 //
-//  This file is based on the CS 3152 PhysicsDemo Lab by Don Holden, 2007
+//  Author: Zhiyuan Chen
+//  Version: 2/21/23
 //
-//  Author: Walker White
-//  Version: 1/10/17
-//
-#ifndef __JS_INPUT_H__
-#define __JS_INPUT_H__
+#ifndef __INPUT_CONTROLLER_H__
+#define __INPUT_CONTROLLER_H__
 #include <cugl/cugl.h>
 
 /**
@@ -32,7 +27,7 @@
  * until later. This is one of the main reasons we like to avoid initialization
  * in the constructor.
  */
-class JsonInput {
+class InputController {
 private:
     /** Whether or not this input is active */
     bool _active;
@@ -76,12 +71,12 @@ public:
      * This constructor does NOT do any initialzation.  It simply allocates the
      * object. This makes it safe to use this class without a pointer.
      */
-    JsonInput(); // Don't initialize.  Allow stack based
+    InputController(); // Don't initialize.  Allow stack based
     
     /**
      * Disposes of this input controller, releasing all listeners.
      */
-    ~JsonInput() { dispose(); }
+    ~InputController() { dispose(); }
     
     /**
      * Deactivates this input controller, releasing all listeners.
@@ -112,13 +107,13 @@ public:
      * Processes the currently cached inputs.
      *
      * This method is used to to poll the current input state.  This will poll the
-     * keyboad and accelerometer.
+     * keyboard and accelerometer.
      * 
      * This method also gathers the delta difference in the touches. Depending on 
      * the OS, we may see multiple updates of the same touch in a single animation
      * frame, so we need to accumulate all of the data together.
      */
-    void  update(float dt);
+    void update(float dt);
 
     /**
      * Clears any buffered inputs so that we may start fresh.
@@ -127,23 +122,38 @@ public:
     
 #pragma mark -
 #pragma mark Input Results
-    /**
-     * Returns the amount of sideways movement.
-     *
-     * -1 = left, 1 = right, 0 = still
-     *
-     * @return the amount of sideways movement.
-     */
-    float getHorizontal() const { return _horizontal; }
     
     /**
-     * Returns the amount of vertical movement.
+     * Returns the unit vector direction of movement
      *
-     * -1 = down, 1 = up, 0 = still
+     * up-vector (1,0) should represent upwards movement
      *
-     * @return the amount of vertical movement.
+     * @return the unit vector direction of movement
      */
-    float getVertical() const { return _vertical; }
+    cugl::Vec2 getMoveDirection();
+    
+    /**
+     * Returns true if the dodge input was triggered.
+     */
+    bool didDodge();
+    
+    /**
+     * Returns the unit vector direction of movement for dodge motion
+     *
+     * The returned value can be anything in the event that {@link didDodge} is false.
+     */
+    cugl::Vec2 getDodgeDirection();
+    
+    /**
+     * Returns true if the parry input was triggered.
+     */
+    bool didParry();
+    
+    /**
+     * Returns true if the attack input was triggered
+     */
+    bool didAttack();
+    
     
     /**
      * Returns true if the reset button was pressed.
@@ -187,4 +197,4 @@ public:
 
 };
 
-#endif /* __JS_INPUT_H__ */
+#endif /* __INPUT_CONTROLLER_H__ */
