@@ -15,8 +15,8 @@
 #ifndef __JS_APP_H__
 #define __JS_APP_H__
 #include <cugl/cugl.h>
-#include "GameScene.h"
-#include "LoadingScene.h"
+#include "scenes/GameScene.h"
+#include "scenes/LoadingScene.h"
 
 /**
  * This class represents the application root for the ship demo.

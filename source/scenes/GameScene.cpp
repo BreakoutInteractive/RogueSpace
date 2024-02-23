@@ -16,7 +16,7 @@
 //  Version: 2/17/24
 //
 #include "GameScene.h"
-#include "JSLevelConstants.h"
+#include "../models/JSLevelConstants.h"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
