@@ -96,6 +96,9 @@ bool InputController::init() {
 }
 
 
+#pragma mark -
+#pragma mark Input Detection
+
 /**
  * Processes the currently cached inputs.
  *
@@ -187,6 +190,25 @@ void InputController::clear() {
     _dtouch = Vec2::ZERO;
     _timestamp.mark();
 }
+
+#pragma mark -
+#pragma mark Input Results
+
+Vec2 InputController::getMoveDirection() {
+    // TODO: return results from mobile input
+    Vec2 direction;
+    #ifndef CU_TOUCH_SCREEN
+    // DESKTOP CONTROLS
+    // desktop cannot freely move in all directions
+    direction.set(_horizontal, _vertical);
+    #else
+        // MOBILE
+    #endif
+    return direction.normalize();
+}
+
+// TODO: complete all other functions from h file
+
 
 #pragma mark -
 #pragma mark Touch Callbacks

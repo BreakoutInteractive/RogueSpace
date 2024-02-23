@@ -14,10 +14,10 @@
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
-#include "JSRocketModel.h"
-#include "InputController.h"
-#include "JSExitModel.h"
-#include "JSLevelModel.h"
+#include "../models/JSRocketModel.h"
+#include "../controllers/InputController.h"
+#include "../models/JSExitModel.h"
+#include "../models/JSLevelModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.

@@ -16,7 +16,7 @@
 //  Version: 2/17/24
 //
 #include "GameScene.h"
-#include "JSLevelConstants.h"
+#include "../models/JSLevelConstants.h"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -219,9 +219,9 @@ void GameScene::preUpdate(float dt) {
 
     // Apply the force to the rocket
     std::shared_ptr<RocketModel> rocket = _level->getRocket();
-//    rocket->setFX(_input.getHorizontal() * rocket->getThrust());
-//    rocket->setFY(_input.getVertical() * rocket->getThrust());
-//    rocket->applyForce();
+    Vec2 force = _input.getMoveDirection() * rocket->getThrust();
+    rocket->setForce(force);
+    rocket->applyForce();
 
     // Animate the three burners
     updateBurner(RocketModel::Burner::MAIN,  rocket->getFY() >  1);

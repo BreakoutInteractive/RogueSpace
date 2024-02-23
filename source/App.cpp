@@ -11,7 +11,7 @@
 //  Version: 3/12/17
 //
 #include "App.h"
-#include "JSLevelConstants.h"
+#include "models/JSLevelConstants.h"
 
 using namespace cugl;
 
