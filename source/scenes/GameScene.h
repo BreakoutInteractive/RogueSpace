@@ -1,7 +1,7 @@
 //
 //  GameScene.h
 //
-//  This class manages the gameplay. It also handles collision detection. 
+//  This class manages the gameplay. It also handles collision detection and in particular, executing callback events when collision has been detected. 
 //  There is not much to do for collisions; our ObstacleWorld class takes care of all
 //  of that for us.  This controller mainly transforms input into gameplay.
 //
@@ -17,7 +17,7 @@
 #include "../models/JSRocketModel.h"
 #include "../controllers/InputController.h"
 #include "../models/JSExitModel.h"
-#include "../models/JSLevelModel.h"
+#include "../models/LevelModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -36,15 +36,15 @@ protected:
     InputController _input;
     
     // VIEW
-    /** Reference to the physics root of the scene graph */
-    std::shared_ptr<cugl::scene2::SceneNode> _rootnode;
+    /** Reference to the physics node of this scene graph */
+    std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
     /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winnode;
+    std::shared_ptr<cugl::scene2::Label> _winNode;
     /** Reference to the reset message label */
-    std::shared_ptr<cugl::scene2::Label> _loadnode;
+    std::shared_ptr<cugl::scene2::Label> _resetNode;
 
-    /** The Box2D world */
-    //std::shared_ptr<cugl::ObstacleWorld> _world;
+    // MODEL
+
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
 
@@ -147,7 +147,7 @@ public:
      *
      * @param value whether the level is completed.
      */
-    void setComplete(bool value) { _complete = value; _winnode->setVisible(value); }
+    void setComplete(bool value) { _complete = value; _winNode->setVisible(value); }
     
     
 #pragma mark -
@@ -237,6 +237,12 @@ public:
      * @param on        Whether to turn the animation on or off
      */
     void updateBurner(RocketModel::Burner burner, bool on);
+    
+    /**
+     * Draws the game scene with the given sprite batch. Depending on the game internal state,
+     * the debug scene may be drawn.
+     */
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
     
 #pragma mark -
 #pragma mark Collision Handling

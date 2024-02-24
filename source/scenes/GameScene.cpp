@@ -1,10 +1,6 @@
 //
 //  GameScene.cpp
 //
-//  You will notice that we do not use a Scene asset this time.  While we could
-//  have done this, we wanted to highlight the issues of connecting physics
-//  objects to scene graph objects.  Hence we include all of the API calls.
-//
 //  WARNING: There are a lot of shortcuts in this design that will do not adapt
 //  well to data driven design.  This demo has a lot of simplifications to make
 //  it a bit easier to see how everything fits together.  However, the model
@@ -77,7 +73,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     _input.init();
-
+    _level->setAssets(_assets);
+    
     // Create the world and attach the listeners.
     std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
     activateWorldCollisions(world);
@@ -87,42 +84,62 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/world->getBounds().getMaxX() :
                                           dimen.height/world->getBounds().getMaxY();
+    
+#pragma mark - GameScene:: Scene Graph Initialization
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
-    // Create the scene graph
-    _rootnode = scene2::SceneNode::alloc();
-    _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _rootnode->setPosition(offset);
+    // Create the scene graph nodes
+    _debugNode = scene2::SceneNode::alloc();
+    _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _debugNode->setPosition(offset);
+    _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
   
-    _winnode = scene2::Label::allocWithText("VICTORY!",_assets->get<Font>(PRIMARY_FONT));
-    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
-    _winnode->setPosition(dimen/2.0f);
-    _winnode->setForeground(STATIC_COLOR);
-    _winnode->setVisible(false);
+    // TODO: This works as starter but victory screens are usually separate game modes (scenes)
+    // We make this game scene inactive and transition to other scenes
+    _winNode = scene2::Label::allocWithText("VICTORY!",_assets->get<Font>(PRIMARY_FONT));
+    _winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _winNode->setPosition(dimen/2.0f);
+    _winNode->setForeground(STATIC_COLOR);
+    _winNode->setVisible(false);
 
-    _loadnode = scene2::Label::allocWithText(RESET_MESSAGE,_assets->get<Font>(PRIMARY_FONT));
-    _loadnode->setAnchor(Vec2::ANCHOR_CENTER);
-    _loadnode->setPosition(dimen/2.0f);
-    _loadnode->setForeground(STATIC_COLOR);
-    _loadnode->setVisible(false);
+    _resetNode = scene2::Label::allocWithText(RESET_MESSAGE,_assets->get<Font>(PRIMARY_FONT));
+    _resetNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _resetNode->setPosition(dimen/2.0f);
+    _resetNode->setForeground(STATIC_COLOR);
+    _resetNode->setVisible(false);
       
-    addChild(_rootnode);
-    addChild(_winnode);
-    addChild(_loadnode);
+    addChild(_debugNode); //this we keep
+    addChild(_winNode); //TODO: remove
+    addChild(_resetNode); //TODO: remove
 
-    _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
-    _level->setAssets(_assets);
-    _level->setRootNode(_rootnode); // Obtains ownership of root.
+    _level->setRootNode(_debugNode); // Obtains ownership of root.
   
+#pragma mark - Game State Initialization
     _active = true;
     _complete = false;
     setDebug(false);
     
     // XNA nostalgia
+    // TODO: change base color
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     return true;
 }
 
+void GameScene::dispose() {
+    if (_active) {
+        _input.dispose();
+        _debugNode = nullptr;
+        _winNode = nullptr; // TODO: remove
+        _resetNode = nullptr; // TODO: remove
+        _level = nullptr;
+        _complete = false;
+        _debug = false;
+        Scene2::dispose();
+    }
+}
+
+#pragma mark -
+#pragma mark Physics Initialization
 void GameScene::activateWorldCollisions(const std::shared_ptr<physics2::ObstacleWorld>& world) {
     world->activateCollisionCallbacks(true);
     world->onBeginContact = [this](b2Contact* contact) {
@@ -133,64 +150,30 @@ void GameScene::activateWorldCollisions(const std::shared_ptr<physics2::Obstacle
     };
 }
 
-/**
- * Disposes of all (non-static) resources allocated to this mode.
- */
-void GameScene::dispose() {
-    if (_active) {
-        _input.dispose();
-        _rootnode = nullptr;
-        _winnode = nullptr;
-        _loadnode = nullptr;
-        _level = nullptr;
-        _complete = false;
-        _debug = false;
-        Scene2::dispose();
-    }
-}
-
 
 #pragma mark -
 #pragma mark Physics Handling
-/**
- * The method called to indicate the start of a deterministic loop.
- *
- * This method is used instead of {@link #update} if {@link #setDeterministic}
- * is set to true. It marks the beginning of the core application loop,
- * which is concluded with a call to {@link #postUpdate}.
- *
- * This method should be used to process any events that happen early in
- * the application loop, such as user input or events created by the
- * {@link schedule} method. In particular, no new user input will be
- * recorded between the time this method is called and {@link #postUpdate}
- * is invoked.
- *
- * Note that the time passed as a parameter is the time measured from the
- * start of the previous frame to the start of the current frame. It is
- * measured before any input or callbacks are processed. It agrees with
- * the value sent to {@link #postUpdate} this animation frame.
- *
- * @param dt    The amount of time (in seconds) since the last frame
- */
+
+
 void GameScene::preUpdate(float dt) {
 	if (_level == nullptr) {
 		return;
 	}
 
 	// Check to see if new level loaded yet
-	if (_loadnode->isVisible()) {
+	if (_resetNode->isVisible()) {
 		if (_assets->complete()) {
 			_level = nullptr;
       
 			// Access and initialize level
-			_level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+			_level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
 			_level->setAssets(_assets);
-			_level->setRootNode(_rootnode); // Obtains ownership of root.
+			_level->setRootNode(_debugNode); // Obtains ownership of debug node.
 			_level->showDebug(_debug);
       
             activateWorldCollisions(_level->getWorld());
 
-			_loadnode->setVisible(false);
+			_resetNode->setVisible(false);
 		} else {
 			// Level is not loaded yet; refuse input
 			return;
@@ -207,8 +190,8 @@ void GameScene::preUpdate(float dt) {
         _assets->unload<LevelModel>(LEVEL_ONE_KEY);
 
         // Load a new level and quit update
-        _loadnode->setVisible(true);
-        _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE);
+        _resetNode->setVisible(true);
+        _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
         setComplete(false);
         return;
     }
@@ -217,6 +200,7 @@ void GameScene::preUpdate(float dt) {
         Application::get()->quit();
     }
 
+#pragma mark - handle player input
     // Apply the force to the rocket
     std::shared_ptr<RocketModel> rocket = _level->getRocket();
     Vec2 force = _input.getMoveDirection() * rocket->getThrust();
@@ -229,74 +213,19 @@ void GameScene::preUpdate(float dt) {
     updateBurner(RocketModel::Burner::RIGHT, rocket->getFX() <  -1);
 }
 
-/**
- * The method called to provide a deterministic application loop.
- *
- * This method provides an application loop that runs at a guaranteed fixed
- * timestep. This method is (logically) invoked every {@link getFixedStep}
- * microseconds. By that we mean if the method {@link draw} is called at
- * time T, then this method is guaranteed to have been called exactly
- * floor(T/s) times this session, where s is the fixed time step.
- *
- * This method is always invoked in-between a call to {@link #preUpdate}
- * and {@link #postUpdate}. However, to guarantee determinism, it is
- * possible that this method is called multiple times between those two
- * calls. Depending on the value of {@link #getFixedStep}, it can also
- * (periodically) be called zero times, particularly if {@link #getFPS}
- * is much faster.
- *
- * As such, this method should only be used for portions of the application
- * that must be deterministic, such as the physics simulation. It should
- * not be used to process user input (as no user input is recorded between
- * {@link #preUpdate} and {@link #postUpdate}) or to animate models.
- *
- * The time passed to this method is NOT the same as the one passed to
- * {@link #preUpdate}. It will always be exactly the same value.
- *
- * @param step  The number of fixed seconds for this step
- */
+
 void GameScene::fixedUpdate(float step) {
     // Turn the physics engine crank.
     _level->getWorld()->update(step);
 }
 
-/**
- * The method called to indicate the end of a deterministic loop.
- *
- * This method is used instead of {@link #update} if {@link #setDeterministic}
- * is set to true. It marks the end of the core application loop, which was
- * begun with a call to {@link #preUpdate}.
- *
- * This method is the final portion of the update loop called before any
- * drawing occurs. As such, it should be used to implement any final
- * animation in response to the simulation provided by {@link #fixedUpdate}.
- * In particular, it should be used to interpolate any visual differences
- * between the the simulation timestep and the FPS.
- *
- * This method should not be used to process user input, as no new input
- * will have been recorded since {@link #preUpdate} was called.
- *
- * Note that the time passed as a parameter is the time measured from the
- * last call to {@link #fixedUpdate}. That is because this method is used
- * to interpolate object position for animation.
- *
- * @param remain    The amount of time (in seconds) last fixedUpdate
- */
+
 void GameScene::postUpdate(float remain) {
-	// TODO: Update this demo to do interpolation.
+	// TODO: possibly apply interpolation.
     // We will need more data structures for this
 }
 
-/**
- * Updates that animation for a single burner
- *
- * This method is here instead of the the rocket model because of our philosophy
- * that models should always be lightweight.  Animation includes sounds and other
- * assets that we do not want to process in the model
- *
- * @param  burner   The rocket burner to animate
- * @param  on       Whether to turn the animation on or off
- */
+
 void GameScene::updateBurner(RocketModel::Burner burner, bool on) {
 	std::shared_ptr<RocketModel> rocket = _level->getRocket();
     std::string sound = rocket->getBurnerSound(burner);
@@ -315,14 +244,27 @@ void GameScene::updateBurner(RocketModel::Burner burner, bool on) {
 }
 
 /**
- * Processes the start of a collision
+ * Returns the active screen size of this scene.
  *
- * This method is called when we first get a collision between two objects.  We use
- * this method to test if it is the "right" kind of collision.  In particular, we
- * use it to test if we make it to the win door.
- *
- * @param  contact  The two bodies that collided
+ * This method is for graceful handling of different aspect
+ * ratios
  */
+Size GameScene::computeActiveSize() const {
+    Size dimen = Application::get()->getDisplaySize();
+    float ratio1 = dimen.width/dimen.height;
+    float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
+    if (ratio1 < ratio2) {
+        dimen *= SCENE_WIDTH/dimen.width;
+    } else {
+        dimen *= SCENE_HEIGHT/dimen.height;
+    }
+    return dimen;
+}
+
+
+#pragma mark -
+#pragma mark Collision Handling
+
 void GameScene::beginContact(b2Contact* contact) {
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
@@ -337,16 +279,7 @@ void GameScene::beginContact(b2Contact* contact) {
     }
 }
 
-/**
- * Handles any modifications necessary before collision resolution
- *
- * This method is called just before Box2D resolves a collision.  We use this method
- * to implement sound on contact, using the algorithms outlined in Ian Parberry's
- * "Introduction to Game Physics with Box2D".
- *
- * @param  contact  	The two bodies that collided
- * @param  oldManfold  	The collision manifold before contact
- */
+
 void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
     float speed = 0;
 
@@ -383,20 +316,11 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
     }
 }
 
-/**
- * Returns the active screen size of this scene.
- *
- * This method is for graceful handling of different aspect
- * ratios
- */
-Size GameScene::computeActiveSize() const {
-    Size dimen = Application::get()->getDisplaySize();
-    float ratio1 = dimen.width/dimen.height;
-    float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
-    if (ratio1 < ratio2) {
-        dimen *= SCENE_WIDTH/dimen.width;
-    } else {
-        dimen *= SCENE_HEIGHT/dimen.height;
-    }
-    return dimen;
+#pragma mark -
+#pragma mark Rendering
+
+void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
+    CULog("%s", "drawing ahahaha");
+    // TODO: draw the game here
+    Scene2::render(batch);
 }

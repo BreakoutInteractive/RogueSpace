@@ -1,14 +1,12 @@
 //
 //  LoadingScene.h
 //
-//  This module provides a very barebones loading screen.  Most of the time you
-//  will not need a loading screen, because the assets will load so fast.  But
-//  in most cases, the game will include more assets that takes time to load.
+//  This module provides a very barebones loading screen.
 //
 //  Author: Walker White and Anthony Perello (3/12/17)
 //  Modified: Zhiyuan Chen
 //  Version: 2/17/24
-//
+
 #ifndef __LOADING_SCENE_H__
 #define __LOADING_SCENE_H__
 #include <cugl/cugl.h>

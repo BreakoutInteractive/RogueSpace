@@ -44,7 +44,7 @@ using namespace cugl;
  */
 int main(int argc, char * argv[]) {
     // Change this to your application class
-    JsonApp app;
+    App app;
     
     // Set the properties of your application
     app.setName("RogueSpace");

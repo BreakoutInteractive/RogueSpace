@@ -1,17 +1,10 @@
 //
-//  JSApp.h
-//  JSON Demo
+//  App.h
 //
-//  This is the root class for your game.  The file main.cpp accesses this class
-//  to run the application.  While you could put most of your game logic in
-//  this class, we prefer to break the game up into player modes and have a
-//  class for each mode.
+//  This is the root class.  The file main.cpp accesses this class
+//  to run the application.
 //
-//  This file is based on the CS 3152 PhysicsDemo Lab by Don Holden, 2007
-//
-//  Author: Walker White and Anthony Perello
-//  Version: 3/12/17
-//
+
 #ifndef __APP_H__
 #define __APP_H__
 #include <cugl/cugl.h>
@@ -21,7 +14,7 @@
 /**
  * This class represents the application root for the ship demo.
  */
-class JsonApp : public cugl::Application {
+class App : public cugl::Application {
 protected:
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
@@ -48,7 +41,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    JsonApp() : cugl::Application(), _loaded(false) {}
+    App() : cugl::Application(), _loaded(false) {}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -57,7 +50,7 @@ public:
      * It simply calls the dispose() method in Application.  There is nothing
      * special to do here.
      */
-    ~JsonApp() { }
+    ~App() { }
     
     
 #pragma mark Application State

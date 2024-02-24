@@ -1,23 +1,19 @@
 //
-//  JSLevelModel.hpp
-//  JSONDemo
+//  LevelModel.hpp
 //
 //  This module provides a level that can be loaded from a JSON file.  It reads the JSON
-//  file and creates the objects in the level.  Objects are one of four categories: the
-//  rocket, the exit, the walls, and the crates.
+//  file and creates the objects in the level.
 //
 //  This class is a subclass of Asset so that we can use a GenericLoader to manage the
 //  the loading.  Even though this class defines a load method, there is the question of
 //  when the method is called. The GenericLoader allows this object to be loaded in a
 //  separate thread along with all of the other assets.
 //
-//  This file is based on the CS 3152 PhysicsDemo Lab by Don Holden, 2007
-//
 //  Author: Walker White and Anthony Perello
 //  Version: 3/12/17
 //
-#ifndef __JS_LEVEL_MODEL_H__
-#define __JS_LEVEL_MODEL_H__
+#ifndef __LEVEL_MODEL_H__
+#define __LEVEL_MODEL_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUObstacleWorld.h>
 #include <vector>
@@ -50,8 +46,6 @@ protected:
     std::shared_ptr<scene2::SceneNode> _root;
     /** The bounds of this level in physics coordinates */
     Rect _bounds;
-    /** The global gravity for this level */
-    Vec2 _gravity;
     /** The level drawing scale (difference between physics and drawing coordinates) */
     Vec2 _scale;
 
@@ -219,13 +213,6 @@ public:
      */
     const Rect& getBounds() const   { return _bounds; }
 
-    /**
-     * Returns the global gravity for this level
-     *
-     * @return the global gravity for this level
-     */
-    const Vec2& getGravity() const { return _gravity; }
-
 
 #pragma mark Drawing Methods
     /**
@@ -350,4 +337,4 @@ public:
     virtual ~LevelModel(void);
 };
 
-#endif /* defined(__JS_LEVEL_MODEL_H__) */
+#endif /* _LEVEL_MODEL_H__ */

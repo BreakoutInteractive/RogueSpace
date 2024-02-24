@@ -1,12 +1,5 @@
-//
-//  JSLevelModel.cpp
-//  Wireframe
-//
-//  Author: Walker White and Anthony Perello
-//  Version: 3/12/17
-//
 #include <cugl/assets/CUJsonLoader.h>
-#include "JSLevelModel.h"
+#include "LevelModel.h"
 #include "JSLevelConstants.h"
 #include "JSExitModel.h"
 #include "JSCrateModel.h"
@@ -190,12 +183,10 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 	// Initial geometry
 	float w = json->get(WIDTH_FIELD)->asFloat();
 	float h = json->get(HEIGHT_FIELD)->asFloat();
-	float g = json->get(GRAVITY_FIELD)->asFloat();
 	_bounds.size.set(w, h);
-	_gravity.set(0,g);
 
 	/** Create the physics world */
-	_world = physics2::ObstacleWorld::alloc(getBounds(),getGravity());
+	_world = physics2::ObstacleWorld::alloc(getBounds(),Vec2::ZERO);
 
 	// Parse the rocket
 	if (!loadRocket(json)) {
