@@ -28,6 +28,9 @@
         }, 
         "player": {
             "file":     "textures/player.png"
+        },
+        "floor": {
+            "file":     "textures/iso_floor_tile.png"
         }
 	},
     "sounds": {

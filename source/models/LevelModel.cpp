@@ -4,6 +4,7 @@
 #include "JSExitModel.h"
 #include "JSCrateModel.h"
 #include "JSWallModel.h"
+#include "Floor.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -34,10 +35,20 @@ void LevelModel::setDrawScale(float value) {
 	if (_player != nullptr) {
 		_player->setDrawScale(value);
 	}
+    else {
+        CUAssertLog(false, "Failed to set draw scale for player");
+    }
+    if (_floor != nullptr) {
+        _floor->setDrawScale(Vec2(value, value));
+    }
+    else {
+        CUAssertLog(false, "Failed to set draw scale for floor");
+    }
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: draw contents manually, sorting
+    _floor->draw(batch);
     _player->draw(batch);
 }
 
@@ -72,6 +83,7 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
+    _floor->loadAssets(assets);
 }
 
 
@@ -140,17 +152,17 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 		CUAssertLog(false, "Failed to load walls");
 		return false;
 	}
-	auto crates = json->get(CRATES_FIELD);
-	if (crates != nullptr) {
-		// Convert the object to an array so we can see keys and values
-		int csize = (int)crates->size();
-		for(int ii = 0; ii < csize; ii++) {
-			loadCrate(crates->get(ii));
-		}
-	} else {
-		CUAssertLog(false, "Failed to load crates");
-		return false;
-	}
+//	auto crates = json->get(CRATES_FIELD);
+//	if (crates != nullptr) {
+//		// Convert the object to an array so we can see keys and values
+//		int csize = (int)crates->size();
+//		for(int ii = 0; ii < csize; ii++) {
+//			loadCrate(crates->get(ii));
+//		}
+//	} else {
+//		CUAssertLog(false, "Failed to load crates");
+//		return false;
+//	}
     
     // Add objects to world
     addObstacle(_player);
@@ -159,6 +171,16 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
+    }
+    
+    // load visuals (floor)
+    auto floor = json->get("floor");
+    if (floor != nullptr){
+        loadFloor(floor);
+    }
+    else {
+        CUAssertLog(false, "Failed to load floor tiles");
+        return false;
     }
 
 	return true;
@@ -193,6 +215,7 @@ void LevelModel::unload() {
     
     _world->removeObstacle(_player);
     _player = nullptr;
+    _floor = nullptr;
 }
 
 
@@ -225,7 +248,53 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     if (btype == STATIC_VALUE) {
         _player->setBodyType(b2_staticBody);
     }
-    return true;
+    return success;
+}
+
+bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
+    bool success = true;
+    auto sizeData = json->get(SIZE_FIELD);
+    success = success && sizeData->isArray();
+    Vec2 size(sizeData->get(0)->asFloat(), sizeData->get(1)->asFloat());
+    std::string textureName = json->getString(TEXTURE_FIELD);
+    std::vector<std::shared_ptr<Tile>> tiles;
+    
+    bool useGrid = json->get("use-grid")->asBool();
+    if (!useGrid){
+        // load all tiles as given
+        auto tilesData = json->get("tiles");
+        int count = (int)tilesData->size();
+
+        for(int ii = 0; ii < count; ii++) {
+            auto tileData = tilesData->get(ii);
+            auto posData = tileData->get(POSITION_FIELD);
+            Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
+            auto tile = Tile::alloc(pos, textureName);
+            tiles.emplace_back(tile);
+        }
+    }
+    else {
+        // generate grid of tiles automatically
+        auto grid = json->get("grid");
+        auto startData = grid->get("start");
+        Vec2 startPos(startData->get(0)->asFloat(), startData->get(1)->asFloat());
+        int rows = grid->get("rows")->asInt();
+        int cols = grid->get("columns")->asInt();
+        for (int i = 0; i < rows; i++){
+            // compute the first on row
+            Vec2 firstTilePos = startPos + Vec2(size.x / 2 * i, -size.y / 4 * i );
+            for (int j = 0; j < cols; j++){
+                Vec2 pos = firstTilePos - Vec2(size.x / 2 * j, size.y/4 * j);
+                auto tile = Tile::alloc(pos, textureName);
+                tiles.emplace_back(tile);
+            }
+        }
+    }
+    
+    _floor = Floor::alloc(size, tiles);
+    _floor->setDrawScale(_scale);
+    
+    return success;
 }
 
 

@@ -4,7 +4,7 @@
     "gravity":  -4.9,
     "player": {
         "pos": [24, 6],
-        "size": [0.5,0.5],
+        "size": [0.3,0.3],
         "bodytype":      "dynamic",
         "density":        5.0,
         "friction":       0.1,
@@ -13,186 +13,28 @@
         "texture":       "player",
         "debugcolor":    "blue"
     },
-    "crates": {
-        "crate01": {
-            "pos":           [14.5, 14.25],
-            "size":          [ 2.0,  2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
+    "floor": {
+        "debug-only-description": "collection of tiles that make up the floor",
+        "debug-only-detail": "for sake of not blowing up the JSON file at this stage, `tiles` will contain the list of desirable tiles to draw and if we want a grid, use grid field",
+        "fields": "tiles are drawn starting at an offset of (-width/2, -height/4)",
+        "size": [4, 4],
+        "texture":       "floor",
+        "use-grid" :    true,
+        "grid": {
+            "start": [20, 15],
+            "columns": 10,
+            "rows": 10
         },
-        "crate02": {
-            "pos":           [13.0, 12.0],
-            "size":          [ 2.0,  2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate01",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate03": {
-            "pos":           [16.0, 12.0],
-            "size":          [ 2.0,  2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate04": {
-            "pos":           [11.5, 9.75],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate05": {
-            "pos":           [14.5, 9.75],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate01",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate06": {
-            "pos":           [17.5, 9.75],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate01",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate07": {
-            "pos":           [13.0, 7.5],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate08": {
-            "pos":           [16.0, 7.5],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate01",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate09": {
-            "pos":           [11.5, 5.25],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate10": {
-            "pos":           [14.5, 5.25],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate11": {
-            "pos":           [17.5, 5.25],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate12": {
-            "pos":           [10.0, 3.0],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate01",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate13": {
-            "pos":           [13.0, 3.0],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate01",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate14": {
-            "pos":           [16.0, 3.0],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "crate14": {
-            "pos":           [19.0, 3.0],
-            "size":          [ 2.0, 2.0],
-            "bodytype":      "dynamic",
-            "density":        1.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "damping":        1.0,
-            "texture":       "crate02",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
+        "tiles":{
+            "tile1": {
+                "pos": [8, 6]
+            },
+            "tile2": {
+                "pos": [7, 5.5]
+            },
+            "tile3": {
+                "pos": [6, 5]
+            }
         }
     },
     "walls": {

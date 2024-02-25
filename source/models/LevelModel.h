@@ -28,6 +28,7 @@ using namespace cugl;
 class ExitModel;
 class WallModel;
 class CrateModel;
+class Floor;
 
 #pragma mark -
 #pragma mark Level Model
@@ -55,6 +56,8 @@ protected:
     
     /** Reference to the player object */
     std::shared_ptr<Player> _player;
+    
+    std::shared_ptr<Floor> _floor;
 
     /** Reference to all the active crates */
     std::vector<std::shared_ptr<CrateModel>> _crates;
@@ -73,34 +76,27 @@ protected:
     /**
      * Loads the player object
      *
+     * The player will will be stored in `_player`  field and retained.
+     * If the player fails to load, then `_player` will be nullptr.
+     *
+     * @param  json   a JSON reader with cursor ready to read the player
+     *
+     * @retain the player
+     * @return true if the player was successfully loaded
      */
     bool loadPlayer(const std::shared_ptr<JsonValue>& json);
     
+    
     /**
-     * Loads the singular rocket object
+     * Loads the floor layer object
      *
-     * The rocket will will be stored in _rocket_  field and retained.
-     * If the rocket fails to load, then _rocket_ will be nullptr.
+     * @param  json   a JSON reader with cursor ready to read the floor data
      *
-     * @param  reader   a JSON reader with cursor ready to read the rocket
-     *
-     * @retain the rocket
-     * @return true if the rocket was successfully loaded
+     * @retain the floor tiles
+     * @return true if the floor tiles were successfully loaded
      */
-    bool loadRocket(const std::shared_ptr<JsonValue>& json);
-
-    /**
-     * Loads the singular exit door
-     *
-     * The exit door will will be stored in _goalDoor field and retained.
-     * If the exit fails to load, then _goalDoor will be nullptr.
-     *
-     * @param  reader   a JSON reader with cursor ready to read the exit
-     *
-     * @retain the exit door
-     * @return true if the exit door was successfully loaded
-     */
-    bool loadGoalDoor(const std::shared_ptr<JsonValue>& json);
+    bool loadFloor(const std::shared_ptr<JsonValue>& json);
+    
 
     /**
      * Loads a single wall object

@@ -69,7 +69,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player
     Vec2 offset(0, 20);
     // batch draw(texture, color, origin, scale, angle, offset)
-    batch->draw(_playerTexture,Color4::WHITE, (Vec2)(_playerTexture->getSize())/2, Vec2(0.5, 0.5), 0, getPosition() * _drawscale + offset);
+    batch->draw(_playerTexture,Color4::WHITE, Vec2(_playerTexture->getWidth()/2, 0), Vec2(0.5,0.5), 0, getPosition() * _drawscale);
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
