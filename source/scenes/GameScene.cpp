@@ -201,7 +201,8 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the rocket
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 force = _input.getMoveDirection();
-    player->setForce(force * 2); //TODO: use json data
+    player->setLinearDamping(50);
+    player->setForce(force*5); //TODO: use json data
     player->applyForce();
 
 }

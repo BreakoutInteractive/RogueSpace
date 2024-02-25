@@ -44,12 +44,12 @@ void Player::applyForce() {
     }
     
     // Orient the force with rotation.
-    Vec4 netforce(_force.x,_force.y,0.0f,1.0f);
-    Mat4::createRotationZ(getAngle(),&_affine);
-    netforce *= _affine;
+    //Vec4 netforce(_force.x,_force.y,0.0f,1.0f);
+    //Mat4::createRotationZ(getAngle(),&_affine);
+    //netforce *= _affine;
     
     // Apply force to the rocket BODY, not the rocket
-    _body->ApplyForceToCenter(b2Vec2(netforce.x,netforce.y), true);
+    _body->ApplyLinearImpulseToCenter(b2Vec2(_force.x,_force.y), true);
 }
 
 void Player::update(float delta) {
