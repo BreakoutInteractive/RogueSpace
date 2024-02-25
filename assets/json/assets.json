@@ -25,6 +25,9 @@
         },
         "flames-left": {
             "file":     "textures/flames-left.png"
+        }, 
+        "player": {
+            "file":     "textures/player.png"
         }
 	},
     "sounds": {

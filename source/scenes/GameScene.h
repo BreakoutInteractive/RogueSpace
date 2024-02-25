@@ -15,6 +15,7 @@
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
 #include "../models/JSRocketModel.h"
+#include "../models/Player.hpp"
 #include "../controllers/InputController.h"
 #include "../models/JSExitModel.h"
 #include "../models/LevelModel.h"
@@ -93,7 +94,7 @@ public:
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
-    void dispose();
+    void dispose() override;
     
     /**
      * Initializes the controller contents, and starts the game

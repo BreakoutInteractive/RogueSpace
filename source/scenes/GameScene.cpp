@@ -84,14 +84,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/world->getBounds().getMaxX() :
                                           dimen.height/world->getBounds().getMaxY();
-    
+    _level->setDrawScale(_scale);
 #pragma mark - GameScene:: Scene Graph Initialization
-    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
     // Create the scene graph nodes
     _debugNode = scene2::SceneNode::alloc();
-    _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _debugNode->setPosition(offset);
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
   
     // TODO: This works as starter but victory screens are usually separate game modes (scenes)
@@ -112,7 +109,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     addChild(_winNode); //TODO: remove
     addChild(_resetNode); //TODO: remove
 
-    _level->setRootNode(_debugNode); // Obtains ownership of root.
+    _level->setDebugNode(_debugNode); // Obtains ownership of root.
   
 #pragma mark - Game State Initialization
     _active = true;
@@ -168,7 +165,7 @@ void GameScene::preUpdate(float dt) {
 			// Access and initialize level
 			_level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
 			_level->setAssets(_assets);
-			_level->setRootNode(_debugNode); // Obtains ownership of debug node.
+			_level->setDebugNode(_debugNode); // Obtains ownership of debug node.
 			_level->showDebug(_debug);
       
             activateWorldCollisions(_level->getWorld());
@@ -202,15 +199,11 @@ void GameScene::preUpdate(float dt) {
 
 #pragma mark - handle player input
     // Apply the force to the rocket
-    std::shared_ptr<RocketModel> rocket = _level->getRocket();
-    Vec2 force = _input.getMoveDirection() * rocket->getThrust();
-    rocket->setForce(force);
-    rocket->applyForce();
+    std::shared_ptr<Player> player = _level->getPlayer();
+    Vec2 force = _input.getMoveDirection();
+    player->setForce(force * 2); //TODO: use json data
+    player->applyForce();
 
-    // Animate the three burners
-    updateBurner(RocketModel::Burner::MAIN,  rocket->getFY() >  1);
-    updateBurner(RocketModel::Burner::LEFT,  rocket->getFX() >  1);
-    updateBurner(RocketModel::Burner::RIGHT, rocket->getFX() <  -1);
 }
 
 
@@ -223,24 +216,6 @@ void GameScene::fixedUpdate(float step) {
 void GameScene::postUpdate(float remain) {
 	// TODO: possibly apply interpolation.
     // We will need more data structures for this
-}
-
-
-void GameScene::updateBurner(RocketModel::Burner burner, bool on) {
-	std::shared_ptr<RocketModel> rocket = _level->getRocket();
-    std::string sound = rocket->getBurnerSound(burner);
-    if (on) {
-        rocket->animateBurner(burner, true);
-        if (!AudioEngine::get()->isActive(sound) && sound.size() > 0) {
-            auto source = _assets->get<Sound>(sound);
-            AudioEngine::get()->play(sound,source,true,source->getVolume());
-        }
-    } else {
-        rocket->animateBurner(burner, false);
-        if (AudioEngine::get()->isActive(sound)) {
-            AudioEngine::get()->clear(sound);
-        }
-    }
 }
 
 /**
@@ -266,17 +241,17 @@ Size GameScene::computeActiveSize() const {
 #pragma mark Collision Handling
 
 void GameScene::beginContact(b2Contact* contact) {
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
+    //b2Body* body1 = contact->GetFixtureA()->GetBody();
+    //b2Body* body2 = contact->GetFixtureB()->GetBody();
     
-    // If we hit the "win" door, we are done
-    intptr_t rptr = reinterpret_cast<intptr_t>(_level->getRocket().get());
-    intptr_t dptr = reinterpret_cast<intptr_t>(_level->getExit().get());
-
-    if((body1->GetUserData().pointer == rptr && body2->GetUserData().pointer == dptr) ||
-       (body1->GetUserData().pointer == dptr && body2->GetUserData().pointer == rptr)) {
-        setComplete(true);
-    }
+//    // If we hit the "win" door, we are done
+//    intptr_t rptr = reinterpret_cast<intptr_t>(_level->getRocket().get());
+//    intptr_t dptr = reinterpret_cast<intptr_t>(_level->getExit().get());
+//
+//    if((body1->GetUserData().pointer == rptr && body2->GetUserData().pointer == dptr) ||
+//       (body1->GetUserData().pointer == dptr && body2->GetUserData().pointer == rptr)) {
+//        setComplete(true);
+//    }
 }
 
 
@@ -320,7 +295,9 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 #pragma mark Rendering
 
 void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
-    CULog("%s", "drawing ahahaha");
-    // TODO: draw the game here
+    batch->begin(getCamera()->getCombined());
+    _level->render(batch);
+    batch->end();
+    // draw the debug component
     Scene2::render(batch);
 }

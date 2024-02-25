@@ -15,7 +15,7 @@
 #define WIDTH_FIELD         "width"
 #define HEIGHT_FIELD        "height"
 #define GRAVITY_FIELD       "gravity"
-#define ROCKET_FIELD        "rocket"
+#define PLAYER_FIELD        "player"
 #define GOALDOOR_FIELD      "exit"
 #define CRATES_FIELD        "crates"
 #define WALLS_FIELD         "walls"

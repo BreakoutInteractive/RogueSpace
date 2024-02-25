@@ -2,34 +2,16 @@
 	"width":    32.0,
 	"height":   18.0,
     "gravity":  -4.9,
-    "rocket": {
-        "pos":           [24,     4],
-        "size":          [1.5625, 1.78125],
+    "player": {
+        "pos": [24, 6],
+        "size": [0.5,0.5],
         "bodytype":      "dynamic",
-        "density":        1.0,
+        "density":        5.0,
         "friction":       0.1,
-        "restitution":    0.4,
+        "restitution":    0,
         "rotation":      false,
-        "texture":       "rocket",
-        "thrust":        30.0,
-        "flames":        "flames",
-        "flames-left":   "flames-left",
-        "flames-right":  "flames-right",
-        "main-sound":    "burn",
-        "left-sound":    "left-burn",
-        "right-sound":   "right-burn",
-        "debugcolor":    "yellow"
-    },
-    "exit": {
-        "pos":           [ 6, 12],
-        "size":          [ 3,  3],
-        "bodytype":      "static",
-        "density":        0.0,
-        "friction":       0.0,
-        "restitution":    0.0,
-        "texture":       "goal",
-        "debugcolor":    "white",
-        "debugopacity":  192
+        "texture":       "player",
+        "debugcolor":    "blue"
     },
     "crates": {
         "crate01": {
