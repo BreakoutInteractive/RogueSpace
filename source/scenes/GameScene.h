@@ -58,21 +58,9 @@ protected:
     bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
-  
-    /**
-     * Activates world collision callbacks on the given physics world and sets the onBeginContact and beforeSolve callbacks
-     *
-     * @param world the physics world to activate world collision callbacks on
-     */
-    void activateWorldCollisions(const std::shared_ptr<physics2::ObstacleWorld>& world);
     
-    /**
-     * Returns the active screen size of this scene.
-     *
-     * This method is for graceful handling of different aspect
-     * ratios
-     */
-    cugl::Size computeActiveSize() const;
+#pragma mark -
+#pragma mark Counters
 
     /**how many frames left until we can attack again*/
     int _atkCD;
@@ -237,18 +225,6 @@ public:
     void postUpdate(float remain);
     
     /**
-     * Updates that animation for a single burner
-     *
-     * This method is here instead of the the rocket model because of our 
-     * philosophy that models should always be lightweight.  Animation includes 
-     * sounds and other assets that we do not want to process in the model.
-     *
-     * @param burner    The rocket burner to animate
-     * @param on        Whether to turn the animation on or off
-     */
-    void updateBurner(RocketModel::Burner burner, bool on);
-    
-    /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
@@ -278,6 +254,25 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+
+protected:
+#pragma mark -
+#pragma mark Helpers
+    
+    /**
+     * Activates world collision callbacks on the given physics world and sets the onBeginContact and beforeSolve callbacks
+     *
+     * @param world the physics world to activate world collision callbacks on
+     */
+    void activateWorldCollisions(const std::shared_ptr<physics2::ObstacleWorld>& world);
+    
+    /**
+     * Returns the active screen size of this scene.
+     *
+     * This method is for graceful handling of different aspect
+     * ratios
+     */
+    cugl::Size computeActiveSize() const;
 };
 
-#endif /* __JS_GAME_SCENE_H__ */
+#endif /* __GAME_SCENE_H__ */

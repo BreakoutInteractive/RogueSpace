@@ -7,7 +7,7 @@ using namespace cugl;
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
-#define DEBUG_KEY KeyCode::D
+#define DEBUG_KEY KeyCode::Q
 /** The key for exitting the game */
 #define EXIT_KEY  KeyCode::ESCAPE
 

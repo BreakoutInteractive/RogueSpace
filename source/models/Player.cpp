@@ -49,7 +49,16 @@ void Player::applyForce() {
     //netforce *= _affine;
     
     // Apply force to the rocket BODY, not the rocket
-    _body->ApplyLinearImpulseToCenter(b2Vec2(_force.x,_force.y), true);
+    // _body->ApplyLinearImpulseToCenter(b2Vec2(_force.x,_force.y), true);
+
+    auto maxGroundSpeed = 5.0f;
+    Vec2 vel = getLinearVelocity();
+    if (vel.length() >= maxGroundSpeed) {
+        vel.normalize();
+        setLinearVelocity(vel * maxGroundSpeed);
+    }
+    auto pos = getPosition();
+    _body->ApplyForce(b2Vec2(_force.x, _force.y), b2Vec2(pos.x, pos.y), true);
 }
 
 void Player::update(float delta) {

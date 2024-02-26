@@ -203,18 +203,21 @@ void GameScene::preUpdate(float dt) {
     }
 
 #pragma mark - handle player input
-    // Apply the force to the rocket
+    // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 force = _input.getMoveDirection();
-    player->setLinearDamping(50);
+//    player->setLinearDamping(50);
     //only move if we're not attacking, parrying, or dodging
-    if (_atkCD == _parryCD == _dodgeCD == 0) {
+    if (_atkCD == 0 && force.length() > 0) {
         player->setForce(force * 5); //TODO: use json data
         player->applyForce();
     }
     else { 
         //TODO: make player stop
-        player->setLinearVelocity(0, 0);
+//        player->setLinearVelocity(0, 0);
+        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
+        player->setForce(dampen * player->getLinearVelocity());
+        player->applyForce();
     }
     std::shared_ptr<physics2::CapsuleObstacle> atk = _level->getAttack();
 
@@ -292,9 +295,9 @@ Size GameScene::computeActiveSize() const {
 #pragma mark Collision Handling
 
 void GameScene::beginContact(b2Contact* contact) {
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
-    
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//    
 //    // If we hit the "win" door, we are done
 //    intptr_t rptr = reinterpret_cast<intptr_t>(_level->getRocket().get());
 //    intptr_t dptr = reinterpret_cast<intptr_t>(_level->getExit().get());
