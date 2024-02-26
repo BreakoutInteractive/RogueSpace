@@ -61,11 +61,12 @@ protected:
     float _horizontal;
     /** How much did we move vertically? */
     float _vertical;
+    /** Did we dodge? */
+    bool _dodgePressed;
 
     bool _attacked;
     cugl::Vec2 _attackDir;
     bool _parried;
-    bool _dodged;
     
 public:
 #pragma mark -
@@ -140,7 +141,7 @@ public:
     /**
      * Returns true if the dodge input was triggered.
      */
-    bool didDodge() const { return _dodged; };
+    bool didDodge() const { return _dodgePressed; }
     
     /**
      * Returns the unit vector direction of movement for dodge motion
