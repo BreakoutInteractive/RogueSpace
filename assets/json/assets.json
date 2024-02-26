@@ -37,6 +37,9 @@
         },
         "attack": {
             "file":     "textures/attack.png"
+        },
+        "enemy":{
+            "file":     "textures/lizard_idle_front.png"
         }
 	},
     "sounds": {

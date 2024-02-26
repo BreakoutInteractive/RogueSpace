@@ -20,7 +20,7 @@
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
 #include "JSRocketModel.h"
-#include "Player.hpp"
+#include <vector>
 
 using namespace cugl;
 
@@ -29,6 +29,8 @@ class ExitModel;
 class WallModel;
 class CrateModel;
 class Floor;
+class Player;
+class Enemy;
 
 #pragma mark -
 #pragma mark Level Model
@@ -56,13 +58,13 @@ protected:
     
     /** Reference to the player object */
     std::shared_ptr<Player> _player;
+    
+    /** list of enemy references */
+    std::vector<std::shared_ptr<Enemy>> _enemies;
 
     std::shared_ptr<physics2::CapsuleObstacle> _atk;
     
     std::shared_ptr<Floor> _floor;
-
-    /** Reference to all the active crates */
-    std::vector<std::shared_ptr<CrateModel>> _crates;
     
     /** Reference to all the walls */
     std::vector<std::shared_ptr<WallModel>> _walls;
@@ -90,6 +92,13 @@ protected:
      */
     bool loadPlayer(const std::shared_ptr<JsonValue>& json);
     
+    /**
+     * Loads the enemy object
+     *
+     * The enemies will be stored in the  `_enemies` field and retained.
+     */
+    bool loadEnemies(const std::shared_ptr<JsonValue>& json);
+    
     
     /**
      * Loads the floor layer object
@@ -114,19 +123,6 @@ protected:
      * @return true if the wall was successfully loaded
      */
     bool loadWall(const std::shared_ptr<JsonValue>& json);
-
-    /**
-     * Loads a single crate object
-     *
-     * The crate will be retained and stored in the vector _crates.  If the
-     * crate fails to load, then it will not be added to _crates.
-     *
-     * @param  reader   a JSON reader with cursor ready to read the crate
-     *
-     * @retain the crate
-     * @return true if the crate was successfully loaded
-     */
-    bool loadCrate(const std::shared_ptr<JsonValue>& json);
 
     /**
      * Converts the string to a color
@@ -176,19 +172,6 @@ public:
     }
 
 #pragma mark Model Access
-//    /**
-//     * Returns the rocket in this game level
-//     *
-//     * @return the rocket in this game level
-//     */
-//    const std::shared_ptr<RocketModel>& getRocket() { return _rocket; }
-//
-//    /**
-//     * Returns the exit door in this game level
-//     *
-//     * @return the exit door in this game level
-//     */
-//    const std::shared_ptr<ExitModel>& getExit() { return _goalDoor; }
 
     /**
      * Returns the Obstacle world in this game level 
@@ -201,6 +184,10 @@ public:
      * @return the player in this game level
      */
     const std::shared_ptr<Player> getPlayer() {return _player; }
+    
+    /**
+     * @return the player's attack semi-sphere
+     */
     const std::shared_ptr<physics2::CapsuleObstacle> getAttack() { return _atk; }
 
 
