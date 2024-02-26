@@ -9,6 +9,7 @@
 #define Player_hpp
 
 #include <cugl/cugl.h>
+#include "Counter.hpp"
 
 /**
  * This class is the player avatar for the player lander game.
@@ -41,6 +42,23 @@ protected:
     std::shared_ptr<cugl::Texture> _activeTexture;
     
 public:
+    
+#pragma mark -
+#pragma mark Counters
+    /** attack cooldown counter*/
+    Counter _atkCD;
+    /** parry cooldown counter */
+    Counter _parryCD;
+    /** dodge ooldown counter*/
+    Counter _dodgeCD;
+    
+    /** counter that is active during the dodge motion*/
+    Counter _dodgeDuration;
+    
+    /**
+     * decrement all counters
+     */
+    void updateCounters();
     
     
 #pragma mark Constructors
@@ -211,6 +229,7 @@ public:
      * @param value the x-component of the force applied to this player.
      */
     void setFY(float value) { _force.y = value; }
+    
     
 #pragma mark -
 #pragma mark Animation

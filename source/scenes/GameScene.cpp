@@ -47,13 +47,6 @@ using namespace cugl;
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
 
-/**the number of frames we wait before allowing another attack*/
-#define ATK_CD 6
-/**the number of frames we wait before allowing another parry*/
-#define PARRY_CD 6
-/**the number of frames we wait before allowing another dodge*/
-#define DODGE_CD 6
-
 #pragma mark -
 #pragma mark Constructors
 
@@ -64,9 +57,6 @@ _debug(false){}
 
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
-    _atkCD = 0;
-    _parryCD = 0;
-    _dodgeCD = 0;
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
         return false;
@@ -207,26 +197,26 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - handle player input
     // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
-    Vec2 force = _input.getMoveDirection();
-//    player->setLinearDamping(50);
-    //only move if we're not attacking, parrying, or dodging
-    if (_atkCD == 0 && force.length() > 0) {
-        player->setForce(force * 5); //TODO: use json data
+    Vec2 moveForce = _input.getMoveDirection();
+    
+    auto _atkCD = player->_atkCD.getCount();
+    auto _parryCD = player->_parryCD.getCount();
+    auto _dodgeCD = player->_dodgeCD.getCount();
+    //only move fast if we're not attacking, parrying, or dodging
+    if (_atkCD == _parryCD == _dodgeCD == 0 && player->_dodgeDuration.isZero()) {
+        //if all abilities are active
+        player->setForce(moveForce * 5); //TODO: use json data
         player->applyForce();
     }
-    else { 
-        //TODO: make player stop
-//        player->setLinearVelocity(0, 0);
-        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
-        player->setForce(dampen * player->getLinearVelocity());
-        player->applyForce();
-    }
+
     std::shared_ptr<physics2::CapsuleObstacle> atk = _level->getAttack();
 
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (_input.didAttack() && _atkCD == 0 && _parryCD == 0) {
-        //attack points from player to mouse 
+    
+    //for now, give higher precedence to dodge than to attack but only allow one at a time
+    if (_input.didAttack() && player->_atkCD.isZero() && player->_parryCD.isZero() && player->_dodgeCD.isZero() && !_input.didDodge()) {
+        //attack points from player to mouse
         Vec2 direction = _input.getAttackDirection();
         Vec2 playerPos = player->getPosition() * player->getDrawScale();
         //convert from screen to drawing coords
@@ -240,27 +230,45 @@ void GameScene::preUpdate(float dt) {
         atk->setEnabled(true);
         atk->setAngle(ang);
         atk->setPosition(player->getPosition());
-        player->setAngle(atk->getAngle());
-        _atkCD = ATK_CD;
+        player->_atkCD.reset();
     }
-    else if (_atkCD > 0) _atkCD -= 1;
-    else if (_atkCD == 0) atk->setEnabled(false);
+    else if (player->_atkCD.isZero()){
+        atk->setEnabled(false);
+    }
 
-    //for now, give higher precendence to attack than to parry
-    if (_input.didParry() && _parryCD == 0 && _atkCD == 0 && !_input.didAttack()) {
+    //for now, give higher precendence to attack than to parry but only allow one at a time
+    if (_input.didParry() && player->_parryCD.isZero() && player->_atkCD.isZero() && player->_dodgeCD.isZero() && !_input.didAttack() && !_input.didDodge()) {
         //TODO: handle parry
+        CULog("parried");
         player->animateParry();
-        _parryCD = PARRY_CD;
+        player->_parryCD.reset();
     }
-    else if (_parryCD > 0) _parryCD -= 1;
-    else if (_parryCD == 0) player->animateDefault();
+    else if (player->_parryCD.isZero()) player->animateDefault();
 
-    if (_input.didDodge() && _dodgeCD == 0) {
-        //TODO: handle dodge
-        _dodgeCD = DODGE_CD;
+    //for now, give highest precedence to dodge but only allow one at a time
+    if (_input.didDodge() && player->_dodgeCD.isZero() && player->_parryCD.isZero() && player->_atkCD.isZero()) {
+        CULog("dodged");
+        player->_dodgeCD.reset();
+        player->_dodgeDuration.reset(); // set dodge frames
     }
-    else if (_dodgeCD > 0) _dodgeCD -= 1;
-
+    if (!player->_dodgeDuration.isZero()){
+        CULog("dodging");
+        auto force = _input.getDodgeDirection();
+        //player->setLinearDamping(20);
+        player->setForce(force*50);
+        player->applyForce();
+    }
+    
+    // if we not dodging or move
+    if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
+        // dampen
+        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
+        player->setForce(dampen * player->getLinearVelocity());
+        player->applyForce();
+    }
+    
+    player->updateCounters();
+    
 }
 
 

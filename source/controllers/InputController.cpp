@@ -114,6 +114,7 @@ void InputController::update(float dt) {
     int rght = false;
     int up   = false;
     int down = false;
+    int dodge = false;
 
 #ifndef CU_TOUCH_SCREEN
     // DESKTOP CONTROLS
@@ -124,6 +125,7 @@ void InputController::update(float dt) {
     _keyReset  = keys->keyPressed(RESET_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
+
     //move with WASD
     left = keys->keyDown(KeyCode::A);
     rght = keys->keyDown(KeyCode::D);
@@ -134,7 +136,8 @@ void InputController::update(float dt) {
     if (_attacked) _attackDir = (mouse->pointerPosition());
     _parried = mouse->buttonPressed().hasRight();
     //dodge on spacebar
-    _dodged = keys->keyDown(KeyCode::SPACE);
+    dodge = keys->keyDown(KeyCode::SPACE);
+
 #else
     // MOBILE CONTROLS
     Vec3 acc = Input::get<Accelerometer>()->getAcceleration();
@@ -158,6 +161,7 @@ void InputController::update(float dt) {
     _resetPressed = _keyReset;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
+    _dodgePressed = dodge;
     
     // Directional controls
     _horizontal = 0.0f;
@@ -217,6 +221,18 @@ Vec2 InputController::getMoveDirection() {
 }
 
 // TODO: complete all other functions from h file
+
+Vec2 InputController::getDodgeDirection() {
+    Vec2 direction;
+    #ifndef CU_TOUCH_SCREEN
+    // DESKTOP CONTROLS
+    // for now, dodge in direction we are moving
+    direction.set(_horizontal, _vertical);
+    #else
+    // MOBILE
+    #endif
+    return direction.normalize();
+}
 
 
 #pragma mark -
