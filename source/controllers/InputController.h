@@ -61,6 +61,8 @@ protected:
     float _horizontal;
     /** How much did we move vertically? */
     float _vertical;
+    /** Did we dodge? */
+    bool _dodgePressed;
     
 public:
 #pragma mark -
@@ -135,7 +137,7 @@ public:
     /**
      * Returns true if the dodge input was triggered.
      */
-    bool didDodge();
+    bool didDodge() const { return _dodgePressed; }
     
     /**
      * Returns the unit vector direction of movement for dodge motion

@@ -200,10 +200,19 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the rocket
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 force = _input.getMoveDirection();
-    player->setLinearDamping(50);
-    player->setForce(force*5); //TODO: use json data
-    player->applyForce();
-
+    if (_input.didDodge() && player->canDodge()) {
+        player->resetDodge();
+        force = _input.getDodgeDirection();
+        player->setLinearDamping(20);
+        player->setForce(force*50);
+        player->applyForce();
+    }
+    else {
+        player->setLinearDamping(50);
+        player->setForce(force*5); //TODO: use json data
+        player->applyForce();
+    }
+    
 }
 
 

@@ -20,6 +20,8 @@ bool Player::init(const Vec2 pos, const Size size) {
     BoxObstacle::setAngle(M_PI_4);
     std::string name("player");
     setName(name);
+    _dodgeCount = 0;
+    _dodgeCooldown = 60; // setting dodge cooldown to 1 sec for now
     return true;
 }
 
@@ -50,6 +52,11 @@ void Player::applyForce() {
     
     // Apply force to the rocket BODY, not the rocket
     _body->ApplyLinearImpulseToCenter(b2Vec2(_force.x,_force.y), true);
+    
+    if (_dodgeCount <= _dodgeCooldown)
+    {
+        _dodgeCount++;
+    }
 }
 
 void Player::update(float delta) {
