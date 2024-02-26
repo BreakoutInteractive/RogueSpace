@@ -37,6 +37,9 @@
         },
         "attack": {
             "file":     "textures/attack.png"
+        },
+        "parry": {
+            "file":     "textures/player_parry.png"
         }
 	},
     "sounds": {

@@ -65,6 +65,8 @@ _debug(false){}
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
     _atkCD = 0;
+    _parryCD = 0;
+    _dodgeCD = 0;
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
         return false;
@@ -223,7 +225,7 @@ void GameScene::preUpdate(float dt) {
 
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (_input.didAttack() && _atkCD == 0) {
+    if (_input.didAttack() && _atkCD == 0 && _parryCD == 0) {
         //attack points from player to mouse 
         Vec2 direction = _input.getAttackDirection();
         Vec2 playerPos = player->getPosition() * player->getDrawScale();
@@ -244,11 +246,14 @@ void GameScene::preUpdate(float dt) {
     else if (_atkCD > 0) _atkCD -= 1;
     else if (_atkCD == 0) atk->setEnabled(false);
 
-    if (_input.didParry() && _parryCD == 0) {
+    //for now, give higher precendence to attack than to parry
+    if (_input.didParry() && _parryCD == 0 && _atkCD == 0 && !_input.didAttack()) {
         //TODO: handle parry
+        player->animateParry();
         _parryCD = PARRY_CD;
     }
     else if (_parryCD > 0) _parryCD -= 1;
+    else if (_parryCD == 0) player->animateDefault();
 
     if (_input.didDodge() && _dodgeCD == 0) {
         //TODO: handle dodge

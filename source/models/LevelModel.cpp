@@ -255,6 +255,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     _player->setFixedRotation(!json->getBool(ROTATION_FIELD));
     _player->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
     _player->setTextureKey(json->getString(TEXTURE_FIELD));
+    _player->setParryTextureKey(json->getString(PARRY_FIELD));
     _player->setDrawScale(_scale);
 
     std::string btype = json->getString(BODYTYPE_FIELD);
@@ -262,6 +263,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
         _player->setBodyType(b2_staticBody);
     }
 
+    //setup the attack for collision detection
 	_atk = physics2::CapsuleObstacle::alloc(pos, Size(0, ATK_RADIUS), poly2::Capsule::HALF_REVERSE);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_staticBody);

@@ -11,6 +11,7 @@
         "restitution":    0,
         "rotation":      false,
         "texture":       "player",
+        "parry":         "parry",
         "debugcolor":    "blue"
     },
     "floor": {

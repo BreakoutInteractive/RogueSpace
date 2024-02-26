@@ -77,9 +77,19 @@ void Player::setDrawScale(Vec2 scale) {
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
-    batch->draw(_playerTexture,Color4::WHITE, Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
+    batch->draw(_activeTexture,Color4::WHITE, Vec2(_activeTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _playerTexture = assets->get<Texture>(_playerTextureKey);
+    _parryTexture = assets->get<Texture>(_parryTextureKey);
+    _activeTexture = _playerTexture;
+}
+
+void Player::animateParry() {
+    _activeTexture = _parryTexture;
+}
+
+void Player::animateDefault() {
+    _activeTexture = _playerTexture;
 }
