@@ -35,8 +35,14 @@
         "background": {
             "file":     "textures/space_background.png"
         },
-        "attack": {
+        "atk": {
             "file":     "textures/attack.png"
+        },
+        "parry": {
+            "file":     "textures/player_parry.png"
+        },
+        "attack": {
+            "file":     "textures/player_attack.png"
         }
 	},
     "sounds": {

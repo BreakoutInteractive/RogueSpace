@@ -26,6 +26,10 @@ protected:
 
     /** The texture key for the player*/
     std::string _playerTextureKey;
+    /** The texture key for the parry animation */
+    std::string _parryTextureKey;
+    /** The texture key for the attack animation */
+    std::string _attackTextureKey;
     
     /** Cache object for transforming the force according the object angle */
     cugl::Mat4 _affine;
@@ -34,6 +38,12 @@ protected:
     
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
+    /** The texture to use while parrying */
+    std::shared_ptr<cugl::Texture> _parryTexture;
+    /** The texture to use while attacking */
+    std::shared_ptr<cugl::Texture> _attackTexture;
+    /** The texture we are currently drawing */
+    std::shared_ptr<cugl::Texture> _activeTexture;
     
 public:
     
@@ -249,6 +259,45 @@ public:
     * @param  strip    the texture (key) for this player
     */
     void setTextureKey(const std::string& key) { _playerTextureKey = key; }
+
+    /**
+    * Returns the texture (key) for this player's parry animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @return the texture (key) for this player's parry animation
+    */
+    const std::string& getParryTextureKey() const { return _parryTextureKey; }
+
+    /**
+    * Returns the texture (key) for this player's parry animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @param  strip    the texture (key) for this player's parry animation
+    */
+    void setParryTextureKey(const std::string& key) { _parryTextureKey = key; }
+    /**
+    * Returns the texture (key) for this player's attack animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @return the texture (key) for this player's attack animation
+    */
+    const std::string& getAttackTextureKey() const { return _attackTextureKey; }
+
+    /**
+    * Returns the texture (key) for this player's attack animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @param  strip    the texture (key) for this player's attack animation
+    */
+    void setAttackTextureKey(const std::string& key) { _attackTextureKey = key; }
     
     /**
      * Sets the ratio of the player sprite to the physics body
@@ -283,6 +332,13 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+
+    /** Change to using the parry animation */
+    void animateParry();
+    /** Change to using the default animation */
+    void animateDefault();
+    /** Change to using the attack animation */
+    void animateAttack();
     
     
 #pragma mark -
