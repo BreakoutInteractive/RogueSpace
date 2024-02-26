@@ -10,7 +10,7 @@
 #include "Player.hpp"
 
 /**the number of frames we wait before allowing another attack*/
-#define ATK_CD 6
+#define ATK_CD 10
 /**the number of frames we wait before allowing another parry*/
 #define PARRY_CD 6
 /**the number of frames we wait before allowing another dodge*/
@@ -101,6 +101,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _playerTexture = assets->get<Texture>(_playerTextureKey);
     _parryTexture = assets->get<Texture>(_parryTextureKey);
+    _attackTexture = assets->get<Texture>(_attackTextureKey);
     _activeTexture = _playerTexture;
 }
 
@@ -111,6 +112,10 @@ void Player::animateParry() {
 void Player::animateDefault() {
     _activeTexture = _playerTexture;
 }
+void Player::animateAttack() {
+    _activeTexture = _attackTexture;
+}
+
 #pragma mark -
 #pragma mark State Update
 

@@ -92,7 +92,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
     _floor->loadAssets(assets);
-    _attackAnimation = assets->get<Texture>("attack");
+    _attackAnimation = assets->get<Texture>("atk");
 }
 
 
@@ -256,6 +256,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     _player->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
     _player->setTextureKey(json->getString(TEXTURE_FIELD));
     _player->setParryTextureKey(json->getString(PARRY_FIELD));
+    _player->setAttackTextureKey(json->getString(ATTACK_FIELD));
     _player->setDrawScale(_scale);
 
     std::string btype = json->getString(BODYTYPE_FIELD);

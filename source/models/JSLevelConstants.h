@@ -34,6 +34,7 @@
 /** The drawing fields for each object */
 #define TEXTURE_FIELD       "texture"
 #define PARRY_FIELD			"parry"
+#define ATTACK_FIELD		"attack"
 #define DEBUG_COLOR_FIELD   "debugcolor"
 #define DEBUG_OPACITY_FIELD "debugopacity"
 

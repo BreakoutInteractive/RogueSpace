@@ -12,6 +12,7 @@
         "rotation":      false,
         "texture":       "player",
         "parry":         "parry",
+        "attack":        "attack",
         "debugcolor":    "blue"
     },
     "floor": {
