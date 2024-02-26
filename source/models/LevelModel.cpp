@@ -117,7 +117,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
     }
-    _attackAnimation = assets->get<Texture>("attack");
+    _attackAnimation = assets->get<Texture>("atk");
 }
 
 
@@ -272,6 +272,8 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     _player->setFixedRotation(!json->getBool(ROTATION_FIELD));
     _player->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
     _player->setTextureKey(json->getString(TEXTURE_FIELD));
+    _player->setParryTextureKey(json->getString(PARRY_FIELD));
+    _player->setAttackTextureKey(json->getString(ATTACK_FIELD));
     _player->setDrawScale(_scale);
 
     std::string btype = json->getString(BODYTYPE_FIELD);
@@ -279,7 +281,8 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
         _player->setBodyType(b2_staticBody);
     }
 
-	_atk = physics2::CapsuleObstacle::alloc(pos, Size(1, ATK_RADIUS), poly2::Capsule::HALF_REVERSE);
+    //setup the attack for collision detection
+	_atk = physics2::CapsuleObstacle::alloc(pos, Size(0, ATK_RADIUS), poly2::Capsule::HALF_REVERSE);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_staticBody);
     return success;

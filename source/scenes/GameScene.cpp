@@ -57,7 +57,6 @@ _debug(false){}
 
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
-
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
         return false;
@@ -214,46 +213,55 @@ void GameScene::preUpdate(float dt) {
 
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (_input.didAttack() && player->_atkCD.isZero()) {
-        //attack points from player to mouse
-        Vec2 direction = _input.getAttackDirection();
-        Vec2 playerPos = player->getPosition() * player->getDrawScale();
-        //convert from screen to drawing coords
-        direction.y = SCENE_HEIGHT - direction.y;
-        //convert to player coords
-        direction -= playerPos;
-        direction.normalize();
-        //compute angle from x-axis (since that is where the right cap of a capsule, i.e. the attack hitbox, points)
-        float ang = acos(direction.dot(Vec2::UNIT_X));
-        if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
-        atk->setEnabled(true);
-        atk->setAngle(ang);
-        atk->setPosition(player->getPosition());
-        player->_atkCD.reset();
+    if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
+        //for now, give highest precedence to dodge
+        if (_input.didDodge() && player->_dodgeCD.isZero()) {
+            CULog("dodged");
+            player->_dodgeCD.reset();
+            player->_dodgeDuration.reset(); // set dodge frames
+        }
+        else if (player->_dodgeDuration.isZero()) { //not dodging
+            //for now, give middle precedence to attack
+            if (_input.didAttack()) {
+                /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
+                Vec2 direction = _input.getAttackDirection();
+                Vec2 playerPos = player->getPosition() * player->getDrawScale();
+                //convert from screen to drawing coords
+                direction.y = SCENE_HEIGHT - direction.y;
+                //convert to player coords
+                direction -= playerPos;
+                direction.normalize();
+                //compute angle from x-axis (since that is where the right cap of a capsule, i.e. the attack hitbox, points)
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
+                /////// END COMPUTATION OF ATTACK DIRECTION ///////
+                atk->setEnabled(true);
+                atk->setAngle(ang);
+                atk->setPosition(player->getPosition());
+                player->animateAttack();
+                player->_atkCD.reset();
+            }
+            //for now, give lowest precendence to parry
+            else if (_input.didParry()) {
+                //TODO: handle parry
+                CULog("parried");
+                player->animateParry();
+                player->_parryCD.reset();
+            }
+        }     
     }
-    else if (player->_atkCD.isZero()){
-        atk->setEnabled(false);
-    }
-    
-    if (_input.didParry() && player->_parryCD.isZero()) {
-        //TODO: handle parry
-        CULog("parried");
-        player->_parryCD.reset();
-    }
-
-    if (_input.didDodge() && player->_dodgeCD.isZero()) {
-        CULog("dodged");
-        player->_dodgeCD.reset();
-        player->_dodgeDuration.reset(); // set dodge frames
-    }
-    
-    if (!player->_dodgeDuration.isZero()){
+    if (!player->_dodgeDuration.isZero()) {
         CULog("dodging");
         auto force = _input.getDodgeDirection();
         //player->setLinearDamping(20);
-        player->setForce(force*50);
+        player->setForce(force * 50);
         player->applyForce();
     }
+    if (player->_atkCD.isZero()) {
+        atk->setEnabled(false);
+    }
+    //if/when we create a dodge animation, add a check for it here
+    if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
     
     // if we not dodging or move
     if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
