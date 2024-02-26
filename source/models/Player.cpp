@@ -10,7 +10,7 @@
 #include "Player.hpp"
 
 /**the number of frames we wait before allowing another attack*/
-#define ATK_CD 6
+#define ATK_CD 10
 /**the number of frames we wait before allowing another parry*/
 #define PARRY_CD 6
 /**the number of frames we wait before allowing another dodge*/
@@ -95,17 +95,32 @@ void Player::setDrawScale(Vec2 scale) {
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
-    batch->draw(_playerTexture,Color4::WHITE, Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
+    batch->draw(_activeTexture,Color4::WHITE, Vec2(_activeTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
     // render player differently while dodging (add fading effect)
     if (!_dodgeDuration.isZero()) {
         for (int i = 2; i < 10; i+=2) {
             batch->draw(_playerTexture,Color4(Vec4(1, 1, 1, 1 - i*0.1)), Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, (getPosition() - getLinearVelocity()*(i*0.01)) * _drawScale);
         }
     }
+    
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _playerTexture = assets->get<Texture>(_playerTextureKey);
+    _parryTexture = assets->get<Texture>(_parryTextureKey);
+    _attackTexture = assets->get<Texture>(_attackTextureKey);
+    _activeTexture = _playerTexture;
+}
+
+void Player::animateParry() {
+    _activeTexture = _parryTexture;
+}
+
+void Player::animateDefault() {
+    _activeTexture = _playerTexture;
+}
+void Player::animateAttack() {
+    _activeTexture = _attackTexture;
 }
 
 #pragma mark -
