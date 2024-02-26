@@ -61,15 +61,14 @@ void Player::update(float delta) {
 #pragma mark Animation
 
 
-void Player::setDrawScale(float scale) {
-    _drawscale = scale;
+void Player::setDrawScale(Vec2 scale) {
+    _drawScale = scale;
 }
 
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    // TODO: render player
-    Vec2 offset(0, 20);
+    // TODO: render player with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
-    batch->draw(_playerTexture,Color4::WHITE, Vec2(_playerTexture->getWidth()/2, 0), Vec2(0.5,0.5), 0, getPosition() * _drawscale);
+    batch->draw(_playerTexture,Color4::WHITE, Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){

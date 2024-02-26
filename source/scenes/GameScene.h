@@ -43,6 +43,8 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _winNode;
     /** Reference to the reset message label */
     std::shared_ptr<cugl::scene2::Label> _resetNode;
+    
+    std::shared_ptr<Texture> _backgroundTexture;
 
     // MODEL
 

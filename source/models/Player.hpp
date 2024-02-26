@@ -29,7 +29,7 @@ protected:
     /** Cache object for transforming the force according the object angle */
     cugl::Mat4 _affine;
     
-    float _drawscale;
+    cugl::Vec2 _drawScale;
     
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
@@ -41,7 +41,7 @@ public:
     /**
      * Creates a new player at the origin.
      */
-    Player(void) : BoxObstacle(), _drawscale(1.0f) { }
+    Player(void) : BoxObstacle(), _drawScale(1.0f, 1.0f) { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -243,7 +243,7 @@ public:
      *
      * @param scale The ratio of the player sprite to the physics body
      */
-    void setDrawScale(float scale);
+    void setDrawScale(cugl::Vec2 scale);
     
     /**
      * Returns the ratio of the player sprite to the physics body
@@ -257,7 +257,7 @@ public:
      *
      * @return the ratio of the player sprite to the physics body
      */
-    float getDrawScale() const { return _drawscale; }
+    cugl::Vec2 getDrawScale() const { return _drawScale; }
     
     
     /**

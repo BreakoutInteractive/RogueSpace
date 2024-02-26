@@ -31,15 +31,15 @@ LevelModel::~LevelModel(void) {
 #pragma mark -
 #pragma mark Drawing Methods
 
-void LevelModel::setDrawScale(float value) {
+void LevelModel::setDrawScale(Vec2 scale) {
 	if (_player != nullptr) {
-		_player->setDrawScale(value);
+		_player->setDrawScale(scale);
 	}
     else {
         CUAssertLog(false, "Failed to set draw scale for player");
     }
     if (_floor != nullptr) {
-        _floor->setDrawScale(Vec2(value, value));
+        _floor->setDrawScale(scale);
     }
     else {
         CUAssertLog(false, "Failed to set draw scale for floor");
@@ -124,6 +124,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 		CUAssertLog(false, "Failed to load level file");
 		return false;
 	}
+    CULog("loading");
 	// Initial geometry
 	float w = json->get(WIDTH_FIELD)->asFloat();
 	float h = json->get(HEIGHT_FIELD)->asFloat();
@@ -244,6 +245,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     _player->setFixedRotation(!json->getBool(ROTATION_FIELD));
     _player->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
     _player->setTextureKey(json->getString(TEXTURE_FIELD));
+    _player->setDrawScale(_scale);
 
     std::string btype = json->getString(BODYTYPE_FIELD);
     if (btype == STATIC_VALUE) {
