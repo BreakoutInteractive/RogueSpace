@@ -6,7 +6,7 @@
         "pos": [24, 6],
         "size": [0.3,0.3],
         "bodytype":      "dynamic",
-        "density":        5.0,
+        "density":        3.0,
         "friction":       0.1,
         "restitution":    0,
         "rotation":      false,

@@ -47,6 +47,12 @@ using namespace cugl;
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
 
+/**the number of frames we wait before allowing another attack*/
+#define ATK_CD 6
+/**the number of frames we wait before allowing another parry*/
+#define PARRY_CD 6
+/**the number of frames we wait before allowing another dodge*/
+#define DODGE_CD 6
 
 #pragma mark -
 #pragma mark Constructors
@@ -58,6 +64,7 @@ _debug(false){}
 
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
+    _atkCD = 0;
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
         return false;
@@ -150,7 +157,6 @@ void GameScene::activateWorldCollisions(const std::shared_ptr<physics2::Obstacle
 #pragma mark -
 #pragma mark Physics Handling
 
-
 void GameScene::preUpdate(float dt) {
 	if (_level == nullptr) {
 		return;
@@ -197,12 +203,58 @@ void GameScene::preUpdate(float dt) {
     }
 
 #pragma mark - handle player input
-    // Apply the force to the rocket
+    // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 force = _input.getMoveDirection();
-    player->setLinearDamping(50);
-    player->setForce(force*5); //TODO: use json data
-    player->applyForce();
+//    player->setLinearDamping(50);
+    //only move if we're not attacking, parrying, or dodging
+    if (_atkCD == 0 && force.length() > 0) {
+        player->setForce(force * 5); //TODO: use json data
+        player->applyForce();
+    }
+    else { 
+        //TODO: make player stop
+//        player->setLinearVelocity(0, 0);
+        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
+        player->setForce(dampen * player->getLinearVelocity());
+        player->applyForce();
+    }
+    std::shared_ptr<physics2::CapsuleObstacle> atk = _level->getAttack();
+
+    //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
+    //Not sure if this will be possible on mobile, but it's definitely possible on the computer
+    if (_input.didAttack() && _atkCD == 0) {
+        //attack points from player to mouse 
+        Vec2 direction = _input.getAttackDirection();
+        Vec2 playerPos = player->getPosition() * player->getDrawScale();
+        //convert from screen to drawing coords
+        direction.y = SCENE_HEIGHT - direction.y;
+        //convert to player coords
+        direction -= playerPos;
+        direction.normalize();
+        //compute angle from x-axis (since that is where the right cap of a capsule, i.e. the attack hitbox, points)
+        float ang = acos(direction.dot(Vec2::UNIT_X));
+        if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
+        atk->setEnabled(true);
+        atk->setAngle(ang);
+        atk->setPosition(player->getPosition());
+        player->setAngle(atk->getAngle());
+        _atkCD = ATK_CD;
+    }
+    else if (_atkCD > 0) _atkCD -= 1;
+    else if (_atkCD == 0) atk->setEnabled(false);
+
+    if (_input.didParry() && _parryCD == 0) {
+        //TODO: handle parry
+        _parryCD = PARRY_CD;
+    }
+    else if (_parryCD > 0) _parryCD -= 1;
+
+    if (_input.didDodge() && _dodgeCD == 0) {
+        //TODO: handle dodge
+        _dodgeCD = DODGE_CD;
+    }
+    else if (_dodgeCD > 0) _dodgeCD -= 1;
 
 }
 
@@ -243,9 +295,9 @@ Size GameScene::computeActiveSize() const {
 #pragma mark Collision Handling
 
 void GameScene::beginContact(b2Contact* contact) {
-    //b2Body* body1 = contact->GetFixtureA()->GetBody();
-    //b2Body* body2 = contact->GetFixtureB()->GetBody();
-    
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//    
 //    // If we hit the "win" door, we are done
 //    intptr_t rptr = reinterpret_cast<intptr_t>(_level->getRocket().get());
 //    intptr_t dptr = reinterpret_cast<intptr_t>(_level->getExit().get());
@@ -254,6 +306,10 @@ void GameScene::beginContact(b2Contact* contact) {
 //       (body1->GetUserData().pointer == dptr && body2->GetUserData().pointer == rptr)) {
 //        setComplete(true);
 //    }
+    
+    //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
+    //TODO: parry
+
 }
 
 
