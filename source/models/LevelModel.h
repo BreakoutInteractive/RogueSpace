@@ -56,6 +56,8 @@ protected:
     
     /** Reference to the player object */
     std::shared_ptr<Player> _player;
+
+    std::shared_ptr<physics2::CapsuleObstacle> _atk;
     
     std::shared_ptr<Floor> _floor;
 
@@ -70,6 +72,8 @@ protected:
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
+
+    std::shared_ptr<cugl::Texture> _attackAnimation;
 
 #pragma mark Internal Helper Methods
     
@@ -197,6 +201,7 @@ public:
      * @return the player in this game level
      */
     const std::shared_ptr<Player> getPlayer() {return _player; }
+    const std::shared_ptr<physics2::CapsuleObstacle> getAttack() { return _atk; }
 
 
 #pragma mark Physics Attributes

@@ -61,6 +61,11 @@ protected:
     float _horizontal;
     /** How much did we move vertically? */
     float _vertical;
+
+    bool _attacked;
+    cugl::Vec2 _attackDir;
+    bool _parried;
+    bool _dodged;
     
 public:
 #pragma mark -
@@ -135,7 +140,7 @@ public:
     /**
      * Returns true if the dodge input was triggered.
      */
-    bool didDodge();
+    bool didDodge() const { return _dodged; };
     
     /**
      * Returns the unit vector direction of movement for dodge motion
@@ -147,12 +152,18 @@ public:
     /**
      * Returns true if the parry input was triggered.
      */
-    bool didParry();
+    bool didParry() const { return _parried; }
     
     /**
      * Returns true if the attack input was triggered
      */
-    bool didAttack();
+    bool didAttack() const { return _attacked; }
+    /**
+     * Returns the vector direction of attack (i.e. the position of the mouse)
+     *
+     * The returned value can be anything in the event that {@link didAttack} is false.
+     */
+    cugl::Vec2 getAttackDirection() const { return _attackDir; }
     
     
     /**

@@ -73,6 +73,13 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+
+    /**how many frames left until we can attack again*/
+    int _atkCD;
+    /**how many frames left until we can parry again*/
+    int _parryCD;
+    /**how many frames left until we can dodge again*/
+    int _dodgeCD;
     
 public:
 #pragma mark -

@@ -9,6 +9,10 @@
 #pragma mark -
 #pragma mark Static Constructors
 
+//the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player
+//this is how sweeping melee attacks work in Hades
+#define ATK_RADIUS 3.5f
+
 /**
 * Creates a new, empty level.
 */
@@ -50,6 +54,10 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: draw contents manually, sorting
     _floor->draw(batch);
     _player->draw(batch);
+    //we add pi/2 to the angle since the sprite is pointing down but the hitbox points right by default
+    if (_atk->isEnabled()) batch->draw(_attackAnimation, Color4(255,255,255,200), Vec2(_attackAnimation->getWidth() / 2, _attackAnimation->getHeight()/2), 
+                                        Vec2(ATK_RADIUS/(_attackAnimation->getWidth() / 2), ATK_RADIUS/(_attackAnimation->getHeight() / 2)) * _player->getDrawScale(),
+                                        _atk->getAngle() + M_PI_2, _atk->getPosition() * _player->getDrawScale());
 }
 
 void LevelModel::clearDebugNode(){
@@ -84,6 +92,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
     _floor->loadAssets(assets);
+    _attackAnimation = assets->get<Texture>("attack");
 }
 
 
@@ -167,6 +176,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     
     // Add objects to world
     addObstacle(_player);
+	addObstacle(_atk);
     for (int ii = 0; ii < _crates.size(); ii++){
         addObstacle(_crates[ii]);
     }
@@ -251,6 +261,10 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     if (btype == STATIC_VALUE) {
         _player->setBodyType(b2_staticBody);
     }
+
+	_atk = physics2::CapsuleObstacle::alloc(pos, Size(0, ATK_RADIUS), poly2::Capsule::HALF_REVERSE);
+	_atk->setSensor(true);
+	_atk->setBodyType(b2_staticBody);
     return success;
 }
 

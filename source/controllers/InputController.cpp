@@ -80,7 +80,7 @@ bool InputController::init() {
     
     // Only process keyboard on desktop
 #ifndef CU_TOUCH_SCREEN
-    success = Input::activate<Keyboard>();
+    success = Input::activate<Keyboard>() && Input::activate<Mouse>();
 #else
     success = Input::activate<Accelerometer>();
     Touchscreen* touch = Input::get<Touchscreen>();
@@ -118,16 +118,23 @@ void InputController::update(float dt) {
 #ifndef CU_TOUCH_SCREEN
     // DESKTOP CONTROLS
     Keyboard* keys = Input::get<Keyboard>();
+    Mouse* mouse = Input::get<Mouse>();
 
     // Map "keyboard" events to the current frame boundary
     _keyReset  = keys->keyPressed(RESET_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
-    
-    left = keys->keyDown(KeyCode::ARROW_LEFT);
-    rght = keys->keyDown(KeyCode::ARROW_RIGHT);
-    up   = keys->keyDown(KeyCode::ARROW_UP);
-    down = keys->keyDown(KeyCode::ARROW_DOWN);
+    //move with WASD
+    left = keys->keyDown(KeyCode::A);
+    rght = keys->keyDown(KeyCode::D);
+    up   = keys->keyDown(KeyCode::W);
+    down = keys->keyDown(KeyCode::S);
+    //attack on left click, parry on right click
+    _attacked = mouse->buttonPressed().hasLeft();
+    if (_attacked) _attackDir = (mouse->pointerPosition());
+    _parried = mouse->buttonPressed().hasRight();
+    //dodge on spacebar
+    _dodged = keys->keyDown(KeyCode::SPACE);
 #else
     // MOBILE CONTROLS
     Vec3 acc = Input::get<Accelerometer>()->getAcceleration();
@@ -144,6 +151,8 @@ void InputController::update(float dt) {
     left |= (pitch > EVENT_ACCEL_THRESH);
     rght |= (pitch < -EVENT_ACCEL_THRESH);
     up   |= _keyUp;
+
+    //TODO: movement+attack+parry+dodge on mobile controls
 #endif
 
     _resetPressed = _keyReset;
