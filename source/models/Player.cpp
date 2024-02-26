@@ -96,6 +96,12 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
     batch->draw(_playerTexture,Color4::WHITE, Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
+    // render player differently while dodging (add fading effect)
+    if (!_dodgeDuration.isZero()) {
+        for (int i = 2; i < 10; i+=2) {
+            batch->draw(_playerTexture,Color4(Vec4(1, 1, 1, 1 - i*0.1)), Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, (getPosition() - getLinearVelocity()*(i*0.01)) * _drawScale);
+        }
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
