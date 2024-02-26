@@ -5,6 +5,8 @@
 #include "JSCrateModel.h"
 #include "JSWallModel.h"
 #include "Floor.hpp"
+#include "Player.hpp"
+#include "Enemy.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -36,6 +38,7 @@ LevelModel::~LevelModel(void) {
 #pragma mark Drawing Methods
 
 void LevelModel::setDrawScale(Vec2 scale) {
+    _scale = scale;
 	if (_player != nullptr) {
 		_player->setDrawScale(scale);
 	}
@@ -48,16 +51,31 @@ void LevelModel::setDrawScale(Vec2 scale) {
     else {
         CUAssertLog(false, "Failed to set draw scale for floor");
     }
+    
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        _enemies[ii]->setDrawScale(scale);
+    }
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: draw contents manually, sorting
     _floor->draw(batch);
+    
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        _enemies[ii]->draw(batch);
+    }
+    
     _player->draw(batch);
+    
     //we add pi/2 to the angle since the sprite is pointing down but the hitbox points right by default
-    if (_atk->isEnabled()) batch->draw(_attackAnimation, Color4(255,255,255,200), Vec2(_attackAnimation->getWidth() / 2, _attackAnimation->getHeight()/2), 
-                                        Vec2(ATK_RADIUS/(_attackAnimation->getWidth() / 2), ATK_RADIUS/(_attackAnimation->getHeight() / 2)) * _player->getDrawScale(),
-                                        _atk->getAngle() + M_PI_2, _atk->getPosition() * _player->getDrawScale());
+    if (_atk->isEnabled()){
+        batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
+            _atk->getAngle() + M_PI_2, _atk->getPosition() * _scale);
+    }
+    
+    // make sure debug node is hidden when not active
+    _atk->getDebugNode()->setVisible(_atk->isEnabled());
+
 }
 
 void LevelModel::clearDebugNode(){
@@ -80,9 +98,13 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     
     // debug node should be added once objects are initialized
     _player->setDebugScene(_debugNode);
-    for (int ii = 0; ii < _crates.size(); ii++){
-        _crates[ii]->setDebugScene(_debugNode);
+    _atk->setDebugScene(_debugNode);
+    _atk->setDebugColor(Color4::RED);
+
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        _enemies[ii]->setDebugScene(_debugNode);
     }
+    
     for (int ii = 0; ii < _walls.size(); ii++){
         _walls[ii]->setDebugScene(_debugNode);
     }
@@ -92,6 +114,9 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
     _floor->loadAssets(assets);
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        _enemies[ii]->loadAssets(assets);
+    }
     _attackAnimation = assets->get<Texture>("atk");
 }
 
@@ -162,23 +187,21 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 		CUAssertLog(false, "Failed to load walls");
 		return false;
 	}
-//	auto crates = json->get(CRATES_FIELD);
-//	if (crates != nullptr) {
-//		// Convert the object to an array so we can see keys and values
-//		int csize = (int)crates->size();
-//		for(int ii = 0; ii < csize; ii++) {
-//			loadCrate(crates->get(ii));
-//		}
-//	} else {
-//		CUAssertLog(false, "Failed to load crates");
-//		return false;
-//	}
     
+    auto enemiesJson = json->get("enemies");
+    if (enemiesJson != nullptr){
+        loadEnemies(enemiesJson);
+    }
+    else {
+        CUAssertLog(false, "Failed to load enemies");
+        return false;
+    }
+
     // Add objects to world
     addObstacle(_player);
 	addObstacle(_atk);
-    for (int ii = 0; ii < _crates.size(); ii++){
-        addObstacle(_crates[ii]);
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        addObstacle(_enemies[ii]);
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
@@ -197,21 +220,15 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 	return true;
 }
 
-/**
-* Unloads this game level, releasing all sources
-*
-* This load method should NEVER access the AssetManager.  Assets are loaded and
-* unloaded in parallel, not in sequence.  If an asset (like a game level) has
-* references to other assets, then these should be disconnected earlier.
-*/
+
 void LevelModel::unload() {
-	for(auto it = _crates.begin(); it != _crates.end(); ++it) {
+	for(auto it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (_world != nullptr) {
 			_world->removeObstacle((*it));
 		}
     (*it) = nullptr;
 	}
-	_crates.clear();
+	_enemies.clear();
 	for(auto it = _walls.begin(); it != _walls.end(); ++it) {
 		if (_world != nullptr) {
 			_world->removeObstacle((*it));
@@ -269,6 +286,31 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_staticBody);
     return success;
+}
+
+bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
+    int count = (int) data->size();
+    for (int ii = 0; ii < count; ii++){
+        auto json = data->get(ii);
+        auto posData = json->get(POSITION_FIELD);
+        auto sizeArray = json->get(SIZE_FIELD);
+        Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
+        Size size(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
+        auto enemy = Enemy::alloc(pos, size);
+        enemy->setName("enemy-" + std::to_string(ii));
+        enemy->setDensity(json->getDouble(DENSITY_FIELD));
+        enemy->setFriction(json->getDouble(FRICTION_FIELD));
+        enemy->setRestitution(json->getDouble(RESTITUTION_FIELD));
+        enemy->setFixedRotation(!json->getBool(ROTATION_FIELD));
+        enemy->setTextureKey(json->getString(TEXTURE_FIELD));
+        enemy->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
+        std::string btype = json->getString(BODYTYPE_FIELD);
+        if (btype == STATIC_VALUE) {
+            enemy->setBodyType(b2_staticBody);
+        }
+        _enemies.push_back(enemy);
+    }
+    return true;
 }
 
 bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
@@ -360,60 +402,6 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	}
 
 	vertices.clear();
-	return success;
-}
-
-/**
-* Loads a single crate object
-*
-* The crate will be retained and stored in the vector _crates.  If the
-* crate fails to load, then it will not be added to _crates.
-*
-* @param  reader   a JSON reader with cursor ready to read the crate
-*
-* @retain the crate
-* @return true if the crate was successfully loaded
-*/
-bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
-	bool success = true;
-
-	auto posArray = json->get(POSITION_FIELD);
-	success = success && posArray->isArray();
-	Vec2 cratePos = Vec2(posArray->get(0)->asFloat(), posArray->get(1)->asFloat());
-
-	auto sizeArray = json->get(SIZE_FIELD);
-	success = success && sizeArray->isArray();
-	Vec2 crateSize = Vec2(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
-
-	// Get the object, which is automatically retained
-	std::shared_ptr<CrateModel> crate = CrateModel::alloc(cratePos,(Size)crateSize);
-
-	// Using the key makes too many sounds
-	// crate->setName(reader.getKey());
-	std::string textureName = json->getString(TEXTURE_FIELD);
-	crate->setName(textureName);
-	std::string btype = json->getString(BODYTYPE_FIELD);
-	if (btype == STATIC_VALUE) {
-		crate->setBodyType(b2_staticBody);
-	}
-
-	crate->setDensity(json->getDouble(DENSITY_FIELD));
-	crate->setFriction(json->getDouble(FRICTION_FIELD));
-	crate->setRestitution(json->getDouble(RESTITUTION_FIELD));
-	crate->setAngularDamping(json->getDouble(DAMPING_FIELD));
-	crate->setAngleSnap(0);     // Snap to the nearest degree
-
-								// Set the texture value
-	success = success && json->get(TEXTURE_FIELD)->isString();
-	crate->setTextureKey(json->getString(TEXTURE_FIELD));
-	crate->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
-
-	if (success) {
-		_crates.push_back(crate);
-	} else {
-		crate = nullptr;
-	}
-
 	return success;
 }
 

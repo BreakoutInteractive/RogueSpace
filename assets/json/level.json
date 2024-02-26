@@ -15,6 +15,30 @@
         "attack":        "attack",
         "debugcolor":    "blue"
     },
+    "enemies": {
+        "enemy-1": {
+            "pos": [22, 13],
+            "size": [0.3,0.3],
+            "bodytype":     "static",
+            "density":      1.0,
+            "friction":     0.1,
+            "restitution":  0,
+            "rotation":     false,
+            "texture":      "enemy",
+            "debugcolor":   "green"
+        },
+        "enemy-2": {
+            "pos": [18, 13],
+            "size": [0.3,0.3],
+            "bodytype":     "static",
+            "density":      1.0,
+            "friction":     0.1,
+            "restitution":  0,
+            "rotation":     false,
+            "texture":      "enemy",
+            "debugcolor":   "green"
+        }
+    },
     "floor": {
         "debug-only-description": "collection of tiles that make up the floor",
         "debug-only-detail": "for sake of not blowing up the JSON file at this stage, `tiles` will contain the list of desirable tiles to draw and if we want a grid, use grid field",
