@@ -215,8 +215,8 @@ void GameScene::preUpdate(float dt) {
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
     
     //for now, give higher precedence to dodge than to attack but only allow one at a time
-    if (_input.didAttack() && player->_atkCD.isZero() && player->_parryCD.isZero() && player->_dodgeCD.isZero() && !_input.didDodge()) {
-        //attack points from player to mouse
+    if (_input.didAttack() && player->_atkCD.isZero() && player->_parryCD.isZero() && player->_dodgeDuration.isZero() && !_input.didDodge()) {
+        /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
         Vec2 direction = _input.getAttackDirection();
         Vec2 playerPos = player->getPosition() * player->getDrawScale();
         //convert from screen to drawing coords
@@ -227,6 +227,7 @@ void GameScene::preUpdate(float dt) {
         //compute angle from x-axis (since that is where the right cap of a capsule, i.e. the attack hitbox, points)
         float ang = acos(direction.dot(Vec2::UNIT_X));
         if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
+        /////// END COMPUTATION OF ATTACK DIRECTION ///////
         atk->setEnabled(true);
         atk->setAngle(ang);
         atk->setPosition(player->getPosition());
@@ -237,7 +238,7 @@ void GameScene::preUpdate(float dt) {
     }
 
     //for now, give higher precendence to attack than to parry but only allow one at a time
-    if (_input.didParry() && player->_parryCD.isZero() && player->_atkCD.isZero() && player->_dodgeCD.isZero() && !_input.didAttack() && !_input.didDodge()) {
+    if (_input.didParry() && player->_parryCD.isZero() && player->_atkCD.isZero() && player->_dodgeDuration.isZero() && !_input.didAttack() && !_input.didDodge()) {
         //TODO: handle parry
         CULog("parried");
         player->animateParry();
