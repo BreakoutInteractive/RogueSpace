@@ -211,13 +211,13 @@ void LevelModel::unload() {
 	_walls.clear();
     
     _world->removeObstacle(_player);
-	if (_world != nullptr) {
-		_world->clear();
-		_world = nullptr;
-	}
-
     _player = nullptr;
     _floor = nullptr;
+    
+    if (_world != nullptr) {
+        _world->clear();
+        _world = nullptr;
+    }
 }
 
 
