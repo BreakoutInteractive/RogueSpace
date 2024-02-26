@@ -31,6 +31,9 @@
         },
         "floor": {
             "file":     "textures/iso_floor_tile.png"
+        },
+        "background": {
+            "file":     "textures/space_background.png"
         }
 	},
     "sounds": {

@@ -74,6 +74,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     _input.init();
     _level->setAssets(_assets);
+    _backgroundTexture = assets->get<Texture>("background");
     
     // Create the world and attach the listeners.
     std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
@@ -84,7 +85,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/world->getBounds().getMaxX() :
                                           dimen.height/world->getBounds().getMaxY();
-    _level->setDrawScale(_scale);
+    _level->setDrawScale(Vec2(_scale, _scale));
 #pragma mark - GameScene:: Scene Graph Initialization
     
     // Create the scene graph nodes
@@ -116,9 +117,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _complete = false;
     setDebug(false);
     
-    // XNA nostalgia
-    // TODO: change base color
-    Application::get()->setClearColor(Color4f::CORNFLOWER);
+    Application::get()->setClearColor(Color4f::WHITE);
     return true;
 }
 
@@ -167,7 +166,7 @@ void GameScene::preUpdate(float dt) {
 			_level->setAssets(_assets);
 			_level->setDebugNode(_debugNode); // Obtains ownership of debug node.
 			_level->showDebug(_debug);
-      
+            _level->setDrawScale(Vec2(_scale, _scale));
             activateWorldCollisions(_level->getWorld());
 
 			_resetNode->setVisible(false);
@@ -209,7 +208,9 @@ void GameScene::preUpdate(float dt) {
 
 void GameScene::fixedUpdate(float step) {
     // Turn the physics engine crank.
-    _level->getWorld()->update(step);
+    if (_level != nullptr){
+        _level->getWorld()->update(step);
+    }
 }
 
 
@@ -295,9 +296,13 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 #pragma mark Rendering
 
 void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
-    batch->begin(getCamera()->getCombined());
-    _level->render(batch);
-    batch->end();
+    if (_level != nullptr){
+        batch->begin(getCamera()->getCombined());
+        Size s = Application::get()->getDisplaySize();
+        batch->draw(_backgroundTexture, Rect(0, 0, s.width, s.height));
+        _level->render(batch);
+        batch->end();
+    }
     // draw the debug component
     Scene2::render(batch);
 }

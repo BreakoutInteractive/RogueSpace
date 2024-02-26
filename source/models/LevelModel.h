@@ -235,7 +235,7 @@ public:
      *
      * @param value  the drawing scale for this game level
      */
-    void setDrawScale(float value);
+    void setDrawScale(Vec2 value);
 
     void clearDebugNode();
 
