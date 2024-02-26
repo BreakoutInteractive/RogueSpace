@@ -63,6 +63,10 @@ protected:
     float _vertical;
     /** Did we dodge? */
     bool _dodgePressed;
+
+    bool _attacked;
+    cugl::Vec2 _attackDir;
+    bool _parried;
     
 public:
 #pragma mark -
@@ -149,12 +153,18 @@ public:
     /**
      * Returns true if the parry input was triggered.
      */
-    bool didParry();
+    bool didParry() const { return _parried; }
     
     /**
      * Returns true if the attack input was triggered
      */
-    bool didAttack();
+    bool didAttack() const { return _attacked; }
+    /**
+     * Returns the vector direction of attack (i.e. the position of the mouse)
+     *
+     * The returned value can be anything in the event that {@link didAttack} is false.
+     */
+    cugl::Vec2 getAttackDirection() const { return _attackDir; }
     
     
     /**

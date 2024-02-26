@@ -9,6 +9,7 @@
 #define Player_hpp
 
 #include <cugl/cugl.h>
+#include "Counter.hpp"
 
 /**
  * This class is the player avatar for the player lander game.
@@ -34,13 +35,24 @@ protected:
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
     
-    /** Number of frames since player has dodged */
-    int _dodgeCount;
-    
-    /** Number of frames until the player can dodge again */
-    int _dodgeCooldown;
-    
 public:
+    
+#pragma mark -
+#pragma mark Counters
+    /** attack cooldown counter*/
+    Counter _atkCD;
+    /** parry cooldown counter */
+    Counter _parryCD;
+    /** dodge ooldown counter*/
+    Counter _dodgeCD;
+    
+    /** counter that is active during the dodge motion*/
+    Counter _dodgeDuration;
+    
+    /**
+     * decrement all counters
+     */
+    void updateCounters();
     
     
 #pragma mark Constructors
@@ -212,15 +224,6 @@ public:
      */
     void setFY(float value) { _force.y = value; }
     
-    /**
-     * Returns whether the player is able to dodge.
-     */
-    bool canDodge() { return _dodgeCount > _dodgeCooldown; }
-    
-    /**
-     * Resets the dodge counter, putting the player's dodge on cooldown.
-     */
-    void resetDodge() { _dodgeCount = 0; }
     
 #pragma mark -
 #pragma mark Animation
