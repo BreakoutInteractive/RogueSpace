@@ -103,7 +103,15 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         //since we are only using the front-facing animation for now, always reset it to the start of that animation if we are out of bounds of it
         _attackAnimation->setFrame(newFrame > 47 || newFrame < 40 ? 40 : newFrame);
     }
-    else batch->draw(_activeTexture,Color4::WHITE, Vec2(_activeTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
+    else {
+        batch->draw(_activeTexture, Color4::WHITE, Vec2(_activeTexture->getWidth() / 2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
+        // render player differently while dodging (add fading effect)
+        if (!_dodgeDuration.isZero()) {
+            for (int i = 2; i < 10; i += 2) {
+                batch->draw(_playerTexture, Color4(Vec4(1, 1, 1, 1 - i * 0.1)), Vec2(_playerTexture->getWidth() / 2, 0), Vec2::ONE, 0, (getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale);
+            }
+        }
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){

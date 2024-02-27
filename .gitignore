@@ -33,3 +33,6 @@
 
 # Others
 build/
+
+# Mac
+**/DS_Store
