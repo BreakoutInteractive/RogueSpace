@@ -210,7 +210,7 @@ void GameScene::preUpdate(float dt) {
         player->applyForce();
     }
 
-    std::shared_ptr<physics2::CapsuleObstacle> atk = _level->getAttack();
+    std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
 
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
@@ -232,7 +232,7 @@ void GameScene::preUpdate(float dt) {
                 //convert to player coords
                 direction -= playerPos;
                 direction.normalize();
-                //compute angle from x-axis (since that is where the right cap of a capsule, i.e. the attack hitbox, points)
+                //compute angle from x-axis
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
@@ -324,8 +324,15 @@ void GameScene::beginContact(b2Contact* contact) {
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
         if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
                  (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
-            (*it)->hit();
-            CULog("Hit an enemy!");
+            //attack hitbox is a circle, but we only want it to hit in a semicircle
+            Vec2 dir = (*it)->getPosition() - _level->getPlayer()->getPosition();
+            dir.normalize();
+            float ang = acos(dir.dot(Vec2::UNIT_X));
+            if ((*it)->getPosition().y < _level->getPlayer()->getPosition().y) ang *= -1;
+            if (abs(ang-_level->getAttack()->getAngle())<=M_PI_2){
+                (*it)->hit();
+                CULog("Hit an enemy!");
+            }
         }
     }
     

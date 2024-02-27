@@ -62,7 +62,7 @@ protected:
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
 
-    std::shared_ptr<physics2::CapsuleObstacle> _atk;
+    std::shared_ptr<physics2::WheelObstacle> _atk;
     
     std::shared_ptr<Floor> _floor;
     
@@ -188,7 +188,7 @@ public:
     /**
      * @return the player's attack semi-sphere
      */
-    const std::shared_ptr<physics2::CapsuleObstacle> getAttack() { return _atk; }
+    const std::shared_ptr<physics2::WheelObstacle> getAttack() { return _atk; }
 
     /**
      * @return the enemies in this game level
