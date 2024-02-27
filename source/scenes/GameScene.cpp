@@ -203,6 +203,14 @@ void GameScene::preUpdate(float dt) {
     player->setLinearDamping(50);
     player->setForce(force*5); //TODO: use json data
     player->applyForce();
+    
+    if (_input.getPosition()<=getSize()/2 &&(_input.didPress() || _input.isDown())){
+        cugl::Vec2 currPos = _input.getPosition();
+        Vec3 worldPos = screenToWorldCoords(currPos);        
+        Vec2 posDiff = worldPos.subtract(player->getPosition());
+        player->setPosition(posDiff);
+        _input.setPosition(player->getPosition());
+    }
 
 }
 

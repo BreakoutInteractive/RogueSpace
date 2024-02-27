@@ -15,6 +15,8 @@ using namespace cugl;
 #define EVENT_DOUBLE_CLICK  400
 /** How far we must swipe left or right for a gesture */
 #define EVENT_SWIPE_LENGTH  100
+/** How far we must drag  for movement */
+#define EVENT_DRAG_LENGTH  500
 /** How fast we must swipe left or right for a gesture */
 #define EVENT_SWIPE_TIME   1000
 /** How far we must turn the tablet for the accelerometer to register */
@@ -41,6 +43,9 @@ _keyDown(false),
 _keyReset(false),
 _keyDebug(false),
 _keyExit(false),
+_touchDown(false),
+_prevDown(false),
+_moveEvent(false),
 _horizontal(0.0f),
 _vertical(0.0f) {
 }
@@ -60,6 +65,7 @@ void InputController::dispose() {
         Touchscreen* touch = Input::get<Touchscreen>();
         touch->removeBeginListener(LISTENER_KEY);
         touch->removeEndListener(LISTENER_KEY);
+        touch->removeMotionListener(LISTENER_KEY);
 #endif
         _active = false;
     }
@@ -84,17 +90,22 @@ bool InputController::init() {
 #else
     success = Input::activate<Accelerometer>();
     Touchscreen* touch = Input::get<Touchscreen>();
-    touch->addBeginListener(LISTENER_KEY,[=](const cugl::TouchEvent& event, bool focus) {
-        this->touchBeganCB(event,focus);
-    });
-    touch->addEndListener(LISTENER_KEY,[=](const cugl::TouchEvent& event, bool focus) {
-        this->touchEndedCB(event,focus);
-    });
+    if (touch) {
+        _touchKey = touch->acquireKey();
+        touch->addBeginListener(_touchKey,[=](const cugl::TouchEvent& event, bool focus) { //LISTENER_KEY
+            this->touchBeganCB(event,focus);
+        });
+        touch->addEndListener(_touchKey, [=](const cugl::TouchEvent& event, bool focus) {
+            this->touchEndedCB(event,focus);
+        });
+        touch->addMotionListener(_touchKey, [=](const cugl::TouchEvent& event, cugl::Vec2 fingerPos, bool focus) {
+            this->dragCB(event,fingerPos,focus);
+        });
+    }
 #endif
     _active = success;
     return success;
 }
-
 
 #pragma mark -
 #pragma mark Input Detection
@@ -144,6 +155,11 @@ void InputController::update(float dt) {
     left |= (pitch > EVENT_ACCEL_THRESH);
     rght |= (pitch < -EVENT_ACCEL_THRESH);
     up   |= _keyUp;
+    
+    _prevDown = _currDown;
+    _currDown = _touchDown;
+    _prevPos = _currPos;
+    _currPos = _touchPos;
 #endif
 
     _resetPressed = _keyReset;
@@ -187,9 +203,15 @@ void InputController::clear() {
     _horizontal = 0.0f;
     _vertical   = 0.0f;
     
-    _dtouch = Vec2::ZERO;
+    _prevPos = Vec2::ZERO;
     _timestamp.mark();
 }
+
+void InputController::setPosition(cugl::Vec2 newPos){
+    _prevPos = _currPos;
+    _currPos = newPos;
+}
+
 
 #pragma mark -
 #pragma mark Input Results
@@ -205,10 +227,10 @@ Vec2 InputController::getMoveDirection() {
         // MOBILE
     #endif
     return direction.normalize();
+    
+    // TODO: complete all other functions from h file
+
 }
-
-// TODO: complete all other functions from h file
-
 
 #pragma mark -
 #pragma mark Touch Callbacks
@@ -220,11 +242,15 @@ Vec2 InputController::getMoveDirection() {
  */
 void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
     // All touches correspond to key up
-    _keyUp = true;
+//    _keyUp = true;
+    if (!_touchDown){
+        _touchDown = true;
+        _touchPos = event.position;
+    }
      
     // Update the touch location for later gestures
     _timestamp = event.timestamp;
-    _dtouch = event.position;
+//    _prevPos = event.position;
 }
  
 /**
@@ -235,10 +261,19 @@ void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
  */
 void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     // Gesture has ended.  Give it meaning.
-    Vec2 diff = event.position-_dtouch;
+    if (!_touchDown){
+        _touchDown = false;
+    }
+    Vec2 diff = event.position-_prevPos;
     bool fast = (event.timestamp.ellapsedMillis(_timestamp) < EVENT_SWIPE_TIME);
     _keyReset = fast && diff.x < -EVENT_SWIPE_LENGTH;
     _keyExit  = fast && diff.x > EVENT_SWIPE_LENGTH;
     _keyDebug = fast && diff.y > EVENT_SWIPE_LENGTH;
     _keyUp = false;
+}
+
+void InputController::dragCB(const cugl::TouchEvent& event, const Vec2 previous, bool focus) {
+    if (_touchDown) {
+        _touchPos = event.position;
+    }
 }

@@ -42,10 +42,14 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
+    /** Whether the player is  moving*/
+    bool _moveEvent;
 
     // TOUCH SUPPORT
-    /** The initial touch location for the current gesture */
-    cugl::Vec2 _dtouch;
+    /** The previous touch/mouse position */
+    cugl::Vec2 _prevPos;
+    /** The current touch location for the current gesture */
+    cugl::Vec2 _currPos;
     /** The timestamp for the beginning of the current gesture */
     cugl::Timestamp _timestamp;
 
@@ -61,7 +65,17 @@ protected:
     float _horizontal;
     /** How much did we move vertically? */
     float _vertical;
-    
+    /** The key for the touch listeners */
+    Uint32 _touchKey;
+    /** The finger position (for drag interface) */
+    cugl::Vec2 _touchPos;
+    /** Whether the finger is down */
+    bool _touchDown;
+    /** Whether there is an active touch press */
+    bool _currDown;
+    /** Whether there was an active touch press last frame*/
+    bool _prevDown;
+
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -120,6 +134,26 @@ public:
      */
     void clear();
     
+    /**
+     * Returns the current mouse/touch position
+     *
+     * @return the current mouse/touch position
+     */
+    const cugl::Vec2& getPosition() const {
+        return _currPos;
+    }
+    
+    void setPosition(cugl::Vec2 newPos);
+    
+    /**
+     * Returns the previous mouse/touch position
+     *
+     * @return the previous mouse/touch position
+     */
+    const cugl::Vec2& getPreviousPosition() const {
+        return _prevPos;
+    }
+    
 #pragma mark -
 #pragma mark Input Results
     
@@ -131,6 +165,42 @@ public:
      * @return the unit vector direction of movement
      */
     cugl::Vec2 getMoveDirection();
+    
+    /**
+     * Return true if the user initiated a press this frame.
+     *
+     * A press means that the user is pressing (button/finger) this
+     * animation frame, but was not pressing during the last frame.
+     *
+     * @return true if the user initiated a press this frame.
+     */
+    bool didPress() const {
+        return !_prevDown && _touchDown;
+    }
+
+    /**
+     * Return true if the user initiated a release this frame.
+     *
+     * A release means that the user was pressing (button/finger) last
+     * animation frame, but is not pressing during this frame.
+     *
+     * @return true if the user initiated a release this frame.
+     */
+    bool didRelease() const {
+        return !_touchDown && _prevDown;
+    }
+
+    /**
+     * Return true if the user is actively pressing this frame.
+     *
+     * This method only checks that a press is active or ongoing.
+     * It does not care when the press was initiated.
+     *
+     * @return true if the user is actively pressing this frame.
+     */
+    bool isDown() const {
+        return _touchDown;
+    }
     
     /**
      * Returns true if the dodge input was triggered.
@@ -194,6 +264,15 @@ public:
      * @param event The associated event
      */
     void touchEndedCB(const cugl::TouchEvent& event, bool focus);
+    
+    /**
+     * Call back to execute when the finger moves.
+     *     *
+     * @param event     The event with the touch information
+     * @param previous  The previously reported finger location
+     * @param focus     Whether this device has focus (UNUSED)
+     */
+    void dragCB(const cugl::TouchEvent& event, const cugl::Vec2 previous, bool focus);
 
 };
 
