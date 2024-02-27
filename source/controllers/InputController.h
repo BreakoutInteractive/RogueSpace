@@ -29,44 +29,88 @@
  */
 class InputController {
 private:
+#pragma mark -
+#pragma mark Internal Input Raw Data
+    
+    // this section can be modified between calls to update()
+    
     /** Whether or not this input is active */
     bool _active;
     // KEYBOARD EMULATION
-    /** Whether the up arrow key is down */
-    bool  _keyUp;
-    /** Whether the down arrow key is down */
-    bool  _keyDown;
+    /** Whether the dodge  key is down */
+    bool  _keyDodge;
+    /** Whether the parry key is down */
+    bool  _keyParry;
+    /** Whether the attack key is down*/
+    bool _keyAttack;
     /** Whether the reset key is down */
     bool  _keyReset;
     /** Whether the debug key is down */
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
+    /** a vector cache representing the intended direction of movement*/
+    cugl::Vec2 _keyMoveDir;
+    /** a vector cache representing the intended direction of dodge*/
+    cugl::Vec2 _keyDodgeDir;
 
     // TOUCH SUPPORT
-    /** The initial touch location for the current gesture */
-    cugl::Vec2 _dtouch;
     /** The timestamp for the beginning of the current gesture */
     cugl::Timestamp _timestamp;
+    /** The listener key associated with the touchscreen */
+    uint32_t _touchKey;
+
+    /**
+     * A gesture is defined by the starting position of a touch event,
+     * A gesture officially finishes when the touch is released. An inactive gesture can be safely discarded.
+     */
+    struct GestureData {
+        /** whether the touch event is still active*/
+        bool active;
+        /** where on the screen did the touch start */
+        cugl::Vec2 initialPos;
+        /** where on the screen is the touch currently*/
+        cugl::Vec2 curPos;
+        /** where on the screen was the touch last time before it moved*/
+        cugl::Vec2 prevPos;
+        /** the time when the touch was initiated */
+        cugl::Timestamp timestamp;
+        /** the identifier of this touch event */
+        cugl::TouchID touchID;
+    };
+    
+    /**
+     * initialize gesture data based on event timestamp, position, id, etc.
+     */
+    void initGestureDataFromEvent(GestureData& data, const cugl::TouchEvent& event);
+    
+    /** gesture data on the left hand side of the landscape screen*/
+    GestureData _leftGesture;
+    /** gesture data on the right hand side of the landscape screen*/
+    GestureData _rightGesture;
 
 protected:
-    // INPUT RESULTS
+#pragma mark -
+#pragma mark Input Results (Abstraction Layer)
+    
     /** Whether the reset action was chosen. */
     bool _resetPressed;
     /** Whether the debug toggle was chosen. */
     bool _debugPressed;
     /** Whether the exit action was chosen. */
     bool _exitPressed;
-    /** How much did we move horizontally? */
-    float _horizontal;
-    /** How much did we move vertically? */
-    float _vertical;
-    /** Did we dodge? */
+    /** Whether the dodge action was chosen */
     bool _dodgePressed;
-
-    bool _attacked;
+    /** Whether the attack action was chosen*/
+    bool _attackPressed;
+    /** Whether the parry action was chosen */
+    bool _parryPressed;
+    /** TODO: this should not be necessary; which direction did we attack*/
     cugl::Vec2 _attackDir;
-    bool _parried;
+    /** unit vector direction of movement */
+    cugl::Vec2 _moveDir;
+    /** unit vector direction of dodge motion */
+    cugl::Vec2 _dodgeDir;
     
 public:
 #pragma mark -
@@ -93,10 +137,12 @@ public:
     void dispose();
     
     /**
-     * Deactivates this input controller, releasing all listeners.
+     * Initializes the input control and activates input listeners (touch/keyboard).
      *
-     * This method will not dispose of the input controller. It can be reused
-     * once it is reinitialized.
+     * This method works like a proper constructor, initializing the input
+     * controller and allocating memory.
+     *
+     * @return true if the controller was initialized successfully
      */
     bool init();
     
@@ -136,7 +182,7 @@ public:
      *
      * @return the unit vector direction of movement
      */
-    cugl::Vec2 getMoveDirection();
+    cugl::Vec2 getMoveDirection(){ return _moveDir; }
     
     /**
      * Returns true if the dodge input was triggered.
@@ -148,24 +194,24 @@ public:
      *
      * The returned value can be anything in the event that {@link didDodge} is false.
      */
-    cugl::Vec2 getDodgeDirection();
+    cugl::Vec2 getDodgeDirection(){ return _dodgeDir; }
     
     /**
      * Returns true if the parry input was triggered.
      */
-    bool didParry() const { return _parried; }
+    bool didParry() const { return _parryPressed; }
     
     /**
      * Returns true if the attack input was triggered
      */
-    bool didAttack() const { return _attacked; }
+    bool didAttack() const { return _attackPressed; }
+    
     /**
      * Returns the vector direction of attack (i.e. the position of the mouse)
      *
      * The returned value can be anything in the event that {@link didAttack} is false.
      */
     cugl::Vec2 getAttackDirection() const { return _attackDir; }
-    
     
     /**
      * Returns true if the reset button was pressed.
@@ -206,6 +252,15 @@ public:
      * @param event The associated event
      */
     void touchEndedCB(const cugl::TouchEvent& event, bool focus);
+    
+    /**
+     * Call back to execute when the finger moves.
+     *     *
+     * @param event     The event with the touch information
+     * @param previous  The previously reported finger location
+     * @param focus     Whether this device has focus (UNUSED)
+     */
+    void touchMotionCB(const cugl::TouchEvent& event, const cugl::Vec2 previous, bool focus);
 
 };
 

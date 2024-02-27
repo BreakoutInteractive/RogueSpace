@@ -35,6 +35,9 @@ bool Player::init(const Vec2 pos, const Size size) {
     _dodgeCD.setMaxCount(DODGE_CD);
     _dodgeDuration.setMaxCount(DODGE_DURATION);
     
+    // TODO: removal later, GAMEPLAY PROTOTYPE set 1-2 frame delay so player does not attack immediately if play button is held for too long
+    _atkCD.setCount(1);
+    
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
     _directions[2] = Vec2(1,0);     //right

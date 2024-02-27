@@ -200,6 +200,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     // Add objects to world
     addObstacle(_player);
 	addObstacle(_atk);
+    _atk->setEnabled(false); // turn off the attack semisphere
     for (int ii = 0; ii < _enemies.size(); ii++){
         addObstacle(_enemies[ii]);
     }
