@@ -42,11 +42,13 @@ protected:
     std::shared_ptr<cugl::Texture> _parryTexture;
     /** The texture to use while attacking */
     std::shared_ptr<cugl::Texture> _attackTexture;
+    /** The animation to use while attacking */
+    std::shared_ptr<cugl::SpriteSheet> _attackAnimation;
     /** The texture we are currently drawing */
     std::shared_ptr<cugl::Texture> _activeTexture;
     
 public:
-    
+    bool _attacking;
 #pragma mark -
 #pragma mark Counters
     /** attack cooldown counter*/
