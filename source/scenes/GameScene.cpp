@@ -261,6 +261,7 @@ void GameScene::preUpdate(float dt) {
         //player->setLinearDamping(20);
         player->setForce(force * 50);
         player->applyForce();
+        player->setFacingDir(force);
     }
     if (player->_atkCD.isZero()) {
         atk->setEnabled(false);

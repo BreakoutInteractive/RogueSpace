@@ -13,7 +13,7 @@ using namespace cugl;
 /** How far we must swipe in any direction for a movement gesture i*/
 #define EVENT_SWIPE_LENGTH 5
 /** How long in milliseconds must we hold for a parry*/
-#define PARRY_HOLD_TIME 2000
+#define PARRY_HOLD_TIME 1000
 
 
 #pragma mark -
@@ -135,6 +135,7 @@ void InputController::update(float dt) {
     _exitPressed  = _keyExit;
     _attackPressed = _keyAttack;
     _dodgePressed = _keyDodge;
+    _parryPressed = _keyParry;
     
     _moveDir.set(_keyMoveDir).normalize();
     _dodgeDir.set(_keyDodgeDir).normalize();
