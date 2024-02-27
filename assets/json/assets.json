@@ -45,7 +45,7 @@
             "file":     "textures/player_parry.png"
         },
         "attack": {
-            "file":     "textures/player_attack.png"
+            "file":     "textures/player_slash.png"
         }
 	},
     "sounds": {

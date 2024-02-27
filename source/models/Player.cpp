@@ -9,9 +9,9 @@
 
 #include "Player.hpp"
 
-/**the number of frames we wait before allowing another attack*/
-#define ATK_CD 10
-/**the number of frames we wait before allowing another parry*/
+/**the number of frames we wait before allowing another attack, also currently the length of the attack*/
+#define ATK_CD 16
+/**the number of frames we wait before allowing another parry, also currently the length of the parry*/
 #define PARRY_CD 6
 /**the number of frames we wait before allowing another dodge*/
 #define DODGE_CD 60
@@ -95,32 +95,48 @@ void Player::setDrawScale(Vec2 scale) {
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
-    batch->draw(_activeTexture,Color4::WHITE, Vec2(_activeTexture->getWidth()/2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
-    // render player differently while dodging (add fading effect)
-    if (!_dodgeDuration.isZero()) {
-        for (int i = 2; i < 10; i+=2) {
-            batch->draw(_playerTexture,Color4(Vec4(1, 1, 1, 1 - i*0.1)), Vec2(_playerTexture->getWidth()/2, 0), Vec2::ONE, 0, (getPosition() - getLinearVelocity()*(i*0.01)) * _drawScale);
+    if (_attacking) { 
+        //idk why but the position needs to be offset by -width/2
+        Affine2 t = Affine2::createTranslation(getPosition() * _drawScale-Vec2(_playerTexture->getWidth()/2, 0));
+        _attackAnimation->draw(batch, Color4::WHITE, Vec2(_activeTexture->getWidth() / 2, 0), t); 
+        //this weird-looking operation is to advance the animation every other frame instead of every frame so that it is more visible
+        int newFrame = _attackAnimation->getFrame() + (_atkCD.getCount() % 2 == 1);
+        //since we are only using the front-facing animation for now, always reset it to the start of that animation if we are out of bounds of it
+        _attackAnimation->setFrame(newFrame > 47 || newFrame < 40 ? 40 : newFrame);
+    }
+    else {
+        batch->draw(_activeTexture, Color4::WHITE, Vec2(_activeTexture->getWidth() / 2, 0), Vec2::ONE, 0, getPosition() * _drawScale);
+        // render player differently while dodging (add fading effect)
+        if (!_dodgeDuration.isZero()) {
+            for (int i = 2; i < 10; i += 2) {
+                batch->draw(_playerTexture, Color4(Vec4(1, 1, 1, 1 - i * 0.1)), Vec2(_playerTexture->getWidth() / 2, 0), Vec2::ONE, 0, (getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale);
+            }
         }
     }
-    
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _playerTexture = assets->get<Texture>(_playerTextureKey);
     _parryTexture = assets->get<Texture>(_parryTextureKey);
     _attackTexture = assets->get<Texture>(_attackTextureKey);
+    _attackAnimation = SpriteSheet::alloc(_attackTexture, 8, 8);
+    //just use forward-facing for now
+    _attackAnimation->setFrame(40);
     _activeTexture = _playerTexture;
 }
 
 void Player::animateParry() {
     _activeTexture = _parryTexture;
+    _attacking = false;
 }
 
 void Player::animateDefault() {
     _activeTexture = _playerTexture;
+    _attacking = false;
 }
 void Player::animateAttack() {
-    _activeTexture = _attackTexture;
+    _attacking = true;
+    //_activeTexture = _attackTexture;
 }
 
 #pragma mark -
