@@ -26,8 +26,8 @@
         "flames-left": {
             "file":     "textures/flames-left.png"
         }, 
-        "player": {
-            "file":     "textures/player.png"
+        "player-idle": {
+            "file":     "textures/player_idle.png"
         },
         "enemy":{
             "file":     "textures/lizard_idle_front.png"
