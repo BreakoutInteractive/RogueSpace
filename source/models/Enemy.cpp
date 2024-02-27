@@ -9,6 +9,8 @@
 
 using namespace cugl;
 
+#define HIT_TIME 10
+
 #pragma mark -
 #pragma mark Constructors
 
@@ -18,6 +20,8 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     BoxObstacle::setAngle(M_PI_4);
     std::string name("enemy");
     setName(name);
+    _tint = Color4::WHITE;
+    _hitCounter.setMaxCount(HIT_TIME);
     return true;
 }
 
@@ -67,9 +71,21 @@ void Enemy::setDrawScale(Vec2 scale) {
 void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render enemy with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
-    batch->draw(_texture,Color4::WHITE, Vec2(_texture->getWidth()/2, 0), Vec2(0.5, 0.5), 0, getPosition() * _drawScale);
+    batch->draw(_texture,_tint, Vec2(_texture->getWidth()/2, 0), Vec2(0.5, 0.5), 0, getPosition() * _drawScale);
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _texture = assets->get<Texture>(_textureKey);
+}
+
+void Enemy::hit() {
+    if (_hitCounter.isZero()) {
+        _hitCounter.reset();
+        _tint = Color4::RED;
+    }
+}
+
+void Enemy::updateCounters() {
+    _hitCounter.decrement();
+    if (_hitCounter.isZero()) _tint = Color4::WHITE;
 }

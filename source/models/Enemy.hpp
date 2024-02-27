@@ -34,6 +34,10 @@ protected:
     
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _texture;
+
+    cugl::Color4 _tint;
+
+    Counter _hitCounter;
     
 public:
 #pragma mark -
@@ -212,6 +216,11 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+
+    /**
+     * Method to call when an enemy is hit by an attack
+     */
+    void hit();
     
     
 #pragma mark -
@@ -222,6 +231,10 @@ public:
      * This method should be called after the force attribute is set.
      */
     void applyForce();
+
+#pragma mark -
+#pragma mark State Update
+    void updateCounters();
 };
 
 #endif /* Enemy_hpp */
