@@ -13,6 +13,7 @@
 //
 #include "GameScene.h"
 #include "../models/JSLevelConstants.h"
+#include "../models/Enemy.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -236,6 +237,7 @@ void GameScene::preUpdate(float dt) {
                 if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
                 atk->setEnabled(true);
+                atk->setAwake(true);
                 atk->setAngle(ang);
                 atk->setPosition(player->getPosition());
                 player->animateAttack();
@@ -272,7 +274,8 @@ void GameScene::preUpdate(float dt) {
     }
     
     player->updateCounters();
-    
+    std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) (*it)->updateCounters();
 }
 
 
@@ -312,21 +315,22 @@ Size GameScene::computeActiveSize() const {
 #pragma mark Collision Handling
 
 void GameScene::beginContact(b2Contact* contact) {
-//    b2Body* body1 = contact->GetFixtureA()->GetBody();
-//    b2Body* body2 = contact->GetFixtureB()->GetBody();
-//    
-//    // If we hit the "win" door, we are done
-//    intptr_t rptr = reinterpret_cast<intptr_t>(_level->getRocket().get());
-//    intptr_t dptr = reinterpret_cast<intptr_t>(_level->getExit().get());
-//
-//    if((body1->GetUserData().pointer == rptr && body2->GetUserData().pointer == dptr) ||
-//       (body1->GetUserData().pointer == dptr && body2->GetUserData().pointer == rptr)) {
-//        setComplete(true);
-//    }
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();    
+    //attack
+    intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
+    std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
+        if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
+                 (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
+            (*it)->hit();
+            CULog("Hit an enemy!");
+        }
+    }
     
     //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
     //TODO: parry
-
 }
 
 

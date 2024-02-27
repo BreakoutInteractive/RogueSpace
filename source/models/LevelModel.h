@@ -190,6 +190,11 @@ public:
      */
     const std::shared_ptr<physics2::CapsuleObstacle> getAttack() { return _atk; }
 
+    /**
+     * @return the enemies in this game level
+     */
+    const std::vector<std::shared_ptr<Enemy>> getEnemies() { return _enemies; }
+
 
 #pragma mark Physics Attributes
     /** 
