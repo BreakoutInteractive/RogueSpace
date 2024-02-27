@@ -36,16 +36,26 @@ protected:
     
     cugl::Vec2 _drawScale;
     
+    //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
-    /** The texture to use while parrying */
-    std::shared_ptr<cugl::Texture> _parryTexture;
-    /** The texture to use while attacking */
-    std::shared_ptr<cugl::Texture> _attackTexture;
+    /** player idle 8 frames indexed by `directionIndex` */
+    std::shared_ptr<cugl::SpriteSheet> _idleAnimation;
+    /** The animation to use while parrying */
+    std::shared_ptr<cugl::SpriteSheet> _parryAnimation;
     /** The animation to use while attacking */
     std::shared_ptr<cugl::SpriteSheet> _attackAnimation;
-    /** The texture we are currently drawing */
-    std::shared_ptr<cugl::Texture> _activeTexture;
+    /** The animation we are currently drawing */
+    std::shared_ptr<cugl::SpriteSheet> _activeAnimation;
+    
+    /** The 8 directions ranging from front and going counter clockwise until front-right*/
+    cugl::Vec2 _directions[8];
+    
+    /** The direction that the player is currently facing */
+    cugl::Vec2 _facingDirection;
+    
+    /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
+    int _directionIndex;
     
 public:
     bool _attacking;
@@ -236,6 +246,15 @@ public:
      */
     void setFY(float value) { _force.y = value; }
     
+    /**
+     * @return the unit vector direction that the player is facing towards
+     */
+    cugl::Vec2 getFacingDir(){ return _facingDirection; }
+    
+    /**
+     * Sets the direction that the player is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir);
     
 #pragma mark -
 #pragma mark Animation
@@ -243,7 +262,7 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
  
     /**
-    * Returns the texture (key) for this player
+    * Returns the idle texture (key) for this player
     *
     * The value returned is not a Texture2D value.  Instead, it is a key for
     * accessing the texture from the asset manager.
@@ -253,7 +272,7 @@ public:
     const std::string& getTextureKey() const { return _playerTextureKey; }
 
     /**
-    * Returns the texture (key) for this player
+    * Returns the idle texture (key) for this player
     *
     * The value returned is not a Texture2D value.  Instead, it is a key for
     * accessing the texture from the asset manager.
@@ -362,7 +381,7 @@ public:
      *
      * @param delta Timing values from parent loop
      */
-    virtual void update(float delta) override;
+//    virtual void update(float delta) override;
 };
 
 #endif /* Player_hpp */

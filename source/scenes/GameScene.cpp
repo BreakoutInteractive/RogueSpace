@@ -199,6 +199,11 @@ void GameScene::preUpdate(float dt) {
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
     
+    // update the direction the player is facing
+    if (moveForce.length() > 0){
+        player->setFacingDir(moveForce);
+    }
+    
     auto _atkCD = player->_atkCD.getCount();
     auto _parryCD = player->_parryCD.getCount();
     auto _dodgeCD = player->_dodgeCD.getCount();
@@ -216,7 +221,6 @@ void GameScene::preUpdate(float dt) {
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
-            CULog("dodged");
             player->_dodgeCD.reset();
             player->_dodgeDuration.reset(); // set dodge frames
         }
@@ -251,7 +255,6 @@ void GameScene::preUpdate(float dt) {
         }     
     }
     if (!player->_dodgeDuration.isZero()) {
-        CULog("dodging");
         auto force = _input.getDodgeDirection();
         //player->setLinearDamping(20);
         player->setForce(force * 50);
