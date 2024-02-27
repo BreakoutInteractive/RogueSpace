@@ -9,6 +9,7 @@
 #define Player_hpp
 
 #include <cugl/cugl.h>
+#include "Counter.hpp"
 
 /**
  * This class is the player avatar for the player lander game.
@@ -25,16 +26,55 @@ protected:
 
     /** The texture key for the player*/
     std::string _playerTextureKey;
+    /** The texture key for the parry animation */
+    std::string _parryTextureKey;
+    /** The texture key for the attack animation */
+    std::string _attackTextureKey;
     
     /** Cache object for transforming the force according the object angle */
     cugl::Mat4 _affine;
     
     cugl::Vec2 _drawScale;
     
+    //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
+    /** player idle 8 frames indexed by `directionIndex` */
+    std::shared_ptr<cugl::SpriteSheet> _idleAnimation;
+    /** The animation to use while parrying */
+    std::shared_ptr<cugl::SpriteSheet> _parryAnimation;
+    /** The animation to use while attacking */
+    std::shared_ptr<cugl::SpriteSheet> _attackAnimation;
+    /** The animation we are currently drawing */
+    std::shared_ptr<cugl::SpriteSheet> _activeAnimation;
+    
+    /** The 8 directions ranging from front and going counter clockwise until front-right*/
+    cugl::Vec2 _directions[8];
+    
+    /** The direction that the player is currently facing */
+    cugl::Vec2 _facingDirection;
+    
+    /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
+    int _directionIndex;
     
 public:
+    bool _attacking;
+#pragma mark -
+#pragma mark Counters
+    /** attack cooldown counter*/
+    Counter _atkCD;
+    /** parry cooldown counter */
+    Counter _parryCD;
+    /** dodge ooldown counter*/
+    Counter _dodgeCD;
+    
+    /** counter that is active during the dodge motion*/
+    Counter _dodgeDuration;
+    
+    /**
+     * decrement all counters
+     */
+    void updateCounters();
     
     
 #pragma mark Constructors
@@ -206,13 +246,23 @@ public:
      */
     void setFY(float value) { _force.y = value; }
     
+    /**
+     * @return the unit vector direction that the player is facing towards
+     */
+    cugl::Vec2 getFacingDir(){ return _facingDirection; }
+    
+    /**
+     * Sets the direction that the player is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir);
+    
 #pragma mark -
 #pragma mark Animation
     
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
  
     /**
-    * Returns the texture (key) for this player
+    * Returns the idle texture (key) for this player
     *
     * The value returned is not a Texture2D value.  Instead, it is a key for
     * accessing the texture from the asset manager.
@@ -222,7 +272,7 @@ public:
     const std::string& getTextureKey() const { return _playerTextureKey; }
 
     /**
-    * Returns the texture (key) for this player
+    * Returns the idle texture (key) for this player
     *
     * The value returned is not a Texture2D value.  Instead, it is a key for
     * accessing the texture from the asset manager.
@@ -230,6 +280,45 @@ public:
     * @param  strip    the texture (key) for this player
     */
     void setTextureKey(const std::string& key) { _playerTextureKey = key; }
+
+    /**
+    * Returns the texture (key) for this player's parry animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @return the texture (key) for this player's parry animation
+    */
+    const std::string& getParryTextureKey() const { return _parryTextureKey; }
+
+    /**
+    * Returns the texture (key) for this player's parry animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @param  strip    the texture (key) for this player's parry animation
+    */
+    void setParryTextureKey(const std::string& key) { _parryTextureKey = key; }
+    /**
+    * Returns the texture (key) for this player's attack animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @return the texture (key) for this player's attack animation
+    */
+    const std::string& getAttackTextureKey() const { return _attackTextureKey; }
+
+    /**
+    * Returns the texture (key) for this player's attack animation
+    *
+    * The value returned is not a Texture2D value.  Instead, it is a key for
+    * accessing the texture from the asset manager.
+    *
+    * @param  strip    the texture (key) for this player's attack animation
+    */
+    void setAttackTextureKey(const std::string& key) { _attackTextureKey = key; }
     
     /**
      * Sets the ratio of the player sprite to the physics body
@@ -264,6 +353,13 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+
+    /** Change to using the parry animation */
+    void animateParry();
+    /** Change to using the default animation */
+    void animateDefault();
+    /** Change to using the attack animation */
+    void animateAttack();
     
     
 #pragma mark -
@@ -285,7 +381,7 @@ public:
      *
      * @param delta Timing values from parent loop
      */
-    virtual void update(float delta) override;
+//    virtual void update(float delta) override;
 };
 
 #endif /* Player_hpp */

@@ -26,14 +26,26 @@
         "flames-left": {
             "file":     "textures/flames-left.png"
         }, 
-        "player": {
-            "file":     "textures/player.png"
+        "player-idle": {
+            "file":     "textures/player_idle.png"
+        },
+        "enemy":{
+            "file":     "textures/lizard_idle_front.png"
         },
         "floor": {
             "file":     "textures/iso_floor_tile.png"
         },
         "background": {
             "file":     "textures/space_background.png"
+        },
+        "atk": {
+            "file":     "textures/attack.png"
+        },
+        "parry": {
+            "file":     "textures/player_parry.png"
+        },
+        "attack": {
+            "file":     "textures/player_slash.png"
         }
 	},
     "sounds": {

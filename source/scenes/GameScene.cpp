@@ -13,6 +13,7 @@
 //
 #include "GameScene.h"
 #include "../models/JSLevelConstants.h"
+#include "../models/Enemy.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -46,7 +47,6 @@ using namespace cugl;
 
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
-
 
 #pragma mark -
 #pragma mark Constructors
@@ -150,7 +150,6 @@ void GameScene::activateWorldCollisions(const std::shared_ptr<physics2::Obstacle
 #pragma mark -
 #pragma mark Physics Handling
 
-
 void GameScene::preUpdate(float dt) {
 	if (_level == nullptr) {
 		return;
@@ -197,21 +196,89 @@ void GameScene::preUpdate(float dt) {
     }
 
 #pragma mark - handle player input
-    // Apply the force to the rocket
+    // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
-    Vec2 force = _input.getMoveDirection();
-    player->setLinearDamping(50);
-    player->setForce(force*5); //TODO: use json data
-    player->applyForce();
+    Vec2 moveForce = _input.getMoveDirection();
     
-    if (_input.getPosition()<=getSize()/2 &&(_input.didPress() || _input.isDown())){
-        cugl::Vec2 currPos = _input.getPosition();
-        Vec3 worldPos = screenToWorldCoords(currPos);        
-        Vec2 posDiff = worldPos.subtract(player->getPosition());
-        player->setPosition(posDiff);
-        _input.setPosition(player->getPosition());
+    // update the direction the player is facing
+    if (moveForce.length() > 0){
+        player->setFacingDir(moveForce);
+    }
+    
+    auto _atkCD = player->_atkCD.getCount();
+    auto _parryCD = player->_parryCD.getCount();
+    auto _dodgeCD = player->_dodgeCD.getCount();
+    //only move fast if we're not attacking, parrying, or dodging
+    if (_atkCD == _parryCD == _dodgeCD == 0 && player->_dodgeDuration.isZero()) {
+        //if all abilities are active
+        player->setForce(moveForce * 5); //TODO: use json data
+        player->applyForce();
     }
 
+    std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
+
+    //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
+    //Not sure if this will be possible on mobile, but it's definitely possible on the computer
+    if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
+        //for now, give highest precedence to dodge
+        if (_input.didDodge() && player->_dodgeCD.isZero()) {
+            player->_dodgeCD.reset();
+            player->_dodgeDuration.reset(); // set dodge frames
+        }
+        else if (player->_dodgeDuration.isZero()) { //not dodging
+            //for now, give middle precedence to attack
+            if (_input.didAttack()) {
+                /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
+                Vec2 direction = _input.getAttackDirection();
+                Vec2 playerPos = player->getPosition() * player->getDrawScale();
+                //convert from screen to drawing coords
+                direction.y = SCENE_HEIGHT - direction.y;
+                //convert to player coords
+                direction -= playerPos;
+                direction.normalize();
+                //compute angle from x-axis
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
+                /////// END COMPUTATION OF ATTACK DIRECTION ///////
+                atk->setEnabled(true);
+                atk->setAwake(true);
+                atk->setAngle(ang);
+                atk->setPosition(player->getPosition());
+                player->animateAttack();
+                player->_atkCD.reset();
+            }
+            //for now, give lowest precendence to parry
+            else if (_input.didParry()) {
+                //TODO: handle parry
+                CULog("parried");
+                player->animateParry();
+                player->_parryCD.reset();
+            }
+        }     
+    }
+    if (!player->_dodgeDuration.isZero()) {
+        auto force = _input.getDodgeDirection();
+        //player->setLinearDamping(20);
+        player->setForce(force * 50);
+        player->applyForce();
+    }
+    if (player->_atkCD.isZero()) {
+        atk->setEnabled(false);
+    }
+    //if/when we create a dodge animation, add a check for it here
+    if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
+    
+    // if we not dodging or move
+    if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
+        // dampen
+        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
+        player->setForce(dampen * player->getLinearVelocity());
+        player->applyForce();
+    }
+    
+    player->updateCounters();
+    std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) (*it)->updateCounters();
 }
 
 
@@ -251,17 +318,29 @@ Size GameScene::computeActiveSize() const {
 #pragma mark Collision Handling
 
 void GameScene::beginContact(b2Contact* contact) {
-    //b2Body* body1 = contact->GetFixtureA()->GetBody();
-    //b2Body* body2 = contact->GetFixtureB()->GetBody();
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();    
+    //attack
+    intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
+    std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
+        if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
+                 (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
+            //attack hitbox is a circle, but we only want it to hit in a semicircle
+            Vec2 dir = (*it)->getPosition() - _level->getPlayer()->getPosition();
+            dir.normalize();
+            float ang = acos(dir.dot(Vec2::UNIT_X));
+            if ((*it)->getPosition().y < _level->getPlayer()->getPosition().y) ang *= -1;
+            if (abs(ang-_level->getAttack()->getAngle())<=M_PI_2){
+                (*it)->hit();
+                CULog("Hit an enemy!");
+            }
+        }
+    }
     
-//    // If we hit the "win" door, we are done
-//    intptr_t rptr = reinterpret_cast<intptr_t>(_level->getRocket().get());
-//    intptr_t dptr = reinterpret_cast<intptr_t>(_level->getExit().get());
-//
-//    if((body1->GetUserData().pointer == rptr && body2->GetUserData().pointer == dptr) ||
-//       (body1->GetUserData().pointer == dptr && body2->GetUserData().pointer == rptr)) {
-//        setComplete(true);
-//    }
+    //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
+    //TODO: parry
 }
 
 
