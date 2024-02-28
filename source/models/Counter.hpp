@@ -56,7 +56,6 @@ public:
     Counter(int maxCount, std::string tag, bool adjustable):
         _maxCount(maxCount), _count(0), name(tag), _adjustable(adjustable){
             assert(maxCount > 0);
-            CULog("initialized as %d", _adjustable);
         }
     
     /**

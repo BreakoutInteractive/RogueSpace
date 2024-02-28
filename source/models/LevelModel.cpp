@@ -158,7 +158,6 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 		CUAssertLog(false, "Failed to load level file");
 		return false;
 	}
-    CULog("loading");
 	// Initial geometry
 	float w = json->get(WIDTH_FIELD)->asFloat();
 	float h = json->get(HEIGHT_FIELD)->asFloat();
