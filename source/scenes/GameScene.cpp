@@ -196,8 +196,18 @@ void GameScene::preUpdate(float dt) {
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
-    if (_level->getEnemies().size() == 0 && !_winNode->isVisible()){
-        setComplete(true);
+    if (!_winNode->isVisible()){
+        // game not won, check if any enemies active
+        int activeCount = 0;
+        auto enemies = _level->getEnemies();
+        for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+            if ((*it)->isEnabled()) {
+                activeCount += 1;
+            }
+        }
+        if (activeCount == 0){
+            setComplete(true);
+        }
     }
 
 #pragma mark - handle player input
@@ -297,7 +307,12 @@ void GameScene::preUpdate(float dt) {
     
     player->updateCounters();
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
-    for (auto it = enemies.begin(); it != enemies.end(); ++it) (*it)->updateCounters();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        (*it)->updateCounters();
+        if ((*it)->getHealth() <= 0) {
+            (*it)->setEnabled(false);
+        }
+    }
 }
 
 

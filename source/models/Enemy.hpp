@@ -39,6 +39,9 @@ protected:
 
     Counter _hitCounter;
     
+    /** The enemy's current health */
+    int _health;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -156,6 +159,16 @@ public:
      * @param value the x-component of the force applied to this player.
      */
     void setFY(float value) { _force.y = value; }
+    
+    /**
+     * Gets the current health of this enemy.
+     */
+    int getHealth() const { return _health; }
+    
+    /**
+     * Sets the current health of this enemy.
+     */
+    void setHealth(int value) { _health = value; }
     
     
 #pragma mark -

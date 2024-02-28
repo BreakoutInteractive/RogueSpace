@@ -62,7 +62,9 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     _floor->draw(batch);
     
     for (int ii = 0; ii < _enemies.size(); ii++){
-        _enemies[ii]->draw(batch);
+        if (_enemies[ii]->isEnabled()) {
+            _enemies[ii]->draw(batch);
+        }
     }
     
     _player->draw(batch);
@@ -304,6 +306,7 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         enemy->setFixedRotation(!json->getBool(ROTATION_FIELD));
         enemy->setTextureKey(json->getString(TEXTURE_FIELD));
         enemy->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
+        enemy->setHealth(json->getInt("health"));
         std::string btype = json->getString(BODYTYPE_FIELD);
         if (btype == STATIC_VALUE) {
             enemy->setBodyType(b2_staticBody);
