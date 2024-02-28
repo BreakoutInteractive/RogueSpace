@@ -283,7 +283,6 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     }
 
     //setup the attack for collision detection
-    //THIS IS WRONG. We will likely need a custom semicircle
 	_atk = physics2::WheelObstacle::alloc(pos, ATK_RADIUS);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);
