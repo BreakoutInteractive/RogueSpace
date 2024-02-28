@@ -32,6 +32,7 @@ _keyDebug(false),
 _keyExit(false) {
 }
 
+
 void InputController::dispose() {
     if (_active) {
 #ifndef CU_TOUCH_SCREEN
@@ -71,6 +72,7 @@ bool InputController::init() {
         });
     }
     success = touch != nullptr;
+    clear();
 #endif
     _active = success;
     return success;
@@ -175,16 +177,18 @@ void InputController::clear() {
  */
 void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
     if (!_active){
-        return;;
+        return;
     }
     // check where the touch was initiated
     // TODO: this does not work the same way when you rotate the phone 180 (maybe use Display instead)
     Size s = Application::get()->getDisplaySize();
     Vec2 touchPos = event.position;
+
     if (touchPos.x >= s.width/2 && !_rightGesture.active){
         // right sided
         initGestureDataFromEvent(_rightGesture, event);
     }
+    
     else if (touchPos.x < s.width/2 && !_leftGesture.active){
         // left sided
         initGestureDataFromEvent(_leftGesture, event);

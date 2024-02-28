@@ -66,7 +66,7 @@ private:
      */
     struct GestureData {
         /** whether the touch event is still active*/
-        bool active;
+        bool active = false;
         /** where on the screen did the touch start */
         cugl::Vec2 initialPos;
         /** where on the screen is the touch currently*/
