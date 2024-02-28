@@ -34,6 +34,8 @@ bool Player::init(const Vec2 pos, const Size size) {
     _parryCD.setMaxCount(PARRY_CD);
     _dodgeCD.setMaxCount(DODGE_CD);
     _dodgeDuration.setMaxCount(DODGE_DURATION);
+    _idleCycle.setMaxCount(16);
+    _idleCycle.reset();
     
     // TODO: removal later, GAMEPLAY PROTOTYPE set 1-2 frame delay so player does not attack immediately if play button is held for too long
     _atkCD.setCount(1);
@@ -51,7 +53,6 @@ bool Player::init(const Vec2 pos, const Size size) {
     _facingDirection = _directions[0];
     return true;
 }
-
 
 /**
  * Disposes all resources and assets of this rocket
@@ -97,7 +98,6 @@ void Player::setDrawScale(Vec2 scale) {
 }
 
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    _idleAnimation->setFrame(_directionIndex);
     
     // TODO: render player with appropriate scales
     
@@ -106,11 +106,9 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     _activeAnimation->draw(batch, origin, transform);
     
     if (_attacking) {
-        _attackAnimation->draw(batch, origin, transform);
         //this weird-looking operation is to advance the animation every other frame instead of every frame so that it is more visible
         int newFrame = _attackAnimation->getFrame() + (_atkCD.getCount() % 2 == 1);
-        //since we are only using the front-facing animation for now, always reset it to the start of that animation if we are out of bounds of it
-        _attackAnimation->setFrame(newFrame > 47 || newFrame < 40 ? 40 : newFrame);
+        _attackAnimation->setFrame(newFrame >= _attackAnimation->getSize() ? newFrame - 1 : newFrame);
     }
     else {
         // render player differently while dodging (add fading effect)
@@ -124,6 +122,13 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
             }
         }
     }
+    
+    // cycle through active animation
+    if (_activeAnimation == _idleAnimation){
+        // check if we want to advance frame
+        int newFrame = _idleAnimation->getFrame() + (_idleCycle.getCount() % 2  == 1);
+        _idleAnimation->setFrame(newFrame);
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -133,9 +138,8 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _parryAnimation = SpriteSheet::alloc(parryTexture, 1, 1); // 1 by 1 texture into animation
     _attackAnimation = SpriteSheet::alloc(attackTexture, 8, 8);
     //just use forward-facing for now
-    _attackAnimation->setFrame(40); // TODO: handle directions
-    _idleAnimation = SpriteSheet::alloc(_playerTexture, 1, 8);
-    _idleAnimation->setFrame(_directionIndex);
+    _idleAnimation = SpriteSheet::alloc(_playerTexture, 8, 8);
+    _idleAnimation->setFrame(8 * _directionIndex);
     _activeAnimation = _idleAnimation;
 }
 
@@ -146,10 +150,12 @@ void Player::animateParry() {
 
 void Player::animateDefault() {
     _activeAnimation = _idleAnimation;
+    _idleAnimation->setFrame(8 * _directionIndex);
     _attacking = false;
 }
 void Player::animateAttack() {
     _attacking = true;
+    _attackAnimation->setFrame(8 * _directionIndex);
     _activeAnimation = _attackAnimation;
 }
 
@@ -161,9 +167,15 @@ void Player::updateCounters(){
     _parryCD.decrement();
     _dodgeCD.decrement();
     _dodgeDuration.decrement();
+    _idleCycle.decrement();
+    if (_idleCycle.isZero()){
+        _idleCycle.reset();
+        _idleAnimation->setFrame(8 * _directionIndex);
+    }
 }
 
 void Player::setFacingDir(cugl::Vec2 dir){
+    int prevDirection = _directionIndex;
     Vec2 d = dir.normalize();
     _directionIndex = -1;
     float similarity = -INFINITY;
@@ -177,4 +189,11 @@ void Player::setFacingDir(cugl::Vec2 dir){
     }
     assert(_directionIndex >= 0 && _directionIndex < 8);
     _facingDirection = d;
+    
+    // sync animation
+    
+    if (prevDirection != _directionIndex){
+        _idleAnimation->setFrame(8 * _directionIndex);
+        _attackAnimation->setFrame(8 * _directionIndex);
+    }
 }

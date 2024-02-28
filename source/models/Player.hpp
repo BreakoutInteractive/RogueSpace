@@ -67,9 +67,10 @@ public:
     Counter _parryCD;
     /** dodge ooldown counter*/
     Counter _dodgeCD;
-    
     /** counter that is active during the dodge motion*/
     Counter _dodgeDuration;
+    /** counter that is active during the idle cycle*/
+    Counter _idleCycle;
     
     /**
      * decrement all counters

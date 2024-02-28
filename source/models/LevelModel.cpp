@@ -160,7 +160,6 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 		CUAssertLog(false, "Failed to load level file");
 		return false;
 	}
-    CULog("loading");
 	// Initial geometry
 	float w = json->get(WIDTH_FIELD)->asFloat();
 	float h = json->get(HEIGHT_FIELD)->asFloat();
@@ -285,7 +284,6 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     }
 
     //setup the attack for collision detection
-    //THIS IS WRONG. We will likely need a custom semicircle
 	_atk = physics2::WheelObstacle::alloc(pos, ATK_RADIUS);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);

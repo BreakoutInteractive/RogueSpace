@@ -194,6 +194,11 @@ void GameScene::preUpdate(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
+    
+    // TODO: this is only a temporary win condition, revisit after Gameplay Release
+    if (_level->getEnemies().size() == 0 && !_winNode->isVisible()){
+        setComplete(true);
+    }
 
 #pragma mark - handle player input
     // Apply the force to the player
@@ -239,7 +244,7 @@ void GameScene::preUpdate(float dt) {
                 //direction.normalize();
                 //compute angle from x-axis
                 //float ang = acos(direction.dot(Vec2::UNIT_X));
-                //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
+                //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang = 2*M_PI - ang;
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
                 
                 Vec2 direction = player->getFacingDir();
@@ -267,6 +272,10 @@ void GameScene::preUpdate(float dt) {
     }
     if (!player->_dodgeDuration.isZero()) {
         auto force = _input.getDodgeDirection();
+        if (force.length() == 0){
+            // dodge in the direction currently facing
+            force = player->getFacingDir();
+        }
         //player->setLinearDamping(20);
         player->setForce(force * 50);
         player->applyForce();
@@ -343,11 +352,11 @@ void GameScene::beginContact(b2Contact* contact) {
         if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
                  (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
             //attack hitbox is a circle, but we only want it to hit in a semicircle
-            Vec2 dir = (*it)->getPosition() - _level->getPlayer()->getPosition();
+            Vec2 dir = (*it)->getPosition()*(*it)->getDrawScale() - _level->getPlayer()->getPosition()*_level->getPlayer()->getDrawScale();
             dir.normalize();
             float ang = acos(dir.dot(Vec2::UNIT_X));
-            if ((*it)->getPosition().y < _level->getPlayer()->getPosition().y) ang *= -1;
-            if (abs(ang-_level->getAttack()->getAngle())<=M_PI_2){
+            if ((*it)->getPosition().y * (*it)->getDrawScale().y < _level->getPlayer()->getPosition().y * _level->getPlayer()->getDrawScale().y) ang = 2*M_PI-ang;
+            if (abs(ang-_level->getAttack()->getAngle())<=M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3*M_PI_2){
                 (*it)->hit();
                 CULog("Hit an enemy!");
             }
