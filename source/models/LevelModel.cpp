@@ -90,13 +90,14 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 		clearDebugNode();
 	}
 
-	_debugNode = node;
-	_scale.set(_debugNode->getContentSize().width/_viewBounds.width,
-             _debugNode->getContentSize().height/_viewBounds.height);
+	_debugNode = scene2::SceneNode::alloc();
+	_scale.set(node->getContentSize().width/_viewBounds.width,
+             node->getContentSize().height/_viewBounds.height);
 
     _debugNode->setScale(_scale); // Debug node draws in PHYSICS coordinates
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setPosition(Vec2::ZERO);
+    node->addChild(_debugNode);
     
     // debug node should be added once objects are initialized
     _player->setDebugScene(_debugNode);

@@ -89,8 +89,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 #pragma mark - GameScene:: Scene Graph Initialization
     
     // Create the scene graph nodes
+    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     _debugNode = scene2::SceneNode::alloc();
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    _debugNode->setPosition(_offset);
+    _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _debugNode->setVisible(true);
   
     // TODO: This works as starter but victory screens are usually separate game modes (scenes)
     // We make this game scene inactive and transition to other scenes
@@ -110,6 +114,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     addChild(_winNode); //TODO: remove
     addChild(_resetNode); //TODO: remove
 
+    _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     _level->setDebugNode(_debugNode); // Obtains ownership of root.
   
 #pragma mark - Game State Initialization
@@ -418,12 +423,19 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 #pragma mark Rendering
 
 void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
+    // render background
+    batch->begin(getCamera()->getCombined());
+    Size s = Application::get()->getDisplaySize();
+    batch->draw(_backgroundTexture, Rect(0, 0, s.width, s.height));
+    batch->end();
     if (_level != nullptr){
+        getCamera()->translate(-_offset);
+        getCamera()->update();
         batch->begin(getCamera()->getCombined());
-        Size s = Application::get()->getDisplaySize();
-        batch->draw(_backgroundTexture, Rect(0, 0, s.width, s.height));
         _level->render(batch);
         batch->end();
+        getCamera()->translate(_offset);
+        getCamera()->update();
     }
     // draw the debug component
     Scene2::render(batch);

@@ -45,6 +45,8 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _resetNode;
     
     std::shared_ptr<Texture> _backgroundTexture;
+    /** content offset to prevent displays on notch/adjusting aspect ratios*/
+    cugl::Vec2 _offset;
 
     // MODEL
 
