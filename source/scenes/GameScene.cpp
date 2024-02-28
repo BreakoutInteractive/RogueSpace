@@ -194,6 +194,11 @@ void GameScene::preUpdate(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
+    
+    // TODO: this is only a temporary win condition, revisit after Gameplay Release
+    if (_level->getEnemies().size() == 0 && !_winNode->isVisible()){
+        setComplete(true);
+    }
 
 #pragma mark - handle player input
     // Apply the force to the player
@@ -267,6 +272,10 @@ void GameScene::preUpdate(float dt) {
     }
     if (!player->_dodgeDuration.isZero()) {
         auto force = _input.getDodgeDirection();
+        if (force.length() == 0){
+            // dodge in the direction currently facing
+            force = player->getFacingDir();
+        }
         //player->setLinearDamping(20);
         player->setForce(force * 50);
         player->applyForce();
