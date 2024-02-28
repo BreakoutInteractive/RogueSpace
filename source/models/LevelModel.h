@@ -49,6 +49,8 @@ protected:
 
     /** The bounds of this level in physics coordinates */
     Rect _bounds;
+    /** The dimension of the view (forming a subregion of the bounds) */
+    Size _viewBounds;
     /** The level drawing scale (difference between physics and drawing coordinates) */
     Vec2 _scale;
 
@@ -203,6 +205,11 @@ public:
      * @return the bounds of this level in physics coordinates
      */
     const Rect& getBounds() const   { return _bounds; }
+    
+    /**
+     * @return the size of the desired view in physics coordinates
+     */
+    const Size& getViewBounds() const { return _viewBounds; }
 
 
 #pragma mark Drawing Methods

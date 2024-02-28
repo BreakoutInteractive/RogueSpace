@@ -26,7 +26,7 @@ using namespace cugl;
 
 bool Player::init(const Vec2 pos, const Size size) {
     BoxObstacle::init(pos,size);
-    BoxObstacle::setAngle(M_PI_4);
+    //BoxObstacle::setAngle(M_PI_4);
     std::string name("player");
     setName(name);
     // set the counter properties
@@ -104,7 +104,6 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     Vec2 origin = Vec2(_activeAnimation->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2::createTranslation(getPosition() * _drawScale);
     _activeAnimation->draw(batch, origin, transform);
-    
     if (_attacking) {
         //this weird-looking operation is to advance the animation every other frame instead of every frame so that it is more visible
         int newFrame = _attackAnimation->getFrame() + (_atkCD.getCount() % 2 == 1);

@@ -91,8 +91,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 	}
 
 	_debugNode = node;
-	_scale.set(_debugNode->getContentSize().width/_bounds.size.width,
-             _debugNode->getContentSize().height/_bounds.size.height);
+	_scale.set(_debugNode->getContentSize().width/_viewBounds.width,
+             _debugNode->getContentSize().height/_viewBounds.height);
 
     _debugNode->setScale(_scale); // Debug node draws in PHYSICS coordinates
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -164,6 +164,9 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 	float w = json->get(WIDTH_FIELD)->asFloat();
 	float h = json->get(HEIGHT_FIELD)->asFloat();
 	_bounds.size.set(w, h);
+    float vw = json->get("view-width")->asFloat();
+    float vh = json->get("view-height")->asFloat();
+    _viewBounds.set(vw, vh);
 
 	/** Create the physics world */
 	_world = physics2::ObstacleWorld::alloc(getBounds(),Vec2::ZERO);

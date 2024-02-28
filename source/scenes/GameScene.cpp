@@ -83,8 +83,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
-    _scale = dimen.width == SCENE_WIDTH ? dimen.width/world->getBounds().getMaxX() :
-                                          dimen.height/world->getBounds().getMaxY();
+    _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
+                                          dimen.height/_level->getViewBounds().height;
     _level->setDrawScale(Vec2(_scale, _scale));
 #pragma mark - GameScene:: Scene Graph Initialization
     
