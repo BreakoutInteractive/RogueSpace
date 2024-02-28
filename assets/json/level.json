@@ -37,7 +37,8 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
-            "debugcolor":   "green"
+            "debugcolor":   "green",
+            "health":       2
         }
     },
     "floor": {
