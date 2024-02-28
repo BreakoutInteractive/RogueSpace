@@ -4,9 +4,9 @@
     "gravity":  -4.9,
     "player": {
         "pos": [24, 6],
-        "size": [0.3,0.3],
+        "size": [0.5,0.5],
         "bodytype":      "dynamic",
-        "density":        3.0,
+        "density":        2.0,
         "friction":       0.1,
         "restitution":    0,
         "rotation":      false,
@@ -18,7 +18,7 @@
     "enemies": {
         "enemy-1": {
             "pos": [22, 13],
-            "size": [0.3,0.3],
+            "size": [0.6,0.6],
             "bodytype":     "static",
             "density":      1.0,
             "friction":     0.1,
@@ -29,7 +29,7 @@
         },
         "enemy-2": {
             "pos": [18, 13],
-            "size": [0.3,0.3],
+            "size": [0.6,0.6],
             "bodytype":     "static",
             "density":      1.0,
             "friction":     0.1,

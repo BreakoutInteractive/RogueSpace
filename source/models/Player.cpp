@@ -48,6 +48,7 @@ bool Player::init(const Vec2 pos, const Size size) {
         
     }
     _directionIndex = 0;
+    _facingDirection = _directions[0];
     return true;
 }
 
@@ -175,4 +176,5 @@ void Player::setFacingDir(cugl::Vec2 dir){
         }
     }
     assert(_directionIndex >= 0 && _directionIndex < 8);
+    _facingDirection = d;
 }

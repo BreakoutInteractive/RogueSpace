@@ -228,18 +228,27 @@ void GameScene::preUpdate(float dt) {
         else if (player->_dodgeDuration.isZero()) { //not dodging
             //for now, give middle precedence to attack
             if (_input.didAttack()) {
+                // TODO: keep or remove.
                 /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
-                Vec2 direction = _input.getAttackDirection();
-                Vec2 playerPos = player->getPosition() * player->getDrawScale();
+                //Vec2 direction = _input.getAttackDirection();
+                //Vec2 playerPos = player->getPosition() * player->getDrawScale();
                 //convert from screen to drawing coords
-                direction.y = SCENE_HEIGHT - direction.y;
+                //direction.y = SCENE_HEIGHT - direction.y;
                 //convert to player coords
-                direction -= playerPos;
-                direction.normalize();
+                //direction -= playerPos;
+                //direction.normalize();
                 //compute angle from x-axis
-                float ang = acos(direction.dot(Vec2::UNIT_X));
-                if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
+                //float ang = acos(direction.dot(Vec2::UNIT_X));
+                //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang *= -1;
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
+                
+                Vec2 direction = player->getFacingDir();
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (direction.y < 0){
+                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                }
+  
                 atk->setEnabled(true);
                 atk->setAwake(true);
                 atk->setAngle(ang);
