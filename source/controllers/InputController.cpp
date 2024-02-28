@@ -11,9 +11,9 @@ using namespace cugl;
 /** The key for exitting the game */
 #define EXIT_KEY  KeyCode::ESCAPE
 /** How far we must swipe in any direction for a movement gesture i*/
-#define EVENT_SWIPE_LENGTH 5
+#define EVENT_SWIPE_LENGTH 175
 /** How long in milliseconds must we hold for a parry*/
-#define PARRY_HOLD_TIME 1000
+#define PARRY_HOLD_TIME 300
 
 
 #pragma mark -
@@ -73,6 +73,7 @@ bool InputController::init() {
     success = touch != nullptr;
 #endif
     _active = success;
+    clear();
     return success;
 }
 
@@ -231,7 +232,7 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     }
     
     // handle release on left-side (for now, this can happen if the user just don't want to move
-    if (touchPos.x < s.width/2 && _leftGesture.active){
+    if (_leftGesture.active && event.touch == _leftGesture.touchID){
         _leftGesture.active = false;
         _keyMoveDir = Vec2::ZERO;
     }
@@ -274,4 +275,10 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
             _keyMoveDir.set(swipeDir.x, -swipeDir.y); //negate y because screen origin is different from game origin.
         }
     }
+    else if (touchPos.x >= s.width/2 && _leftGesture.active && _leftGesture.touchID == event.touch){
+        // case where gesture starts left but ends on right, fixes "infinite" player moement
+        _leftGesture.active = false;
+        _keyMoveDir = Vec2::ZERO;
+    }
+        
 }
