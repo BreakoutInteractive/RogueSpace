@@ -75,6 +75,7 @@ bool InputController::init() {
     clear();
 #endif
     _active = success;
+    clear();
     return success;
 }
 
@@ -235,7 +236,7 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     }
     
     // handle release on left-side (for now, this can happen if the user just don't want to move
-    if (touchPos.x < s.width/2 && _leftGesture.active){
+    if (_leftGesture.active && event.touch == _leftGesture.touchID){
         _leftGesture.active = false;
         _keyMoveDir = Vec2::ZERO;
     }
@@ -282,6 +283,6 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         // case where gesture starts left but ends on right, fixes "infinite" player moement
         _leftGesture.active = false;
         _keyMoveDir = Vec2::ZERO;
-        }
+    }
         
 }
