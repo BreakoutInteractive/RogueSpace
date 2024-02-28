@@ -288,7 +288,12 @@ void GameScene::preUpdate(float dt) {
     
     player->updateCounters();
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
-    for (auto it = enemies.begin(); it != enemies.end(); ++it) (*it)->updateCounters();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        (*it)->updateCounters();
+        if ((*it)->getHealth() <= 0) {
+            (*it)->setEnabled(false);
+        }
+    }
 }
 
 

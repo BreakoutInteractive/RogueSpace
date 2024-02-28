@@ -81,6 +81,7 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
 void Enemy::hit() {
     if (_hitCounter.isZero()) {
         _hitCounter.reset();
+        setHealth(getHealth()-1);
         _tint = Color4::RED;
     }
 }
