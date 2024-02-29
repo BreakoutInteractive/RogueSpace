@@ -21,6 +21,8 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     std::string name("enemy");
     setName(name);
     _tint = Color4::WHITE;
+    _range = 12;        // Current range is hardcoded as 10 units for all enemies.
+                        // Factor this into the json as you wish. 
     _hitCounter.setMaxCount(HIT_TIME);
     return true;
 }

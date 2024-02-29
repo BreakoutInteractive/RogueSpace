@@ -16,6 +16,7 @@
 #include <vector>
 #include "../models/JSRocketModel.h"
 #include "../models/Player.hpp"
+#include "../controllers/AIEngine.hpp"
 #include "../controllers/InputController.h"
 #include "../models/JSExitModel.h"
 #include "../models/LevelModel.h"
@@ -35,6 +36,8 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
+    /** Engine to process mob movement */
+    AIEngine _aiEngine;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
