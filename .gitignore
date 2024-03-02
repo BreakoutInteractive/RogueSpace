@@ -33,6 +33,7 @@
 
 # Others
 build/
+*.zip
 
 # Mac
 **/.DS_Store
