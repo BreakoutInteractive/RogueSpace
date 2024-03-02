@@ -1,12 +1,28 @@
 # RogueSpace
 
-## Demo Notes
-**In addition** we have created a custom loader for the level and added this to the 
-asset manager.  This is not necessarily the best way to do this.  It may just be best
-to read in the JSON file as an asset and then have the level model parse the JSON
-(which is effectively what we are doing here).  But there is a generic loader for any
-class that is a subclass of `Asset`.  That is an abstract class with the following methods
+A lone human crash lands on a mysterious desert world. As they venture from the wreckage, the human is attacked by hostile aliens. The human can defend themselves by parrying an enemy attack or dodging away from harm. They can attack their enemies whenever they gain an opportunity. As the human travels across the planet, the aliens become more challenging to defeat.
 
-* `preload`, which loads the asset on the asset thread
-* `materialize` which finalizes the asset on the main render thread
-* `unload` which unloads the asset
+
+## GamePlay Prototype
+
+### Objective
+
+You, the player, must clear all enemies in the given level in order to complete the level.
+
+### Mobile Controls
+
+| Action    | Input |
+| :---------------- | :------ |
+| Move (omnidirectional)  | Tap and move finger on left half of screen |
+| Attack | Tap and release (quickly) on right half of screen |
+| Parry  | Hold and release on right half of screen  |
+| Dodge (omnidirectional) | Swipe in any directional on right half of screen
+
+### Desktop Controls
+
+| Action    | Input |
+| :---------------- | :------ |
+| Move (8-directional)  | WASD combinations |
+| Attack | Mouse LEFT Click |
+| Parry  | Mouse RIGHT Click  |
+| Dodge | Space Bar
