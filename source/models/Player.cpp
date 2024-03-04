@@ -18,6 +18,8 @@
 
 #define DODGE_DURATION 10
 
+#define HIT_TIME 10
+
 using namespace cugl;
 
 #pragma mark -
@@ -36,6 +38,9 @@ bool Player::init(const Vec2 pos, const Size size) {
     _dodgeDuration.setMaxCount(DODGE_DURATION);
     _idleCycle.setMaxCount(16);
     _idleCycle.reset();
+    _hp = 3;
+    _hitCounter.setMaxCount(HIT_TIME);
+    _tint = Color4::WHITE;
     
     // TODO: removal later, GAMEPLAY PROTOTYPE set 1-2 frame delay so player does not attack immediately if play button is held for too long
     _atkCD.setCount(1);
@@ -103,7 +108,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     Vec2 origin = Vec2(_activeAnimation->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2::createTranslation(getPosition() * _drawScale);
-    _activeAnimation->draw(batch, origin, transform);
+    _activeAnimation->draw(batch, _tint, origin, transform);
     if (_attacking) {
         //this weird-looking operation is to advance the animation every other frame instead of every frame so that it is more visible
         int newFrame = _attackAnimation->getFrame() + (_atkCD.getCount() % 2 == 1);
@@ -167,10 +172,12 @@ void Player::updateCounters(){
     _dodgeCD.decrement();
     _dodgeDuration.decrement();
     _idleCycle.decrement();
+    _hitCounter.decrement();
     if (_idleCycle.isZero()){
         _idleCycle.reset();
         _idleAnimation->setFrame(8 * _directionIndex);
     }
+    if (_hitCounter.isZero()) _tint = Color4::WHITE;
 }
 
 void Player::setFacingDir(cugl::Vec2 dir){
@@ -194,5 +201,13 @@ void Player::setFacingDir(cugl::Vec2 dir){
     if (prevDirection != _directionIndex){
         _idleAnimation->setFrame(8 * _directionIndex);
         _attackAnimation->setFrame(8 * _directionIndex);
+    }
+}
+
+void Player::hit() {
+    if (_hitCounter.isZero()) {
+        _hitCounter.reset();
+        _hp -= 1;
+        _tint = Color4::RED;
     }
 }

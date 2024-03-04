@@ -52,7 +52,7 @@ using namespace cugl;
 #pragma mark Constructors
 
 GameScene::GameScene() : Scene2(),
-_complete(false),
+_complete(false), _defeat(false),
 _debug(false){}
 
 
@@ -104,6 +104,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _winNode->setForeground(STATIC_COLOR);
     _winNode->setVisible(false);
 
+    _loseNode = scene2::Label::allocWithText("GAME OVER", _assets->get<Font>(PRIMARY_FONT));
+    _loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _loseNode->setPosition(dimen / 2.0f);
+    _loseNode->setForeground(Color4::RED);
+    _loseNode->setVisible(false);
+
     _resetNode = scene2::Label::allocWithText(RESET_MESSAGE,_assets->get<Font>(PRIMARY_FONT));
     _resetNode->setAnchor(Vec2::ANCHOR_CENTER);
     _resetNode->setPosition(dimen/2.0f);
@@ -112,6 +118,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
       
     addChild(_debugNode); //this we keep
     addChild(_winNode); //TODO: remove
+    addChild(_loseNode); //TODO: remove
     addChild(_resetNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
@@ -120,6 +127,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 #pragma mark - Game State Initialization
     _active = true;
     _complete = false;
+    _defeat = false;
     setDebug(false);
     
     Application::get()->setClearColor(Color4f::WHITE);
@@ -131,9 +139,11 @@ void GameScene::dispose() {
         _input.dispose();
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
+        _loseNode = nullptr; //TODO: remove
         _resetNode = nullptr; // TODO: remove
         _level = nullptr;
         _complete = false;
+        _defeat = false;
         _debug = false;
         Scene2::dispose();
     }
@@ -193,6 +203,7 @@ void GameScene::preUpdate(float dt) {
         _resetNode->setVisible(true);
         _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
         setComplete(false);
+        setDefeat(false);
         return;
     }
     if (_input.didExit())  {
@@ -201,7 +212,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
-    if (!_winNode->isVisible()){
+    if (!_winNode->isVisible() && !_loseNode->isVisible()){
         // game not won, check if any enemies active
         int activeCount = 0;
         auto enemies = _level->getEnemies();
@@ -213,6 +224,8 @@ void GameScene::preUpdate(float dt) {
         if (activeCount == 0){
             setComplete(true);
         }
+
+        if (_level->getPlayer()->_hp==0) setDefeat(true);
     }
 
 #pragma mark - handle player input
@@ -236,7 +249,7 @@ void GameScene::preUpdate(float dt) {
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
-
+    atk->setPosition(player->getPosition());
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
@@ -272,7 +285,6 @@ void GameScene::preUpdate(float dt) {
                 atk->setEnabled(true);
                 atk->setAwake(true);
                 atk->setAngle(ang);
-                atk->setPosition(player->getPosition());
                 player->animateAttack();
                 player->_atkCD.reset();
             }
@@ -361,6 +373,7 @@ void GameScene::beginContact(b2Contact* contact) {
     b2Body* body2 = contact->GetFixtureB()->GetBody();    
     //attack
     intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
+    intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
@@ -375,6 +388,11 @@ void GameScene::beginContact(b2Contact* contact) {
                 (*it)->hit();
                 CULog("Hit an enemy!");
             }
+        }
+        else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+            //player takes damage if running into enemy while not dodging
+            if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit();
         }
     }
     
