@@ -81,8 +81,10 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
 }
 
 void LevelModel::clearDebugNode(){
-    _debugNode->removeAllChildren();
-    _debugNode = nullptr;
+    if (_debugNode != nullptr){
+        _debugNode->removeAllChildren();
+        _debugNode = nullptr;
+    }
 }
 
 void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
