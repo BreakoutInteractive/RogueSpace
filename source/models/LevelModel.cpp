@@ -1,7 +1,7 @@
 #include <cugl/assets/CUJsonLoader.h>
-#include "LevelModel.h"
-#include "JSLevelConstants.h"
-#include "JSWallModel.h"
+#include "LevelModel.hpp"
+#include "LevelConstants.hpp"
+#include "JSWallModel.hpp"
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"

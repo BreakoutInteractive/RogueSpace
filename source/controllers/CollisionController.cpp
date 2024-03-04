@@ -1,5 +1,5 @@
 #include <cugl/cugl.h>
-#include "../models/LevelModel.h"
+#include "../models/LevelModel.hpp"
 #include "CollisionController.hpp"
 
 // The motivation to separate this out of GameScene is to let the focus of here to be dealing with combat collisioos and other collision events

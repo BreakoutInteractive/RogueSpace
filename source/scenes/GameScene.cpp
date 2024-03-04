@@ -11,8 +11,8 @@
 //  Modified: Zhiyuan Chen
 //  Version: 2/17/24
 //
-#include "GameScene.h"
-#include "../models/JSLevelConstants.h"
+#include "GameScene.hpp"
+#include "../models/LevelConstants.hpp"
 #include "../models/Enemy.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>

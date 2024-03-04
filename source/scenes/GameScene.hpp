@@ -16,8 +16,8 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
-#include "../controllers/InputController.h"
-#include "../models/LevelModel.h"
+#include "../controllers/InputController.hpp"
+#include "../models/LevelModel.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
