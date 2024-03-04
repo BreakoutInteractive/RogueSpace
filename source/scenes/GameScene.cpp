@@ -73,7 +73,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     _input.init();
-    _aiEngine.init(dimen);
+    // _aiEngine.init(dimen);
     _level->setAssets(_assets);
     _backgroundTexture = assets->get<Texture>("background");
     
@@ -320,9 +320,9 @@ void GameScene::preUpdate(float dt) {
         if ((*it)->getHealth() <= 0) {
             (*it)->setEnabled(false);
         }
-        Vec2 f = _aiEngine.lineOfSight((*it), player);
-        (*it)->setForce(f);
-        (*it)->applyForce();
+        // Vec2 f = _aiEngine.lineOfSight((*it), player);
+        // (*it)->setForce(f);
+        // (*it)->applyForce();
     }
 }
 

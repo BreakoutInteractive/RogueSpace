@@ -19,7 +19,6 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
-#include "JSRocketModel.h"
 #include <vector>
 
 using namespace cugl;

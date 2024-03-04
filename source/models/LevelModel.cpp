@@ -1,8 +1,6 @@
 #include <cugl/assets/CUJsonLoader.h>
 #include "LevelModel.h"
 #include "JSLevelConstants.h"
-#include "JSExitModel.h"
-#include "JSCrateModel.h"
 #include "JSWallModel.h"
 #include "Floor.hpp"
 #include "Player.hpp"

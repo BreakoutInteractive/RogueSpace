@@ -1,19 +1,22 @@
-//
-//  AIEngine.cpp
-//  RS
-//
-//  Created by Vincent Fong on 2/26/24.
-//
-
-#include "AIEngine.hpp"
+#include "AIController.hpp"
+#include "../models/LevelModel.h"
+#include "../models/Enemy.hpp"
+#include "../models/Player.hpp"
 
 using namespace cugl;
 
-/**
- * Returns a 0,0 vector if the enemy does not have line of sight to the player.
- * Else, returns a unit vector from e to p.
- */
-cugl::Vec2 AIEngine::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
+void AIController::init(std::shared_ptr<LevelModel> level) {
+    _world = level->getWorld();
+    // set enemies here ? 
+    // will have to get set from level, need to change levelmodel interface.
+    
+}
+
+AIController::~AIController(){
+    // TODO: complete destructor
+}
+
+cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
     Vec2 ePos = e->getPosition();
     Vec2 pPos = p->getPosition();
     
@@ -38,4 +41,8 @@ cugl::Vec2 AIEngine::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<Playe
         e->setLinearVelocity(0, 0);
     }
     return Vec2(0, 0);
+}
+
+void AIController::update(float dt){
+    // TODO: make any 
 }

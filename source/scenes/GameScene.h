@@ -14,11 +14,9 @@
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
-#include "../models/JSRocketModel.h"
 #include "../models/Player.hpp"
-#include "../controllers/AIEngine.hpp"
+#include "../controllers/AIController.hpp"
 #include "../controllers/InputController.h"
-#include "../models/JSExitModel.h"
 #include "../models/LevelModel.h"
 
 /**
@@ -37,7 +35,7 @@ protected:
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
     /** Engine to process mob movement */
-    AIEngine _aiEngine;
+    AIController _AIController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
