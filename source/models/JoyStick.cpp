@@ -90,8 +90,11 @@ void JoyStick::loadAssets(const std::shared_ptr<AssetManager> &assets){
 }
 
 void JoyStick::setDrawScale(cugl::Vec2 scale){
-    _drawBaseScale = (Vec2)_baseTexture->getSize()/(2*scale);
-    _joyBall->_drawBallScale=(Vec2)_ballTexture->getSize()/(2*scale);
+    _drawBaseScale = (Vec2)_baseTexture->getSize()/(4*scale);
+    _joyBall->_drawBallScale=(Vec2)_ballTexture->getSize()/(4*scale);
+//    _drawBaseScale = scale;
+//    _joyBall->_drawBallScale=scale;
+
 }
 /**
  * Draws active joystick to the sprite batch within the given bounds.
