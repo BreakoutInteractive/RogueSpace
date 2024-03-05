@@ -232,20 +232,25 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
+
+    auto _atkCD = player->_atkCD.getCount();
+    auto _parryCD = player->_parryCD.getCount();
+    auto _dodgeCD = player->_dodgeCD.getCount();
     
     // update the direction the player is facing
     if (moveForce.length() > 0){
         player->setFacingDir(moveForce);
     }
     
-    auto _atkCD = player->_atkCD.getCount();
-    auto _parryCD = player->_parryCD.getCount();
-    auto _dodgeCD = player->_dodgeCD.getCount();
+
     //only move fast if we're not attacking, parrying, or dodging
     if (_atkCD == _parryCD == _dodgeCD == 0 && player->_dodgeDuration.isZero()) {
         //if all abilities are active
-        player->setForce(moveForce * 5); //TODO: use json data
-        player->applyForce();
+        //player->setForce(moveForce * 5); //TODO: use json data
+        //player->applyForce();
+        player->setLinearVelocity(moveForce * 5);
+    } else if (_dodgeCD == 0) {
+        player->setLinearVelocity(Vec2::ZERO);
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
@@ -257,6 +262,15 @@ void GameScene::preUpdate(float dt) {
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
             player->_dodgeDuration.reset(); // set dodge frames
+            //dodge
+            auto force = _input.getDodgeDirection();
+            if (force.length() == 0) {
+                // dodge in the direction currently facing. normalize so that the dodge is constant speed
+                force = player->getFacingDir().getNormalization();
+            }
+            //player->setLinearDamping(20);
+            player->setLinearVelocity(force * 30);
+            player->setFacingDir(force);
         }
         else if (player->_dodgeDuration.isZero()) { //not dodging
             //for now, give middle precedence to attack
@@ -297,30 +311,31 @@ void GameScene::preUpdate(float dt) {
             }
         }     
     }
-    if (!player->_dodgeDuration.isZero()) {
-        auto force = _input.getDodgeDirection();
-        if (force.length() == 0){
-            // dodge in the direction currently facing
-            force = player->getFacingDir();
-        }
-        //player->setLinearDamping(20);
-        player->setForce(force * 50);
-        player->applyForce();
-        player->setFacingDir(force);
-    }
+    //if (!player->_dodgeDuration.isZero()) {
+    //    auto force = _input.getDodgeDirection();
+    //    if (force.length() == 0){
+    //        // dodge in the direction currently facing. normalize so that the dodge is constant speed
+    //        force = player->getFacingDir().getNormalization();
+    //    }
+    //    //player->setLinearDamping(20);
+    //    player->setLinearVelocity(force * 50);
+    //    player->setSensor(true);
+    //    //player->applyForce();
+    //    player->setFacingDir(force);
+    //}
     if (player->_atkCD.isZero()) {
         atk->setEnabled(false);
     }
     //if/when we create a dodge animation, add a check for it here
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
     
-    // if we not dodging or move
-    if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
-        // dampen
-        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
-        player->setForce(dampen * player->getLinearVelocity());
-        player->applyForce();
-    }
+    //// if we not dodging or move
+    //if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
+    //    // dampen
+    //    float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
+    //    player->setForce(dampen * player->getLinearVelocity());
+    //    player->applyForce();
+    //}
     
     player->updateCounters();
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
@@ -395,8 +410,9 @@ void GameScene::beginContact(b2Contact* contact) {
             if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit();
         }
     }
-    
     //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
+    //this is handled in beforeSolve by disabling the contact if the player is dodging and collides with enemies or their attacks
+    
     //TODO: parry
 }
 
@@ -435,6 +451,18 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
             }
         }
     }
+
+    intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
+    std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+            //phase through enemies while dodging
+            if (!_level->getPlayer()->_dodgeDuration.isZero()) contact->SetEnabled(false);
+        }
+    }
+    //TODO: add another check here for enemy attacks once they can do so
 }
 
 #pragma mark -
