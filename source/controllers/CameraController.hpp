@@ -12,6 +12,9 @@
 #define __CAMERA_CONTROLLER_HPP__
 #include <cugl/cugl.h>
 
+/**
+ A camera controller manages the behavior of a (2D orthographic) camera.
+ */
 class CameraController {
 
 private:
@@ -21,27 +24,72 @@ private:
     /** camera target */
     cugl::Vec2 _targetPosition;
     
+    /** camera initial position (x,y,z) */
+    cugl::Vec3 _initPosition;
+    
+    /** whether the camera is currently active */
+    bool _active;
+    
+    /** camera chase speed */
+    float _speed;
+    
 public:
     
 #pragma mark -
 #pragma mark Constructors and Destructors
     /**
-     * creates a new controller with the given camera
+     * initializes a new inactive controller with the given camera and default camera speed of 1.
+     *
+     * @param camera the camera
     */
-    CameraController(std::shared_ptr<cugl::Camera> camera);
+    void init(std::shared_ptr<cugl::Camera> camera){ init(camera, 1.0f); }
+    
+    
+    /**
+     * initializes a new inactive controller with the given camera and speed.
+     *
+     * @param camera the camera
+     * @param speed the camera movement speed
+    */
+    void init(std::shared_ptr<cugl::Camera> camera, float speed);
 
     /**
      * Destroys the controller and removes all references to resources such as the camera.
     */
     ~CameraController();
 
-#pragma mark -
-#pragma mark Camera Handling
-
+#pragma mark-
+#pragma mark Attributes
+    
     /**
      * @return the camera position
     */
     cugl::Vec2 getPosition(){ return _camera->getPosition();}
+    
+    /**
+     * @return whether the camera (controller) is active.
+     */
+    bool isActve(){ return _active; }
+    
+#pragma mark -
+#pragma mark Camera Handling
+    
+    /**
+     * resets the camera to the initial position and inactivates off the controller
+     */
+    void reset();
+    
+    /**
+     * sets the speed at which the camera follows its target
+     */
+    void setSpeed(float spd){ _speed = spd; }
+    
+    /**
+     * moves the camera (x,y) position to the given position
+     *
+     * this is useful to initialize the camera to a specific entity location, map area, etc.
+     */
+    void setCamPosition(cugl:: Vec2 pos);
 
     /**
      * sets the target position of the camera (to move towards)
@@ -50,9 +98,11 @@ public:
 
     /**
      * updates the camera by the given amount of time. If the camera is in an idle state
-     * (eg. camera has no target or not used for gameplay), the update will not perform any changes.
+     * (eg. inactive camera has no target or is not used for gameplay), the update will not perform any changes.
     */
     void update(float dt);
+    
+    // TODO: possibly camera shakes :skull
 
 };
 

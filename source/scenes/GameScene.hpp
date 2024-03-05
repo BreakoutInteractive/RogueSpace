@@ -18,6 +18,7 @@
 #include "../controllers/AIController.hpp"
 #include "../controllers/InputController.hpp"
 #include "../models/LevelModel.hpp"
+#include "../controllers/CameraController.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -36,6 +37,8 @@ protected:
     InputController _input;
     /** Engine to process mob movement */
     AIController _AIController;
+    /** Controller to modify camera behavior */
+    CameraController _camController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
