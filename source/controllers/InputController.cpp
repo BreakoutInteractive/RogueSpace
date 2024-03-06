@@ -12,8 +12,14 @@ using namespace cugl;
 #define EXIT_KEY  KeyCode::ESCAPE
 /** How far we must swipe in any direction for a movement gesture i*/
 #define EVENT_SWIPE_LENGTH 175
-/** How long in milliseconds must we hold for a parry*/
-#define PARRY_HOLD_TIME 300
+/** the minimum amount of milliseconds for a press to be considered a hold*/
+#define HOLD_TIME 300
+/** the maximum amount of milliseconds for a motion swipe to be considered a dodge*/
+#define DODGE_SWIPE_TIME 200
+///** the maximum amount of milliseconds for a touch and release to be considered a tap*/
+//#define TAP_TIME 300
+/** the maximum amount of milliseconds between the end of the first tap and the start of the second tap*/
+#define DOUBLE_TAP_TIME_GAP 200
 
 
 #pragma mark -
@@ -140,6 +146,7 @@ void InputController::update(float dt) {
     
     _moveDir.set(_keyMoveDir).normalize();
     _dodgeDir.set(_keyDodgeDir).normalize();
+    _attackDir.set(_keyAttackDir).normalize();
 
 
 // If it does not support keyboard, we must reset "virtual" keyboard
@@ -160,38 +167,14 @@ void InputController::clear() {
     _dodgePressed = false;
     _attackPressed = false;
     _parryPressed = false;
-    _leftGesture.active = false;
-    _rightGesture.active = false;
+    _motionGesture.active = false;
+    _combatGesture.active = false;
     _timestamp.mark();
 }
 
 
 #pragma mark -
 #pragma mark Touch Callbacks
-/**
- * Callback for the beginning of a touch event
- *
- * @param t     The touch information
- * @param event The associated event
- */
-void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
-    if (!_active){
-        return;;
-    }
-    // check where the touch was initiated
-    // TODO: this does not work the same way when you rotate the phone 180 (maybe use Display instead)
-    Size s = Application::get()->getDisplaySize();
-    Vec2 touchPos = event.position;
-    if (touchPos.x >= s.width/2 && !_rightGesture.active){
-        // right sided
-        initGestureDataFromEvent(_rightGesture, event);
-    }
-    else if (touchPos.x < s.width/2 && !_leftGesture.active){
-        // left sided
-        initGestureDataFromEvent(_leftGesture, event);
-    }
-    
-}
 
 void InputController::initGestureDataFromEvent(GestureData& data, const cugl::TouchEvent &event){
     data.active = true;
@@ -199,42 +182,106 @@ void InputController::initGestureDataFromEvent(GestureData& data, const cugl::To
     data.curPos = event.position;
     data.initialPos = data.curPos;
     data.touchID = event.touch;
+    
+    // if previous tap is active but the start of this touch is too far apart from the end of the first tap, clear the previous tap.
+    // if we do not do this, then tap orders such as 1-tap 1-tap 2-tap will not be read
+    // as a double tap since the second 1-tap is processed as a failed second tap of a double tap, and hence 2-tap becomes the first tap.
+    if (!data.tap.expired){
+        auto prevEndTime = data.tap.timestamp;
+        auto timeDiff = event.timestamp.ellapsedMillis(prevEndTime);
+        if (timeDiff > DOUBLE_TAP_TIME_GAP){
+            data.tap.expired = true;
+        }
+    }
+}
+
+void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
+    if (!_active){
+        return;;
+    }
+    // TODO: this does not work the same way when you rotate the phone 180 (use Display instead)
+    Size s = Application::get()->getDisplaySize();
+    Vec2 touchPos = event.position;
+    if (reversedGestures){
+        // need to refactor code so this works for either setting
+    }
+    else {
+        // default (left-move, right-combat)
+        if (touchPos.x >= 2*s.width/3 && !_combatGesture.active){
+            // right sided
+            initGestureDataFromEvent(_combatGesture, event);
+        }
+        else if (touchPos.x <= s.width/3 && !_motionGesture.active){
+            // left sided
+            initGestureDataFromEvent(_motionGesture, event);
+        }
+    }
 }
  
-/**
- * Callback for the end of a touch event
- *
- * @param t     The touch information
- * @param event The associated event
- */
+
 void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     if (!_active){
         return;;
     }
-    // parry occurs on release (longer tap)
-    // attack occurs on release (short tap)
-    // it is required that the touch has not moved much because otherwise it becomes
-    // a player may have tap + hold + swipe (to dodge) but on release, this should not fire an attack/parry event
     Vec2 touchPos = event.position;
-    Size s = Application::get()->getDisplaySize();
-    if (touchPos.x >= s.width/2 && _rightGesture.active && event.touch == _rightGesture.touchID){
-        // since the right-sided event did not result in a dodge,
-        // this implies an insufficient movement of touch (or none)
-        // so we can safely use the timestamp to judge whether it is an attack or parry
-        auto elapsed = event.timestamp.ellapsedMillis(_rightGesture.timestamp);
-        if (elapsed >= PARRY_HOLD_TIME){
-            _keyParry = true;
+
+    // Dodge = quick release of motion gesture
+    if (_motionGesture.active && event.touch == _motionGesture.touchID){
+        _motionGesture.active = false;
+        if (event.timestamp.ellapsedMillis(_motionGesture.timestamp) <= DODGE_SWIPE_TIME){
+            // quick swipe
+            Vec2 swipeDir = touchPos - _motionGesture.initialPos;
+            float swipeLength = swipeDir.length();
+            if (swipeLength >= EVENT_SWIPE_LENGTH){
+                _keyDodgeDir.set(swipeDir.x, -swipeDir.y); //negate y because screen origin is different from game origin.
+                _keyDodge = true;
+            }
         }
-        else {
-            _keyAttack = true;
-        }
-        _rightGesture.active = false;
+        // slowly letting go of the joystick always implies no movement
+        _keyMoveDir = Vec2::ZERO;
     }
     
-    // handle release on left-side (for now, this can happen if the user just don't want to move
-    if (_leftGesture.active && event.touch == _leftGesture.touchID){
-        _leftGesture.active = false;
-        _keyMoveDir = Vec2::ZERO;
+    if (_combatGesture.active && event.touch == _combatGesture.touchID){
+        _combatGesture.active = false;
+        Vec2 gestureMotion = touchPos - _combatGesture.initialPos;
+        float changeInPosition = gestureMotion.length();
+        auto elapsed = event.timestamp.ellapsedMillis(_combatGesture.timestamp);
+        if (changeInPosition < EVENT_SWIPE_LENGTH && elapsed >= HOLD_TIME){
+            _keyParry = true;
+        }
+        if (changeInPosition >= EVENT_SWIPE_LENGTH && elapsed < HOLD_TIME){
+            _keyAttack = true;
+            _keyAttackDir.set(gestureMotion.x, -gestureMotion.y);
+        }
+        
+        // TODO: user-testing: make sure a tap and a swipe isn't being recognized as being too similar
+        bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition < EVENT_SWIPE_LENGTH;
+        TapData& tap = _combatGesture.tap;
+        if (is_tap_event){
+            if (tap.expired){
+                // first tap, so we should renew the data so to anticipate a second tap.
+                tap.expired = false;
+                tap.timestamp = event.timestamp;
+                tap.pos = _combatGesture.initialPos;
+            }
+            else {
+                // second tap
+                // check the difference in time
+                auto curStartTime = _combatGesture.timestamp;
+                auto prevEndTime = tap.timestamp;
+                auto timeDiff = curStartTime.ellapsedMillis(prevEndTime);
+                // TODO: figure out whether the two taps need to be as close as possible location-wise. that is quite interesting.
+                if (timeDiff <= DOUBLE_TAP_TIME_GAP){
+                    // double tap performed
+                    _keySwap = true;
+                }
+                tap.expired = true; // clear the tap data.
+            }
+        }
+        else {
+            // this release was not a tap (some form of a "hold" or quick swipe)
+            tap.expired = true; // clear the tap data.
+        }
     }
 }
 
@@ -245,40 +292,18 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
     // update positions in gestures (important for dodge and move)
     Vec2 touchPos = event.position;
     Size s = Application::get()->getDisplaySize();
-    if (touchPos.x >= s.width/2 && _rightGesture.active && _rightGesture.touchID == event.touch){
-        // right sided motion
-        _rightGesture.prevPos = previous;
-        _rightGesture.curPos = event.position;
-        
-        // check if finger dragged enough to initiate dodge
-        Vec2 swipeDir = touchPos - _rightGesture.initialPos;
-        float swipeLength = swipeDir.length();
-        if (swipeLength >= EVENT_SWIPE_LENGTH){
-            // update movement based on the direction vector
-            _keyDodge = true;
-            _keyDodgeDir.set(swipeDir.x, -swipeDir.y); //negate y because screen origin is different from game origin.
-            // now this touch is "freed" even if it still touches the screen
-            // every new dodge requires a tap + hold and moving
-            _rightGesture.active = false;
-        }
-        
-    }
-    else if (touchPos.x < s.width/2 && _leftGesture.active && _leftGesture.touchID == event.touch){
+    
+    if (touchPos.x < s.width/3 && _motionGesture.active && _motionGesture.touchID == event.touch){
         // left sided motion
-        _leftGesture.prevPos = previous;
-        _leftGesture.curPos = event.position;
+        _motionGesture.prevPos = previous;
+        _motionGesture.curPos = event.position;
         // check if finger dragged enough to initiate movement
-        Vec2 swipeDir = touchPos - _leftGesture.initialPos;
+        Vec2 swipeDir = touchPos - _motionGesture.initialPos;
         float swipeLength = swipeDir.length();
         if (swipeLength >= EVENT_SWIPE_LENGTH){
             // update movement based on the direction vector
             _keyMoveDir.set(swipeDir.x, -swipeDir.y); //negate y because screen origin is different from game origin.
         }
-    }
-    else if (touchPos.x >= s.width/2 && _leftGesture.active && _leftGesture.touchID == event.touch){
-        // case where gesture starts left but ends on right, fixes "infinite" player moement
-        _leftGesture.active = false;
-        _keyMoveDir = Vec2::ZERO;
     }
         
 }
