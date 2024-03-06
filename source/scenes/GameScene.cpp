@@ -296,7 +296,8 @@ void GameScene::preUpdate(float dt) {
                 //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang = 2*M_PI - ang;
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
                 
-                Vec2 direction = player->getFacingDir();
+                //Vec2 direction = player->getFacingDir();
+                Vec2 direction = _input.getAttackDirection();
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (direction.y < 0){
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
