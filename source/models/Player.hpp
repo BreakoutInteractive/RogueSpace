@@ -36,6 +36,8 @@ protected:
     
     cugl::Vec2 _drawScale;
     
+    cugl::Color4 _tint;
+    
     //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
@@ -71,6 +73,8 @@ public:
     Counter _dodgeDuration;
     /** counter that is active during the idle cycle*/
     Counter _idleCycle;
+    /** counter that is active while the player takes damage */
+    Counter _hitCounter;
     
     /**
      * decrement all counters
@@ -361,6 +365,11 @@ public:
     void animateDefault();
     /** Change to using the attack animation */
     void animateAttack();
+    
+    /**
+     * Method to call when the player is hit by an attack
+     */
+    void hit();
     
     
 #pragma mark -

@@ -46,6 +46,12 @@ protected:
     int _health;
     
 public:
+#pragma mark Counters
+    
+    Counter _atkLength;
+    
+    Counter _atkCD;
+    
 #pragma mark -
 #pragma mark Constructors
     /**

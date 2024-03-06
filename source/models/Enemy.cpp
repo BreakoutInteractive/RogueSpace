@@ -10,6 +10,10 @@
 using namespace cugl;
 
 #define HIT_TIME 10
+/**the number of frames an attack will last**/
+#define ATK_TIME 16
+/**the number of frames we wait before allowing another attack*/
+#define ATK_CD 120
 
 #pragma mark -
 #pragma mark Constructors
@@ -21,9 +25,11 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     std::string name("enemy");
     setName(name);
     _tint = Color4::WHITE;
-    _range = 12;        // Current range is hardcoded as 10 units for all enemies.
-                        // Factor this into the json as you wish. 
+    _range = 4;        // Current range is hardcoded as 10 units for all enemies.
+                        // Factor this into the json as you wish.
     _hitCounter.setMaxCount(HIT_TIME);
+    _atkLength.setMaxCount(ATK_TIME);
+    _atkCD.setMaxCount(ATK_CD);
     return true;
 }
 
@@ -89,6 +95,8 @@ void Enemy::hit() {
 }
 
 void Enemy::updateCounters() {
+    _atkCD.decrement();
+    _atkLength.decrement();
     _hitCounter.decrement();
     if (_hitCounter.isZero()) _tint = Color4::WHITE;
 }

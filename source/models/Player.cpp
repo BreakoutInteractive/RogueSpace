@@ -9,6 +9,7 @@
 
 #include "Player.hpp"
 
+#define HIT_TIME 10
 /**the number of frames we wait before allowing another attack, also currently the length of the attack*/
 #define ATK_CD 16
 /**the number of frames we wait before allowing another parry, also currently the length of the parry*/
@@ -29,7 +30,9 @@ bool Player::init(const Vec2 pos, const Size size) {
     //BoxObstacle::setAngle(M_PI_4);
     std::string name("player");
     setName(name);
+    _tint = Color4::WHITE;
     // set the counter properties
+    _hitCounter.setMaxCount(HIT_TIME);
     _atkCD.setMaxCount(ATK_CD);
     _parryCD.setMaxCount(PARRY_CD);
     _dodgeCD.setMaxCount(DODGE_CD);
@@ -103,7 +106,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     Vec2 origin = Vec2(_activeAnimation->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2::createTranslation(getPosition() * _drawScale);
-    _activeAnimation->draw(batch, origin, transform);
+    _activeAnimation->draw(batch, _tint, origin, transform);
     if (_attacking) {
         //this weird-looking operation is to advance the animation every other frame instead of every frame so that it is more visible
         int newFrame = _attackAnimation->getFrame() + (_atkCD.getCount() % 2 == 1);
@@ -113,7 +116,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         // render player differently while dodging (add fading effect)
         if (!_dodgeDuration.isZero()) {
             for (int i = 2; i < 10; i += 2) {
-                auto color = Color4(Vec4(1, 1, 1, 1 - i * 0.1));
+                auto color = Color4(Vec4(_tint.r/255, _tint.g/255, _tint.b/255, _tint.a/255 - i * 0.1));
                 // TODO: the tinted version of draw() shifts the texture for some reason (see documentation or Walker). Tinting may be needed for other purposes.
                 Vec2 bugOffset = -origin;
                 Affine2 localTrans = Affine2::createTranslation((getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale + bugOffset );
@@ -158,6 +161,13 @@ void Player::animateAttack() {
     _activeAnimation = _attackAnimation;
 }
 
+void Player::hit() {
+    if (_hitCounter.isZero()) {
+        _hitCounter.reset();
+        _tint = Color4::RED;
+    }
+}
+
 #pragma mark -
 #pragma mark State Update
 
@@ -171,6 +181,8 @@ void Player::updateCounters(){
         _idleCycle.reset();
         _idleAnimation->setFrame(8 * _directionIndex);
     }
+    _hitCounter.decrement();
+    if (_hitCounter.isZero()) _tint = Color4::WHITE;
 }
 
 void Player::setFacingDir(cugl::Vec2 dir){

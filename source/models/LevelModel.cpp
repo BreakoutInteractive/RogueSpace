@@ -65,6 +65,13 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         }
     }
     
+    for (int ii = 0; ii < _enemyAtks.size(); ii++) {
+        if (_enemyAtks[ii]->isEnabled()){
+            batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
+                _enemyAtks[ii]->getAngle() + M_PI_2, _enemyAtks[ii]->getPosition() * _scale);
+        }
+    }
+    
     _player->draw(batch);
     
     //we add pi/2 to the angle since the sprite is pointing down but the hitbox points right by default
@@ -75,6 +82,10 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     // make sure debug node is hidden when not active
     _atk->getDebugNode()->setVisible(_atk->isEnabled());
+    
+    for (int ii = 0; ii < _enemyAtks.size(); ii++){
+        _enemyAtks[ii]->getDebugNode()->setVisible(_enemyAtks[ii]->isEnabled());
+    }
 
 }
 
@@ -106,6 +117,10 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDebugScene(_debugNode);
+    }
+    for (int ii = 0; ii < _enemyAtks.size(); ii++){
+        _enemyAtks[ii]->setDebugScene(_debugNode);
+        _enemyAtks[ii]->setDebugColor(Color4::RED);
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
@@ -208,6 +223,10 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     _atk->setEnabled(false); // turn off the attack semisphere
     for (int ii = 0; ii < _enemies.size(); ii++){
         addObstacle(_enemies[ii]);
+    }
+    for (int ii = 0; ii < _enemyAtks.size(); ii++) {
+        addObstacle(_enemyAtks[ii]);
+        _enemyAtks[ii]->setEnabled(false);
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
@@ -316,6 +335,12 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
             enemy->setBodyType(b2_staticBody);
         }
         _enemies.push_back(enemy);
+        
+        // attack setup
+        auto attack = physics2::WheelObstacle::alloc(pos, ATK_RADIUS); //for now enemies have same attack radius as player
+        attack->setSensor(true);
+        attack->setBodyType(b2_dynamicBody);
+        _enemyAtks.push_back(attack);
     }
     return true;
 }
