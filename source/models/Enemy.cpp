@@ -14,6 +14,8 @@ using namespace cugl;
 #define ATK_TIME 16
 /**the number of frames we wait before allowing another attack*/
 #define ATK_CD 120
+/**the number of frames an enemy will be stunned*/
+#define STUN_CD 60
 
 #pragma mark -
 #pragma mark Constructors
@@ -30,6 +32,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     _hitCounter.setMaxCount(HIT_TIME);
     _atkLength.setMaxCount(ATK_TIME);
     _atkCD.setMaxCount(ATK_CD);
+    _stunCD.setMaxCount(STUN_CD);
     return true;
 }
 
@@ -95,6 +98,7 @@ void Enemy::hit() {
 }
 
 void Enemy::updateCounters() {
+    _stunCD.decrement();
     _atkCD.decrement();
     _atkLength.decrement();
     _hitCounter.decrement();

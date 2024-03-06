@@ -54,6 +54,8 @@ public:
     
     Counter _atkCD;
     
+    Counter _stunCD;
+    
 #pragma mark -
 #pragma mark Constructors
     /**
