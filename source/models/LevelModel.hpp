@@ -65,8 +65,6 @@ protected:
 
     std::shared_ptr<physics2::WheelObstacle> _atk;
     
-    std::vector<std::shared_ptr<physics2::WheelObstacle>> _enemyAtks;
-    
     std::shared_ptr<Floor> _floor;
     
     /** Reference to all the walls */
@@ -197,11 +195,6 @@ public:
      * @return the enemies in this game level
      */
     const std::vector<std::shared_ptr<Enemy>> getEnemies() { return _enemies; }
-    
-    /**
-     * @return the enemies' attack semi-sphere
-     */
-    const std::vector<std::shared_ptr<physics2::WheelObstacle>> getEnemyAttacks() { return _enemyAtks; }
 
 
 #pragma mark Physics Attributes

@@ -321,15 +321,14 @@ void GameScene::preUpdate(float dt) {
     
 #pragma mark - Enemy movement
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
-    std::vector<std::shared_ptr<physics2::WheelObstacle>> attacks = _level->getEnemyAttacks();
-    for (int ii = 0; ii < enemies.size(); ii++) {
-        enemies[ii]->updateCounters();
-        if (enemies[ii]->getHealth() <= 0) {
-            enemies[ii]->setEnabled(false);
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        (*it)->updateCounters();
+        if ((*it)->getHealth() <= 0) {
+            (*it)->setEnabled(false);
         }
-        if (enemies[ii]->isEnabled()) {
-            if (enemies[ii]->_atkCD.isZero() && enemies[ii]->getPosition().distance(player->getPosition()) <= enemies[ii]->getRange()) {
-                Vec2 direction = player->getPosition()*player->getDrawScale() - enemies[ii]->getPosition()*enemies[ii]->getDrawScale();
+        if ((*it)->isEnabled()) {
+            if ((*it)->_atkCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getRange()) {
+                Vec2 direction = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
                 direction.normalize();
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (direction.y < 0){
@@ -337,19 +336,19 @@ void GameScene::preUpdate(float dt) {
                     ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                 }
                 
-                attacks[ii]->setEnabled(true);
-                attacks[ii]->setAwake(true);
-                attacks[ii]->setAngle(ang);
-                attacks[ii]->setPosition(enemies[ii]->getPosition());
-                enemies[ii]->_atkCD.reset();
-                enemies[ii]->_atkLength.reset();
+                (*it)->getAttack()->setEnabled(true);
+                (*it)->getAttack()->setAwake(true);
+                (*it)->getAttack()->setAngle(ang);
+                (*it)->getAttack()->setPosition((*it)->getPosition());
+                (*it)->_atkCD.reset();
+                (*it)->_atkLength.reset();
             }
             // Vec2 f = _aiEngine.lineOfSight((*it), player);
             // (*it)->setForce(f);
             // (*it)->applyForce();
         }
-        if (enemies[ii]->_atkLength.isZero()) {
-            attacks[ii]->setEnabled(false);
+        if ((*it)->_atkLength.isZero()) {
+            (*it)->getAttack()->setEnabled(false);
         }
     }
     
@@ -418,19 +417,18 @@ void GameScene::beginContact(b2Contact* contact) {
     // enemy attack
     std::shared_ptr<Player> player = _level->getPlayer();
     intptr_t plptr = reinterpret_cast<intptr_t>(player.get());
-    std::vector<std::shared_ptr<physics2::WheelObstacle>> attacks = _level->getEnemyAttacks();
-    for (int ii = 0; ii < attacks.size(); ii++) {
-        intptr_t aptr = reinterpret_cast<intptr_t>(attacks[ii].get());
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        intptr_t aptr = reinterpret_cast<intptr_t>((*it)->getAttack().get());
         if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == plptr)
             || (body1->GetUserData().pointer == plptr && body2->GetUserData().pointer == aptr)) {
-            Vec2 dir = player->getPosition()*player->getDrawScale() - enemies[ii]->getPosition()*enemies[ii]->getDrawScale();
+            Vec2 dir = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
             dir.normalize();
             float ang = acos(dir.dot(Vec2::UNIT_X));
             if (player->getPosition().y * player->getDrawScale().y <
-                enemies[ii]->getPosition().y *
-                enemies[ii]->getDrawScale().y) ang = 2*M_PI-ang;
-            if (abs(ang - attacks[ii]->getAngle()) <= M_PI_2
-                || abs(ang - attacks[ii]->getAngle()) >= 3*M_PI_2) {
+                (*it)->getPosition().y *
+                (*it)->getDrawScale().y) ang = 2*M_PI-ang;
+            if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
+                || abs(ang - (*it)->getAttack()->getAngle()) >= 3*M_PI_2) {
                 player->hit();
                 CULog("Player took damage!");
             }

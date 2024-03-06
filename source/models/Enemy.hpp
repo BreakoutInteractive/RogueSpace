@@ -39,6 +39,8 @@ protected:
 
     Counter _hitCounter;
     
+    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
+    
     /** Enemy's sight range */
     float _range;
     
@@ -189,6 +191,15 @@ public:
      */
     void setHealth(int value) { _health = value; }
     
+    /**
+     * Gets this enemy's attack hitbox.
+     */
+    std::shared_ptr<cugl::physics2::WheelObstacle> getAttack() const { return _attack; }
+    
+    /**
+     * Sets this enemy's attack hitbox.
+     */
+    void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
     
 #pragma mark -
 #pragma mark Animation

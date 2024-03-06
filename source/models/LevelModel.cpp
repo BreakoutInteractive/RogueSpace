@@ -63,12 +63,9 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if (_enemies[ii]->isEnabled()) {
             _enemies[ii]->draw(batch);
         }
-    }
-    
-    for (int ii = 0; ii < _enemyAtks.size(); ii++) {
-        if (_enemyAtks[ii]->isEnabled()){
+        if (_enemies[ii]->getAttack()->isEnabled()) {
             batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
-                _enemyAtks[ii]->getAngle() + M_PI_2, _enemyAtks[ii]->getPosition() * _scale);
+                _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);
         }
     }
     
@@ -83,8 +80,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // make sure debug node is hidden when not active
     _atk->getDebugNode()->setVisible(_atk->isEnabled());
     
-    for (int ii = 0; ii < _enemyAtks.size(); ii++){
-        _enemyAtks[ii]->getDebugNode()->setVisible(_enemyAtks[ii]->isEnabled());
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
     }
 
 }
@@ -117,10 +114,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDebugScene(_debugNode);
-    }
-    for (int ii = 0; ii < _enemyAtks.size(); ii++){
-        _enemyAtks[ii]->setDebugScene(_debugNode);
-        _enemyAtks[ii]->setDebugColor(Color4::RED);
+        _enemies[ii]->getAttack()->setDebugScene(_debugNode);
+        _enemies[ii]->getAttack()->setDebugColor(Color4::RED);
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
@@ -223,10 +218,8 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     _atk->setEnabled(false); // turn off the attack semisphere
     for (int ii = 0; ii < _enemies.size(); ii++){
         addObstacle(_enemies[ii]);
-    }
-    for (int ii = 0; ii < _enemyAtks.size(); ii++) {
-        addObstacle(_enemyAtks[ii]);
-        _enemyAtks[ii]->setEnabled(false);
+        addObstacle(_enemies[ii]->getAttack());
+        _enemies[ii]->getAttack()->setEnabled(false);
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
@@ -340,7 +333,7 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         auto attack = physics2::WheelObstacle::alloc(pos, ATK_RADIUS); //for now enemies have same attack radius as player
         attack->setSensor(true);
         attack->setBodyType(b2_dynamicBody);
-        _enemyAtks.push_back(attack);
+        enemy->setAttack(attack);
     }
     return true;
 }
