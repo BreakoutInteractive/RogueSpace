@@ -51,34 +51,28 @@ JoyStick::JoyStick(const cugl::Vec2 p, cugl::Vec2 scale){
 
 
 void JoyStick::updateBasePos(cugl::Vec2 inputPos) { //stick a little ahead of input  //negate y because screen origin is different from game origin
-    //reposition joystick at player touch position then set active to true
-    _basePosition = inputPos.subtract(107, 3);
-    
-    _active = true;
+    _basePosition = inputPos;
     _joyBall->position = _basePosition;
-    
-     _basePosition = inputPos.divide(_drawBaseScale);
-    //    _basePosition = inputPos.subtract(Vec2(_baseTexture->getWidth()/2,_baseTexture->getHeight()/2)); x=377.160309 y 293.618317    1.40625
-    
-//    _basePosition = inputPos.subtract(Vec2(_drawBaseScale.x*_baseTexture->getWidth()/2,_drawBaseScale.y*_baseTexture->getHeight()/2));
-//    _basePosition = inputPos;
-//    _joyBall->position = inputPos;
-    
+    _active = true;
 }
 
 /**
  * Moves the active joystick.
  */
 void JoyStick::updateBallPos(cugl::Vec2 inputDir, cugl::Vec2 inputPos) { //stick a little ahead of input
-//    CULog("pos x: %f, y: %f", inputDir.x,inputDir.y);
-//    CULog("rad x: %f, y: %f", (_radius/_drawBaseScale).x,(_radius).y); 45,45
-    Vec2 ballPos = _joyBall->position;
-    
-    if (_joyBall->position-inputPos <_radius/_drawBaseScale) {
-        //check if ball within radius
-//        _joyBall->position=inputPos;
-    }
+    if (inputPos.distance(_basePosition)<_radius){
+        _joyBall->position=inputPos;
+    }else{
+        cugl::Vec2 touch2base(inputPos.x-_basePosition.x,inputPos.y-_basePosition.y);
 
+        float angle = atan2(touch2base.y, touch2base.x);
+        float xDist = sin(angle-1.5708)*_radius;
+        float yDist = cos(angle-1.5708)*_radius;
+        
+        _joyBall->position = Vec2(_basePosition.x-xDist, _basePosition.y+yDist);
+        _joyBall->angle=angle;
+
+    }
     
 }
 
@@ -89,11 +83,16 @@ void JoyStick::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
 }
 
+void JoyStick::setActive(bool active){
+    _active=active;
+    if(!active){
+        _joyBall->position = _basePosition;
+    }
+}
+
 void JoyStick::setDrawScale(cugl::Vec2 scale){
     _drawBaseScale = (Vec2)_baseTexture->getSize()/(4*scale);
     _joyBall->_drawBallScale=(Vec2)_ballTexture->getSize()/(4*scale);
-//    _drawBaseScale = scale;
-//    _joyBall->_drawBallScale=scale;
 
 }
 /**
@@ -108,27 +107,15 @@ void JoyStick::draw(const std::shared_ptr<SpriteBatch>& batch) {
 
         Affine2 transBase;
         transBase.scale(_drawBaseScale);
-        transBase.translate(_basePosition);
+        transBase.translate(_basePosition-(baseOrigin));
         
         Affine2 transBall;
         transBall.scale(_drawBaseScale);
-        transBall.translate(_joyBall->position);
-        
+        transBall.translate(_joyBall->position-(baseOrigin));
+
         batch->draw(_baseTexture, baseOrigin, transBase);
         batch->draw(_ballTexture, ballOrigin, transBall);
-
         
-        
-        
-        //        Vec2 copyPos = _joyBall->position;
-        //        copyPos.add(_radius,_radius);
-        //        transBall.translate(copyPos);
-
-//          batch draw(texture, color, origin, scale, angle, offset)
-//        batch->draw(_baseTexture, baseOrigin, _drawBaseScale, 0, (_basePosition)*_drawBaseScale);
-//        batch->draw(_ballTexture, ballOrigin, _joyBall->_drawBallScale, 180, (_joyBall->position)*_joyBall->_drawBallScale);
-//        batch->draw(_baseTexture, baseOrigin, _drawBaseScale, 0, (_baseTexture->getSize())*_drawBaseScale);
-//        batch->draw(_ballTexture, ballOrigin, _joyBall->_drawBallScale, _joyBall->angle, _ballTexture->getSize()*_joyBall->_drawBallScale);
 
     }
 }

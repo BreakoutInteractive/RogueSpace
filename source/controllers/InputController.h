@@ -186,6 +186,10 @@ public:
      */
     cugl::Vec2 getMoveDirection(){ return _moveDir; }
     
+    bool isLeft() const { return _leftGesture.active; }
+    cugl::Vec2 getInitialLocation(){ return _leftGesture.initialPos; }
+    cugl::Vec2 getTouchLocation(){ return _leftGesture.curPos; }
+    
     /**
      * Returns true if the dodge input was triggered.
      */

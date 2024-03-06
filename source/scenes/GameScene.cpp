@@ -17,6 +17,7 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
+#include "JoyStick.hpp"
 
 #include <ctime>
 #include <string>
@@ -220,6 +221,18 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
+    
+    std::shared_ptr<JoyStick> stick = _level->getJoystick();
+    if(_input.isLeft()){
+        if (!stick->getActive()) {
+            stick->updateBasePos(screenToWorldCoords(_input.getInitialLocation()));
+        }
+        else {
+            stick->updateBallPos(moveForce,screenToWorldCoords(_input.getTouchLocation()));
+        }
+    } else{
+        stick->setActive(false);
+    }
     
     // update the direction the player is facing
     if (moveForce.length() > 0){

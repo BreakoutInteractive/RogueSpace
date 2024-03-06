@@ -183,7 +183,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 	_world = physics2::ObstacleWorld::alloc(getBounds(),Vec2::ZERO);
     
     /** Create joystick */
-    _joystick = std::make_shared<JoyStick>(Vec2(1024/4,576/2), Vec2::ZERO); //hard code position for testing
+    _joystick = std::make_shared<JoyStick>(Vec2::ZERO, Vec2::ZERO); 
     
     auto playerJson = json->get(PLAYER_FIELD);
     if (playerJson != nullptr){
