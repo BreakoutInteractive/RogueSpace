@@ -17,7 +17,7 @@
 //  Author: Walker White
 //  Version: 1/20/16
 //
-#include "JSWallModel.h"
+#include "JSWallModel.hpp"
 
 #pragma mark -
 #pragma mark Initializers

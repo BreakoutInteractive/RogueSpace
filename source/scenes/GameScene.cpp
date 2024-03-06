@@ -11,8 +11,8 @@
 //  Modified: Zhiyuan Chen
 //  Version: 2/17/24
 //
-#include "GameScene.h"
-#include "../models/JSLevelConstants.h"
+#include "GameScene.hpp"
+#include "../models/LevelConstants.hpp"
 #include "../models/Enemy.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
@@ -65,6 +65,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
+    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+    
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         CULog("Fail!");
@@ -73,6 +75,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     _input.init();
+    // _aiEngine.init(dimen);
     _level->setAssets(_assets);
     _backgroundTexture = assets->get<Texture>("background");
     
@@ -86,13 +89,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
                                           dimen.height/_level->getViewBounds().height;
     _level->setDrawScale(Vec2(_scale, _scale));
+    
+    _camController.init(getCamera(), 2.5f);
+    auto p = _level->getPlayer();
+    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
+    
 #pragma mark - GameScene:: Scene Graph Initialization
     
     // Create the scene graph nodes
-    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     _debugNode = scene2::SceneNode::alloc();
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
-    _debugNode->setPosition(_offset);
+    _debugNode->setPosition(Vec2::ZERO);
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setVisible(true);
   
@@ -338,13 +345,22 @@ void GameScene::preUpdate(float dt) {
     //}
     
     player->updateCounters();
+    
+#pragma mark - Enemy movement
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         if ((*it)->getHealth() <= 0) {
             (*it)->setEnabled(false);
         }
+        // Vec2 f = _aiEngine.lineOfSight((*it), player);
+        // (*it)->setForce(f);
+        // (*it)->applyForce();
     }
+    
+    _camController.setTarget(player->getPosition() * player->getDrawScale());
+    _camController.update(dt);
+    _winNode->setPosition(_camController.getPosition());
 }
 
 
@@ -472,16 +488,14 @@ void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
     // render background
     batch->begin(getCamera()->getCombined());
     Size s = Application::get()->getDisplaySize();
-    batch->draw(_backgroundTexture, Rect(0, 0, s.width, s.height));
+    Vec3 camPos = getCamera()->getPosition();
+    batch->draw(_backgroundTexture, Rect(camPos.x - s.width/2, camPos.y - s.height/2, s.width, s.height));
+
     batch->end();
     if (_level != nullptr){
-        getCamera()->translate(-_offset);
-        getCamera()->update();
         batch->begin(getCamera()->getCombined());
         _level->render(batch);
         batch->end();
-        getCamera()->translate(_offset);
-        getCamera()->update();
     }
     // draw the debug component
     Scene2::render(batch);

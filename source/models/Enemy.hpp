@@ -39,6 +39,9 @@ protected:
 
     Counter _hitCounter;
     
+    /** Enemy's sight range */
+    float _range;
+    
     /** The enemy's current health */
     int _health;
     
@@ -100,6 +103,16 @@ public:
     
 #pragma mark -
 #pragma mark Accessors
+    /**
+     * Returns the sight range applied to this player.
+     *
+     * Remember to modify the input values by the thrust amount before assigning
+     * the value to force.
+     *
+     * @return the force applied to this player.
+     */
+    const float getRange() const { return _range; }
+    
     /**
      * Returns the force applied to this player.
      *

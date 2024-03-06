@@ -1,5 +1,5 @@
-#include "App.h"
-#include "models/JSLevelConstants.h"
+#include "App.hpp"
+#include "models/LevelConstants.hpp"
 
 using namespace cugl;
 

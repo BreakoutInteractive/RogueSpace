@@ -1,4 +1,4 @@
-#include "LoadingScene.h"
+#include "LoadingScene.hpp"
 
 using namespace cugl;
 

@@ -20,7 +20,7 @@
         "enemy-1": {
             "pos": [22, 13],
             "size": [0.6,0.6],
-            "bodytype":     "static",
+            "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
             "restitution":  0,
@@ -32,7 +32,7 @@
         "enemy-2": {
             "pos": [18, 13],
             "size": [0.6,0.6],
-            "bodytype":     "static",
+            "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
             "restitution":  0,
@@ -44,7 +44,7 @@
         "enemy-3": {
             "pos": [8, 8],
             "size": [0.6,0.6],
-            "bodytype":     "static",
+            "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
             "restitution":  0,
@@ -56,7 +56,7 @@
         "enemy-4": {
             "pos": [2, 6],
             "size": [0.6,0.6],
-            "bodytype":     "static",
+            "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
             "restitution":  0,

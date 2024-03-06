@@ -14,11 +14,11 @@
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
-#include "../models/JSRocketModel.h"
 #include "../models/Player.hpp"
-#include "../controllers/InputController.h"
-#include "../models/JSExitModel.h"
-#include "../models/LevelModel.h"
+#include "../controllers/AIController.hpp"
+#include "../controllers/InputController.hpp"
+#include "../models/LevelModel.hpp"
+#include "../controllers/CameraController.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -35,6 +35,10 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
+    /** Engine to process mob movement */
+    AIController _AIController;
+    /** Controller to modify camera behavior */
+    CameraController _camController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
