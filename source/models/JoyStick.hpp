@@ -56,6 +56,9 @@ private:
     
     /** The drawing scale of the joystick base  */
     cugl::Vec2 _drawBaseScale;
+    cugl::Vec2 _trueScale;
+    
+    int time;
     
     /** Whether the joystick is active or not  */
     float _active;

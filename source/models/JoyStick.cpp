@@ -8,7 +8,11 @@
 #include <math.h>
 #include "JoyStick.hpp"
 
+
 using namespace cugl;
+
+#define HOLD_TIME 25
+
 
 #pragma mark JoyStick
 JoyStick::Ball::Ball() {
@@ -43,14 +47,16 @@ JoyStick::JoyStick() {
 }
 
 JoyStick::JoyStick(const cugl::Vec2 p, cugl::Vec2 scale){
-    _basePosition = p;
-    _active = false;
+
+    _basePosition = Vec2(1024/2,576/2);
+    _active = true;
+    time=0;
     _drawBaseScale=scale;
     _joyBall = std::make_shared<Ball>(_basePosition);
 }
 
 
-void JoyStick::updateBasePos(cugl::Vec2 inputPos) { //stick a little ahead of input  //negate y because screen origin is different from game origin
+void JoyStick::updateBasePos(cugl::Vec2 inputPos) {
     _basePosition = inputPos;
     _joyBall->position = _basePosition;
     _active = true;
@@ -73,7 +79,6 @@ void JoyStick::updateBallPos(cugl::Vec2 inputDir, cugl::Vec2 inputPos) { //stick
         _joyBall->angle=angle;
 
     }
-    
 }
 
 void JoyStick::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -87,6 +92,7 @@ void JoyStick::setActive(bool active){
     _active=active;
     if(!active){
         _joyBall->position = _basePosition;
+        time = 0;
     }
 }
 
@@ -107,15 +113,22 @@ void JoyStick::draw(const std::shared_ptr<SpriteBatch>& batch) {
 
         Affine2 transBase;
         transBase.scale(_drawBaseScale);
-        transBase.translate(_basePosition-(baseOrigin));
+        transBase.translate(_basePosition.x, _basePosition.y);
         
         Affine2 transBall;
         transBall.scale(_drawBaseScale);
-        transBall.translate(_joyBall->position-(baseOrigin));
+        transBall.translate(_joyBall->position.x, _joyBall->position.y);
 
-        batch->draw(_baseTexture, baseOrigin, transBase);
-        batch->draw(_ballTexture, ballOrigin, transBall);
         
-
+        batch->draw(_ballTexture, Color4(Vec4(1,1,1,.5*time/HOLD_TIME)), ballOrigin, transBall);
+        batch->draw(_baseTexture, Color4(Vec4(1,1,1,.5*time/HOLD_TIME)), baseOrigin, transBase);
+        
+        batch->draw(_ballTexture, Color4(Vec4(1,1,1,1)), ballOrigin, transBall);
+        batch->draw(_baseTexture, Color4(Vec4(1,1,1,1)), baseOrigin, transBase);
+        
+        if (time<HOLD_TIME){
+            time+=1;
+        }
+                
     }
 }
