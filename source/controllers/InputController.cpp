@@ -172,6 +172,34 @@ void InputController::clear() {
     _timestamp.mark();
 }
 
+#pragma mark -
+#pragma mark Helper Functions
+
+/**
+ * @return true if the touch is applied on the motion gesture
+ */
+bool motionPosConstraint(Vec2 touchPos, bool reversed){
+    Size s = Application::get()->getDisplaySize();
+    if (reversed){
+        return touchPos.x >= 2* s.width/3;
+    }
+    else {
+        return touchPos.x < s.width/3;
+    }
+}
+
+/**
+ * @return true if the touch is applied on the combat gesture
+ */
+bool combatPosConstraint(Vec2 touchPos, bool reversed){
+    Size s = Application::get()->getDisplaySize();
+    if (reversed){
+        return touchPos.x < s.width/3;
+    }
+    else {
+        return touchPos.x >= 2* s.width/3;
+    }
+}
 
 #pragma mark -
 #pragma mark Touch Callbacks
@@ -199,22 +227,13 @@ void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
     if (!_active){
         return;;
     }
-    // TODO: this does not work the same way when you rotate the phone 180 (use Display instead)
-    Size s = Application::get()->getDisplaySize();
     Vec2 touchPos = event.position;
-    if (reversedGestures){
-        // need to refactor code so this works for either setting
+    // default: combat = right sided, motion = left
+    if (combatPosConstraint(touchPos, reversedGestures) && !_combatGesture.active){
+        initGestureDataFromEvent(_combatGesture, event);
     }
-    else {
-        // default (left-move, right-combat)
-        if (touchPos.x >= 2*s.width/3 && !_combatGesture.active){
-            // right sided
-            initGestureDataFromEvent(_combatGesture, event);
-        }
-        else if (touchPos.x <= s.width/3 && !_motionGesture.active){
-            // left sided
-            initGestureDataFromEvent(_motionGesture, event);
-        }
+    else if (motionPosConstraint(touchPos, reversedGestures) && !_motionGesture.active){
+        initGestureDataFromEvent(_motionGesture, event);
     }
 }
  
@@ -291,9 +310,8 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
     }
     // update positions in gestures (important for dodge and move)
     Vec2 touchPos = event.position;
-    Size s = Application::get()->getDisplaySize();
     
-    if (touchPos.x < s.width/3 && _motionGesture.active && _motionGesture.touchID == event.touch){
+    if (_motionGesture.active && _motionGesture.touchID == event.touch){
         // left sided motion
         _motionGesture.prevPos = previous;
         _motionGesture.curPos = event.position;

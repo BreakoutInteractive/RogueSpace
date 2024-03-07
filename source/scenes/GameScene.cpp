@@ -501,5 +501,4 @@ void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
     }
     // draw the debug component
     Scene2::render(batch);
-    CULog("drawn");
 }
