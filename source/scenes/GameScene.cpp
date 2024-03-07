@@ -358,10 +358,6 @@ void GameScene::preUpdate(float dt) {
         // (*it)->setForce(f);
         // (*it)->applyForce();
     }
-    
-    _camController.setTarget(player->getPosition() * player->getDrawScale());
-    _camController.update(dt);
-    _winNode->setPosition(_camController.getPosition());
 }
 
 
@@ -369,6 +365,11 @@ void GameScene::fixedUpdate(float step) {
     // Turn the physics engine crank.
     if (_level != nullptr){
         _level->getWorld()->update(step);
+        auto player = _level->getPlayer();
+        _camController.update(step);
+        _camController.setTarget(player->getPosition() * player->getDrawScale());
+        _winNode->setPosition(_camController.getPosition());
+        _loseNode->setPosition(_camController.getPosition());
     }
 }
 
@@ -500,4 +501,5 @@ void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
     }
     // draw the debug component
     Scene2::render(batch);
+    CULog("drawn");
 }
