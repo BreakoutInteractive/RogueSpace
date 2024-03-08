@@ -19,21 +19,10 @@ public:
     public:
         /** ball position */
         cugl::Vec2 position;
-        /** ball angle */
-        float angle;
         /** The drawing scale of the joystick ball */
         cugl::Vec2 _drawBallScale;
         
     public:
-        Ball();
-        /**
-         * Allocates a joystick ball by setting its position and angle.
-         *
-         * @param p         The position
-         * @param ang     The angle
-         */
-        Ball(const cugl::Vec2 p, float ang);
-        
         /**
          * Allocates a joystick ball by setting its position .
          *
@@ -44,7 +33,7 @@ public:
         /**
          * Moves the joystick ball one animation frame
          */
-        void update(const cugl::Vec2 p, float ang);
+        void update(const cugl::Vec2 p);
     };
     
 private:
@@ -54,11 +43,11 @@ private:
     /** The texture for the joystick base sprite. */
     std::shared_ptr<cugl::Texture> _baseTexture;
     
-    /** The drawing scale of the joystick base  */
+    /** The drawing scale of the joystick base .*/
     cugl::Vec2 _drawBaseScale;
-    cugl::Vec2 _trueScale;
     
-    int time;
+    /** time of hold for joystick to appear.  */
+    int _time;
     
     /** Whether the joystick is active or not  */
     float _active;
@@ -99,6 +88,7 @@ public:
      * @return the scale of this joystick.
      */
     cugl::Vec2 getScale() const { return _drawBaseScale; }
+    
     cugl::Vec2 getPositon() const { return _basePosition; }
         
     /**

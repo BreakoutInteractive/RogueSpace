@@ -51,7 +51,7 @@ void LevelModel::setDrawScale(Vec2 scale) {
         CUAssertLog(false, "Failed to set draw scale for floor");
     }
     if (_joystick != nullptr) {
-        _joystick->setDrawScale(scale);
+        _joystick->setDrawScale(Vec2(.75, .75));
     }
     else {
         CUAssertLog(false, "Failed to set draw scale for joystick");

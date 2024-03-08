@@ -48,10 +48,10 @@
             "file":     "textures/player_slash.png"
         },
         "joystick_base": {
-            "file":     "textures/Joystick-Ring.png"
+            "file":     "textures/js_ring.png"
         },
         "stick": {
-            "file":     "textures/Joystick-Button.png"
+            "file":     "textures/js_button.png"
         }
 	},
     "sounds": {
