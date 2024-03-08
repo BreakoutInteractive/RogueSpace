@@ -45,8 +45,17 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
 }
 
 void AIController::update(float dt){
-    // TODO: implement the following
     // make sentries rotate 45 degrees counterclockwise (?) at set intervals
+    for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
+        if ((*it)->getDefaultState() == "sentry") {
+            if ((*it)->_sentryCD.isZero()) {
+                (*it)->_sentryCD.reset();
+                (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
+                CULog("Sentry direction: %f, %f", (*it)->getFacingDir().x, (*it)->getFacingDir().y);
+            }
+        }
+    }
+    // TODO: implement the following
     // make patrolling enemies move to the next node in their path
     // if enemy has LOS of player
     //      move along shortest path to player

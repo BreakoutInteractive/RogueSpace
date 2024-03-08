@@ -94,6 +94,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
+    _AIController.init(_level);
+    
 #pragma mark - GameScene:: Scene Graph Initialization
     
     // Create the scene graph nodes
@@ -320,6 +322,8 @@ void GameScene::preUpdate(float dt) {
     player->updateCounters();
     
 #pragma mark - Enemy movement
+    _AIController.update(dt);
+    // enemy attacks
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();

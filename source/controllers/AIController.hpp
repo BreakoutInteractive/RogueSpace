@@ -61,6 +61,7 @@ public:
     
     /**
      * TODO: document this function
+     * Updates locations and states for all enemies
     */
     void update(float dt);
     

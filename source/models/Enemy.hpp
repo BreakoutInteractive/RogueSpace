@@ -47,6 +47,9 @@ protected:
     /** The enemy's current health */
     int _health;
     
+    /** The current direction the enemy is facing */
+    cugl::Vec2 _facingDirection;
+    
     /** The enemy's default state */
     std::string _defaultState;
     
@@ -61,6 +64,8 @@ public:
     Counter _atkCD;
     
     Counter _stunCD;
+    
+    Counter _sentryCD;
     
 #pragma mark -
 #pragma mark Constructors
@@ -228,6 +233,16 @@ public:
      * Sets this enemy's patrol path.
      */
     void setPath(std::vector<cugl::Vec2> value) { _path = value; }
+    
+    /**
+     * @return the unit vector direction that the enemy is facing towards
+     */
+    cugl::Vec2 getFacingDir() { return _facingDirection; }
+    
+    /**
+     * Sets the direction that the enemy is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir) { _facingDirection = dir; };
     
 #pragma mark -
 #pragma mark Animation

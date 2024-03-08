@@ -16,6 +16,8 @@ using namespace cugl;
 #define ATK_CD 120
 /**the number of frames an enemy will be stunned*/
 #define STUN_CD 60
+/**the number of frames a sentry will wait before rotating**/
+#define SENTRY_CD 120
 
 #pragma mark -
 #pragma mark Constructors
@@ -33,6 +35,9 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     _atkLength.setMaxCount(ATK_TIME);
     _atkCD.setMaxCount(ATK_CD);
     _stunCD.setMaxCount(STUN_CD);
+    _sentryCD.setMaxCount(SENTRY_CD);
+    
+    _facingDirection = Vec2(0, -1); // starts facing downward
     return true;
 }
 
@@ -98,6 +103,7 @@ void Enemy::hit() {
 }
 
 void Enemy::updateCounters() {
+    _sentryCD.decrement();
     _stunCD.decrement();
     _atkCD.decrement();
     _atkLength.decrement();
