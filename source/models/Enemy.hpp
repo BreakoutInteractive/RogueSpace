@@ -47,6 +47,12 @@ protected:
     /** The enemy's current health */
     int _health;
     
+    /** The enemy's default state */
+    std::string _defaultState;
+    
+    /** The enemy's patrol path */
+    std::vector<cugl::Vec2> _path;
+    
 public:
 #pragma mark Counters
     
@@ -202,6 +208,26 @@ public:
      * Sets this enemy's attack hitbox.
      */
     void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
+    
+    /**
+     * Gets this enemy's default state.
+     */
+    std::string getDefaultState() const { return _defaultState; }
+    
+    /**
+     * Sets this enemy's default state.
+     */
+    void setDefaultState(std::string value) { _defaultState = value; }
+    
+    /**
+     * Gets this enemy's patrol path.
+     */
+    std::vector<cugl::Vec2> getPath() const { return _path; }
+    
+    /**
+     * Sets this enemy's patrol path.
+     */
+    void setPath(std::vector<cugl::Vec2> value) { _path = value; }
     
 #pragma mark -
 #pragma mark Animation

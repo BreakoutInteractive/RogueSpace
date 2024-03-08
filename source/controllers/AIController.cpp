@@ -7,7 +7,7 @@ using namespace cugl;
 
 void AIController::init(std::shared_ptr<LevelModel> level) {
     _world = level->getWorld();
-    // set enemies here ? 
+    _enemies = level->getEnemies(); // set enemies here ?
     // will have to get set from level, need to change levelmodel interface.
     
 }
@@ -16,6 +16,7 @@ AIController::~AIController(){
     // TODO: complete destructor
 }
 
+// this should return a bool(?)
 cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
     Vec2 ePos = e->getPosition();
     Vec2 pPos = p->getPosition();
@@ -44,5 +45,13 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
 }
 
 void AIController::update(float dt){
-    // TODO: make any 
+    // TODO: implement the following
+    // make sentries rotate 45 degrees counterclockwise (?) at set intervals
+    // make patrolling enemies move to the next node in their path
+    // if enemy has LOS of player
+    //      move along shortest path to player
+    // otherwise
+    //      stop and look around for a bit (do we want this?) before either
+    //          moving back to default position (for sentries) or
+    //          moving back to the closest node on their patrol path (for patrol enemies)
 }

@@ -323,6 +323,14 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         enemy->setTextureKey(json->getString(TEXTURE_FIELD));
         enemy->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
         enemy->setHealth(json->getInt("health"));
+        enemy->setDefaultState(json->getString("defaultstate"));
+        std::vector<Vec2> path;
+        auto pathData = json->get("path");
+        for (int j = 0; j < pathData->size(); j++) {
+            Vec2 node(pathData->get(j)->get(0)->asFloat(), pathData->get(j)->get(1)->asFloat());
+            path.push_back(node);
+        }
+        enemy->setPath(path);
         std::string btype = json->getString(BODYTYPE_FIELD);
         if (btype == STATIC_VALUE) {
             enemy->setBodyType(b2_staticBody);
