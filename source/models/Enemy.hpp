@@ -39,13 +39,40 @@ protected:
 
     Counter _hitCounter;
     
+    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
+    
     /** Enemy's sight range */
     float _range;
     
     /** The enemy's current health */
     int _health;
     
+    /** The current direction the enemy is facing */
+    cugl::Vec2 _facingDirection;
+    
+    /** The enemy's default state */
+    std::string _defaultState;
+    
+    /** The enemy's patrol path */
+    std::vector<cugl::Vec2> _path;
+    
+    /** The enemy's goal position */
+    cugl::Vec2 _goal;
+    
+    /** The enemy's goal path index */
+    int _pathIndex;
+    
 public:
+#pragma mark Counters
+    
+    Counter _atkLength;
+    
+    Counter _atkCD;
+    
+    Counter _stunCD;
+    
+    Counter _sentryCD;
+    
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -183,6 +210,65 @@ public:
      */
     void setHealth(int value) { _health = value; }
     
+    /**
+     * Gets this enemy's attack hitbox.
+     */
+    std::shared_ptr<cugl::physics2::WheelObstacle> getAttack() const { return _attack; }
+    
+    /**
+     * Sets this enemy's attack hitbox.
+     */
+    void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
+    
+    /**
+     * Gets this enemy's default state.
+     */
+    std::string getDefaultState() const { return _defaultState; }
+    
+    /**
+     * Sets this enemy's default state.
+     */
+    void setDefaultState(std::string value) { _defaultState = value; }
+    
+    /**
+     * Gets this enemy's patrol path.
+     */
+    std::vector<cugl::Vec2> getPath() const { return _path; }
+    
+    /**
+     * Sets this enemy's patrol path.
+     */
+    void setPath(std::vector<cugl::Vec2> value) { _path = value; }
+    
+    /**
+     * Gets this enemy's goal position.
+     */
+    cugl::Vec2 getGoal() const { return _goal; }
+    
+    /**
+     * Sets this enemy's goal position.
+     */
+    void setGoal(cugl::Vec2 value) { _goal = value; }
+    
+    /**
+     * Gets this enemy's goal path index.
+     */
+    int getPathIndex() const { return _pathIndex; }
+    
+    /**
+     * Sets this enemy's goal path index.
+     */
+    void setPathIndex(int value) { _pathIndex = value; }
+    
+    /**
+     * @return the unit vector direction that the enemy is facing towards
+     */
+    cugl::Vec2 getFacingDir() { return _facingDirection; }
+    
+    /**
+     * Sets the direction that the enemy is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir) { _facingDirection = dir; };
     
 #pragma mark -
 #pragma mark Animation

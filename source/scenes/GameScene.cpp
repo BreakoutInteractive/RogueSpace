@@ -102,6 +102,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
+    _AIController.init(_level);
+    
 #pragma mark - GameScene:: Scene Graph Initialization
     
     // Create the scene graph nodes
@@ -217,6 +219,7 @@ void GameScene::preUpdate(float dt) {
         // Load a new level and quit update
         _resetNode->setVisible(true);
         _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
+        _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
         setComplete(false);
         setDefeat(false);
         return;
@@ -321,7 +324,7 @@ void GameScene::preUpdate(float dt) {
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                     ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                 }
-  
+
                 atk->setEnabled(true);
                 atk->setAwake(true);
                 atk->setAngle(ang);
@@ -366,15 +369,39 @@ void GameScene::preUpdate(float dt) {
     player->updateCounters();
     
 #pragma mark - Enemy movement
+    _AIController.update(dt);
+    // enemy attacks
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         if ((*it)->getHealth() <= 0) {
             (*it)->setEnabled(false);
         }
-        // Vec2 f = _aiEngine.lineOfSight((*it), player);
-        // (*it)->setForce(f);
-        // (*it)->applyForce();
+        if ((*it)->isEnabled()) {
+            // enemy attacks if not stunned and within range of player
+            if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getRange()) {
+                Vec2 direction = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
+                direction.normalize();
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (direction.y < 0){
+                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                }
+                
+                (*it)->getAttack()->setEnabled(true);
+                (*it)->getAttack()->setAwake(true);
+                (*it)->getAttack()->setAngle(ang);
+                (*it)->getAttack()->setPosition((*it)->getPosition());
+                (*it)->_atkCD.reset();
+                (*it)->_atkLength.reset();
+            }
+            // Vec2 f = _aiEngine.lineOfSight((*it), player);
+            // (*it)->setForce(f);
+            // (*it)->applyForce();
+        }
+        if ((*it)->_atkLength.isZero()) {
+            (*it)->getAttack()->setEnabled(false);
+        }
     }
 }
 
@@ -446,6 +473,27 @@ void GameScene::beginContact(b2Contact* contact) {
             if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit();
         }
     }
+    // enemy attack
+    std::shared_ptr<Player> player = _level->getPlayer();
+    intptr_t plptr = reinterpret_cast<intptr_t>(player.get());
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        intptr_t aptr = reinterpret_cast<intptr_t>((*it)->getAttack().get());
+        if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == plptr)
+            || (body1->GetUserData().pointer == plptr && body2->GetUserData().pointer == aptr)) {
+            Vec2 dir = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
+            dir.normalize();
+            float ang = acos(dir.dot(Vec2::UNIT_X));
+            if (player->getPosition().y * player->getDrawScale().y <
+                (*it)->getPosition().y *
+                (*it)->getDrawScale().y) ang = 2*M_PI-ang;
+            if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
+                || abs(ang - (*it)->getAttack()->getAngle()) >= 3*M_PI_2) {
+                player->hit();
+                CULog("Player took damage!");
+            }
+        }
+    }
+    
     //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
     //this is handled in beforeSolve by disabling the contact if the player is dodging and collides with enemies or their attacks
     

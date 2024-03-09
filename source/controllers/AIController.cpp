@@ -7,15 +7,17 @@ using namespace cugl;
 
 void AIController::init(std::shared_ptr<LevelModel> level) {
     _world = level->getWorld();
-    // set enemies here ? 
+    _enemies = level->getEnemies(); // set enemies here ?
     // will have to get set from level, need to change levelmodel interface.
     
 }
 
 AIController::~AIController(){
-    // TODO: complete destructor
+    _world = nullptr;
+    _enemies.clear();
 }
 
+// this should return a bool(?)
 cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
     Vec2 ePos = e->getPosition();
     Vec2 pPos = p->getPosition();
@@ -44,5 +46,31 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
 }
 
 void AIController::update(float dt){
-    // TODO: make any 
+    for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
+        // make sentries rotate 45 degrees counterclockwise (?) at set intervals
+        if ((*it)->getDefaultState() == "sentry") {
+            if ((*it)->_sentryCD.isZero()) {
+                (*it)->_sentryCD.reset();
+                (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
+                // CULog("Sentry direction: %f, %f", (*it)->getFacingDir().x, (*it)->getFacingDir().y);
+            }
+        }
+        // make patrolling enemies go to the next location on their patrol route
+        if ((*it)->getDefaultState() == "patrol") {
+            if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                (*it)->setPathIndex(((*it)->getPathIndex()+1)%(*it)->getPath().size());
+                (*it)->setGoal((*it)->getPath()[(*it)->getPathIndex()]);
+                // velocity currently based on distance from goal, may need adjusting
+                ((*it)->setLinearVelocity((*it)->getGoal().x-(*it)->getPosition().x, (*it)->getGoal().y-(*it)->getPosition().y));
+            }
+            // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
+        }
+    }
+    // TODO: implement the following
+    // if enemy has LOS of player
+    //      move along shortest path to player
+    // otherwise
+    //      stop and look around for a bit (do we want this?) before either
+    //          moving back to default position (for sentries) or
+    //          moving back to the closest node on their patrol path (for patrol enemies)
 }

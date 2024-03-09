@@ -64,6 +64,10 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if (_enemies[ii]->isEnabled()) {
             _enemies[ii]->draw(batch);
         }
+        if (_enemies[ii]->getAttack()->isEnabled()) {
+            batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
+                _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);
+        }
     }
     
     _player->draw(batch);
@@ -76,6 +80,10 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     // make sure debug node is hidden when not active
     _atk->getDebugNode()->setVisible(_atk->isEnabled());
+    
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
+    }
 
 }
 
@@ -107,6 +115,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDebugScene(_debugNode);
+        _enemies[ii]->getAttack()->setDebugScene(_debugNode);
+        _enemies[ii]->getAttack()->setDebugColor(Color4::RED);
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
@@ -210,6 +220,8 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     _atk->setEnabled(false); // turn off the attack semisphere
     for (int ii = 0; ii < _enemies.size(); ii++){
         addObstacle(_enemies[ii]);
+        addObstacle(_enemies[ii]->getAttack());
+        _enemies[ii]->getAttack()->setEnabled(false);
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
@@ -313,11 +325,29 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         enemy->setTextureKey(json->getString(TEXTURE_FIELD));
         enemy->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
         enemy->setHealth(json->getInt("health"));
+        enemy->setDefaultState(json->getString("defaultstate"));
+        std::vector<Vec2> path;
+        auto pathData = json->get("path");
+        for (int j = 0; j < pathData->size(); j++) {
+            Vec2 node(pathData->get(j)->get(0)->asFloat(), pathData->get(j)->get(1)->asFloat());
+            path.push_back(node);
+        }
+        enemy->setPath(path);
+        if (enemy->getDefaultState() == "patrol") {
+            enemy->setGoal(enemy->getPath()[0]);
+            enemy->setPathIndex(0);
+        }
         std::string btype = json->getString(BODYTYPE_FIELD);
         if (btype == STATIC_VALUE) {
             enemy->setBodyType(b2_staticBody);
         }
         _enemies.push_back(enemy);
+        
+        // attack setup
+        auto attack = physics2::WheelObstacle::alloc(pos, ATK_RADIUS); //for now enemies have same attack radius as player
+        attack->setSensor(true);
+        attack->setBodyType(b2_dynamicBody);
+        enemy->setAttack(attack);
     }
     return true;
 }

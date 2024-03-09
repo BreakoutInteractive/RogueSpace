@@ -36,6 +36,8 @@ protected:
     
     cugl::Vec2 _drawScale;
     
+    cugl::Color4 _tint;
+    
     //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
@@ -56,8 +58,6 @@ protected:
     
     /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
     int _directionIndex;
-
-    cugl::Color4 _tint;
     
 public:
     bool _attacking;
@@ -73,7 +73,9 @@ public:
     Counter _dodgeDuration;
     /** counter that is active during the idle cycle*/
     Counter _idleCycle;
+    /** counter that is active while the player takes damage */
     Counter _hitCounter;
+    
     int _hp;
     
     /**

@@ -26,8 +26,8 @@ private:
     /** the game world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
 
-    /** the set of enemies */
-    std::unordered_set<std::shared_ptr<Enemy>> _enemies;
+    /** the list of enemies */
+    std::vector<std::shared_ptr<Enemy>> _enemies;
 
 public:
 #pragma mark -
@@ -61,6 +61,7 @@ public:
     
     /**
      * TODO: document this function
+     * Updates locations and states for all enemies
     */
     void update(float dt);
     

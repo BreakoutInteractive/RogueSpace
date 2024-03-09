@@ -9,6 +9,7 @@
 
 #include "Player.hpp"
 
+#define HIT_TIME 10
 /**the number of frames we wait before allowing another attack, also currently the length of the attack*/
 #define ATK_CD 16
 /**the number of frames we wait before allowing another parry, also currently the length of the parry*/
@@ -31,7 +32,9 @@ bool Player::init(const Vec2 pos, const Size size) {
     //BoxObstacle::setAngle(M_PI_4);
     std::string name("player");
     setName(name);
+    _tint = Color4::WHITE;
     // set the counter properties
+    _hitCounter.setMaxCount(HIT_TIME);
     _atkCD.setMaxCount(ATK_CD);
     _parryCD.setMaxCount(PARRY_CD);
     _dodgeCD.setMaxCount(DODGE_CD);
@@ -160,6 +163,7 @@ void Player::animateAttack() {
     _attackAnimation->setFrame(8 * _directionIndex);
     _activeAnimation = _attackAnimation;
 }
+
 
 #pragma mark -
 #pragma mark State Update
