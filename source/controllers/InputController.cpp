@@ -16,8 +16,8 @@ using namespace cugl;
 #define HOLD_TIME 300
 /** the maximum amount of milliseconds for a motion swipe to be considered a dodge*/
 #define DODGE_SWIPE_TIME 200
-///** the maximum amount of milliseconds for a touch and release to be considered a tap*/
-//#define TAP_TIME 300
+/** horizontal constraint for a swipe to qualify for upwards or downwards */
+#define VSWIPE_HORIZONTAL_DIFF 250
 /** the maximum amount of milliseconds between the end of the first tap and the start of the second tap*/
 #define DOUBLE_TAP_TIME_GAP 200
 
@@ -55,7 +55,6 @@ void InputController::dispose() {
 }
 
 bool InputController::init() {
-    _timestamp.mark();
     bool success = true;
     
     // Only process keyboard on desktop
@@ -79,6 +78,7 @@ bool InputController::init() {
     success = touch != nullptr;
 #endif
     _active = success;
+    reversedGestures = false;
     clear();
     return success;
 }
@@ -169,62 +169,68 @@ void InputController::clear() {
     _parryPressed = false;
     _motionGesture.active = false;
     _combatGesture.active = false;
-    _timestamp.mark();
+    _settingsGesture.active = false;
 }
-
 
 #pragma mark -
-#pragma mark Touch Callbacks
+#pragma mark Results
 
-void InputController::initGestureDataFromEvent(GestureData& data, const cugl::TouchEvent &event){
-    data.active = true;
-    data.timestamp = event.timestamp;
-    data.curPos = event.position;
-    data.initialPos = data.curPos;
-    data.touchID = event.touch;
-    
-    // if previous tap is active but the start of this touch is too far apart from the end of the first tap, clear the previous tap.
-    // if we do not do this, then tap orders such as 1-tap 1-tap 2-tap will not be read
-    // as a double tap since the second 1-tap is processed as a failed second tap of a double tap, and hence 2-tap becomes the first tap.
-    if (!data.tap.expired){
-        auto prevEndTime = data.tap.timestamp;
-        auto timeDiff = event.timestamp.ellapsedMillis(prevEndTime);
-        if (timeDiff > DOUBLE_TAP_TIME_GAP){
-            data.tap.expired = true;
-        }
+Vec2 InputController::getDodgeDirection(cugl::Vec2 facingDir){
+    if (scheme == ControlOption::UNIFIED){
+        return facingDir;
     }
+    // OMNI
+    return _dodgeDir;
 }
 
-void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
-    if (!_active){
-        return;;
+Vec2 InputController::getAttackDirection(cugl::Vec2 facingDir){
+    if (scheme == ControlOption::UNIFIED){
+        return facingDir;
     }
-    // TODO: this does not work the same way when you rotate the phone 180 (use Display instead)
+    // OMNI
+    return _attackDir;
+}
+
+#pragma mark -
+#pragma mark Helper Functions
+
+/**
+ * @return true if the touch is applied on the motion gesture
+ */
+bool motionPosConstraint(Vec2 touchPos, bool reversed){
     Size s = Application::get()->getDisplaySize();
-    Vec2 touchPos = event.position;
-    if (reversedGestures){
-        // need to refactor code so this works for either setting
+    if (reversed){
+        return touchPos.x >= 2* s.width/3;
     }
     else {
-        // default (left-move, right-combat)
-        if (touchPos.x >= 2*s.width/3 && !_combatGesture.active){
-            // right sided
-            initGestureDataFromEvent(_combatGesture, event);
-        }
-        else if (touchPos.x <= s.width/3 && !_motionGesture.active){
-            // left sided
-            initGestureDataFromEvent(_motionGesture, event);
-        }
+        return touchPos.x < s.width/3;
     }
 }
- 
 
-void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
-    if (!_active){
-        return;;
+/**
+ * @return true if the touch is applied on the combat gesture
+ */
+bool combatPosConstraint(Vec2 touchPos, bool reversed){
+    Size s = Application::get()->getDisplaySize();
+    if (reversed){
+        return touchPos.x < s.width/3;
     }
-    Vec2 touchPos = event.position;
+    else {
+        return touchPos.x >= 2* s.width/3;
+    }
+}
 
+/**
+ * @return true if the touch is applied on the settings gesture
+ */
+bool settingsPosConstraint(Vec2 touchPos){
+    Size s = Application::get()->getDisplaySize();
+    return s.width/3 < touchPos.x && touchPos.x < 2 * s.width/3;
+}
+
+void InputController::readEndGestureOminidirectional(GestureData& _motionGesture, GestureData& _combatGesture, const cugl::TouchEvent& event){
+    Vec2 touchPos = event.position;
+    
     // Dodge = quick release of motion gesture
     if (_motionGesture.active && event.touch == _motionGesture.touchID){
         _motionGesture.active = false;
@@ -240,7 +246,6 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         // slowly letting go of the joystick always implies no movement
         _keyMoveDir = Vec2::ZERO;
     }
-    
     if (_combatGesture.active && event.touch == _combatGesture.touchID){
         _combatGesture.active = false;
         Vec2 gestureMotion = touchPos - _combatGesture.initialPos;
@@ -274,6 +279,8 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
                 if (timeDiff <= DOUBLE_TAP_TIME_GAP){
                     // double tap performed
                     _keySwap = true;
+                    
+                    _keyDodge = true;
                 }
                 tap.expired = true; // clear the tap data.
             }
@@ -285,16 +292,142 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     }
 }
 
+void InputController::readEndGestureUnified(GestureData &_motionGesture, GestureData &_combatGesture, const cugl::TouchEvent &event){
+    Vec2 touchPos = event.position;
+    
+    if (_combatGesture.active && event.touch == _combatGesture.touchID){
+        _combatGesture.active = false;
+        Vec2 gestureMotion = touchPos - _combatGesture.initialPos;
+        float changeInPosition = gestureMotion.length();
+        auto elapsed = event.timestamp.ellapsedMillis(_combatGesture.timestamp);
+
+        if (changeInPosition >= EVENT_SWIPE_LENGTH){
+            // up
+            if (gestureMotion.y < 0){
+                _keyDodge = true;
+                return;
+            }
+            // down
+            if (gestureMotion.y > 0){
+                _keyParry = true;
+                return;
+            }
+        }
+        bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition <= 20;
+        if (is_tap_event){
+            _keyAttack = true;
+        }
+        else if (elapsed >= HOLD_TIME && changeInPosition <= 20){
+            // HOLD DOWN to change weapon ? to charge ? to do boosted shots?
+            _keySwap = true; // TODO: chosen weapon swap for now.
+        }
+    }
+    
+    if (_motionGesture.active && event.touch == _motionGesture.touchID){
+        _keyMoveDir.setZero();
+        _motionGesture.active = false;
+    }
+}
+
+#pragma mark -
+#pragma mark Touch Callbacks
+
+void InputController::initGestureDataFromEvent(GestureData& data, const cugl::TouchEvent &event){
+    data.active = true;
+    data.timestamp = event.timestamp;
+    data.curPos = event.position;
+    data.initialPos = data.curPos;
+    data.touchID = event.touch;
+    
+    // if previous tap is active but the start of this touch is too far apart from the end of the first tap, clear the previous tap.
+    // if we do not do this, then tap orders such as 1-tap 1-tap 2-tap will not be read
+    // as a double tap since the second 1-tap is processed as a failed second tap of a double tap, and hence 2-tap becomes the first tap.
+    if (!data.tap.expired){
+        auto prevEndTime = data.tap.timestamp;
+        auto timeDiff = event.timestamp.ellapsedMillis(prevEndTime);
+        if (timeDiff > DOUBLE_TAP_TIME_GAP){
+            data.tap.expired = true;
+        }
+    }
+}
+
+void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
+    if (!_active){
+        return;;
+    }
+    Vec2 touchPos = event.position;
+    // default: combat = right sided, motion = left
+    if (combatPosConstraint(touchPos, reversedGestures) && !_combatGesture.active){
+        initGestureDataFromEvent(_combatGesture, event);
+    }
+    else if (motionPosConstraint(touchPos, reversedGestures) && !_motionGesture.active){
+        initGestureDataFromEvent(_motionGesture, event);
+    }
+    
+    if (settingsPosConstraint(touchPos) && !_settingsGesture.active){
+        initGestureDataFromEvent(_settingsGesture, event);
+    }
+}
+ 
+
+void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
+    if (!_active){
+        return;;
+    }
+
+    if (scheme == ControlOption::UNIFIED){
+        readEndGestureUnified(_motionGesture, _combatGesture, event);
+    }
+    else if (scheme == ControlOption::OMNIDIRECTIONAL){
+        readEndGestureOminidirectional(_motionGesture, _combatGesture, event);
+    }
+    
+    
+    // TODO: this is temporary setting on screen
+    if (_settingsGesture.active && event.touch == _settingsGesture.touchID){
+        _settingsGesture.active = false;
+        Vec2 gestureMotion = event.position - _settingsGesture.initialPos;
+        float changeInPosition = gestureMotion.length();
+        auto elapsed = event.timestamp.ellapsedMillis(_settingsGesture.timestamp);
+        
+        if (changeInPosition >= EVENT_SWIPE_LENGTH && gestureMotion.y < 0){
+            // this is a swipe up, change controls.
+            scheme = (scheme == ControlOption::UNIFIED) ? ControlOption::OMNIDIRECTIONAL : ControlOption::UNIFIED;
+        }
+        bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition <= 20;
+        TapData& tap = _settingsGesture.tap;
+        if (is_tap_event){
+            if (tap.expired){
+                // first tap, so we should renew the data so to anticipate a second tap.
+                tap.expired = false;
+                tap.timestamp = event.timestamp;
+                tap.pos = _settingsGesture.initialPos;
+            }
+            else {
+                // second tap, check the difference in time
+                auto curStartTime = _settingsGesture.timestamp;
+                auto prevEndTime = tap.timestamp;
+                auto timeDiff = curStartTime.ellapsedMillis(prevEndTime);
+                if (timeDiff <= DOUBLE_TAP_TIME_GAP){
+                    reversedGestures = !reversedGestures; // double tap performed
+                }
+                tap.expired = true; // clear the tap data.
+            }
+        }
+        else { 
+            tap.expired = true; // clear the tap data.
+        }
+    }
+}
+
 void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 previous, bool focus) {
     if (!_active){
         return;;
     }
     // update positions in gestures (important for dodge and move)
     Vec2 touchPos = event.position;
-    Size s = Application::get()->getDisplaySize();
     
-    if (touchPos.x < s.width/3 && _motionGesture.active && _motionGesture.touchID == event.touch){
-        // left sided motion
+    if (_motionGesture.active && _motionGesture.touchID == event.touch){
         _motionGesture.prevPos = previous;
         _motionGesture.curPos = event.position;
         // check if finger dragged enough to initiate movement
@@ -305,5 +438,15 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
             _keyMoveDir.set(swipeDir.x, -swipeDir.y); //negate y because screen origin is different from game origin.
         }
     }
-        
+    
+    if (scheme == ControlOption::UNIFIED){
+        if (_combatGesture.active && _combatGesture.touchID == event.touch){
+            // reinforce swipes to be vertical for dodge and parry
+            // inactivate the touch if deviates too much from initial point of contact
+            float deltaX = touchPos.x - _combatGesture.initialPos.x;
+            if (abs(deltaX) >= VSWIPE_HORIZONTAL_DIFF){
+                _combatGesture.active = false;
+            }
+        }
+    }
 }

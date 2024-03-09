@@ -270,7 +270,7 @@ void GameScene::preUpdate(float dt) {
             player->_dodgeCD.reset();
             player->_dodgeDuration.reset(); // set dodge frames
             //dodge
-            auto force = _input.getDodgeDirection();
+            auto force = _input.getDodgeDirection(player->getFacingDir());
             if (force.length() == 0) {
                 // dodge in the direction currently facing. normalize so that the dodge is constant speed
                 force = player->getFacingDir().getNormalization();
@@ -297,7 +297,7 @@ void GameScene::preUpdate(float dt) {
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
                 
                 //Vec2 direction = player->getFacingDir();
-                Vec2 direction = _input.getAttackDirection();
+                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (direction.y < 0){
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
@@ -358,10 +358,6 @@ void GameScene::preUpdate(float dt) {
         // (*it)->setForce(f);
         // (*it)->applyForce();
     }
-    
-    _camController.setTarget(player->getPosition() * player->getDrawScale());
-    _camController.update(dt);
-    _winNode->setPosition(_camController.getPosition());
 }
 
 
@@ -369,6 +365,11 @@ void GameScene::fixedUpdate(float step) {
     // Turn the physics engine crank.
     if (_level != nullptr){
         _level->getWorld()->update(step);
+        auto player = _level->getPlayer();
+        _camController.update(step);
+        _camController.setTarget(player->getPosition() * player->getDrawScale());
+        _winNode->setPosition(_camController.getPosition());
+        _loseNode->setPosition(_camController.getPosition());
     }
 }
 
