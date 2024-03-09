@@ -19,6 +19,8 @@
 
 #define DODGE_DURATION 10
 
+#define HIT_TIME 10
+
 using namespace cugl;
 
 #pragma mark -
@@ -39,6 +41,9 @@ bool Player::init(const Vec2 pos, const Size size) {
     _dodgeDuration.setMaxCount(DODGE_DURATION);
     _idleCycle.setMaxCount(16);
     _idleCycle.reset();
+    _hp = 3;
+    _hitCounter.setMaxCount(HIT_TIME);
+    _tint = Color4::WHITE;
     
     // TODO: removal later, GAMEPLAY PROTOTYPE set 1-2 frame delay so player does not attack immediately if play button is held for too long
     _atkCD.setCount(1);
@@ -116,10 +121,8 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         // render player differently while dodging (add fading effect)
         if (!_dodgeDuration.isZero()) {
             for (int i = 2; i < 10; i += 2) {
-                auto color = Color4(Vec4(_tint.r/255, _tint.g/255, _tint.b/255, _tint.a/255 - i * 0.1));
-                // TODO: the tinted version of draw() shifts the texture for some reason (see documentation or Walker). Tinting may be needed for other purposes.
-                Vec2 bugOffset = -origin;
-                Affine2 localTrans = Affine2::createTranslation((getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale + bugOffset );
+                auto color = Color4(Vec4(1, 1, 1, 1 - i * 0.1));
+                Affine2 localTrans = Affine2::createTranslation((getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale);
                 _activeAnimation->draw(batch, color, origin, localTrans);
             }
         }
@@ -161,12 +164,6 @@ void Player::animateAttack() {
     _activeAnimation = _attackAnimation;
 }
 
-void Player::hit() {
-    if (_hitCounter.isZero()) {
-        _hitCounter.reset();
-        _tint = Color4::RED;
-    }
-}
 
 #pragma mark -
 #pragma mark State Update
@@ -177,11 +174,11 @@ void Player::updateCounters(){
     _dodgeCD.decrement();
     _dodgeDuration.decrement();
     _idleCycle.decrement();
+    _hitCounter.decrement();
     if (_idleCycle.isZero()){
         _idleCycle.reset();
         _idleAnimation->setFrame(8 * _directionIndex);
     }
-    _hitCounter.decrement();
     if (_hitCounter.isZero()) _tint = Color4::WHITE;
 }
 
@@ -206,5 +203,13 @@ void Player::setFacingDir(cugl::Vec2 dir){
     if (prevDirection != _directionIndex){
         _idleAnimation->setFrame(8 * _directionIndex);
         _attackAnimation->setFrame(8 * _directionIndex);
+    }
+}
+
+void Player::hit() {
+    if (_hitCounter.isZero()) {
+        _hitCounter.reset();
+        _hp -= 1;
+        _tint = Color4::RED;
     }
 }

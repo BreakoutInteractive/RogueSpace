@@ -11,7 +11,7 @@
 
 //the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player
 //this is how sweeping melee attacks work in Hades
-#define ATK_RADIUS 3.5f
+#define ATK_RADIUS 4.0f
 
 /**
 * Creates a new, empty level.

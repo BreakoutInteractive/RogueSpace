@@ -76,6 +76,8 @@ public:
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
     
+    int _hp;
+    
     /**
      * decrement all counters
      */
@@ -365,10 +367,10 @@ public:
     void animateDefault();
     /** Change to using the attack animation */
     void animateAttack();
-    
+
     /**
-     * Method to call when the player is hit by an attack
-     */
+    * Method to call when player is hit by an attack
+    */
     void hit();
     
     
