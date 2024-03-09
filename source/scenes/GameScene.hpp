@@ -16,9 +16,10 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
+#include "../controllers/CameraController.hpp"
 #include "../controllers/InputController.hpp"
 #include "../models/LevelModel.hpp"
-#include "../controllers/CameraController.hpp"
+#include "GameRenderer.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -49,10 +50,11 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _loseNode;
     /** Reference to the reset message label */
     std::shared_ptr<cugl::scene2::Label> _resetNode;
-    
-    std::shared_ptr<Texture> _backgroundTexture;
+
     /** content offset to prevent displays on notch/adjusting aspect ratios*/
     cugl::Vec2 _offset;
+    /** custom renderer for this scene */
+    GameRenderer _gameRenderer;
 
     // MODEL
 
@@ -246,7 +248,10 @@ public:
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override {
+        _gameRenderer.render(batch);
+        Scene2::render(batch);
+    }
     
 #pragma mark -
 #pragma mark Collision Handling
