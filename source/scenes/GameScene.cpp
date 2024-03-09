@@ -222,17 +222,19 @@ void GameScene::preUpdate(float dt) {
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
     
-    std::shared_ptr<JoyStick> stick = _level->getJoystick();
+#ifdef CU_TOUCH_SCREEN
+    auto joystick = _gameRenderer.getJoystick();
     if(_input.isLeft()){
-        if (!stick->getActive()) {
-            stick->updateBasePos(screenToWorldCoords(_input.getInitialLocation()));
+        if (!joystick->getActive()) {
+            joystick->updateBasePos(screenToWorldCoords(_input.getInitialLocation()));
         }
         else {
-            stick->updateBallPos(moveForce,screenToWorldCoords(_input.getTouchLocation()));
+            joystick->updateBallPos(moveForce,screenToWorldCoords(_input.getTouchLocation()));
         }
     } else{
-        stick->setActive(false);
+        joystick->setActive(false);
     }
+#endif
     
     // update the direction the player is facing
     if (moveForce.length() > 0){

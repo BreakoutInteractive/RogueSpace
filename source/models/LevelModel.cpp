@@ -50,12 +50,6 @@ void LevelModel::setDrawScale(Vec2 scale) {
     else {
         CUAssertLog(false, "Failed to set draw scale for floor");
     }
-    if (_joystick != nullptr) {
-        _joystick->setDrawScale(Vec2(.75, .75));
-    }
-    else {
-        CUAssertLog(false, "Failed to set draw scale for joystick");
-    }
     
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDrawScale(scale);
@@ -73,7 +67,6 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }
     
     _player->draw(batch);
-    _joystick->draw(batch);
     
     //we add pi/2 to the angle since the sprite is pointing down but the hitbox points right by default
     if (_atk->isEnabled()){
@@ -125,7 +118,6 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
     _floor->loadAssets(assets);
-    _joystick->loadAssets(assets);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
@@ -181,9 +173,6 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 
 	/** Create the physics world */
 	_world = physics2::ObstacleWorld::alloc(getBounds(),Vec2::ZERO);
-    
-    /** Create joystick */
-    _joystick = std::make_shared<JoyStick>(Vec2::ZERO, Vec2::ZERO); 
     
     auto playerJson = json->get(PLAYER_FIELD);
     if (playerJson != nullptr){
@@ -259,7 +248,6 @@ void LevelModel::unload() {
     _world->removeObstacle(_player);
     _player = nullptr;
     _floor = nullptr;
-    _joystick = nullptr;
     
     if (_world != nullptr) {
         _world->clear();

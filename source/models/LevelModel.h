@@ -19,7 +19,6 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
-#include <vector>
 
 using namespace cugl;
 
@@ -30,7 +29,6 @@ class CrateModel;
 class Floor;
 class Player;
 class Enemy;
-class JoyStick;
 
 #pragma mark -
 #pragma mark Level Model
@@ -60,9 +58,6 @@ protected:
     
     /** Reference to the player object */
     std::shared_ptr<Player> _player;
-    
-    /** Reference to the joystick object */
-    std::shared_ptr<JoyStick> _joystick;
     
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
@@ -189,11 +184,6 @@ public:
      * @return the player in this game level
      */
     const std::shared_ptr<Player> getPlayer() {return _player; }
-    
-    /**
-     * @return the joystick in this game level
-     */
-    const std::shared_ptr<JoyStick> getJoystick() {return _joystick; }
     
     /**
      * @return the player's attack semi-sphere

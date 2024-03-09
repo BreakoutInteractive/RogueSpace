@@ -18,6 +18,7 @@
 #include "../controllers/AIController.hpp"
 #include "../controllers/InputController.h"
 #include "../models/LevelModel.h"
+#include "GameRenderer.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -48,6 +49,8 @@ protected:
     std::shared_ptr<Texture> _backgroundTexture;
     /** content offset to prevent displays on notch/adjusting aspect ratios*/
     cugl::Vec2 _offset;
+    
+    GameRenderer _gameRenderer;
 
     // MODEL
 
