@@ -19,7 +19,7 @@
     "enemies": {
         "enemy-1": {
             "pos": [22, 13],
-            "path": [[22, 13], [21, 12], [20, 11], [19, 10]],
+            "path": [[22, 13], [19, 10], [22, 7], [25, 10]],
             "size": [0.6,0.6],
             "defaultstate": "patrol",
             "bodytype":     "dynamic",
@@ -47,7 +47,7 @@
         },
         "enemy-3": {
             "pos": [8, 8],
-            "path": [[8, 8], [7, 7], [6, 6], [5, 5]],
+            "path": [[8, 8], [12, 4], [20, 4], [12, 4]],
             "size": [0.6,0.6],
             "defaultstate": "patrol",
             "bodytype":     "dynamic",

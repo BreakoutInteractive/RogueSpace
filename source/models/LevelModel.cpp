@@ -331,6 +331,10 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
             path.push_back(node);
         }
         enemy->setPath(path);
+        if (enemy->getDefaultState() == "patrol") {
+            enemy->setGoal(enemy->getPath()[0]);
+            enemy->setPathIndex(0);
+        }
         std::string btype = json->getString(BODYTYPE_FIELD);
         if (btype == STATIC_VALUE) {
             enemy->setBodyType(b2_staticBody);

@@ -75,7 +75,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     _input.init();
-    // _aiEngine.init(dimen);
     _level->setAssets(_assets);
     _backgroundTexture = assets->get<Texture>("background");
     
@@ -201,6 +200,7 @@ void GameScene::preUpdate(float dt) {
         // Load a new level and quit update
         _resetNode->setVisible(true);
         _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
+        _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
         setComplete(false);
         return;
     }

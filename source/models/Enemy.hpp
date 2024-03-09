@@ -56,6 +56,12 @@ protected:
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
     
+    /** The enemy's goal position */
+    cugl::Vec2 _goal;
+    
+    /** The enemy's goal path index */
+    int _pathIndex;
+    
 public:
 #pragma mark Counters
     
@@ -233,6 +239,26 @@ public:
      * Sets this enemy's patrol path.
      */
     void setPath(std::vector<cugl::Vec2> value) { _path = value; }
+    
+    /**
+     * Gets this enemy's goal position.
+     */
+    cugl::Vec2 getGoal() const { return _goal; }
+    
+    /**
+     * Sets this enemy's goal position.
+     */
+    void setGoal(cugl::Vec2 value) { _goal = value; }
+    
+    /**
+     * Gets this enemy's goal path index.
+     */
+    int getPathIndex() const { return _pathIndex; }
+    
+    /**
+     * Sets this enemy's goal path index.
+     */
+    void setPathIndex(int value) { _pathIndex = value; }
     
     /**
      * @return the unit vector direction that the enemy is facing towards
