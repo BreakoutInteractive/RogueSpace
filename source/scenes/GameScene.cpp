@@ -11,8 +11,8 @@
 //  Modified: Zhiyuan Chen
 //  Version: 2/17/24
 //
-#include "GameScene.h"
-#include "../models/JSLevelConstants.h"
+#include "GameScene.hpp"
+#include "../models/LevelConstants.hpp"
 #include "../models/Enemy.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
@@ -53,7 +53,7 @@ using namespace cugl;
 #pragma mark Constructors
 
 GameScene::GameScene() : Scene2(),
-_complete(false),
+_complete(false), _defeat(false),
 _debug(false){}
 
 
@@ -64,7 +64,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
+    } else if (!_gameRenderer.cugl::Scene2::init(dimen)){
+        return false;
     }
+    
+    
+    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
@@ -73,10 +78,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     }
 
     _assets = assets;
+    
+    _gameRenderer.init(_assets, getCamera(), _level);
+    
     _input.init();
-    // _aiEngine.init(dimen);
     _level->setAssets(_assets);
-    _backgroundTexture = assets->get<Texture>("background");
     
     // Create the world and attach the listeners.
     std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
@@ -87,14 +93,21 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
                                           dimen.height/_level->getViewBounds().height;
-    _level->setDrawScale(Vec2(_scale, _scale));
+    Vec2 drawScale(_scale, _scale);
+    _level->setDrawScale(drawScale);
+    _gameRenderer.setDrawScale(drawScale);
+    
+    
+    _camController.init(getCamera(), 2.5f);
+    auto p = _level->getPlayer();
+    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
+    
 #pragma mark - GameScene:: Scene Graph Initialization
     
     // Create the scene graph nodes
-    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     _debugNode = scene2::SceneNode::alloc();
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
-    _debugNode->setPosition(_offset);
+    _debugNode->setPosition(Vec2::ZERO);
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setVisible(true);
   
@@ -106,6 +119,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _winNode->setForeground(STATIC_COLOR);
     _winNode->setVisible(false);
 
+    _loseNode = scene2::Label::allocWithText("GAME OVER", _assets->get<Font>(PRIMARY_FONT));
+    _loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _loseNode->setPosition(dimen / 2.0f);
+    _loseNode->setForeground(Color4::RED);
+    _loseNode->setVisible(false);
+
     _resetNode = scene2::Label::allocWithText(RESET_MESSAGE,_assets->get<Font>(PRIMARY_FONT));
     _resetNode->setAnchor(Vec2::ANCHOR_CENTER);
     _resetNode->setPosition(dimen/2.0f);
@@ -114,6 +133,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
       
     addChild(_debugNode); //this we keep
     addChild(_winNode); //TODO: remove
+    addChild(_loseNode); //TODO: remove
     addChild(_resetNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
@@ -122,6 +142,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 #pragma mark - Game State Initialization
     _active = true;
     _complete = false;
+    _defeat = false;
     setDebug(false);
     
     Application::get()->setClearColor(Color4f::WHITE);
@@ -133,9 +154,11 @@ void GameScene::dispose() {
         _input.dispose();
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
+        _loseNode = nullptr; //TODO: remove
         _resetNode = nullptr; // TODO: remove
         _level = nullptr;
         _complete = false;
+        _defeat = false;
         _debug = false;
         Scene2::dispose();
     }
@@ -195,6 +218,7 @@ void GameScene::preUpdate(float dt) {
         _resetNode->setVisible(true);
         _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
         setComplete(false);
+        setDefeat(false);
         return;
     }
     if (_input.didExit())  {
@@ -203,7 +227,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
-    if (!_winNode->isVisible()){
+    if (!_winNode->isVisible() && !_loseNode->isVisible()){
         // game not won, check if any enemies active
         int activeCount = 0;
         auto enemies = _level->getEnemies();
@@ -215,24 +239,26 @@ void GameScene::preUpdate(float dt) {
         if (activeCount == 0){
             setComplete(true);
         }
+
+        if (_level->getPlayer()->_hp==0) setDefeat(true);
     }
 
 #pragma mark - handle player input
     // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
+
+    auto _atkCD = player->_atkCD.getCount();
+    auto _parryCD = player->_parryCD.getCount();
+    auto _dodgeCD = player->_dodgeCD.getCount();
     
 #ifdef CU_TOUCH_SCREEN
-    auto joystick = _gameRenderer.getJoystick();
-    if(_input.isLeft()){
-        if (!joystick->getActive()) {
-            joystick->updateBasePos(screenToWorldCoords(_input.getInitialLocation()));
-        }
-        else {
-            joystick->updateBallPos(moveForce,screenToWorldCoords(_input.getTouchLocation()));
-        }
-    } else{
-        joystick->setActive(false);
+    if(_input.isMotionActive()){
+        _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
+    }
+    else
+    {
+        _gameRenderer.setJoystickVisible(false);
     }
 #endif
     
@@ -241,18 +267,19 @@ void GameScene::preUpdate(float dt) {
         player->setFacingDir(moveForce);
     }
     
-    auto _atkCD = player->_atkCD.getCount();
-    auto _parryCD = player->_parryCD.getCount();
-    auto _dodgeCD = player->_dodgeCD.getCount();
+
     //only move fast if we're not attacking, parrying, or dodging
     if (_atkCD == _parryCD == _dodgeCD == 0 && player->_dodgeDuration.isZero()) {
         //if all abilities are active
-        player->setForce(moveForce * 5); //TODO: use json data
-        player->applyForce();
+        //player->setForce(moveForce * 5); //TODO: use json data
+        //player->applyForce();
+        player->setLinearVelocity(moveForce * 5);
+    } else if (_dodgeCD == 0) {
+        player->setLinearVelocity(Vec2::ZERO);
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
-
+    atk->setPosition(player->getPosition());
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
@@ -260,6 +287,15 @@ void GameScene::preUpdate(float dt) {
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
             player->_dodgeDuration.reset(); // set dodge frames
+            //dodge
+            auto force = _input.getDodgeDirection(player->getFacingDir());
+            if (force.length() == 0) {
+                // dodge in the direction currently facing. normalize so that the dodge is constant speed
+                force = player->getFacingDir().getNormalization();
+            }
+            //player->setLinearDamping(20);
+            player->setLinearVelocity(force * 30);
+            player->setFacingDir(force);
         }
         else if (player->_dodgeDuration.isZero()) { //not dodging
             //for now, give middle precedence to attack
@@ -278,7 +314,8 @@ void GameScene::preUpdate(float dt) {
                 //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang = 2*M_PI - ang;
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
                 
-                Vec2 direction = player->getFacingDir();
+                //Vec2 direction = player->getFacingDir();
+                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (direction.y < 0){
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
@@ -288,7 +325,6 @@ void GameScene::preUpdate(float dt) {
                 atk->setEnabled(true);
                 atk->setAwake(true);
                 atk->setAngle(ang);
-                atk->setPosition(player->getPosition());
                 player->animateAttack();
                 player->_atkCD.reset();
             }
@@ -301,30 +337,31 @@ void GameScene::preUpdate(float dt) {
             }
         }     
     }
-    if (!player->_dodgeDuration.isZero()) {
-        auto force = _input.getDodgeDirection();
-        if (force.length() == 0){
-            // dodge in the direction currently facing
-            force = player->getFacingDir();
-        }
-        //player->setLinearDamping(20);
-        player->setForce(force * 50);
-        player->applyForce();
-        player->setFacingDir(force);
-    }
+    //if (!player->_dodgeDuration.isZero()) {
+    //    auto force = _input.getDodgeDirection();
+    //    if (force.length() == 0){
+    //        // dodge in the direction currently facing. normalize so that the dodge is constant speed
+    //        force = player->getFacingDir().getNormalization();
+    //    }
+    //    //player->setLinearDamping(20);
+    //    player->setLinearVelocity(force * 50);
+    //    player->setSensor(true);
+    //    //player->applyForce();
+    //    player->setFacingDir(force);
+    //}
     if (player->_atkCD.isZero()) {
         atk->setEnabled(false);
     }
     //if/when we create a dodge animation, add a check for it here
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
     
-    // if we not dodging or move
-    if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
-        // dampen
-        float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
-        player->setForce(dampen * player->getLinearVelocity());
-        player->applyForce();
-    }
+    //// if we not dodging or move
+    //if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
+    //    // dampen
+    //    float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
+    //    player->setForce(dampen * player->getLinearVelocity());
+    //    player->applyForce();
+    //}
     
     player->updateCounters();
     
@@ -346,6 +383,11 @@ void GameScene::fixedUpdate(float step) {
     // Turn the physics engine crank.
     if (_level != nullptr){
         _level->getWorld()->update(step);
+        auto player = _level->getPlayer();
+        _camController.update(step);
+        _camController.setTarget(player->getPosition() * player->getDrawScale());
+        _winNode->setPosition(_camController.getPosition());
+        _loseNode->setPosition(_camController.getPosition());
     }
 }
 
@@ -382,6 +424,7 @@ void GameScene::beginContact(b2Contact* contact) {
     b2Body* body2 = contact->GetFixtureB()->GetBody();    
     //attack
     intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
+    intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
@@ -397,9 +440,15 @@ void GameScene::beginContact(b2Contact* contact) {
                 CULog("Hit an enemy!");
             }
         }
+        else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+            //player takes damage if running into enemy while not dodging
+            if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit();
+        }
     }
-    
     //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
+    //this is handled in beforeSolve by disabling the contact if the player is dodging and collides with enemies or their attacks
+    
     //TODO: parry
 }
 
@@ -438,26 +487,16 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
             }
         }
     }
-}
 
-#pragma mark -
-#pragma mark Rendering
-
-void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
-    // render background
-    batch->begin(getCamera()->getCombined());
-    Size s = Application::get()->getDisplaySize();
-    batch->draw(_backgroundTexture, Rect(0, 0, s.width, s.height));
-    batch->end();
-    if (_level != nullptr){
-        getCamera()->translate(-_offset);
-        getCamera()->update();
-        batch->begin(getCamera()->getCombined());
-        _level->render(batch);
-        batch->end();
-        getCamera()->translate(_offset);
-        getCamera()->update();
+    intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
+    std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+            //phase through enemies while dodging
+            if (!_level->getPlayer()->_dodgeDuration.isZero()) contact->SetEnabled(false);
+        }
     }
-    // draw the debug component
-    Scene2::render(batch);
+    //TODO: add another check here for enemy attacks once they can do so
 }

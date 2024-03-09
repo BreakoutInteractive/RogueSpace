@@ -29,7 +29,7 @@
 //  Version: 2/17/24
 
 // Include your application class
-#include "App.h"
+#include "App.hpp"
 
 using namespace cugl;
 

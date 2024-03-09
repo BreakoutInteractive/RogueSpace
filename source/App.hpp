@@ -8,8 +8,8 @@
 #ifndef __APP_H__
 #define __APP_H__
 #include <cugl/cugl.h>
-#include "scenes/GameScene.h"
-#include "scenes/LoadingScene.h"
+#include "scenes/GameScene.hpp"
+#include "scenes/LoadingScene.hpp"
 
 /**
  * This class represents the application root for the ship demo.

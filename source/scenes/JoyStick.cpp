@@ -53,11 +53,11 @@ void JoyStick::updateBasePos(cugl::Vec2 inputPos) {
 /**
  * Moves the active joystick.
  */
-void JoyStick::updateBallPos(cugl::Vec2 inputDir, cugl::Vec2 inputPos) {
+void JoyStick::updateBallPos( cugl::Vec2 inputPos) {
     if (inputPos.distance(_basePosition)<_radius){
         _joyBall->position=inputPos;
     }else{
-        cugl::Vec2 touch2base(inputPos.x-_basePosition.x,inputPos.y-_basePosition.y);
+        cugl::Vec2 touch2base(inputPos - _basePosition);
 
         float angle = atan2(touch2base.y, touch2base.x);
         float xDist = sin(angle-1.5708)*_radius;
@@ -70,6 +70,7 @@ void JoyStick::updateBallPos(cugl::Vec2 inputDir, cugl::Vec2 inputPos) {
 void JoyStick::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _ballTexture = assets->get<Texture>("stick");
     _baseTexture = assets->get<Texture>("joystick_base");
+    _radius = _baseTexture->getWidth()/2.0f;
 }
 
 void JoyStick::setActive(bool active){
@@ -83,6 +84,9 @@ void JoyStick::setActive(bool active){
 void JoyStick::setDrawScale(cugl::Vec2 scale){
     _drawBaseScale=scale;
     _joyBall->_drawBallScale=scale;
+    assert(_radius > 0); // must load assets first
+    _radius = _radius * _drawBaseScale.x;
+    
 }
 /**
  * Draws active joystick to the sprite batch within the given bounds.
@@ -91,22 +95,20 @@ void JoyStick::setDrawScale(cugl::Vec2 scale){
  */
 void JoyStick::draw(const std::shared_ptr<SpriteBatch>& batch) {
     if (_active && _baseTexture && _ballTexture) {
-        Vec2 baseOrigin(_baseTexture->getWidth()/2,_baseTexture->getHeight()/2);
-        Vec2 ballOrigin(_ballTexture->getWidth()/2,_ballTexture->getHeight()/2);
+        Vec2 baseOrigin(_baseTexture->getSize()/2);
+        Vec2 ballOrigin(_ballTexture->getSize()/2);
 
-        _radius = _drawBaseScale.x*(fmax(_baseTexture->getHeight(), _baseTexture->getWidth())/2);
-            
         Affine2 transBase;
         transBase.scale(_drawBaseScale);
-        transBase.translate(_basePosition.x-(_drawBaseScale.x*baseOrigin.x), _basePosition.y);
+        transBase.translate(_basePosition);
             
         Affine2 transBall;
         transBall.scale(Vec2(_drawBaseScale));
-        transBall.translate(_joyBall->position.x-(_drawBaseScale.x*baseOrigin.x), _joyBall->position.y);
+        transBall.translate(_joyBall->position);
             
         batch->draw(_ballTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), ballOrigin, transBall);
         batch->draw(_baseTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), baseOrigin, transBase);
-            
+        
         if(_time<HOLD_TIME){
             _time+=1;
         }

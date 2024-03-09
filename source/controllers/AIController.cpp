@@ -1,5 +1,5 @@
 #include "AIController.hpp"
-#include "../models/LevelModel.h"
+#include "../models/LevelModel.hpp"
 #include "../models/Enemy.hpp"
 #include "../models/Player.hpp"
 

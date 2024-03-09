@@ -16,8 +16,9 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
-#include "../controllers/InputController.h"
-#include "../models/LevelModel.h"
+#include "../controllers/CameraController.hpp"
+#include "../controllers/InputController.hpp"
+#include "../models/LevelModel.hpp"
 #include "GameRenderer.hpp"
 
 /**
@@ -37,19 +38,22 @@ protected:
     InputController _input;
     /** Engine to process mob movement */
     AIController _AIController;
+    /** Controller to modify camera behavior */
+    CameraController _camController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
     /** Reference to the win message label */
     std::shared_ptr<cugl::scene2::Label> _winNode;
+    /** Reference to the lose message label */
+    std::shared_ptr<cugl::scene2::Label> _loseNode;
     /** Reference to the reset message label */
     std::shared_ptr<cugl::scene2::Label> _resetNode;
-    
-    std::shared_ptr<Texture> _backgroundTexture;
+
     /** content offset to prevent displays on notch/adjusting aspect ratios*/
     cugl::Vec2 _offset;
-    
+    /** custom renderer for this scene */
     GameRenderer _gameRenderer;
 
     // MODEL
@@ -62,6 +66,8 @@ protected:
 
     /** Whether we have completed this "game" */
     bool _complete;
+    /** Whetehr we got defeated */
+    bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
     
@@ -133,6 +139,15 @@ public:
      * @return true if the level is completed.
      */
     bool isComplete( ) const { return _complete; }
+
+    /**
+     * Returns true if the player was defeated.
+     *
+     * If true, there will be a game over
+     *
+     * @return true if the player was defeated.
+     */
+    bool isDefeat() const { return _defeat; }
     
     /**
      * Sets whether the level is completed.
@@ -142,6 +157,15 @@ public:
      * @param value whether the level is completed.
      */
     void setComplete(bool value) { _complete = value; _winNode->setVisible(value); }
+
+    /**
+     * Sets whether the player was defeated
+     *
+     * If true, there will be a game over
+     *
+     * @param value whether the player was defeated
+     */
+    void setDefeat(bool value) { _defeat = value; _loseNode->setVisible(value); }
     
     
 #pragma mark -
@@ -224,7 +248,10 @@ public:
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override {
+        _gameRenderer.render(batch);
+        Scene2::render(batch);
+    }
     
 #pragma mark -
 #pragma mark Collision Handling

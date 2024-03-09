@@ -195,6 +195,11 @@ public:
      */
     const std::vector<std::shared_ptr<Enemy>> getEnemies() { return _enemies; }
 
+    /**
+     * @return the walls in this game level
+     */
+    const std::vector<std::shared_ptr<WallModel>> getWalls() { return _walls; }
+
 
 #pragma mark Physics Attributes
     /** 

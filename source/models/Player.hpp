@@ -56,6 +56,8 @@ protected:
     
     /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
     int _directionIndex;
+
+    cugl::Color4 _tint;
     
 public:
     bool _attacking;
@@ -71,6 +73,8 @@ public:
     Counter _dodgeDuration;
     /** counter that is active during the idle cycle*/
     Counter _idleCycle;
+    Counter _hitCounter;
+    int _hp;
     
     /**
      * decrement all counters
@@ -361,6 +365,11 @@ public:
     void animateDefault();
     /** Change to using the attack animation */
     void animateAttack();
+
+    /**
+    * Method to call when player is hit by an attack
+    */
+    void hit();
     
     
 #pragma mark -

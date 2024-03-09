@@ -99,16 +99,10 @@ public:
     /**
      * Moves the ball of an active joystick.
      */
-    void updateBallPos(cugl::Vec2 inputDir, cugl::Vec2 inputPos);
+    void updateBallPos(cugl::Vec2 inputPos);
     
     /**
-     * Sets the image for a joystick.
-     *
-     * The sprite sheet information (size, number of columns) should have
-     * been set in the initial JSON. If not, this texture will be ignored.
-     *
-     * @param valueBall the image for a single joystick ball.
-     * @param valueBase the image for a single joystick base.
+     * Retains references to the textures of a joystick.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
     
@@ -119,6 +113,10 @@ public:
      */
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     
+    /**
+     * sets the draw scale of this component
+     * @pre `loadAssets` must be completed successfuly before setting the draw scale.
+     */
     void setDrawScale(cugl::Vec2 scale);
 };
 
