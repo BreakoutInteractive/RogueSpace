@@ -76,6 +76,16 @@ private:
      */
     void initGestureDataFromEvent(GestureData& data, const cugl::TouchEvent& event);
     
+    /**
+     * reads release gesture assuming control scheme uses unified direction
+     */
+    void readEndGestureUnified(GestureData& _motionGesture, GestureData& _combatGesture, const cugl::TouchEvent& event);
+    
+    /**
+     * reads release gesture assuming control scheme uses omnidirectional controls
+     */
+    void readEndGestureOminidirectional(GestureData& _motionGesture, GestureData& _combatGesture, const cugl::TouchEvent& event);
+    
 #pragma mark -
 #pragma mark Touch Callbacks
     /**
@@ -129,13 +139,11 @@ private:
     cugl::Vec2 _keyMoveDir;
     /** a vector cache representing the intended direction of dodge*/
     cugl::Vec2 _keyDodgeDir;
-
     /** a vector cache representing the intended direction of attack*/
     cugl::Vec2 _keyAttackDir;
 
     // TOUCH SUPPORT
-    /** The timestamp for the beginning of the current gesture */
-    cugl::Timestamp _timestamp;
+    
     /** The listener key associated with the touchscreen */
     uint32_t _touchKey;
     
@@ -144,10 +152,28 @@ private:
     /** gesture data for controlling combat */
     GestureData _combatGesture;
     
+    // TODO: this is temporary, subject to removal (used to toggle between settings)
+    /** gesture data for quick settings */
+    GestureData _settingsGesture;
+    
     /** whether the  gestures have positions swapped. */
     bool reversedGestures;
 
 protected:
+    
+#pragma mark -
+#pragma mark Input Scheme
+    
+    enum class ControlOption : int {
+        /** all directions sync with the direction the player is facing */
+        UNIFIED = 0,
+        /** movement direction does not matter */
+        OMNIDIRECTIONAL = 1
+    };
+    
+    /** the control set that the controller is offering */
+    ControlOption scheme = ControlOption::UNIFIED;
+    
 #pragma mark -
 #pragma mark Input Results (Abstraction Layer)
     
@@ -252,9 +278,9 @@ public:
     /**
      * Returns the unit vector direction of movement for dodge motion
      *
-     * The returned value can be anything in the event that {@link didDodge} is false.
+     * The returned value can be anything in the event that `didDodge` is false.
      */
-    cugl::Vec2 getDodgeDirection(){ return _dodgeDir; }
+    cugl::Vec2 getDodgeDirection(cugl::Vec2 facingDir);
     
     /**
      * Returns true if the parry input was triggered.
@@ -269,9 +295,9 @@ public:
     /**
      * Returns the vector direction of attack (i.e. the position of the mouse)
      *
-     * The returned value can be anything in the event that {@link didAttack} is false.
+     * The returned value can be anything in the event that `didAttack` is false.
      */
-    cugl::Vec2 getAttackDirection() const { return _attackDir; }
+    cugl::Vec2 getAttackDirection(cugl::Vec2 facingDir);
     
     /**
      * @return true if the weapon swap input was triggered

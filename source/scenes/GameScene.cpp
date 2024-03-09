@@ -270,7 +270,7 @@ void GameScene::preUpdate(float dt) {
             player->_dodgeCD.reset();
             player->_dodgeDuration.reset(); // set dodge frames
             //dodge
-            auto force = _input.getDodgeDirection();
+            auto force = _input.getDodgeDirection(player->getFacingDir());
             if (force.length() == 0) {
                 // dodge in the direction currently facing. normalize so that the dodge is constant speed
                 force = player->getFacingDir().getNormalization();
@@ -297,7 +297,7 @@ void GameScene::preUpdate(float dt) {
                 /////// END COMPUTATION OF ATTACK DIRECTION ///////
                 
                 //Vec2 direction = player->getFacingDir();
-                Vec2 direction = _input.getAttackDirection();
+                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (direction.y < 0){
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
