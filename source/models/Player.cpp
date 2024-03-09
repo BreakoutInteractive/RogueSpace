@@ -107,9 +107,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales
     
     Vec2 origin = Vec2(_activeAnimation->getFrameSize().width / 2, 0);
-    // TODO: the tinted version of draw() shifts the texture for some reason (see documentation or Walker). Tinting may be needed for other purposes.
-    Vec2 bugOffset = -origin;
-    Affine2 transform = Affine2::createTranslation(getPosition() * _drawScale + bugOffset);
+    Affine2 transform = Affine2::createTranslation(getPosition() * _drawScale);
     _activeAnimation->draw(batch, _tint, origin, transform);
     if (_attacking) {
         //this weird-looking operation is to advance the animation every other frame instead of every frame so that it is more visible
@@ -121,7 +119,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if (!_dodgeDuration.isZero()) {
             for (int i = 2; i < 10; i += 2) {
                 auto color = Color4(Vec4(1, 1, 1, 1 - i * 0.1));
-                Affine2 localTrans = Affine2::createTranslation((getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale + bugOffset);
+                Affine2 localTrans = Affine2::createTranslation((getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale);
                 _activeAnimation->draw(batch, color, origin, localTrans);
             }
         }

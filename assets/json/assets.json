@@ -46,27 +46,33 @@
         },
         "attack": {
             "file":     "textures/player_slash.png"
+        },
+        "joystick_base": {
+            "file":     "textures/js_ring.png"
+        },
+        "stick": {
+            "file":     "textures/js_button.png"
         }
 	},
     "sounds": {
         "bump": {
             "type":     "sample",
-            "file":     "sounds/bump.wav",
+            "file":     "sounds/StarterSounds/bump.wav",
             "volume":   0.4
         },
         "burn": {
             "type":     "sample",
-            "file":     "sounds/afterburner.wav",
+            "file":     "sounds/StarterSounds/afterburner.wav",
             "volume":   0.5
         },
         "right-burn": {
             "type":     "sample",
-            "file":     "sounds/sideburner-right.wav",
+            "file":     "sounds/StarterSounds/sideburner-right.wav",
             "volume":   0.5
         },
         "left-burn": {
             "type":     "sample",
-            "file":     "sounds/sideburner-left.wav",
+            "file":     "sounds/StarterSounds/sideburner-left.wav",
             "volume":   0.5
         }
     },

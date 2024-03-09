@@ -17,6 +17,7 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
+#include "JoyStick.hpp"
 
 #include <ctime>
 #include <string>
@@ -63,7 +64,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
+    } else if (!_gameRenderer.cugl::Scene2::init(dimen)){
+        return false;
     }
+    
     
     _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
@@ -74,10 +78,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     }
 
     _assets = assets;
+    
+    _gameRenderer.init(_assets, getCamera(), _level);
+    
     _input.init();
-    // _aiEngine.init(dimen);
     _level->setAssets(_assets);
-    _backgroundTexture = assets->get<Texture>("background");
     
     // Create the world and attach the listeners.
     std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
@@ -88,7 +93,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
                                           dimen.height/_level->getViewBounds().height;
-    _level->setDrawScale(Vec2(_scale, _scale));
+    Vec2 drawScale(_scale, _scale);
+    _level->setDrawScale(drawScale);
+    _gameRenderer.setDrawScale(drawScale);
+    
     
     _camController.init(getCamera(), 2.5f);
     auto p = _level->getPlayer();
@@ -243,6 +251,16 @@ void GameScene::preUpdate(float dt) {
     auto _atkCD = player->_atkCD.getCount();
     auto _parryCD = player->_parryCD.getCount();
     auto _dodgeCD = player->_dodgeCD.getCount();
+    
+#ifdef CU_TOUCH_SCREEN
+    if(_input.isMotionActive()){
+        _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
+    }
+    else
+    {
+        _gameRenderer.setJoystickVisible(false);
+    }
+#endif
     
     // update the direction the player is facing
     if (moveForce.length() > 0){
@@ -481,24 +499,4 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
         }
     }
     //TODO: add another check here for enemy attacks once they can do so
-}
-
-#pragma mark -
-#pragma mark Rendering
-
-void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch)  {
-    // render background
-    batch->begin(getCamera()->getCombined());
-    Size s = Application::get()->getDisplaySize();
-    Vec3 camPos = getCamera()->getPosition();
-    batch->draw(_backgroundTexture, Rect(camPos.x - s.width/2, camPos.y - s.height/2, s.width, s.height));
-
-    batch->end();
-    if (_level != nullptr){
-        batch->begin(getCamera()->getCombined());
-        _level->render(batch);
-        batch->end();
-    }
-    // draw the debug component
-    Scene2::render(batch);
 }

@@ -437,6 +437,9 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
             // update movement based on the direction vector
             _keyMoveDir.set(swipeDir.x, -swipeDir.y); //negate y because screen origin is different from game origin.
         }
+        else {
+            _keyMoveDir.setZero();
+        }
     }
     
     if (scheme == ControlOption::UNIFIED){

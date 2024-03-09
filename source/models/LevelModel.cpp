@@ -5,6 +5,7 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "JoyStick.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -117,6 +118,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
     _floor->loadAssets(assets);
+
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
     }
