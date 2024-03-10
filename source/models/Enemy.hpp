@@ -36,8 +36,6 @@ protected:
     std::shared_ptr<cugl::Texture> _texture;
 
     cugl::Color4 _tint;
-
-    Counter _hitCounter;
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
@@ -72,6 +70,8 @@ public:
     Counter _stunCD;
     
     Counter _sentryCD;
+
+    Counter _hitCounter;
     
 #pragma mark -
 #pragma mark Constructors

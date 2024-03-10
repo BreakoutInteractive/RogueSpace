@@ -56,6 +56,7 @@ void AIController::update(float dt) {
                     (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
                     // CULog("Sentry direction: %f, %f", (*it)->getFacingDir().x, (*it)->getFacingDir().y);
                 }
+                if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) (*it)->setLinearVelocity(Vec2::ZERO);
             }
             // make patrolling enemies go to the next location on their patrol route
             if ((*it)->getDefaultState() == "patrol") {
@@ -63,14 +64,19 @@ void AIController::update(float dt) {
                     (*it)->setPathIndex(((*it)->getPathIndex() + 1) % (*it)->getPath().size());
                     (*it)->setGoal((*it)->getPath()[(*it)->getPathIndex()]);
                     // velocity currently based on distance from goal, may need adjusting
-                    ((*it)->setLinearVelocity((*it)->getGoal().x - (*it)->getPosition().x, (*it)->getGoal().y - (*it)->getPosition().y));
+                    (*it)->setLinearVelocity((*it)->getGoal().x - (*it)->getPosition().x, (*it)->getGoal().y - (*it)->getPosition().y);
                 }
                 // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
-                else {
+                else if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) {
                     int prevIdx = (*it)->getPathIndex() - 1;
                     if (prevIdx < 0) prevIdx = (*it)->getPath().size() - 1;
                     Vec2 prev = (*it)->getPath().at(prevIdx);
-                    ((*it)->setLinearVelocity((*it)->getGoal().x - prev.x, (*it)->getGoal().y - prev.y));
+                    Vec2 dest = (*it)->getGoal();
+                    float scl = prev.distance(dest);
+                    Vec2 dir = (*it)->getGoal() - (*it)->getPosition();
+                    dir.normalize();
+                    dir *= scl;
+                    (*it)->setLinearVelocity(dir);
                 }
             }
         }

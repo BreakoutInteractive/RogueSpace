@@ -9,7 +9,8 @@
 
 #include "Player.hpp"
 
-#define HIT_TIME 10
+//should be at least the enemy's attack time so that we can't get hit twice by the same attack
+#define HIT_TIME 16
 /**the number of frames we wait before allowing another attack, also currently the length of the attack*/
 #define ATK_CD 16
 /**the number of frames we wait before allowing another parry, also currently the length of the parry*/

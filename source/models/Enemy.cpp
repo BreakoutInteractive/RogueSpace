@@ -9,7 +9,8 @@
 
 using namespace cugl;
 
-#define HIT_TIME 10
+// should be at least the player's attack time so that it can't get hit twice by the same attack
+#define HIT_TIME 16
 /**the number of frames an attack will last**/
 #define ATK_TIME 16
 /**the number of frames we wait before allowing another attack*/
@@ -99,6 +100,7 @@ void Enemy::hit(cugl::Vec2 atkDir) {
         _hitCounter.reset();
         setHealth(getHealth()-1);
         _tint = Color4::RED;
+        setLinearVelocity(atkDir*10); //tune this value (10)
     }
 }
 
