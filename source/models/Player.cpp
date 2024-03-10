@@ -207,7 +207,8 @@ void Player::setFacingDir(cugl::Vec2 dir){
 }
 
 void Player::hit() {
-    if (_hitCounter.isZero()) {
+    //only get hit if not dodging and not in hitstun
+    if (_hitCounter.isZero() && _dodgeDuration.isZero()) {
         _hitCounter.reset();
         _hp -= 1;
         _tint = Color4::RED;

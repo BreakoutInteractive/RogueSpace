@@ -333,6 +333,11 @@ public:
      * Method to call when an enemy is hit by an attack
      */
     void hit();
+
+    /**
+     * Method to call when an enemy is stunned, e.g. when parried
+     */
+    void stun();
     
     
 #pragma mark -

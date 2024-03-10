@@ -102,11 +102,18 @@ void Enemy::hit() {
     }
 }
 
+void Enemy::stun() {
+    if (_stunCD.isZero()) {
+        _stunCD.reset();
+        _tint = Color4::YELLOW;
+    }
+}
+
 void Enemy::updateCounters() {
     _sentryCD.decrement();
     _stunCD.decrement();
     _atkCD.decrement();
     _atkLength.decrement();
     _hitCounter.decrement();
-    if (_hitCounter.isZero()) _tint = Color4::WHITE;
+    if (_hitCounter.isZero() && _stunCD.isZero()) _tint = Color4::WHITE;
 }

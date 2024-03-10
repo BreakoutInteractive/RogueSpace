@@ -5,7 +5,7 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
-#include "JoyStick.hpp"
+#include "../scenes/JoyStick.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
