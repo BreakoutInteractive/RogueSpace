@@ -20,9 +20,7 @@ GameRenderer::~GameRenderer(){
     _level = nullptr;
 }
 
-bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<Camera> gameCam, std::shared_ptr<LevelModel> level){
-    _gameCam = gameCam;
-    _level = level;
+bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     _backgroundTexture = assets->get<Texture>("background");
     // TODO: use assets to load scene nodes and add them to this scene
     _joystick->loadAssets(assets);

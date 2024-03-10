@@ -58,12 +58,21 @@ public:
      * Initializes the renderer with the necessary assets and scene graph nodes.
      *
      * @param assets    The (loaded) assets for this game mode
-     * @param gameCam   The camera from the game scene
-     * @param level         The level to be rendered
      *
      * @return true if the renderer is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<Camera> gameCam, std::shared_ptr<LevelModel> level);
+    bool init(const std::shared_ptr<AssetManager>& assets);
+    
+    /**
+     * sets the game scene camera and level to be used to render the game
+     *
+     * @param gameCam   The camera from the game scene
+     * @param level         The level to be rendered
+     */
+    void setGameElements(std::shared_ptr<Camera> gameCam, std::shared_ptr<LevelModel> level){
+        _gameCam = gameCam;
+        _level = level;
+    }
     
 #pragma mark -
 #pragma mark View (Methods)

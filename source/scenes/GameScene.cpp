@@ -79,7 +79,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     
-    _gameRenderer.init(_assets, getCamera(), _level);
+    _gameRenderer.init(_assets);
+    _gameRenderer.setGameElements(getCamera(), _level);
     
     _input.init();
     _level->setAssets(_assets);
@@ -199,7 +200,7 @@ void GameScene::preUpdate(float dt) {
 			_level->showDebug(_debug);
             _level->setDrawScale(Vec2(_scale, _scale));
             activateWorldCollisions(_level->getWorld());
-
+            _gameRenderer.setGameElements(getCamera(), _level);
 			_resetNode->setVisible(false);
 		} else {
 			// Level is not loaded yet; refuse input
