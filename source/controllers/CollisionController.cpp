@@ -37,12 +37,12 @@ void CollisionController::beginContact(b2Contact* contact){
 
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
-    //attack
     intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
     intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
+        //attack
         if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
             //attack hitbox is a circle, but we only want it to hit in a semicircle
@@ -51,13 +51,13 @@ void CollisionController::beginContact(b2Contact* contact){
             float ang = acos(dir.dot(Vec2::UNIT_X));
             if ((*it)->getPosition().y * (*it)->getDrawScale().y < _level->getPlayer()->getPosition().y * _level->getPlayer()->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                (*it)->hit();
+                (*it)->hit(dir);
                 CULog("Hit an enemy!");
             }
         }
+        //player takes damage if running into enemy while not dodging
         else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            //player takes damage if running into enemy while not dodging
             if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit();
         }
     }

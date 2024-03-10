@@ -331,8 +331,9 @@ public:
 
     /**
      * Method to call when an enemy is hit by an attack
+     * @param atkDir the direction of the attack that hit this enemy
      */
-    void hit();
+    void hit(cugl::Vec2 atkDir);
 
     /**
      * Method to call when an enemy is stunned, e.g. when parried

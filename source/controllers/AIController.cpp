@@ -66,9 +66,14 @@ void AIController::update(float dt) {
                     ((*it)->setLinearVelocity((*it)->getGoal().x - (*it)->getPosition().x, (*it)->getGoal().y - (*it)->getPosition().y));
                 }
                 // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
+                else {
+                    int prevIdx = (*it)->getPathIndex() - 1;
+                    if (prevIdx < 0) prevIdx = (*it)->getPath().size() - 1;
+                    Vec2 prev = (*it)->getPath().at(prevIdx);
+                    ((*it)->setLinearVelocity((*it)->getGoal().x - prev.x, (*it)->getGoal().y - prev.y));
+                }
             }
         }
-        else (*it)->setLinearVelocity(0);
     }
     // TODO: implement the following
     // if enemy has LOS of player

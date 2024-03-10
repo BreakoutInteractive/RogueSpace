@@ -218,6 +218,7 @@ void GameScene::preUpdate(float dt) {
         _resetNode->setVisible(true);
         _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
         _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
+        _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
         setComplete(false);
         setDefeat(false);
         return;

@@ -94,7 +94,7 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _texture = assets->get<Texture>(_textureKey);
 }
 
-void Enemy::hit() {
+void Enemy::hit(cugl::Vec2 atkDir) {
     if (_hitCounter.isZero()) {
         _hitCounter.reset();
         setHealth(getHealth()-1);
@@ -106,6 +106,7 @@ void Enemy::stun() {
     if (_stunCD.isZero()) {
         _stunCD.reset();
         _tint = Color4::YELLOW;
+        setLinearVelocity(Vec2::ZERO);
     }
 }
 
