@@ -5,6 +5,7 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "../utility/LevelParser.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -144,6 +145,10 @@ void LevelModel::showDebug(bool flag) {
  */
 bool LevelModel::preload(const std::string file) {
 	std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
+    
+    LevelParser ls = LevelParser();
+    ls.preload("json/test_room.json");
+    
 	return preload(reader->readJson());
 }
 
