@@ -118,7 +118,15 @@ void InputController::update(float dt) {
     if (up) _vertical += 1.0f;
     if (down) _vertical -= 1.0f;
     
-    _keyMoveDir.set(_horizontal, _vertical);
+    if (_horizontal == 1){
+        _keyMoveDir.set(1,0).rotate(_vertical * 0.464f); // 0.464f is the 26 deg angle. depends on art.
+    }
+    else if (_horizontal == -1){
+        _keyMoveDir.set(-1,0).rotate(-_vertical * 0.464f);
+    }
+    else {
+        _keyMoveDir.set(_horizontal, _vertical);
+    }
     _keyDodgeDir.set(_keyMoveDir);    // dodges ("dash") in the direction of movement
 
 #else

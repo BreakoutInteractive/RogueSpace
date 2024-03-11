@@ -8,6 +8,7 @@
 //
 
 #include "Player.hpp"
+#include "GameObject.hpp"
 
 #define HIT_TIME 10
 /**the number of frames we wait before allowing another attack, also currently the length of the attack*/
