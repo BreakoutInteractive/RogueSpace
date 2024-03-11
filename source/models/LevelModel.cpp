@@ -5,6 +5,7 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "GameObject.hpp"
 #include "CollisionConstants.hpp"
 
 #pragma mark -
@@ -61,7 +62,7 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     _floor->draw(batch);
     
     for (int ii = 0; ii < _enemies.size(); ii++){
-        if (_enemies[ii]->isEnabled()) {
+        if (_enemies[ii]->getCollider()->isEnabled()) {
             _enemies[ii]->draw(batch);
         }
         if (_enemies[ii]->getAttack()->isEnabled()) {
@@ -109,18 +110,19 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     node->addChild(_debugNode);
     
     // debug node should be added once objects are initialized
-    _player->setDebugScene(_debugNode);
-    _player->getShadow()->setDebugScene(_debugNode);
-    _player->getShadow()->setDebugColor(Color4::RED);
+    _player->getCollider()->setDebugScene(_debugNode);
+    _player->getColliderShadow()->setDebugScene(_debugNode);
+    _player->getColliderShadow()->setDebugColor(Color4::RED);
     _atk->setDebugScene(_debugNode);
     _atk->setDebugColor(Color4::RED);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
-        _enemies[ii]->setDebugScene(_debugNode);
+        auto enemyCollider = _enemies[ii]->getCollider();
+        enemyCollider->setDebugScene(_debugNode);
         _enemies[ii]->getAttack()->setDebugScene(_debugNode);
         _enemies[ii]->getAttack()->setDebugColor(Color4::RED);
-        _enemies[ii]->getShadow()->setDebugScene(_debugNode);
-        _enemies[ii]->getShadow()->setDebugColor(Color4::RED);
+        _enemies[ii]->getColliderShadow()->setDebugScene(_debugNode);
+        _enemies[ii]->getColliderShadow()->setDebugColor(Color4::RED);
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
@@ -219,15 +221,14 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     }
 
     // Add objects to world
-    addObstacle(_player);
-    addObstacle(_player->getShadow());
+    _player->addObstaclesToWorld(_world);
 	addObstacle(_atk);
     _atk->setEnabled(false); // turn off the attack semisphere
+    
     for (int ii = 0; ii < _enemies.size(); ii++){
-        addObstacle(_enemies[ii]);
+        _enemies[ii]->addObstaclesToWorld(_world);
         addObstacle(_enemies[ii]->getAttack());
         _enemies[ii]->getAttack()->setEnabled(false);
-        addObstacle(_enemies[ii]->getShadow());
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
@@ -248,25 +249,22 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 
 
 void LevelModel::unload() {
-	for(auto it = _enemies.begin(); it != _enemies.end(); ++it) {
-		if (_world != nullptr) {
-			_world->removeObstacle((*it));
-		}
-    (*it) = nullptr;
-	}
+    if (_world != nullptr) {
+        for(auto it = _enemies.begin(); it != _enemies.end(); ++it) {
+            (*it)->removeObstaclesFromWorld(_world);
+        }
+        
+        for(auto it = _walls.begin(); it != _walls.end(); ++it) {
+                _world->removeObstacle((*it));
+        }
+    }
 	_enemies.clear();
-	for(auto it = _walls.begin(); it != _walls.end(); ++it) {
-		if (_world != nullptr) {
-			_world->removeObstacle((*it));
-		}
-    (*it) = nullptr;
-	}
 	_walls.clear();
     
-    _world->removeObstacle(_player);
+    _player->removeObstaclesFromWorld(_world);
+    
     _player = nullptr;
     _floor = nullptr;
-    
     if (_world != nullptr) {
         _world->clear();
         _world = nullptr;
@@ -290,13 +288,12 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
 
     // Get the object, which is automatically retained
     _player = Player::alloc(pos,(Size) size);
-    _player->setName(json->key());
-
-    _player->setDensity(json->getDouble(DENSITY_FIELD));
-    _player->setFriction(json->getDouble(FRICTION_FIELD));
-    _player->setRestitution(json->getDouble(RESTITUTION_FIELD));
-    _player->setFixedRotation(!json->getBool(ROTATION_FIELD));
-    _player->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
+    auto playerCollider = _player->getCollider();
+    playerCollider->setDensity(json->getDouble(DENSITY_FIELD));
+    playerCollider->setFriction(json->getDouble(FRICTION_FIELD));
+    playerCollider->setRestitution(json->getDouble(RESTITUTION_FIELD));
+    playerCollider->setFixedRotation(!json->getBool(ROTATION_FIELD));
+    playerCollider->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
     _player->setTextureKey(json->getString(TEXTURE_FIELD)); //idle spritesheet
     _player->setParryTextureKey(json->getString(PARRY_FIELD));
     _player->setAttackTextureKey(json->getString(ATTACK_FIELD));
@@ -304,26 +301,16 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
 
     std::string btype = json->getString(BODYTYPE_FIELD);
     if (btype == STATIC_VALUE) {
-        _player->setBodyType(b2_staticBody);
+        playerCollider->setBodyType(b2_staticBody);
     }
-    
-    auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
-    shadow->setBodyType(b2_kinematicBody);
-    b2Filter filter;
-    // this is a player "shadow"
-    filter.categoryBits = CATEGORY_PLAYER_SHADOW;
-    // a player "shadow" can collide with enemies
-    filter.maskBits = CATEGORY_ENEMY;
-    shadow->setFilterData(filter);
-    _player->setShadow(shadow);
 
     //setup the attack for collision detection
 	_atk = physics2::WheelObstacle::alloc(pos, ATK_RADIUS);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);
-    // this is an attack
+    b2Filter filter;
+    // this is an attack and can collide with a player or an enemy
     filter.categoryBits = CATEGORY_ATTACK;
-    // an attack can collide with a player or an enemy
     filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
     _atk->setFilterData(filter);
     return success;
@@ -338,13 +325,15 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
         Size size(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
         auto enemy = Enemy::alloc(pos, size);
-        enemy->setName("enemy-" + std::to_string(ii));
-        enemy->setDensity(json->getDouble(DENSITY_FIELD));
-        enemy->setFriction(json->getDouble(FRICTION_FIELD));
-        enemy->setRestitution(json->getDouble(RESTITUTION_FIELD));
-        enemy->setFixedRotation(!json->getBool(ROTATION_FIELD));
+        auto enemyCollider = enemy->getCollider();
+        enemyCollider->setName("enemy-" + std::to_string(ii));
+        enemyCollider->setDensity(json->getDouble(DENSITY_FIELD));
+        enemyCollider->setFriction(json->getDouble(FRICTION_FIELD));
+        enemyCollider->setRestitution(json->getDouble(RESTITUTION_FIELD));
+        enemyCollider->setFixedRotation(!json->getBool(ROTATION_FIELD));
+        enemyCollider->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
+        
         enemy->setTextureKey(json->getString(TEXTURE_FIELD));
-        enemy->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
         enemy->setHealth(json->getInt("health"));
         enemy->setDefaultState(json->getString("defaultstate"));
         std::vector<Vec2> path;
@@ -360,22 +349,12 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         }
         std::string btype = json->getString(BODYTYPE_FIELD);
         if (btype == STATIC_VALUE) {
-            enemy->setBodyType(b2_staticBody);
+            enemyCollider->setBodyType(b2_staticBody);
         }
         _enemies.push_back(enemy);
         
-        auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
-        shadow->setAngle(M_PI_4);
-        shadow->setBodyType(b2_kinematicBody);
-        b2Filter filter;
-        // this is an enemy "shadow"
-        filter.categoryBits = CATEGORY_ENEMY_SHADOW;
-        // an enemy "shadow" can collide with the player
-        filter.maskBits = CATEGORY_PLAYER;
-        shadow->setFilterData(filter);
-        enemy->setShadow(shadow);
-        
         // attack setup
+        b2Filter filter;
         auto attack = physics2::WheelObstacle::alloc(pos, ATK_RADIUS); //for now enemies have same attack radius as player
         attack->setSensor(true);
         attack->setBodyType(b2_dynamicBody);

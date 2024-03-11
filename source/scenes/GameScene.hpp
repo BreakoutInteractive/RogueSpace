@@ -286,13 +286,6 @@ protected:
 #pragma mark Helpers
     
     /**
-     * Activates world collision callbacks on the given physics world and sets the onBeginContact and beforeSolve callbacks
-     *
-     * @param world the physics world to activate world collision callbacks on
-     */
-    void activateWorldCollisions(const std::shared_ptr<physics2::ObstacleWorld>& world);
-    
-    /**
      * Returns the active screen size of this scene.
      *
      * This method is for graceful handling of different aspect

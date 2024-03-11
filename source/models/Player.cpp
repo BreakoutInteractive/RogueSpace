@@ -31,17 +31,29 @@ using namespace cugl;
 
 
 bool Player::init(const Vec2 pos, const Size size) {
-    BoxObstacle::init(pos,size);
-    //BoxObstacle::setAngle(M_PI_4);
-    std::string name("player");
-    setName(name);
+    // set up collider
+    auto box = std::make_shared<physics2::BoxObstacle>();
+    box->init(pos, size);
+    std::string name("player-collider");
+    box->setName(name);
+    // this is a player and can collide with an enemy "shadow", a wall, or an attack
     b2Filter filter;
-    // this is a player
     filter.categoryBits = CATEGORY_PLAYER;
-    // a player can collide with an enemy "shadow", a wall, or an attack
     filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
-    setFilterData(filter);
-    _tint = Color4::WHITE;
+    box->setFilterData(filter);
+    _collider = box;    // attach Component
+    
+    // set the player collider-shadow
+    auto boxShadow = std::make_shared<physics2::BoxObstacle>();
+    boxShadow->init(pos, size);
+    std::string name2("player-obstacle");
+    boxShadow->setName(name2);
+    boxShadow->setBodyType(b2_kinematicBody);
+    filter.categoryBits = CATEGORY_PLAYER_SHADOW;
+    filter.maskBits = CATEGORY_ENEMY;
+    boxShadow->setFilterData(filter);
+    _colliderShadow = boxShadow; // attach Component
+    
     // set the counter properties
     _hitCounter.setMaxCount(HIT_TIME);
     _atkCD.setMaxCount(ATK_CD);
@@ -52,10 +64,6 @@ bool Player::init(const Vec2 pos, const Size size) {
     _idleCycle.reset();
     _hp = 3;
     _hitCounter.setMaxCount(HIT_TIME);
-    _tint = Color4::WHITE;
-    
-    // TODO: removal later, GAMEPLAY PROTOTYPE set 1-2 frame delay so player does not attack immediately if play button is held for too long
-    _atkCD.setCount(1);
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -64,7 +72,6 @@ bool Player::init(const Vec2 pos, const Size size) {
     _directions[6] = Vec2(-1,0);    //left
     for (int i = 1; i < 8; i+=2){
         _directions[i] = Vec2(0,-1).rotate(M_PI_4 * i); // diagonal directions
-        
     }
     _directionIndex = 0;
     _facingDirection = _directions[0];
@@ -84,27 +91,6 @@ void Player::dispose() {
 
 #pragma mark -
 #pragma mark Physics
-
-void Player::applyForce() {
-    if (!BoxObstacle::isEnabled()) {
-        return;
-    }
-
-    //_body->ApplyLinearImpulseToCenter(b2Vec2(_force.x,_force.y), true);
-
-    if (_dodgeDuration.isZero()){
-        // when not dodging, set max speed
-        auto maxGroundSpeed = 5.0f;
-        Vec2 vel = getLinearVelocity();
-        if (vel.length() >= maxGroundSpeed) {
-            vel.normalize();
-            setLinearVelocity(vel * maxGroundSpeed);
-        }
-    }
-    auto pos = getPosition();
-    _body->ApplyForce(b2Vec2(_force.x, _force.y), b2Vec2(pos.x, pos.y), true);
-}
-
 
 #pragma mark -
 #pragma mark Animation
@@ -131,7 +117,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if (!_dodgeDuration.isZero()) {
             for (int i = 2; i < 10; i += 2) {
                 auto color = Color4(Vec4(1, 1, 1, 1 - i * 0.1));
-                Affine2 localTrans = Affine2::createTranslation((getPosition() - getLinearVelocity() * (i * 0.01)) * _drawScale);
+                Affine2 localTrans = Affine2::createTranslation((getPosition() - _collider->getLinearVelocity() * (i * 0.01)) * _drawScale);
                 _activeAnimation->draw(batch, color, origin, localTrans);
             }
         }
@@ -221,6 +207,6 @@ void Player::hit(Vec2 atkDir) {
         _hitCounter.reset();
         _hp -= 1;
         _tint = Color4::RED;
-        setLinearVelocity(atkDir * 10); //tune this value (10)
+        _collider->setLinearVelocity(atkDir * 10); //tune this value (10)
     }
 }

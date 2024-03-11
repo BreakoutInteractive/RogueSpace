@@ -82,7 +82,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // Create the world and attach the listeners.
     std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
-    activateWorldCollisions(world);
     
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
@@ -99,8 +98,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
     _AIController.init(_level);
-    _collisionController.setLevel(_level);
     _collisionController.setAssets(_assets);
+    _collisionController.setLevel(_level);
+    
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -164,18 +164,6 @@ void GameScene::dispose() {
     }
 }
 
-#pragma mark -
-#pragma mark Physics Initialization
-void GameScene::activateWorldCollisions(const std::shared_ptr<physics2::ObstacleWorld>& world) {
-    world->activateCollisionCallbacks(true);
-    world->onBeginContact = [this](b2Contact* contact) {
-        beginContact(contact);
-    };
-    world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
-        beforeSolve(contact,oldManifold);
-    };
-}
-
 
 #pragma mark -
 #pragma mark Physics Handling
@@ -196,7 +184,7 @@ void GameScene::preUpdate(float dt) {
 			_level->setDebugNode(_debugNode); // Obtains ownership of debug node.
 			_level->showDebug(_debug);
             _level->setDrawScale(Vec2(_scale, _scale));
-            activateWorldCollisions(_level->getWorld());
+            _collisionController.setLevel(_level);
             _gameRenderer.setGameElements(getCamera(), _level);
 			_resetNode->setVisible(false);
 		} else {
@@ -234,7 +222,7 @@ void GameScene::preUpdate(float dt) {
         int activeCount = 0;
         auto enemies = _level->getEnemies();
         for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-            if ((*it)->isEnabled()) {
+            if ((*it)->getCollider()->isEnabled()) {
                 activeCount += 1;
             }
         }
@@ -274,9 +262,9 @@ void GameScene::preUpdate(float dt) {
     if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         //player->setForce(moveForce * 5); //TODO: use json data
         //player->applyForce();
-        player->setLinearVelocity(moveForce * 5);
+        player->getCollider()->setLinearVelocity(moveForce * 5);
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        player->setLinearVelocity(Vec2::ZERO);
+        player->getCollider()->setLinearVelocity(Vec2::ZERO);
         //player->getShadow()->setLinearVelocity(Vec2::ZERO);
     }
 
@@ -296,7 +284,7 @@ void GameScene::preUpdate(float dt) {
                 force = player->getFacingDir().getNormalization();
             }
             //player->setLinearDamping(20);
-            player->setLinearVelocity(force * 30);
+            player->getCollider()->setLinearVelocity(force * 30);
             //player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
         }
@@ -366,10 +354,6 @@ void GameScene::preUpdate(float dt) {
     //    player->applyForce();
     //}
     
-    player->getShadow()->setPosition(player->getPosition());
-    // CULog("Player position: %s", player->getPosition().toString().c_str());
-    // CULog("Shadow position: %s", player->getShadow()->getPosition().toString().c_str());
-    
     player->updateCounters();
     
 #pragma mark - Enemy movement
@@ -379,9 +363,10 @@ void GameScene::preUpdate(float dt) {
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         if ((*it)->getHealth() <= 0) {
-            (*it)->setEnabled(false);
+            (*it)->getCollider()->setEnabled(false);
+            (*it)->getColliderShadow()->setEnabled(false);
         }
-        if ((*it)->isEnabled()) {
+        if ((*it)->getCollider()->isEnabled()) {
             // enemy attacks if not stunned and within range of player
             if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getRange()) {
                 Vec2 direction = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
@@ -399,14 +384,11 @@ void GameScene::preUpdate(float dt) {
                 (*it)->_atkCD.reset();
                 (*it)->_atkLength.reset();
             }
-            // Vec2 f = _aiEngine.lineOfSight((*it), player);
-            // (*it)->setForce(f);
-            // (*it)->applyForce();
         }
         if ((*it)->_atkLength.isZero()) {
             (*it)->getAttack()->setEnabled(false);
         }
-        (*it)->getShadow()->setPosition((*it)->getPosition());
+        
     }
 }
 
@@ -420,8 +402,14 @@ void GameScene::fixedUpdate(float step) {
         _camController.setTarget(player->getPosition() * player->getDrawScale());
         _winNode->setPosition(_camController.getPosition());
         _loseNode->setPosition(_camController.getPosition());
-        // CULog("Shadow position: %s", player->getShadow()->getPosition().toString().c_str());
+        
+        auto enemies = _level->getEnemies();
+        for (auto it = enemies.begin(); it != enemies.end(); ++it){
+            (*it)->syncPositions();
+        }
+        player->syncPositions();
     }
+    
 }
 
 

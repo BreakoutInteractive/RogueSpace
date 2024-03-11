@@ -13,9 +13,9 @@
 #include "GameObject.hpp"
 
 /**
- * This class represents an enemy in the game.
+ *  This class represents an enemy in the game.
  */
-class Enemy : public cugl::physics2::BoxObstacle, public GameObject {
+class Enemy : public GameObject {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Enemy);
@@ -28,17 +28,10 @@ protected:
     /** The texture key for the player*/
     std::string _textureKey;
     
-    /** Cache object for transforming the force according the object angle */
-    cugl::Mat4 _affine;
-    
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _texture;
-
-    cugl::Color4 _tint;
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
-    
-    std::shared_ptr<cugl::physics2::BoxObstacle> _shadow;
     
     /** Enemy's sight range */
     float _range;
@@ -79,7 +72,7 @@ public:
     /**
      * Creates a new enemy at the origin.
      */
-    Enemy(void) : BoxObstacle(), GameObject() { }
+    Enemy(void) : GameObject() { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -104,7 +97,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
     
     
 #pragma mark Static Constructors
@@ -271,15 +264,6 @@ public:
      */
     void setFacingDir(cugl::Vec2 dir) { _facingDirection = dir; };
     
-    /**
-     * Gets this enemy's "shadow" hitbox.
-     */
-    std::shared_ptr<cugl::physics2::BoxObstacle> getShadow() const { return _shadow; }
-    
-    /**
-     * Sets this enemy's "shadow" hitbox.
-     */
-    void setShadow(std::shared_ptr<cugl::physics2::BoxObstacle> value) { _shadow = value; }
     
 #pragma mark -
 #pragma mark Animation
@@ -327,12 +311,12 @@ public:
     
 #pragma mark -
 #pragma mark Physics
-    /**
-     * Applies the force to the body of this player
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
+//    /**
+//     * Applies the force to the body of this player
+//     *
+//     * This method should be called after the force attribute is set.
+//     */
+//    void applyForce();
 
 #pragma mark -
 #pragma mark State Update

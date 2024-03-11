@@ -25,6 +25,11 @@ protected:
     Vec2 _drawScale;
     
     /**
+     * the color to tint this object
+     */
+    cugl::Color4 _tint;
+    
+    /**
      * the game position of this object
      */
     Vec2 _position;
@@ -52,7 +57,7 @@ public:
     /**
      * constructs a game object at the origin with unit draw scale.
      */
-    GameObject(): _drawScale(1.0f, 1.0f), _position(0,0) {}
+    GameObject();
     
 #pragma mark -
 #pragma mark Rendering
@@ -89,26 +94,47 @@ public:
      */
     cugl::Vec2 getDrawScale() const { return _drawScale; }
     
+public:
 #pragma mark -
 #pragma mark Physics
     
-    std::shared_ptr<cugl::physics2::Obstacle> getCollider(){
+    virtual std::shared_ptr<cugl::physics2::Obstacle> getCollider(){
         return _collider;
     }
     
-    std::shared_ptr<cugl::physics2::Obstacle> getOutline(){
+    virtual std::shared_ptr<cugl::physics2::Obstacle> getOutline(){
         return _outlineSensor;
     }
     
-    std::shared_ptr<cugl::physics2::Obstacle> getColliderShadow(){
+    virtual std::shared_ptr<cugl::physics2::Obstacle> getColliderShadow(){
         return _colliderShadow;
     }
+    
+    /**
+     * adds all attached physics components to the given world
+     */
+    virtual void addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world);
+    
+    /**
+     * remove all attached physics components from the given world
+     */
+    virtual void removeObstaclesFromWorld(std::shared_ptr<physics2::ObstacleWorld> world);
     
     /**
      * synchronizes the physics components in a fixed update game loop.
      * The GameObject matches the positions of all collision elements (by default).
      */
-    virtual void fixedUpdate();
+    virtual void syncPositions();
+    
+#pragma mark -
+#pragma mark Properties
+    
+    virtual Vec2 getPosition(){
+        if (_collider != nullptr){
+            return _collider->getPosition();
+        }
+        return _position;
+    }
 };
 
 #endif /* GameObject_hpp */

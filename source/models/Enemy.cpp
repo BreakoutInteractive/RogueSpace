@@ -26,19 +26,28 @@ using namespace cugl;
 
 
 bool Enemy::init(const Vec2 pos, const Size size) {
-    BoxObstacle::init(pos,size);
-    BoxObstacle::setAngle(M_PI_4);
+    auto box = std::make_shared<physics2::BoxObstacle>();
+    box->init(pos,size);
+    box->setAngle(M_PI_4);
     std::string name("enemy");
-    setName(name);
+    box->setName(name);
     b2Filter filter;
-    // this is an enemy
+    // this is an enemy and can collide with a player "shadow", a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    // an enemy can collide with a player "shadow", a wall, or an attack
     filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
-    setFilterData(filter);
-    _tint = Color4::WHITE;
-    _range = 4;        // Current range is hardcoded as 10 units for all enemies.
-                        // Factor this into the json as you wish.
+    box->setFilterData(filter);
+    _collider = box;
+    
+    auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
+    shadow->setAngle(M_PI_4);
+    shadow->setBodyType(b2_kinematicBody);
+    // this is an enemy "shadow" and can collide with the player
+    filter.categoryBits = CATEGORY_ENEMY_SHADOW;
+    filter.maskBits = CATEGORY_PLAYER;
+    shadow->setFilterData(filter);
+    _colliderShadow = shadow;
+    
+    _range = 4; // TODO: factor this into JSON constants
     _hitCounter.setMaxCount(HIT_TIME);
     _atkLength.setMaxCount(ATK_TIME);
     _atkCD.setMaxCount(ATK_CD);
@@ -65,24 +74,6 @@ void Enemy::dispose() {
 #pragma mark -
 #pragma mark Physics
 
-void Enemy::applyForce() {
-    if (!BoxObstacle::isEnabled()) {
-        return;
-    }
-
-//    if (_dodgeDuration.isZero()){
-//        // when not dodging, set max speed
-//        auto maxGroundSpeed = 5.0f;
-//        Vec2 vel = getLinearVelocity();
-//        if (vel.length() >= maxGroundSpeed) {
-//            vel.normalize();
-//            setLinearVelocity(vel * maxGroundSpeed);
-//        }
-//    }
-    auto pos = getPosition();
-    _body->ApplyForce(b2Vec2(_force.x, _force.y), b2Vec2(pos.x, pos.y), true);
-}
-
 
 #pragma mark -
 #pragma mark Animation
@@ -107,7 +98,7 @@ void Enemy::hit(cugl::Vec2 atkDir) {
         _hitCounter.reset();
         setHealth(getHealth()-1);
         _tint = Color4::RED;
-        setLinearVelocity(atkDir*10); //tune this value (10)
+        _collider->setLinearVelocity(atkDir*10); //tune this value (10)
     }
 }
 
@@ -115,7 +106,7 @@ void Enemy::stun() {
     if (_stunCD.isZero()) {
         _stunCD.reset();
         _tint = Color4::YELLOW;
-        setLinearVelocity(Vec2::ZERO);
+        _collider->setLinearVelocity(Vec2::ZERO);
     }
 }
 

@@ -13,9 +13,9 @@
 #include "GameObject.hpp"
 
 /**
- * This class is the player avatar for the player lander game.
+ * This class is the player object in this game.
  */
-class Player : public cugl::physics2::BoxObstacle, public GameObject {
+class Player : public GameObject {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Player);
@@ -31,13 +31,6 @@ protected:
     std::string _parryTextureKey;
     /** The texture key for the attack animation */
     std::string _attackTextureKey;
-    
-    /** Cache object for transforming the force according the object angle */
-    cugl::Mat4 _affine;
-    
-    cugl::Color4 _tint;
-    
-    std::shared_ptr<cugl::physics2::BoxObstacle> _shadow;
     
     //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
@@ -89,7 +82,7 @@ public:
     /**
      * Creates a new player at the origin.
      */
-    Player(void) : BoxObstacle(), GameObject() { }
+    Player(void) : GameObject() { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -109,7 +102,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init() override { return init(cugl::Vec2::ZERO,cugl::Size::ZERO); }
+    virtual bool init() { return init(cugl::Vec2::ZERO,cugl::Size::ZERO); }
     
     /**
      * Initializes a new player with the given position and unit size.
@@ -118,7 +111,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos) override { return init(pos,cugl::Size(1,1)); }
+    virtual bool init(const cugl::Vec2 pos) { return init(pos,cugl::Size(1,1)); }
     
     /**
      * Initializes a new player with the given position and size.
@@ -130,7 +123,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
     
     
 #pragma mark Static Constructors
@@ -264,16 +257,7 @@ public:
      */
     void setFacingDir(cugl::Vec2 dir);
     
-    /**
-     * Gets the player's "shadow" hitbox.
-     */
-    std::shared_ptr<cugl::physics2::BoxObstacle> getShadow() const { return _shadow; }
-    
-    /**
-     * Sets the player's "shadow" hitbox.
-     */
-    void setShadow(std::shared_ptr<cugl::physics2::BoxObstacle> value) { _shadow = value; }
-    
+
 #pragma mark -
 #pragma mark Animation
  
@@ -361,24 +345,7 @@ public:
     
 #pragma mark -
 #pragma mark Physics
-    /**
-     * Applies the force to the body of this player
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
 
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * This method is called AFTER the collision resolution state. Therefore, it
-     * should not be used to process actions or any other gameplay information.
-     * Its primary purpose is to adjust changes to the fixture, which have to
-     * take place after collision.
-     *
-     * @param delta Timing values from parent loop
-     */
-//    virtual void update(float delta) override;
 };
 
 #endif /* Player_hpp */

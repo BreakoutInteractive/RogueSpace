@@ -8,16 +8,9 @@
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
 
-/** The key for collisions sounds */
-#define COLLISION_SOUND     "bump"
-/** Threshold for generating sound on collision */
-#define SOUND_THRESHOLD     3
-
-// The motivation to separate this out of GameScene is to let the focus of here to be dealing with combat collisioos and other collision events
-// GameScene can focus on player movement, controls, and surface level management.
-
+#pragma mark -
+#pragma mark Physics Initialization
 void CollisionController::setLevel(std::shared_ptr<LevelModel> level){
-    // TODO:
     auto world = level->getWorld();
     world->activateCollisionCallbacks(true);
     world->onBeginContact = [this](b2Contact* contact) {
@@ -33,6 +26,9 @@ void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets)
     _assets = assets;
 }
 
+
+#pragma mark -
+#pragma mark Collision Handling
 void CollisionController::beginContact(b2Contact* contact){
 
     b2Body* body1 = contact->GetFixtureA()->GetBody();
@@ -58,7 +54,8 @@ void CollisionController::beginContact(b2Contact* contact){
         //player takes damage if running into enemy while not dodging
         else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition().normalize());
+            Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
+            dir.normalize();
             if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
         }
     }
@@ -86,9 +83,6 @@ void CollisionController::beginContact(b2Contact* contact){
             }
         }
     }
-
-    //TODO: player should only collide with walls, borders during dodge. should not collide with enemies, enemy attacks, etc.
-    //this is handled in beforeSolve by disabling the contact if the player is dodging and collides with enemies or their attacks
 }
 
 
@@ -114,19 +108,20 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
     }
 
     // Play a sound if above threshold
-    if (speed > SOUND_THRESHOLD) {
-        // These keys result in a low number of sounds.  Too many == distortion.
-        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-
-        if (data1 != nullptr && data2 != nullptr) {
-            std::string key = (data1->getName() + data2->getName());
-            auto source = _assets->get<Sound>(COLLISION_SOUND);
-            if (!AudioEngine::get()->isActive(key)) {
-                AudioEngine::get()->play(key, source, false, source->getVolume());
-            }
-        }
-    }
+    // TODO: get the audio controller to play our SFX
+//    if (speed > SOUND_THRESHOLD) {
+//        // These keys result in a low number of sounds.  Too many == distortion.
+//        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+//        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+//
+//        if (data1 != nullptr && data2 != nullptr) {
+//            std::string key = (data1->getName() + data2->getName());
+//            auto source = _assets->get<Sound>(COLLISION_SOUND);
+//            if (!AudioEngine::get()->isActive(key)) {
+//                AudioEngine::get()->play(key, source, false, source->getVolume());
+//            }
+//        }
+//    }
 
     intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();

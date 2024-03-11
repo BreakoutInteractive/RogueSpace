@@ -40,7 +40,7 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
         return delta.normalize();
     } else {
         // If outside of sight radius or too close to player, stop the enemy.
-        e->setLinearVelocity(0, 0);
+        e->getCollider()->setLinearVelocity(0, 0);
     }
     return Vec2(0, 0);
 }
@@ -56,7 +56,7 @@ void AIController::update(float dt) {
                     (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
                     // CULog("Sentry direction: %f, %f", (*it)->getFacingDir().x, (*it)->getFacingDir().y);
                 }
-                if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) (*it)->setLinearVelocity(Vec2::ZERO);
+                if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
             }
             // make patrolling enemies go to the next location on their patrol route
             if ((*it)->getDefaultState() == "patrol") {
@@ -64,7 +64,7 @@ void AIController::update(float dt) {
                     (*it)->setPathIndex(((*it)->getPathIndex() + 1) % (*it)->getPath().size());
                     (*it)->setGoal((*it)->getPath()[(*it)->getPathIndex()]);
                     // velocity currently based on distance from goal, may need adjusting
-                    (*it)->setLinearVelocity((*it)->getGoal().x - (*it)->getPosition().x, (*it)->getGoal().y - (*it)->getPosition().y);
+                    (*it)->getCollider()->setLinearVelocity((*it)->getGoal().x - (*it)->getPosition().x, (*it)->getGoal().y - (*it)->getPosition().y);
                 }
                 // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
                 else if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) {
@@ -76,7 +76,7 @@ void AIController::update(float dt) {
                     Vec2 dir = (*it)->getGoal() - (*it)->getPosition();
                     dir.normalize();
                     dir *= scl;
-                    (*it)->setLinearVelocity(dir);
+                    (*it)->getCollider()->setLinearVelocity(dir);
                 }
             }
         }

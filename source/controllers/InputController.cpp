@@ -133,7 +133,6 @@ void InputController::update(float dt) {
     // MOBILE CONTROLS
     // TODO: in callbacks map the following to something (for when it is true)
     _keyReset = false; // need to map something
-    _keyDebug = false;
     _keyExit = false;
     
     // The actual updates to movement/dodge directions are all during callbacks
@@ -398,9 +397,15 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         float changeInPosition = gestureMotion.length();
         auto elapsed = event.timestamp.ellapsedMillis(_settingsGesture.timestamp);
         
-        if (changeInPosition >= EVENT_SWIPE_LENGTH && gestureMotion.y < 0){
+        if (changeInPosition >= EVENT_SWIPE_LENGTH){
             // this is a swipe up, change controls.
-            scheme = (scheme == ControlOption::UNIFIED) ? ControlOption::OMNIDIRECTIONAL : ControlOption::UNIFIED;
+            if (gestureMotion.y < 0){
+                scheme = (scheme == ControlOption::UNIFIED) ? ControlOption::OMNIDIRECTIONAL : ControlOption::UNIFIED;
+            }
+            else if (gestureMotion.y > 0){
+                _keyDebug = true;
+                CULog("debug");
+            }
         }
         bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition <= 20;
         TapData& tap = _settingsGesture.tap;
