@@ -36,8 +36,6 @@ protected:
     std::shared_ptr<cugl::Texture> _texture;
 
     cugl::Color4 _tint;
-
-    Counter _hitCounter;
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
@@ -72,6 +70,8 @@ public:
     Counter _stunCD;
     
     Counter _sentryCD;
+
+    Counter _hitCounter;
     
 #pragma mark -
 #pragma mark Constructors
@@ -331,8 +331,14 @@ public:
 
     /**
      * Method to call when an enemy is hit by an attack
+     * @param atkDir the normal vector of the direction of the attack that hit this enemy
      */
-    void hit();
+    void hit(cugl::Vec2 atkDir);
+
+    /**
+     * Method to call when an enemy is stunned, e.g. when parried
+     */
+    void stun();
     
     
 #pragma mark -

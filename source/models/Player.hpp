@@ -370,8 +370,9 @@ public:
 
     /**
     * Method to call when player is hit by an attack
+    * @param atkDir the normal vector of the direction of the attack that hit the player
     */
-    void hit();
+    void hit(cugl::Vec2 atkDir);
     
     
 #pragma mark -

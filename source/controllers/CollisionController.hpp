@@ -19,6 +19,8 @@ private:
 
     std::shared_ptr<LevelModel> _level;
 
+    std::shared_ptr<AssetManager> _assets;
+
 public:
 
 #pragma mark -
@@ -29,6 +31,8 @@ public:
      * sets the level container and attach listeners to the world
     */
     void setLevel(std::shared_ptr<LevelModel> level);
+
+    void setAssets(const std::shared_ptr<AssetManager>& assets);
     
 #pragma mark -
 #pragma mark Collision Handling
