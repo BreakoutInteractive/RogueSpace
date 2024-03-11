@@ -10,7 +10,8 @@
 
 using namespace cugl;
 
-#define HIT_TIME 10
+// should be at least the player's attack time so that it can't get hit twice by the same attack
+#define HIT_TIME 16
 /**the number of frames an attack will last**/
 #define ATK_TIME 16
 /**the number of frames we wait before allowing another attack*/
@@ -101,11 +102,20 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _texture = assets->get<Texture>(_textureKey);
 }
 
-void Enemy::hit() {
+void Enemy::hit(cugl::Vec2 atkDir) {
     if (_hitCounter.isZero()) {
         _hitCounter.reset();
         setHealth(getHealth()-1);
         _tint = Color4::RED;
+        setLinearVelocity(atkDir*10); //tune this value (10)
+    }
+}
+
+void Enemy::stun() {
+    if (_stunCD.isZero()) {
+        _stunCD.reset();
+        _tint = Color4::YELLOW;
+        setLinearVelocity(Vec2::ZERO);
     }
 }
 
@@ -115,5 +125,5 @@ void Enemy::updateCounters() {
     _atkCD.decrement();
     _atkLength.decrement();
     _hitCounter.decrement();
-    if (_hitCounter.isZero()) _tint = Color4::WHITE;
+    if (_hitCounter.isZero() && _stunCD.isZero()) _tint = Color4::WHITE;
 }

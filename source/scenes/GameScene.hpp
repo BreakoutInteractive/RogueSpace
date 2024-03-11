@@ -18,6 +18,7 @@
 #include "../controllers/AIController.hpp"
 #include "../controllers/CameraController.hpp"
 #include "../controllers/InputController.hpp"
+#include "../controllers/CollisionController.hpp"
 #include "../models/LevelModel.hpp"
 #include "GameRenderer.hpp"
 
@@ -40,6 +41,8 @@ protected:
     AIController _AIController;
     /** Controller to modify camera behavior */
     CameraController _camController;
+    /** Controller for handling collisions */
+    CollisionController _collisionController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */

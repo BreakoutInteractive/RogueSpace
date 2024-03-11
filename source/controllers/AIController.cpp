@@ -45,26 +45,40 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
     return Vec2(0, 0);
 }
 
-void AIController::update(float dt){
+void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
-        // make sentries rotate 45 degrees counterclockwise (?) at set intervals
-        if ((*it)->getDefaultState() == "sentry") {
-            if ((*it)->_sentryCD.isZero()) {
-                (*it)->_sentryCD.reset();
-                (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
-                // CULog("Sentry direction: %f, %f", (*it)->getFacingDir().x, (*it)->getFacingDir().y);
+        //enemies shouldn't move when stunned
+        if ((*it)->_stunCD.isZero()) {
+            // make sentries rotate 45 degrees counterclockwise (?) at set intervals
+            if ((*it)->getDefaultState() == "sentry") {
+                if ((*it)->_sentryCD.isZero()) {
+                    (*it)->_sentryCD.reset();
+                    (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
+                    // CULog("Sentry direction: %f, %f", (*it)->getFacingDir().x, (*it)->getFacingDir().y);
+                }
+                if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) (*it)->setLinearVelocity(Vec2::ZERO);
             }
-        }
-        // make patrolling enemies go to the next location on their patrol route
-        if ((*it)->getDefaultState() == "patrol") {
-            if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
-                (*it)->setPathIndex(((*it)->getPathIndex()+1)%(*it)->getPath().size());
-                (*it)->setGoal((*it)->getPath()[(*it)->getPathIndex()]);
-                // velocity currently based on distance from goal, may need adjusting
-                (*it)->setLinearVelocity((*it)->getGoal().x-(*it)->getPosition().x, (*it)->getGoal().y-(*it)->getPosition().y);
-                //(*it)->getShadow()->setLinearVelocity((*it)->getGoal().x-(*it)->getPosition().x, (*it)->getGoal().y-(*it)->getPosition().y);
+            // make patrolling enemies go to the next location on their patrol route
+            if ((*it)->getDefaultState() == "patrol") {
+                if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                    (*it)->setPathIndex(((*it)->getPathIndex() + 1) % (*it)->getPath().size());
+                    (*it)->setGoal((*it)->getPath()[(*it)->getPathIndex()]);
+                    // velocity currently based on distance from goal, may need adjusting
+                    (*it)->setLinearVelocity((*it)->getGoal().x - (*it)->getPosition().x, (*it)->getGoal().y - (*it)->getPosition().y);
+                }
+                // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
+                else if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) {
+                    int prevIdx = (*it)->getPathIndex() - 1;
+                    if (prevIdx < 0) prevIdx = (*it)->getPath().size() - 1;
+                    Vec2 prev = (*it)->getPath().at(prevIdx);
+                    Vec2 dest = (*it)->getGoal();
+                    float scl = prev.distance(dest);
+                    Vec2 dir = (*it)->getGoal() - (*it)->getPosition();
+                    dir.normalize();
+                    dir *= scl;
+                    (*it)->setLinearVelocity(dir);
+                }
             }
-            // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
         }
     }
     // TODO: implement the following

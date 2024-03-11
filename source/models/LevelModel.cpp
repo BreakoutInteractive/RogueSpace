@@ -5,7 +5,6 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
-#include "JoyStick.hpp"
 #include "CollisionConstants.hpp"
 
 #pragma mark -

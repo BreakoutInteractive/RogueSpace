@@ -10,11 +10,12 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
+#include "GameObject.hpp"
 
 /**
  * This class represents an enemy in the game.
  */
-class Enemy : public cugl::physics2::BoxObstacle {
+class Enemy : public cugl::physics2::BoxObstacle, public GameObject {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Enemy);
@@ -30,14 +31,10 @@ protected:
     /** Cache object for transforming the force according the object angle */
     cugl::Mat4 _affine;
     
-    cugl::Vec2 _drawScale;
-    
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _texture;
 
     cugl::Color4 _tint;
-
-    Counter _hitCounter;
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
@@ -74,13 +71,15 @@ public:
     Counter _stunCD;
     
     Counter _sentryCD;
+
+    Counter _hitCounter;
     
 #pragma mark -
 #pragma mark Constructors
     /**
      * Creates a new enemy at the origin.
      */
-    Enemy(void) : BoxObstacle(), _drawScale(1.0f, 1.0f) { }
+    Enemy(void) : BoxObstacle(), GameObject() { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -284,8 +283,6 @@ public:
     
 #pragma mark -
 #pragma mark Animation
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
  
     /**
     * Returns the texture (key) for this player
@@ -305,36 +302,7 @@ public:
     *
     * @param  strip    the texture (key) for this player
     */
-    void setTextureKey(const std::string& key) { _textureKey = key; }
-    
-    /**
-     * Sets the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @param scale The ratio of the player sprite to the physics body
-     */
-    void setDrawScale(cugl::Vec2 scale);
-    
-    /**
-     * Returns the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @return the ratio of the player sprite to the physics body
-     */
-    cugl::Vec2 getDrawScale() const { return _drawScale; }
-    
+    void setTextureKey(const std::string& key) { _textureKey = key; }    
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
@@ -343,8 +311,18 @@ public:
 
     /**
      * Method to call when an enemy is hit by an attack
+     * @param atkDir the normal vector of the direction of the attack that hit this enemy
      */
-    void hit();
+    void hit(cugl::Vec2 atkDir);
+
+    /**
+     * Method to call when an enemy is stunned, e.g. when parried
+     */
+    void stun();
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    
+    void setDrawScale(cugl::Vec2 scale) override;
     
     
 #pragma mark -

@@ -10,11 +10,12 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
+#include "GameObject.hpp"
 
 /**
  * This class is the player avatar for the player lander game.
  */
-class Player : public cugl::physics2::BoxObstacle {
+class Player : public cugl::physics2::BoxObstacle, public GameObject {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Player);
@@ -33,8 +34,6 @@ protected:
     
     /** Cache object for transforming the force according the object angle */
     cugl::Mat4 _affine;
-    
-    cugl::Vec2 _drawScale;
     
     cugl::Color4 _tint;
     
@@ -90,7 +89,7 @@ public:
     /**
      * Creates a new player at the origin.
      */
-    Player(void) : BoxObstacle(), _drawScale(1.0f, 1.0f) { }
+    Player(void) : BoxObstacle(), GameObject() { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -277,8 +276,6 @@ public:
     
 #pragma mark -
 #pragma mark Animation
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
  
     /**
     * Returns the idle texture (key) for this player
@@ -340,35 +337,6 @@ public:
     void setAttackTextureKey(const std::string& key) { _attackTextureKey = key; }
     
     /**
-     * Sets the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @param scale The ratio of the player sprite to the physics body
-     */
-    void setDrawScale(cugl::Vec2 scale);
-    
-    /**
-     * Returns the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @return the ratio of the player sprite to the physics body
-     */
-    cugl::Vec2 getDrawScale() const { return _drawScale; }
-    
-    
-    /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
@@ -382,8 +350,13 @@ public:
 
     /**
     * Method to call when player is hit by an attack
+    * @param atkDir the normal vector of the direction of the attack that hit the player
     */
-    void hit();
+    void hit(cugl::Vec2 atkDir);
+    
+    // INHERITED
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    void setDrawScale(cugl::Vec2 scale) override;
     
     
 #pragma mark -
