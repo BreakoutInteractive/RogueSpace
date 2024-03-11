@@ -111,6 +111,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     
     // debug node should be added once objects are initialized
     _player->setDebugScene(_debugNode);
+    _player->getShadow()->setDebugScene(_debugNode);
+    _player->getShadow()->setDebugColor(Color4::RED);
     _atk->setDebugScene(_debugNode);
     _atk->setDebugColor(Color4::RED);
 
@@ -118,6 +120,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _enemies[ii]->setDebugScene(_debugNode);
         _enemies[ii]->getAttack()->setDebugScene(_debugNode);
         _enemies[ii]->getAttack()->setDebugColor(Color4::RED);
+        _enemies[ii]->getShadow()->setDebugScene(_debugNode);
+        _enemies[ii]->getShadow()->setDebugColor(Color4::RED);
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
@@ -217,12 +221,14 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 
     // Add objects to world
     addObstacle(_player);
+    addObstacle(_player->getShadow());
 	addObstacle(_atk);
     _atk->setEnabled(false); // turn off the attack semisphere
     for (int ii = 0; ii < _enemies.size(); ii++){
         addObstacle(_enemies[ii]);
         addObstacle(_enemies[ii]->getAttack());
         _enemies[ii]->getAttack()->setEnabled(false);
+        addObstacle(_enemies[ii]->getShadow());
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
