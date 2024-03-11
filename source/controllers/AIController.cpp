@@ -61,7 +61,9 @@ void AIController::update(float dt){
                 (*it)->setPathIndex(((*it)->getPathIndex()+1)%(*it)->getPath().size());
                 (*it)->setGoal((*it)->getPath()[(*it)->getPathIndex()]);
                 // velocity currently based on distance from goal, may need adjusting
-                ((*it)->setLinearVelocity((*it)->getGoal().x-(*it)->getPosition().x, (*it)->getGoal().y-(*it)->getPosition().y));
+                (*it)->setLinearVelocity((*it)->getGoal().x-(*it)->getPosition().x, (*it)->getGoal().y-(*it)->getPosition().y);
+                (*it)->getShadow()->setLinearVelocity((*it)->getGoal().x-(*it)->getPosition().x, (*it)->getGoal().y-(*it)->getPosition().y);
+                (*it)->getShadow()->setPosition((*it)->getPosition());
             }
             // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
         }

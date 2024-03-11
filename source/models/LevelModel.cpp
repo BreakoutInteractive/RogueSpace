@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "Enemy.hpp"
 #include "JoyStick.hpp"
+#include "CollisionConstants.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -300,11 +301,26 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     if (btype == STATIC_VALUE) {
         _player->setBodyType(b2_staticBody);
     }
+    
+    auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
+    shadow->setBodyType(b2_kinematicBody);
+    b2Filter filter;
+    // this is a player "shadow"
+    filter.categoryBits = CATEGORY_PLAYER_SHADOW;
+    // a player "shadow" can collide with enemies
+    filter.maskBits = CATEGORY_ENEMY;
+    shadow->setFilterData(filter);
+    _player->setShadow(shadow);
 
     //setup the attack for collision detection
 	_atk = physics2::WheelObstacle::alloc(pos, ATK_RADIUS);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);
+    // this is an attack
+    filter.categoryBits = CATEGORY_ATTACK;
+    // an attack can collide with a player or an enemy
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+    _atk->setFilterData(filter);
     return success;
 }
 
@@ -343,10 +359,26 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         }
         _enemies.push_back(enemy);
         
+        auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
+        shadow->setAngle(M_PI_4);
+        shadow->setBodyType(b2_kinematicBody);
+        b2Filter filter;
+        // this is an enemy "shadow"
+        filter.categoryBits = CATEGORY_ENEMY_SHADOW;
+        // an enemy "shadow" can collide with the player
+        filter.maskBits = CATEGORY_PLAYER;
+        shadow->setFilterData(filter);
+        enemy->setShadow(shadow);
+        
         // attack setup
         auto attack = physics2::WheelObstacle::alloc(pos, ATK_RADIUS); //for now enemies have same attack radius as player
         attack->setSensor(true);
         attack->setBodyType(b2_dynamicBody);
+        // this is an attack
+        filter.categoryBits = CATEGORY_ATTACK;
+        // an attack can collide with a player or an enemy
+        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+        attack->setFilterData(filter);
         enemy->setAttack(attack);
     }
     return true;
@@ -433,6 +465,13 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	success = success && json->get(TEXTURE_FIELD)->isString();
 	wallobj->setTextureKey(json->getString(TEXTURE_FIELD));
 	wallobj->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
+    
+    b2Filter filter;
+    // this is a wall
+    filter.categoryBits = CATEGORY_WALL;
+    // a wall can collide with a player or an enemy
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+    wallobj->setFilterData(filter);
 
 	if (success) {
 		_walls.push_back(wallobj);

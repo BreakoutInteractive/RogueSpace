@@ -278,8 +278,10 @@ void GameScene::preUpdate(float dt) {
         //player->setForce(moveForce * 5); //TODO: use json data
         //player->applyForce();
         player->setLinearVelocity(moveForce * 5);
+        player->getShadow()->setLinearVelocity(moveForce * 5);
     } else if (_dodgeCD == 0) {
         player->setLinearVelocity(Vec2::ZERO);
+        player->getShadow()->setLinearVelocity(Vec2::ZERO);
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
@@ -299,6 +301,7 @@ void GameScene::preUpdate(float dt) {
             }
             //player->setLinearDamping(20);
             player->setLinearVelocity(force * 30);
+            player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
         }
         else if (player->_dodgeDuration.isZero()) { //not dodging
@@ -366,6 +369,8 @@ void GameScene::preUpdate(float dt) {
     //    player->setForce(dampen * player->getLinearVelocity());
     //    player->applyForce();
     //}
+    
+    player->getShadow()->setPosition(player->getPosition());
     
     player->updateCounters();
     

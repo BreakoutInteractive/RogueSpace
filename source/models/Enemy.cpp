@@ -6,6 +6,7 @@
 //
 
 #include "Enemy.hpp"
+#include "CollisionConstants.hpp"
 
 using namespace cugl;
 
@@ -28,6 +29,12 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     BoxObstacle::setAngle(M_PI_4);
     std::string name("enemy");
     setName(name);
+    b2Filter filter;
+    // this is an enemy
+    filter.categoryBits = CATEGORY_ENEMY;
+    // an enemy can collide with a player "shadow", a wall, or an attack
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
+    setFilterData(filter);
     _tint = Color4::WHITE;
     _range = 4;        // Current range is hardcoded as 10 units for all enemies.
                         // Factor this into the json as you wish.

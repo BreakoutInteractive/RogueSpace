@@ -41,6 +41,8 @@ protected:
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
+    std::shared_ptr<cugl::physics2::BoxObstacle> _shadow;
+    
     /** Enemy's sight range */
     float _range;
     
@@ -269,6 +271,16 @@ public:
      * Sets the direction that the enemy is currently facing
      */
     void setFacingDir(cugl::Vec2 dir) { _facingDirection = dir; };
+    
+    /**
+     * Gets this enemy's "shadow" hitbox.
+     */
+    std::shared_ptr<cugl::physics2::BoxObstacle> getShadow() const { return _shadow; }
+    
+    /**
+     * Sets this enemy's "shadow" hitbox.
+     */
+    void setShadow(std::shared_ptr<cugl::physics2::BoxObstacle> value) { _shadow = value; }
     
 #pragma mark -
 #pragma mark Animation

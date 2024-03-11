@@ -38,6 +38,8 @@ protected:
     
     cugl::Color4 _tint;
     
+    std::shared_ptr<cugl::physics2::BoxObstacle> _shadow;
+    
     //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
@@ -262,6 +264,16 @@ public:
      * Sets the direction that the player is currently facing
      */
     void setFacingDir(cugl::Vec2 dir);
+    
+    /**
+     * Gets the player's "shadow" hitbox.
+     */
+    std::shared_ptr<cugl::physics2::BoxObstacle> getShadow() const { return _shadow; }
+    
+    /**
+     * Sets the player's "shadow" hitbox.
+     */
+    void setShadow(std::shared_ptr<cugl::physics2::BoxObstacle> value) { _shadow = value; }
     
 #pragma mark -
 #pragma mark Animation

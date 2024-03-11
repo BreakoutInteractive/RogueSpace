@@ -8,6 +8,7 @@
 //
 
 #include "Player.hpp"
+#include "CollisionConstants.hpp"
 
 #define HIT_TIME 10
 /**the number of frames we wait before allowing another attack, also currently the length of the attack*/
@@ -32,6 +33,12 @@ bool Player::init(const Vec2 pos, const Size size) {
     //BoxObstacle::setAngle(M_PI_4);
     std::string name("player");
     setName(name);
+    b2Filter filter;
+    // this is a player
+    filter.categoryBits = CATEGORY_PLAYER;
+    // a player can collide with an enemy "shadow", a wall, or an attack
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
+    setFilterData(filter);
     _tint = Color4::WHITE;
     // set the counter properties
     _hitCounter.setMaxCount(HIT_TIME);
