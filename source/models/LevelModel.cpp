@@ -58,20 +58,26 @@ void LevelModel::setDrawScale(Vec2 scale) {
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    // TODO: draw contents manually, sorting
     _floor->draw(batch);
     
+    // sort elements to be drawn
+    std::sort(_dynamicObjects.begin(), _dynamicObjects.end(),
+        [](const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b) {
+            return (*a) < (*b);
+        });
+    for (auto it = _dynamicObjects.begin(); it != _dynamicObjects.end(); it++){
+        CULog("pos %s", (*it)->getPosition().toString().c_str());
+        (*it)->draw(batch);
+    }
+    
     for (int ii = 0; ii < _enemies.size(); ii++){
-        if (_enemies[ii]->getCollider()->isEnabled()) {
-            _enemies[ii]->draw(batch);
-        }
         if (_enemies[ii]->getAttack()->isEnabled()) {
             batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
                 _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);
         }
     }
     
-    _player->draw(batch);
+    //_player->draw(batch);
     
     //we add pi/2 to the angle since the sprite is pointing down but the hitbox points right by default
     if (_atk->isEnabled()){
@@ -224,11 +230,14 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     _player->addObstaclesToWorld(_world);
 	addObstacle(_atk);
     _atk->setEnabled(false); // turn off the attack semisphere
+    _dynamicObjects.push_back(_player); // add the player to sorting layer
     
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->addObstaclesToWorld(_world);
         addObstacle(_enemies[ii]->getAttack());
         _enemies[ii]->getAttack()->setEnabled(false);
+        
+        _dynamicObjects.push_back(_enemies[ii]); // add the enemies to sorting layer
     }
     for (int ii = 0; ii < _walls.size(); ii++){
         addObstacle(_walls[ii]);
@@ -243,7 +252,8 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         CUAssertLog(false, "Failed to load floor tiles");
         return false;
     }
-
+    
+    
 	return true;
 }
 
@@ -269,6 +279,8 @@ void LevelModel::unload() {
         _world->clear();
         _world = nullptr;
     }
+    
+    _dynamicObjects.clear();
 }
 
 

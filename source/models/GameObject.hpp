@@ -129,12 +129,23 @@ public:
 #pragma mark -
 #pragma mark Properties
     
-    virtual Vec2 getPosition(){
+    virtual Vec2 getPosition() const {
         if (_collider != nullptr){
             return _collider->getPosition();
         }
         return _position;
     }
+    
+#pragma mark -
+#pragma mark isometric sorting (comparisons)
+
+    bool operator<(const GameObject& other) const
+    {
+        Vec2 p2 = other.getPosition();
+        Vec2 p1 = getPosition();
+        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x <= p2.x));
+    }
+
 };
 
 #endif /* GameObject_hpp */

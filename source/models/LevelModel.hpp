@@ -29,6 +29,7 @@ class CrateModel;
 class Floor;
 class Player;
 class Enemy;
+class GameObject;
 
 #pragma mark -
 #pragma mark Level Model
@@ -61,6 +62,9 @@ protected:
     
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
+    
+    /** list of all moving game objects */
+    std::vector<std::shared_ptr<GameObject>> _dynamicObjects;
 
     std::shared_ptr<physics2::WheelObstacle> _atk;
     
