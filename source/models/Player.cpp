@@ -8,6 +8,7 @@
 //
 
 #include "Player.hpp"
+#include "GameObject.hpp"
 
 //should be at least the enemy's attack time so that we can't get hit twice by the same attack
 #define HIT_TIME 16
