@@ -331,7 +331,7 @@ public:
 
     /**
      * Method to call when an enemy is hit by an attack
-     * @param atkDir the direction of the attack that hit this enemy
+     * @param atkDir the normal vector of the direction of the attack that hit this enemy
      */
     void hit(cugl::Vec2 atkDir);
 

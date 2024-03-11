@@ -207,11 +207,12 @@ void Player::setFacingDir(cugl::Vec2 dir){
     }
 }
 
-void Player::hit() {
+void Player::hit(Vec2 atkDir) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _dodgeDuration.isZero()) {
         _hitCounter.reset();
         _hp -= 1;
         _tint = Color4::RED;
+        setLinearVelocity(atkDir * 10); //tune this value (10)
     }
 }

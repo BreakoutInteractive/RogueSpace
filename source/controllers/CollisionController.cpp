@@ -58,7 +58,8 @@ void CollisionController::beginContact(b2Contact* contact){
         //player takes damage if running into enemy while not dodging
         else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit();
+            Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition().normalize());
+            if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
         }
     }
     // enemy attack
@@ -76,7 +77,7 @@ void CollisionController::beginContact(b2Contact* contact){
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
                 if (player->_parryCD.isZero()) {
-                    player->hit();
+                    player->hit(dir);
                     CULog("Player took damage!");
                 }
                 else {

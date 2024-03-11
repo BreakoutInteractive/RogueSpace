@@ -271,11 +271,11 @@ void GameScene::preUpdate(float dt) {
     
 
     //only move fast if we're not parrying or dodging
-    if (_parryCD == 0 && player->_dodgeDuration.isZero()) {
+    if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         //player->setForce(moveForce * 5); //TODO: use json data
         //player->applyForce();
         player->setLinearVelocity(moveForce * 5);
-    } else if (_dodgeCD == 0) {
+    } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->setLinearVelocity(Vec2::ZERO);
     }
 
