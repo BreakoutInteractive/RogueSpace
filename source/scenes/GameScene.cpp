@@ -277,6 +277,7 @@ void GameScene::preUpdate(float dt) {
         player->setLinearVelocity(moveForce * 5);
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->setLinearVelocity(Vec2::ZERO);
+        //player->getShadow()->setLinearVelocity(Vec2::ZERO);
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
@@ -296,6 +297,7 @@ void GameScene::preUpdate(float dt) {
             }
             //player->setLinearDamping(20);
             player->setLinearVelocity(force * 30);
+            //player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
         }
         else if (player->_dodgeDuration.isZero()) { //not dodging
@@ -364,6 +366,10 @@ void GameScene::preUpdate(float dt) {
     //    player->applyForce();
     //}
     
+    player->getShadow()->setPosition(player->getPosition());
+    // CULog("Player position: %s", player->getPosition().toString().c_str());
+    // CULog("Shadow position: %s", player->getShadow()->getPosition().toString().c_str());
+    
     player->updateCounters();
     
 #pragma mark - Enemy movement
@@ -400,6 +406,7 @@ void GameScene::preUpdate(float dt) {
         if ((*it)->_atkLength.isZero()) {
             (*it)->getAttack()->setEnabled(false);
         }
+        (*it)->getShadow()->setPosition((*it)->getPosition());
     }
 }
 
@@ -413,6 +420,7 @@ void GameScene::fixedUpdate(float step) {
         _camController.setTarget(player->getPosition() * player->getDrawScale());
         _winNode->setPosition(_camController.getPosition());
         _loseNode->setPosition(_camController.getPosition());
+        // CULog("Shadow position: %s", player->getShadow()->getPosition().toString().c_str());
     }
 }
 
