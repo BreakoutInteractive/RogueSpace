@@ -34,7 +34,13 @@ protected:
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
-    float _range;
+    float _sightRange;
+    
+    /** Enemy's attack range */
+    float _attackRange;
+    
+    /** Enemy's movement speed */
+    float _moveSpeed;
     
     /** The enemy's current health */
     int _health;
@@ -125,14 +131,24 @@ public:
 #pragma mark -
 #pragma mark Accessors
     /**
-     * Returns the sight range applied to this player.
+     * Returns the sight range applied to this enemy.
      *
      * Remember to modify the input values by the thrust amount before assigning
      * the value to force.
      *
      * @return the force applied to this player.
      */
-    const float getRange() const { return _range; }
+    const float getSightRange() const { return _sightRange; }
+    
+    /**
+     * Returns the attack range applied to this enemy.
+     *
+     * Remember to modify the input values by the thrust amount before assigning
+     * the value to force.
+     *
+     * @return the force applied to this player.
+     */
+    const float getAttackRange() const { return _attackRange; }
     
     /**
      * Returns the force applied to this player.
@@ -193,6 +209,11 @@ public:
      * @param value the x-component of the force applied to this player.
      */
     void setFY(float value) { _force.y = value; }
+    
+    /**
+     * Gets the movement speed of this enemy.
+     */
+    int getMoveSpeed() const { return _moveSpeed; }
     
     /**
      * Gets the current health of this enemy.

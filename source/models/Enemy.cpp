@@ -20,6 +20,12 @@ using namespace cugl;
 #define STUN_CD 60
 /**the number of frames a sentry will wait before rotating**/
 #define SENTRY_CD 120
+/**the sight range of an enemy**/
+#define SIGHT_RANGE 8
+/**the attack range of an enemy**/
+#define ATK_RANGE 4
+/**the default movement speed for an enemy**/
+#define MOVE_SPEED 2
 
 #pragma mark -
 #pragma mark Constructors
@@ -32,7 +38,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     std::string name("enemy");
     box->setName(name);
     b2Filter filter;
-    // this is an enemy and can collide with a player "shadow", a wall, or an attack
+    // this is an enemy and can collide with a player "shadow", an enemy "shadow", a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
     filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
     box->setFilterData(filter);
@@ -41,13 +47,15 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
     shadow->setAngle(M_PI_4);
     shadow->setBodyType(b2_kinematicBody);
-    // this is an enemy "shadow" and can collide with the player
+    // this is an enemy "shadow" and can collide with the player or an enemy
     filter.categoryBits = CATEGORY_ENEMY_SHADOW;
     filter.maskBits = CATEGORY_PLAYER;
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
     
-    _range = 4; // TODO: factor this into JSON constants
+    _sightRange = SIGHT_RANGE; // TODO: factor this into JSON constants
+    _attackRange = ATK_RANGE;
+    _moveSpeed = MOVE_SPEED;
     _hitCounter.setMaxCount(HIT_TIME);
     _atkLength.setMaxCount(ATK_TIME);
     _atkCD.setMaxCount(ATK_CD);

@@ -28,6 +28,9 @@ private:
 
     /** the list of enemies */
     std::vector<std::shared_ptr<Enemy>> _enemies;
+    
+    /** the player */
+    std::shared_ptr<Player> _player;
 
 public:
 #pragma mark -
