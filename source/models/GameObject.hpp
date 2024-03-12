@@ -19,34 +19,26 @@ using namespace cugl;
 class GameObject {
     
 protected:
-    /**
-     * the drawing scale of this object
-     */
+    
+    /** the drawing scale of this object */
     Vec2 _drawScale;
     
-    /**
-     * the color to tint this object
-     */
+    /** the color to tint this object */
     cugl::Color4 _tint;
     
-    /**
-     * the game position of this object
-     */
+    /** the game position of this object */
     Vec2 _position;
     
-    /**
-     * the collision object associated with this object
-     */
+    /** whether this object is enabled */
+    bool _enabled;
+    
+    /** the collision object associated with this object */
     std::shared_ptr<cugl::physics2::Obstacle> _collider;
     
-    /**
-     * this component is used to make this gameobject an obstacle to other gameobjects while allowing normal physics simulation
-     */
+    /** this component is used to make this gameobject an obstacle to other gameobjects while allowing normal physics simulation */
     std::shared_ptr<cugl::physics2::Obstacle> _colliderShadow;
     
-    /**
-     * the sprite outline (a sensor)
-     */
+    /** the sprite outline (a sensor) */
     std::shared_ptr<cugl::physics2::Obstacle> _outlineSensor;
 
 public:
@@ -135,6 +127,17 @@ public:
         }
         return _position;
     }
+    
+    /**
+     * sets all of the physics components (if any) to be enabled/disabled depending on `value`.
+     * An disabled object should not be drawn and cannot be interacted with.
+     */
+    virtual void setEnabled(bool value);
+
+    /**
+     * gets whether this object is enabled in the game
+     */
+    virtual bool isEnabled(){ return _enabled; }
     
 #pragma mark -
 #pragma mark isometric sorting (comparisons)
