@@ -16,6 +16,15 @@
 using namespace cugl;
 
 class LevelParser {
+protected:
+    int _tilewidth;
+    
+    int _tileheight;
+    
+    int _width;
+    
+    int _height;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -42,14 +51,14 @@ public:
     
     // TODO: come up with a better name please
     /**
-     * Returns correct translated value from Tiled origin to game origin
-     * Note that inputs/outputs describe lengths of tiles; the x/y coordinate used in Tiled must be converted (divide by 64) to use this
-     * @param input the coordinate to be converted
-     * @param width  the width of the room from Tiled
-     * @param x  whether the inputs is an x-coord or y-coord, true if x
+     * Returns correct translated values from Tiled origin to game origin
+     * Note that inputs/outputs describe lengths of tiles; the given x/y coordinate used in Tiled must be converted (divide by tile length) to use this
+     * @param w  the isometric x coordinate to be converted
+     * @param h the isometric y coordinate to be converted
+     * @param arr whether to return Array or Object 
      *
      */
-    float fx(float input, int width, int height, bool x);
+    const std::shared_ptr<JsonValue> translateJson(float w, float h, bool arr);
     
     /**
      * Parses the three floor view layers 

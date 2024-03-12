@@ -12,6 +12,22 @@
 
 using namespace cugl;
 
+const std::shared_ptr<JsonValue> LevelParser::translateJson(float w, float h, bool arr) {
+    float x = _width / 2 + _width - w + h;
+    float y = _height / 2 + _height - (w + h) / 2;
+    std::shared_ptr<JsonValue> ans;
+    if (arr) {
+        ans = JsonValue::allocArray();
+        ans->appendValue(x);
+        ans->appendValue(y);
+        
+    } else {
+        ans = JsonValue::allocObject();
+        ans->appendValue("x", x);
+        ans->appendValue("y", y);
+    }
+    return ans;
+}
 
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue>& layers) {
     // get information
@@ -21,38 +37,76 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
     }
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
-    // will this always be index 0?
     std::shared_ptr<JsonValue> patt = pNode->get("objects")->get(0);
     float px = patt->get("x")->asFloat();
     float py = patt->get("y")->asFloat();
+    std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / (_tileheight), true);
     
     // construct
-    std::shared_ptr<JsonValue> pos = JsonValue::allocArray();
-    pos->appendValue(px / 64);
-    pos->appendValue(py / 64);
     ans->appendChild("pos", pos);
+    // TODO: fill the rest out
     
     return ans;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<JsonValue>& layers) {
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
+    // TODO: learn about frames and retrieving the correct texture for each part of the floor?
+    // TODO: standardize get indices for get, this check is good but should order Tiled layers
+
     // bottom-right of iso view
-    // TODO: learn about frames and retrieving the correct texture for each part of the floor
-    // TODO: standardize constants for get, this check is good but prob talk to designers and/or inspect tiled
     std::shared_ptr<JsonValue> br = layers->get(0);
     if (br->get("name")->toString() != "\"bottom_right\"") {
         CULogError("incorrect index for player node in JSON, node is %s", br->get("name")->toString().c_str());
     }
+    std::shared_ptr<JsonValue> br_ans = JsonValue::allocArray();
+    std::vector<int> br_dat = br->get("data")->asIntArray();
+    for (int i = 0; i < _width; i++) {
+        for (int j = 0; j < _height; j++) {
+            if (br_dat[_width * i + j] != 0) {
+                std::shared_ptr<JsonValue> tile = translateJson(i, j, false);
+                br_ans->appendChild(tile);
+            }
+        }
+    }
+    ans->appendChild("bottom_right", br_ans);
     
-    // The blockers of the floor rendering problem right now are:
-    // 1)   Have to correctly translate the floor tiles
-    // 1.1) Have to fix any OOB tiles from Tiled (perhaps talk to designers to avoid this)
-    // 2)   Have to change how floor is rendered right now to accomodate all 3 layers.
-    // This function should handle problem 1, to continue I'm reliant on tile conversion function (see below)
+    // bottom-left of iso view
+    std::shared_ptr<JsonValue> bl = layers->get(1);
+    if (bl->get("name")->toString() != "\"bottom_left\"") {
+        CULogError("incorrect index for player node in JSON, node is %s", bl->get("name")->toString().c_str());
+    }
+    std::shared_ptr<JsonValue> bl_ans = JsonValue::allocArray();
+    std::vector<int> bl_dat = bl->get("data")->asIntArray();
+    for (int i = 0; i < _width; i++) {
+        for (int j = 0; j < _height; j++) {
+            if (bl_dat[_width * i + j] != 0) {
+                std::shared_ptr<JsonValue> tile = translateJson(i, j, false);
+                bl_ans->appendChild(tile);
+            }
+        }
+    }
+    ans->appendChild("bottom_left", bl_ans);
     
-    // CULog("%s", br->get("name")->toString().c_str());
-    return layers;
+    // top (floor) of iso view
+    std::shared_ptr<JsonValue> fl = layers->get(1);
+    if (fl->get("name")->toString() != "\"bottom_left\"") {
+        CULogError("incorrect index for player node in JSON, node is %s", fl->get("name")->toString().c_str());
+    }
+    std::shared_ptr<JsonValue> fl_ans = JsonValue::allocArray();
+    std::vector<int> fl_dat = fl->get("data")->asIntArray();
+    for (int i = 0; i < _width; i++) {
+        for (int j = 0; j < _height; j++) {
+            if (fl_dat[_width * i + j] != 0) {
+                std::shared_ptr<JsonValue> tile = translateJson(i, j, false);
+                fl_ans->appendChild(tile);
+            }
+        }
+    }
+    ans->appendChild("floor", fl_ans);
+    
+    CULog("%s", ans->toString().c_str());
+    return ans;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<JsonValue>& json) {
@@ -61,12 +115,14 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     // single attributes
     // TODO: create tile coordinate conversion between tiled origin to game origin
     // we also have to translate all walls and objects above 0,0 and need to make sure this problem does not carry from tiled
-    float h = json->get("height")->asFloat();
-    float w = json->get("width")->asFloat();
-    ans->appendValue("width", w + 32);
-    ans->appendValue("height", h + 18);
-    ans->appendValue("view-width", w + 22);
-    ans->appendValue("view-height", h + 8);
+    _width = json->get("width")->asInt();
+    _height = json->get("height")->asInt();
+    _tilewidth = json->get("tilewidth")->asInt();
+    _tileheight = json->get("tileheight")->asInt();
+    ans->appendValue("width", 2.0 * _width);
+    ans->appendValue("height", 2.0 * _height);
+    ans->appendValue("view-width", 1.0 * _width);
+    ans->appendValue("view-height", 1.0 * _height);
     
     std::shared_ptr<JsonValue> layers = json->get("layers");
     std::shared_ptr<JsonValue> floor = LevelParser::parseFloor(layers);
