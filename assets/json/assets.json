@@ -55,10 +55,30 @@
         }
 	},
     "sounds": {
-        "bump": {
+        "airSlash": {
             "type":     "sample",
-            "file":     "sounds/StarterSounds/bump.wav",
+            "file":     "sounds/Impact/slash_01.WAV",
             "volume":   0.4
+        },
+        "bumpWall": {
+            "type":     "sample",
+            "file":     "sounds/Impact/impact_01.WAV",
+            "volume":   0.4
+        },
+        "enemyAttack": {
+            "type":     "sample",
+            "file":     "sounds/Weapons/sword_02.WAV",
+            "volume":   0.5
+        },
+        "playerAttack": {
+            "type":     "sample",
+            "file":     "sounds/Weapons/sword_01.WAV",
+            "volume":   0.5
+        },
+        "wallAttack": {
+            "type":     "sample",
+            "file":     "sounds/Weapons/impact_04.WAV",
+            "volume":   0.5
         },
         "burn": {
             "type":     "sample",

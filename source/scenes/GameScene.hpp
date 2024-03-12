@@ -43,6 +43,8 @@ protected:
     CameraController _camController;
     /** Controller for handling collisions */
     CollisionController _collisionController;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */

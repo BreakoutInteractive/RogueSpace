@@ -92,13 +92,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _level->setDrawScale(drawScale);
     _gameRenderer.setDrawScale(drawScale);
     
-    
+    _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
     _AIController.init(_level);
-    _collisionController.setAssets(_assets);
+    _collisionController.setAssets(_assets, _audioController);
     _collisionController.setLevel(_level);
     
     
@@ -413,7 +413,7 @@ void GameScene::fixedUpdate(float step) {
 
 
 void GameScene::postUpdate(float remain) {
-	// TODO: possibly apply interpolation.
+    // TODO: possibly apply interpolation.
     // We will need more data structures for this
 }
 
