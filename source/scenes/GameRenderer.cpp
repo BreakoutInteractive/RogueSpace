@@ -22,8 +22,29 @@ GameRenderer::~GameRenderer(){
 
 bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     _backgroundTexture = assets->get<Texture>("background");
-    // TODO: use assets to load scene nodes and add them to this scene
     _joystick->loadAssets(assets);
+    
+    Size dimen = Application::get()->getDisplaySize();
+    float ratio = 720/dimen.height;
+    dimen *= ratio;
+    // Start up the input handler
+    _assets = assets;
+    
+    CULog("scene graph issue");
+    // Acquire the scene built by the asset loader and resize it the scene
+    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("HUD");
+    scene->setContentSize(dimen);
+    scene->doLayout(); // Repositions the HUD
+
+    _pauseButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HUD_pause"));
+    _pauseButton->addListener([this](const std::string name, bool down){
+        if (down){
+            CULog("pause button is triggered");
+        }
+    });
+    _pauseButton->activate();
+    
+    addChild(scene);
     return true;
 }
 
