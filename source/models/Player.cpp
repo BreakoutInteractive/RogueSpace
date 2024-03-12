@@ -24,6 +24,8 @@
 
 #define HIT_TIME 10
 
+#define MAX_HP 3
+
 using namespace cugl;
 
 #pragma mark -
@@ -90,7 +92,11 @@ void Player::dispose() {
 
 
 #pragma mark -
-#pragma mark Physics
+#pragma mark Properties
+
+int Player::getMaxHP(){
+    return MAX_HP;
+}
 
 #pragma mark -
 #pragma mark Animation

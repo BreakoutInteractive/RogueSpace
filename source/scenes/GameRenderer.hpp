@@ -37,6 +37,12 @@ private:
     
     std::shared_ptr<scene2::Button> _pauseButton;
     
+    std::shared_ptr<scene2::ProgressBar> _hpBar;
+    
+    std::shared_ptr<scene2::SceneNode> _joystickRing;
+    
+    std::shared_ptr<scene2::SceneNode> _joystickButton;
+    
     /** Reference to the joystick object */
     std::shared_ptr<JoyStick> _joystick;
 
