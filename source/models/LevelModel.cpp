@@ -66,8 +66,9 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
             return (*a) < (*b);
         });
     for (auto it = _dynamicObjects.begin(); it != _dynamicObjects.end(); it++){
-        CULog("pos %s", (*it)->getPosition().toString().c_str());
-        (*it)->draw(batch);
+        if ((*it)->isEnabled()){
+            (*it)->draw(batch);
+        }
     }
     
     for (int ii = 0; ii < _enemies.size(); ii++){

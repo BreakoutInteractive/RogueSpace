@@ -11,6 +11,20 @@ GameObject::GameObject(){
     _tint = Color4::WHITE;
     _position.setZero();
     _drawScale.set(1.0f, 1.0f);
+    _enabled = true;
+}
+
+void GameObject::setEnabled(bool value){
+    _enabled = value;
+    if (_collider != nullptr){
+        _collider->setEnabled(_enabled);
+    }
+    if (_colliderShadow != nullptr){
+        _colliderShadow->setEnabled(_enabled);
+    }
+    if (_outlineSensor != nullptr){
+        _outlineSensor->setEnabled(_enabled);
+    }
 }
 
 void GameObject::syncPositions(){

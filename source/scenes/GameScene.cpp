@@ -363,8 +363,7 @@ void GameScene::preUpdate(float dt) {
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         if ((*it)->getHealth() <= 0) {
-            (*it)->getCollider()->setEnabled(false);
-            (*it)->getColliderShadow()->setEnabled(false);
+            (*it)->setEnabled(false);
         }
         if ((*it)->getCollider()->isEnabled()) {
             // enemy attacks if not stunned and within range of player
