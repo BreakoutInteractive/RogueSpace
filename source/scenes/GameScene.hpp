@@ -16,6 +16,7 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
+#include "../controllers/AudioController.hpp"
 #include "../controllers/CameraController.hpp"
 #include "../controllers/InputController.hpp"
 #include "../controllers/CollisionController.hpp"

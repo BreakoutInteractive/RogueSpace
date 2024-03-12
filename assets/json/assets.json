@@ -77,7 +77,7 @@
         },
         "wallAttack": {
             "type":     "sample",
-            "file":     "sounds/Weapons/impact_04.WAV",
+            "file":     "sounds/Impact/impact_04.WAV",
             "volume":   0.5
         },
         "burn": {

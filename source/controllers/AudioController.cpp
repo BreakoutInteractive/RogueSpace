@@ -18,7 +18,6 @@ using namespace cugl;
      */
 void AudioController::init(std::shared_ptr<cugl::AssetManager> assets){
     _assets = assets;
-    //check out native c++ DSA
 }
         
 #pragma mark -
@@ -36,10 +35,6 @@ void AudioController::playCollisionFX(const std::string key1, const std::string 
             auto source = _assets->get<Sound>("bumpWall");
             AudioEngine::get()->play(uniqueKey, source, false, source->getVolume());
         }
-        else if(key1 == "player" && key2.substr(0,4)=="wall"){
-            auto source = _assets->get<Sound>("bumpWall");
-            AudioEngine::get()->play(uniqueKey, source, false, source->getVolume());
-        }
     }
 }
     
@@ -49,17 +44,27 @@ void AudioController::playCollisionFX(const std::string key1, const std::string 
      * @param  action  the action key for the player
      */
 void AudioController::playPlayerFX(const std::string action){
-    
+    if (!AudioEngine::get()->isActive(action+"player")) {
+        if(action == "attackHit"){
+            auto source = _assets->get<Sound>("playerAttack");
+            AudioEngine::get()->play(action+"player", source, false, source->getVolume());
+        }
+    }
 }
     
     /**
-     * Plays sound associated with action of eney type.
+     * Plays sound associated with action of enemy type.
      *
      * @param  action  the action key for the enemy
      * @param  key  the reference key for the enemy type
      */
 void AudioController::playEnemyFX(const std::string action, const std::string key){
-    
+    if (!AudioEngine::get()->isActive(action+key)) {
+        if(action == "attackHit"){
+            auto source = _assets->get<Sound>("enemyAttack");
+            AudioEngine::get()->play(action+key, source, false, source->getVolume());
+        }
+    }
 }
     
     /**
@@ -72,19 +77,17 @@ void AudioController::playMusic(const std::string key){
 }
     
     /**
-     * Paise all sound associated with game.
-     *
-     * @param  key1  the reference key for the event
+     * Pause all sound associated with game.
      */
 void AudioController::PauseSound(){
-    //Audio engine has mwthod
+    AudioEngine::get()->pause();
 }
     
     /**
      * Plause all effects associated with level.
      */
 void AudioController::PauseFX(){
-    
+    AudioEngine::get()->pauseEffects();
 }
     
     /**
@@ -93,12 +96,12 @@ void AudioController::PauseFX(){
      * @param  key1  the reference key for the event
      */
 void AudioController::resumeSound(){
-    //Audio engine has mwthod
+    AudioEngine::get()->resume();
 }
     
     /**
      * Resume all effects associated with level.
      */
 void AudioController::resumeFX(){
-    
+    AudioEngine::get()->resumeEffects();
 };

@@ -98,8 +98,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
     _AIController.init(_level);
-    _collisionController.setAssets(_assets, _audioController);
+    
     _collisionController.setLevel(_level);
+    _audioController->init(_assets);
+    _collisionController.setAssets(_assets, _audioController);
     
     
 #pragma mark - GameScene:: Scene Graph Initialization
