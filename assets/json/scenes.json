@@ -346,6 +346,148 @@
                     }
                 }
             }
-        }
+        },
+        "pause": {
+                "type": "Node",
+                "format": {
+                    "type": "Anchored"
+                },
+                "data": {
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "size": [
+                        1280,
+                        720
+                    ],
+                    "angle": 0,
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "visible": true
+                },
+                "children": {
+                    "restart": {
+                        "type": "Button",
+                        "format": {
+                            "type": "Anchored"
+                        },
+                        "data": {
+                            "anchor": [
+                                1,
+                                0.5
+                            ],
+                            "size": [
+                                100,
+                                100
+                            ],
+                            "angle": 0,
+                            "position": [
+                                680,
+                                310
+                            ],
+                            "visible": true,
+                            "upnode": "restart"
+                        },
+                        "children": {
+                            "restart": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "restart",
+                                    "anchor": [
+                                        0.5,
+                                        0.5
+                                    ],
+                                    "size": [
+                                        100,
+                                        100
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        0,
+                                        0
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "center",
+                                    "y_anchor": "middle",
+                                    "absolute": false,
+                                    "x_offset": 0,
+                                    "y_offset": 0
+                                }
+                            }
+                        },
+                        "layout": {
+                            "x_anchor": "right",
+                            "y_anchor": "middle",
+                            "absolute": false,
+                            "x_offset": -0.39,
+                            "y_offset": 0
+                        }
+                    },
+                    "back": {
+                        "type": "Button",
+                        "format": {
+                            "type": "Anchored"
+                        },
+                        "data": {
+                            "anchor": [
+                                0,
+                                0.5
+                            ],
+                            "size": [
+                                100,
+                                100
+                            ],
+                            "angle": 0,
+                            "position": [
+                                500,
+                                310
+                            ],
+                            "visible": true,
+                            "upnode": "back"
+                        },
+                        "children": {
+                            "back": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "back",
+                                    "anchor": [
+                                        0.5,
+                                        0.5
+                                    ],
+                                    "size": [
+                                        100,
+                                        100
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        0,
+                                        0
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "center",
+                                    "y_anchor": "middle",
+                                    "absolute": false,
+                                    "x_offset": 0,
+                                    "y_offset": 0
+                                }
+                            }
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "middle",
+                            "absolute": false,
+                            "x_offset": 0.39,
+                            "y_offset": 0
+                        }
+                    }
+                }
+            }
     }
 }
