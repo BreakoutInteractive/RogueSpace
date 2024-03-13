@@ -30,14 +30,6 @@ Tile::Tile(Vec2 pos, std::string textureKey, std::string layer) {
 
 void Tile::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
     _texture = assets->get<Texture>(_textureKey);
-    _activeSide = SpriteSheet::alloc(_texture, 1, 4);
-    if (_layer == "bottom-right") {
-        _activeSide->setFrame(3);
-    } else if (_layer == "bottom-left") {
-        _activeSide->setFrame(2);
-    } else if (_layer == "floor") {
-        _activeSide->setFrame(0);
-    }
 }
 
 void Tile::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Vec2 size, Vec2 drawScale){
@@ -48,20 +40,29 @@ void Tile::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Vec2 size, Vec2
      angle    The amount to rotate the texture
      offset    The texture offset in world coordinates
      */
-    Vec2 scale = drawScale * size / (Vec2)_texture->getSize();
-    Vec2 offset(-size.x / 2, -size.y/4);
-    // batch->draw(_texture, Vec2::ZERO, scale, 0, (_pos + offset) * drawScale);
-    Affine2 t;
-    t.scale(scale);
-    t.translate((_pos + offset) * drawScale);
-    _activeSide->draw(batch, Vec2::ZERO, t);
+    
+    int k;
+    if (_layer == "bottom-right") {
+        k = 3;
+    } else if (_layer == "bottom-left") {
+        k = 2;
+    } else if (_layer == "floor") {
+        k = 0;
+    } else {
+        k = 1;
+    }
+    std::shared_ptr<cugl::Texture> subtex = _texture->getSubTexture(0.25 * k, 0.25 + 0.25 * k, 0, 1);
+    Vec2 scale = drawScale * size / (Vec2) subtex->getSize();
+    Vec2 offset(-size.x / 2, -size.y / 4);
+    batch->draw(subtex, Vec2::ZERO, scale, 0, (_pos + offset) * drawScale);
+
 }
 
 
 #pragma mark -
 #pragma mark Floor
 
-void Floor::dispose(){
+void Floor::dispose() {
     // nothing to do
     // the floor destroys itself, destroying the vector object
     // which reduces pointer counts to each tile and subsequently destroys all tiles

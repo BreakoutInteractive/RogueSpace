@@ -29,9 +29,7 @@ protected:
     
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _texture;
-    
-    std::shared_ptr<cugl::SpriteSheet> _activeSide;
-    
+        
 public:
     
 #pragma mark -

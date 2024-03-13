@@ -22,6 +22,77 @@ const std::shared_ptr<JsonValue> LevelParser::translateJson(float w, float h) {
     return ans;
 }
 
+const std::shared_ptr<JsonValue> LevelParser::parseBoundaries(const std::shared_ptr<JsonValue>& layers) {
+    std::shared_ptr<JsonValue> pNode = layers->get(7);
+    if (pNode->get("name")->toString() != "\"collision\"") {
+        CULogError("incorrect index for mobs in JSON, node is %s", pNode->get("name")->toString().c_str());
+    }
+    std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
+    
+    std::shared_ptr<JsonValue> bounds = pNode->get("objects");
+    
+    for (int i = 0; i < (int) bounds->size(); i++) {
+        std::shared_ptr<JsonValue> bound = bounds->get(i);
+        std::shared_ptr<JsonValue> new_bound = JsonValue::allocObject();
+        std::shared_ptr<JsonValue> vertices = JsonValue::allocArray();
+        for (int s = 0; s < bound->get("polygon")->size(); s++) {
+            std::shared_ptr<JsonValue> vertex = bound->get("polygon")->get(s);
+            float px = vertex->get("x")->asFloat();
+            float py = vertex->get("y")->asFloat();
+            std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
+            vertices->appendValue(pos->get(0)->asFloat());
+            vertices->appendValue(pos->get(1)->asFloat());
+        }
+        new_bound->appendChild("boundary", vertices);
+        new_bound->appendValue("vertices", (int) bound->get("polygon")->size() / 2.0);
+//        float px = enemy->get("x")->asFloat();
+//        float py = enemy->get("y")->asFloat();
+//        std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
+        
+        new_bound->appendValue("density", 0.0);
+        new_bound->appendValue("friction", 0.2);
+        new_bound->appendValue("restitution", 0.1);
+        new_bound->appendValue("texture", (std::string) "earth");
+        new_bound->appendValue("debugcolor", (std::string) "green");
+        new_bound->appendValue("debugopacity", 192.0);
+        ans->appendChild(std::to_string(i), new_bound);
+    }
+    
+    return ans;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseEnemies(const std::shared_ptr<JsonValue>& layers) {
+    // get information
+    std::shared_ptr<JsonValue> pNode = layers->get(9);
+    if (pNode->get("name")->toString() != "\"mob_spawns\"") {
+        CULogError("incorrect index for mobs in JSON, node is %s", pNode->get("name")->toString().c_str());
+    }
+    std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
+    std::shared_ptr<JsonValue> enemies = pNode->get("objects");
+    
+    for (int i = 0; i < (int) enemies->size(); i++) {
+        std::shared_ptr<JsonValue> enemy = enemies->get(i);
+        std::shared_ptr<JsonValue> new_mob = JsonValue::allocObject();
+        float px = enemy->get("x")->asFloat();
+        float py = enemy->get("y")->asFloat();
+        std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
+        std::shared_ptr<JsonValue> size = JsonValue::allocArray();
+        size->appendValue(0.6);
+        size->appendValue(0.6);
+        new_mob->appendChild("size", size);
+        new_mob->appendChild("pos", pos);
+        new_mob->appendValue("density", 1.0);
+        new_mob->appendValue("friction", 0.1);
+        new_mob->appendValue("restitution", 0.0);
+        new_mob->appendValue("rotation", false);
+        new_mob->appendValue("health", 2.0);
+        new_mob->appendValue("texture", (std::string) "enemy");
+        new_mob->appendValue("debugcolor", (std::string) "green");
+        ans->appendChild(enemy->getString("name"), new_mob);
+    }
+    return ans;
+}
+
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue>& layers) {
     // get information
     std::shared_ptr<JsonValue> pNode = layers->get(8);
@@ -129,10 +200,14 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     
     ans->appendChild("tiles", tiles);
     ans->appendValue("use-grid", false);
-    ans->appendValue("size", 3.0);
+    ans->appendValue("layers", 3.0);
     // TODO: abstract texture file name away
     ans->appendValue("texture", (std::string) "floor-new");
-    
+    std::shared_ptr<JsonValue> size = JsonValue::allocArray();
+    // LITERAL
+    size->appendValue(2.0);
+    size->appendValue(2.0);
+    ans->appendChild("size", size);
     // CULog("%s", ans->toString().c_str());
     return ans;
 }
@@ -156,6 +231,12 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     
     std::shared_ptr<JsonValue> player = LevelParser::parsePlayer(layers);
     ans->appendChild("player", player);
+    
+    std::shared_ptr<JsonValue> enemies = LevelParser::parseEnemies(layers);
+    ans->appendChild("enemies", enemies);
+    
+//    std::shared_ptr<JsonValue> boundaries = LevelParser::parseBoundaries(layers);
+//    ans->appendChild("enemies", boundaries);
     
     CULog("%s", ans->toString().c_str());
     
