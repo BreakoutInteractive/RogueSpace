@@ -1,351 +1,351 @@
 {
     "scene2s": {
         "HUD": {
-            "type": "Node",
-            "format": {
-                "type": "Anchored"
-            },
-            "data": {
-                "anchor": [
-                    0,
-                    0
-                ],
-                "size": [
-                    1280,
-                    720
-                ],
-                "angle": 0,
-                "position": [
-                    0,
-                    0
-                ],
-                "visible": true
-            },
-            "children": {
-                "pause": {
-                    "type": "Button",
-                    "format": {
-                        "type": "Anchored"
-                    },
-                    "data": {
-                        "anchor": [
-                            0,
-                            1
-                        ],
-                        "size": [
-                            72,
-                            72
-                        ],
-                        "angle": 0,
-                        "position": [
-                            1168,
-                            608
-                        ],
-                        "visible": true,
-                        "upnode": "pause"
-                    },
-                    "children": {
-                        "pause": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "pause",
-                                "anchor": [
-                                    1,
-                                    1
-                                ],
-                                "size": [
-                                    72,
-                                    72
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    0,
-                                    0
-                                ],
-                                "visible": true
-                            },
-                            "layout": {
-                                "x_anchor": "right",
-                                "y_anchor": "top",
-                                "absolute": false,
-                                "x_offset": 0,
-                                "y_offset": 0
+                "type": "Node",
+                "format": {
+                    "type": "Anchored"
+                },
+                "data": {
+                    "anchor": [
+                        0,
+                        0
+                    ],
+                    "size": [
+                        1280,
+                        720
+                    ],
+                    "angle": 0,
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "visible": true
+                },
+                "children": {
+                    "pause": {
+                        "type": "Button",
+                        "format": {
+                            "type": "Anchored"
+                        },
+                        "data": {
+                            "anchor": [
+                                1,
+                                1
+                            ],
+                            "size": [
+                                72,
+                                72
+                            ],
+                            "angle": 0,
+                            "position": [
+                                1168,
+                                608
+                            ],
+                            "visible": true,
+                            "upnode": "pause"
+                        },
+                        "children": {
+                            "pause": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "pause",
+                                    "anchor": [
+                                        1,
+                                        1
+                                    ],
+                                    "size": [
+                                        72,
+                                        72
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        0,
+                                        0
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "right",
+                                    "y_anchor": "top",
+                                    "absolute": false,
+                                    "x_offset": 0,
+                                    "y_offset": 0
+                                }
                             }
+                        },
+                        "layout": {
+                            "x_anchor": "right",
+                            "y_anchor": "top",
+                            "absolute": false,
+                            "x_offset": -0.03,
+                            "y_offset": -0.06
                         }
                     },
-                    "layout": {
-                        "x_anchor": "left",
-                        "y_anchor": "top",
-                        "absolute": false,
-                        "x_offset": 0.91,
-                        "y_offset": -0.06
-                    }
-                },
-                "status": {
-                    "type": "Node",
-                    "format": {
-                        "type": "Anchored"
-                    },
-                    "data": {
-                        "anchor": [
-                            0,
-                            1
-                        ],
-                        "size": [
-                            450,
-                            72
-                        ],
-                        "angle": 0,
-                        "position": [
-                            40,
-                            608
-                        ],
-                        "visible": true
-                    },
-                    "children": {
-                        "status_bar": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "status_bar",
-                                "anchor": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "size": [
-                                    450,
-                                    72
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    0,
-                                    0
-                                ],
-                                "visible": true
+                    "status": {
+                        "type": "Node",
+                        "format": {
+                            "type": "Anchored"
+                        },
+                        "data": {
+                            "anchor": [
+                                0,
+                                1
+                            ],
+                            "size": [
+                                450,
+                                72
+                            ],
+                            "angle": 0,
+                            "position": [
+                                40,
+                                608
+                            ],
+                            "visible": true
+                        },
+                        "children": {
+                            "status-bar": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "status_bar",
+                                    "anchor": [
+                                        0.5,
+                                        0.5
+                                    ],
+                                    "size": [
+                                        450,
+                                        72
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        0,
+                                        0
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "center",
+                                    "y_anchor": "middle",
+                                    "absolute": false,
+                                    "x_offset": 0,
+                                    "y_offset": 0
+                                }
                             },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": 0,
-                                "y_offset": 0
+                            "hp": {
+                                "type": "Progress",
+                                "data"   : {
+                                    "anchor"     : [0.5,0.5],
+                                    "background" : "status_bar_background",
+                                    "foreground" : "hp_foreground",
+                                    "left_cap"   : "hp_leftcap",
+                                    "right_cap"  : "hp_rightcap"
+                                },
+                                "layout": {
+                                    "x_anchor": "center",
+                                    "y_anchor": "middle",
+                                    "absolute": false,
+                                    "x_offset": 0.07,
+                                    "y_offset": 0.13
+                                }
+                            },
+                            "stamina-1": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "stamina",
+                                    "anchor": [
+                                        0,
+                                        0
+                                    ],
+                                    "size": [
+                                        31,
+                                        13
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        210,
+                                        15
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "left",
+                                    "y_anchor": "bottom",
+                                    "absolute": false,
+                                    "x_offset": 0.47,
+                                    "y_offset": 0.21
+                                }
+                            },
+                            "stamina-2": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "stamina",
+                                    "anchor": [
+                                        0,
+                                        0
+                                    ],
+                                    "size": [
+                                        31,
+                                        13
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        188,
+                                        15
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "left",
+                                    "y_anchor": "bottom",
+                                    "absolute": false,
+                                    "x_offset": 0.42,
+                                    "y_offset": 0.21
+                                }
+                            },
+                            "stamina-3": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "stamina",
+                                    "anchor": [
+                                        0,
+                                        0
+                                    ],
+                                    "size": [
+                                        31,
+                                        13
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        166,
+                                        15
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "left",
+                                    "y_anchor": "bottom",
+                                    "absolute": false,
+                                    "x_offset": 0.37,
+                                    "y_offset": 0.21
+                                }
+                            },
+                            "stamina-4": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "stamina",
+                                    "anchor": [
+                                        0,
+                                        0
+                                    ],
+                                    "size": [
+                                        31,
+                                        13
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        144,
+                                        15
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "left",
+                                    "y_anchor": "bottom",
+                                    "absolute": false,
+                                    "x_offset": 0.32,
+                                    "y_offset": 0.21
+                                }
+                            },
+                            "stamina-5": {
+                                "type": "Image",
+                                "data": {
+                                    "texture": "stamina",
+                                    "anchor": [
+                                        0,
+                                        0
+                                    ],
+                                    "size": [
+                                        31,
+                                        13
+                                    ],
+                                    "angle": 0,
+                                    "position": [
+                                        122,
+                                        15
+                                    ],
+                                    "visible": true
+                                },
+                                "layout": {
+                                    "x_anchor": "left",
+                                    "y_anchor": "bottom",
+                                    "absolute": false,
+                                    "x_offset": 0.27,
+                                    "y_offset": 0.21
+                                }
                             }
                         },
-                        "hp": {
-                            "type": "Progress",
-                            "data"   : {
-                                "anchor"     : [0.5,0.5],
-                                "background" : "status_bar_background",
-                                "foreground" : "hp_foreground",
-                                "left_cap"   : "hp_leftcap",
-                                "right_cap"  : "hp_rightcap"
-                            },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": 0.07,
-                                "y_offset": 0.13
-                            }
-                        },
-                        "stamina": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "stamina",
-                                "anchor": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "size": [
-                                    31,
-                                    13
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    210,
-                                    15
-                                ],
-                                "visible": true
-                            },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": 0,
-                                "y_offset": -0.2
-                            }
-                        },
-                        "stamina_3": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "stamina",
-                                "anchor": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "size": [
-                                    31,
-                                    13
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    188,
-                                    15
-                                ],
-                                "visible": true
-                            },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": -0.05,
-                                "y_offset": -0.2
-                            }
-                        },
-                        "stamina_4": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "stamina",
-                                "anchor": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "size": [
-                                    31,
-                                    13
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    166,
-                                    15
-                                ],
-                                "visible": true
-                            },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": -0.1,
-                                "y_offset": -0.2
-                            }
-                        },
-                        "stamina_5": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "stamina",
-                                "anchor": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "size": [
-                                    31,
-                                    13
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    144,
-                                    15
-                                ],
-                                "visible": true
-                            },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": -0.15,
-                                "y_offset": -0.2
-                            }
-                        },
-                        "stamina_6": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "stamina",
-                                "anchor": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "size": [
-                                    31,
-                                    13
-                                ],
-                                "angle": 0,
-                                "position": [
-                                    122,
-                                    15
-                                ],
-                                "visible": true
-                            },
-                            "layout": {
-                                "x_anchor": "center",
-                                "y_anchor": "middle",
-                                "absolute": false,
-                                "x_offset": -0.19,
-                                "y_offset": -0.2
-                            }
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "top",
+                            "absolute": false,
+                            "x_offset": 0.03,
+                            "y_offset": -0.06
                         }
                     },
-                    "layout": {
-                        "x_anchor": "left",
-                        "y_anchor": "top",
-                        "absolute": false,
-                        "x_offset": 0.03,
-                        "y_offset": -0.06
-                    }
-                },
-                "js_ring": {
-                    "type": "Image",
-                    "data": {
-                        "texture": "js_ring",
-                        "anchor": [
-                            0,
-                            0
-                        ],
-                        "size": [
-                            250,
-                            250
-                        ],
-                        "angle": 0,
-                        "position": [
-                            70,
-                            70
-                        ],
-                        "visible": true
+                    "js-ring": {
+                        "type": "Image",
+                        "data": {
+                            "texture": "js_ring",
+                            "anchor": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                250,
+                                250
+                            ],
+                            "angle": 0,
+                            "position": [
+                                70,
+                                70
+                            ],
+                            "visible": true
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "bottom",
+                            "absolute": false,
+                            "x_offset": 0.05,
+                            "y_offset": 0.1
+                        }
                     },
-                    "layout": {
-                        "x_anchor": "left",
-                        "y_anchor": "bottom",
-                        "absolute": false,
-                        "x_offset": 0.05,
-                        "y_offset": 0.1
-                    }
-                },
-                "js_button": {
-                    "type": "Image",
-                    "data": {
-                        "texture": "js_button",
-                        "anchor": [
-                            0.5,
-                            0.5
-                        ],
-                        "size": [
-                            60,
-                            60
-                        ],
-                        "angle": 0,
-                        "position": [
-                            165,
-                            165
-                        ],
-                        "visible": true
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "middle",
-                        "absolute": false,
-                        "x_offset": -0.35,
-                        "y_offset": -0.23
+                    "js-button": {
+                        "type": "Image",
+                        "data": {
+                            "texture": "js_button",
+                            "anchor": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                60,
+                                60
+                            ],
+                            "angle": 0,
+                            "position": [
+                                165,
+                                165
+                            ],
+                            "visible": true
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "bottom",
+                            "absolute": false,
+                            "x_offset": 0.13,
+                            "y_offset": 0.23
+                        }
                     }
                 }
             }
-        }
     }
 }
