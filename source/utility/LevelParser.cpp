@@ -14,8 +14,8 @@ using namespace cugl;
 
 // BIG ASSUMPTION: the play area is always a square -- simply make designers use square even if it's bigger than necessary?
 const std::shared_ptr<JsonValue> LevelParser::translateJson(float w, float h) {
-    float x = _width / 2 + _width - w + h;
-    float y = _height / 2 + _height - (w + h) / 2;
+    float x = _width * 2 - w + h;
+    float y = _height * 1.5 - (w + h) / 2;
     std::shared_ptr<JsonValue> ans = JsonValue::allocArray();
     ans->appendValue(x);
     ans->appendValue(y);
