@@ -22,8 +22,22 @@ Tile::Tile(Vec2 pos, std::string textureKey){
     _textureKey = textureKey;
 }
 
+Tile::Tile(Vec2 pos, std::string textureKey, std::string layer) {
+    _pos = pos;
+    _textureKey = textureKey;
+    _layer = layer;
+}
+
 void Tile::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
     _texture = assets->get<Texture>(_textureKey);
+    _activeSide = SpriteSheet::alloc(_texture, 1, 4);
+    if (_layer == "bottom-right") {
+        _activeSide->setFrame(3);
+    } else if (_layer == "bottom-left") {
+        _activeSide->setFrame(2);
+    } else if (_layer == "floor") {
+        _activeSide->setFrame(0);
+    }
 }
 
 void Tile::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Vec2 size, Vec2 drawScale){
@@ -36,7 +50,11 @@ void Tile::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Vec2 size, Vec2
      */
     Vec2 scale = drawScale * size / (Vec2)_texture->getSize();
     Vec2 offset(-size.x / 2, -size.y/4);
-    batch->draw(_texture, Vec2::ZERO, scale, 0, (_pos + offset) * drawScale);
+    // batch->draw(_texture, Vec2::ZERO, scale, 0, (_pos + offset) * drawScale);
+    Affine2 t;
+    t.scale(scale);
+    t.translate((_pos + offset) * drawScale);
+    _activeSide->draw(batch, Vec2::ZERO, t);
 }
 
 

@@ -58,7 +58,7 @@ public:
      * @param arr whether to return Array or Object 
      *
      */
-    const std::shared_ptr<JsonValue> translateJson(float w, float h, bool arr);
+    const std::shared_ptr<JsonValue> translateJson(float w, float h);
     
     /**
      * Parses the three floor view layers 

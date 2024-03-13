@@ -147,9 +147,11 @@ bool LevelModel::preload(const std::string file) {
 	std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
     
     LevelParser ls = LevelParser();
-    ls.preload("json/test_room.json");
+    std::shared_ptr<JsonValue> newParse = ls.preload("json/test_room.json");
     
-	return preload(reader->readJson());
+    return preload(newParse);
+//    preload(newParse);
+//	return preload(reader->readJson());
 }
 
 /**
@@ -186,37 +188,37 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         return false;
     }
 
-	auto walls = json->get(WALLS_FIELD);
-	if (walls != nullptr) {
-		// Convert the object to an array so we can see keys and values
-		int wsize = (int)walls->size();
-		for(int ii = 0; ii < wsize; ii++) {
-			loadWall(walls->get(ii));
-		}
-	} else {
-		CUAssertLog(false, "Failed to load walls");
-		return false;
-	}
+//	auto walls = json->get(WALLS_FIELD);
+//	if (walls != nullptr) {
+//		// Convert the object to an array so we can see keys and values
+//		int wsize = (int)walls->size();
+//		for(int ii = 0; ii < wsize; ii++) {
+//			loadWall(walls->get(ii));
+//		}
+//	} else {
+//		CUAssertLog(false, "Failed to load walls");
+//		return false;
+//	}
     
-    auto enemiesJson = json->get("enemies");
-    if (enemiesJson != nullptr){
-        loadEnemies(enemiesJson);
-    }
-    else {
-        CUAssertLog(false, "Failed to load enemies");
-        return false;
-    }
+//    auto enemiesJson = json->get("enemies");
+//    if (enemiesJson != nullptr){
+//        loadEnemies(enemiesJson);
+//    }
+//    else {
+//        CUAssertLog(false, "Failed to load enemies");
+//        return false;
+//    }
 
     // Add objects to world
     addObstacle(_player);
 	addObstacle(_atk);
     _atk->setEnabled(false); // turn off the attack semisphere
-    for (int ii = 0; ii < _enemies.size(); ii++){
-        addObstacle(_enemies[ii]);
-    }
-    for (int ii = 0; ii < _walls.size(); ii++){
-        addObstacle(_walls[ii]);
-    }
+//    for (int ii = 0; ii < _enemies.size(); ii++){
+//        addObstacle(_enemies[ii]);
+//    }
+//    for (int ii = 0; ii < _walls.size(); ii++){
+//        addObstacle(_walls[ii]);
+//    }
     
     // load visuals (floor)
     auto floor = json->get("floor");
@@ -327,42 +329,57 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
 
 bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
     bool success = true;
-    auto sizeData = json->get(SIZE_FIELD);
-    success = success && sizeData->isArray();
-    Vec2 size(sizeData->get(0)->asFloat(), sizeData->get(1)->asFloat());
+//    auto sizeData = json->get(SIZE_FIELD);
+//    success = success && sizeData->isArray();
+//    Vec2 size(sizeData->get(0)->asFloat(), sizeData->get(1)->asFloat());
+//    std::string textureName = json->get(TEXTURE_FIELD);
+    Vec2 size(8, 2);
     std::string textureName = json->getString(TEXTURE_FIELD);
     std::vector<std::shared_ptr<Tile>> tiles;
     
     bool useGrid = json->get("use-grid")->asBool();
     if (!useGrid){
         // load all tiles as given
-        auto tilesData = json->get("tiles");
-        int count = (int)tilesData->size();
-
-        for(int ii = 0; ii < count; ii++) {
-            auto tileData = tilesData->get(ii);
-            auto posData = tileData->get(POSITION_FIELD);
-            Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
-            auto tile = Tile::alloc(pos, textureName);
-            tiles.emplace_back(tile);
-        }
-    }
-    else {
-        // generate grid of tiles automatically
-        auto grid = json->get("grid");
-        auto startData = grid->get("start");
-        Vec2 startPos(startData->get(0)->asFloat(), startData->get(1)->asFloat());
-        int rows = grid->get("rows")->asInt();
-        int cols = grid->get("columns")->asInt();
-        for (int i = 0; i < rows; i++){
-            // compute the first on row
-            Vec2 firstTilePos = startPos + Vec2(size.x / 2 * i, -size.y / 4 * i );
-            for (int j = 0; j < cols; j++){
-                Vec2 pos = firstTilePos - Vec2(size.x / 2 * j, size.y/4 * j);
-                auto tile = Tile::alloc(pos, textureName);
+//        auto tilesData = json->get("tiles");
+//        int count = (int) tilesData->size();
+//
+//        for(int ii = 0; ii < count; ii++) {
+//            auto tileData = tilesData->get(ii);
+//            auto posData = tileData->get(POSITION_FIELD);
+//            Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
+//            auto tile = Tile::alloc(pos, textureName);
+//            tiles.emplace_back(tile);
+//        }
+        
+        std::string layers[] = {"bottom-right", "bottom-left", "floor"};
+        for (int i = 0; i < json->get("size")->asInt(); i++) {
+            // TODO: convert information about the layer kind into
+            std::shared_ptr<JsonValue> layerData = json->get("tiles")->get(layers[i]);
+            for (int j = 0; j < (int) layerData->get("size")->asInt(); j++) {
+                std::vector<float> posData = layerData->get("tiles")->get(j)->asFloatArray();
+                Vec2 pos(posData[0], posData[1]);
+                auto tile = Tile::alloc(pos, textureName, layers[i]);
                 tiles.emplace_back(tile);
             }
         }
+    }
+    else {
+        CULogError("well that's not good!");
+//        // generate grid of tiles automatically
+//        auto grid = json->get("grid");
+//        auto startData = grid->get("start");
+//        Vec2 startPos(startData->get(0)->asFloat(), startData->get(1)->asFloat());
+//        int rows = grid->get("rows")->asInt();
+//        int cols = grid->get("columns")->asInt();
+//        for (int i = 0; i < rows; i++){
+//            // compute the first on row
+//            Vec2 firstTilePos = startPos + Vec2(size.x / 2 * i, -size.y / 4 * i );
+//            for (int j = 0; j < cols; j++){
+//                Vec2 pos = firstTilePos - Vec2(size.x / 2 * j, size.y/4 * j);
+//                auto tile = Tile::alloc(pos, textureName);
+//                tiles.emplace_back(tile);
+//            }
+//        }
     }
     
     _floor = Floor::alloc(size, tiles);
