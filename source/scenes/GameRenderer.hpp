@@ -28,16 +28,34 @@ class LevelModel;
 
 class GameRenderer : public cugl::Scene2 {
     
-
 private:
+    
+    std::shared_ptr<AssetManager> _assets;
+    
 #pragma mark -
 #pragma mark HUD elements
+    
+    std::shared_ptr<scene2::Button> _pauseButton;
+    
+    std::shared_ptr<scene2::ProgressBar> _hpBar;
+    
+    std::shared_ptr<scene2::SceneNode> _joystickRing;
+    
+    std::shared_ptr<scene2::SceneNode> _joystickButton;
+    
     /** Reference to the joystick object */
     std::shared_ptr<JoyStick> _joystick;
-    /** Reference to the game camera  */
-    std::shared_ptr<Camera> _gameCam;
+
     /** the background behind the game*/
     std::shared_ptr<Texture> _backgroundTexture;
+    
+    
+    
+#pragma mark -
+#pragma mark Game Components
+    
+    /** Reference to the game camera  */
+    std::shared_ptr<Camera> _gameCam;
     /** Reference to the level to be rendered */
     std::shared_ptr<LevelModel> _level;
 

@@ -69,7 +69,7 @@ public:
     Counter _idleCycle;
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
-    
+
     int _hp;
     
     /**
@@ -256,6 +256,11 @@ public:
      * Sets the direction that the player is currently facing
      */
     void setFacingDir(cugl::Vec2 dir);
+    
+    /**
+     * @return the maximum HP of the player;
+     */
+    int getMaxHP();
     
 
 #pragma mark -

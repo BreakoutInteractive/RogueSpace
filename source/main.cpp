@@ -49,13 +49,12 @@ int main(int argc, char * argv[]) {
     // Set the properties of your application
     app.setName("RogueSpace");
     app.setOrganization("BreakoutInteractive");
-    app.setHighDPI(true);
+    //app.setHighDPI(true);
 
     //app.setFullscreen(true);
     app.setDisplaySize(1024, 576);
     app.setFPS(60.0f);
     app.setClearColor(Color4(192,192,192,255));
-    
     /// DO NOT MODIFY ANYTHING BELOW THIS LINE
     if (!app.init()) {
         return 1;

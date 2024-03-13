@@ -24,6 +24,8 @@
 
 #define HIT_TIME 10
 
+#define MAX_HP 3
+
 using namespace cugl;
 
 #pragma mark -
@@ -90,7 +92,11 @@ void Player::dispose() {
 
 
 #pragma mark -
-#pragma mark Physics
+#pragma mark Properties
+
+int Player::getMaxHP(){
+    return MAX_HP;
+}
 
 #pragma mark -
 #pragma mark Animation
@@ -205,7 +211,7 @@ void Player::hit(Vec2 atkDir) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _dodgeDuration.isZero()) {
         _hitCounter.reset();
-        _hp -= 1;
+        _hp = std::max(0, _hp - 1);
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * 10); //tune this value (10)
     }
