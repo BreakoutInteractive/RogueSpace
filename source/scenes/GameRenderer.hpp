@@ -43,6 +43,8 @@ private:
     
     std::shared_ptr<scene2::SceneNode> _joystickButton;
     
+    std::vector<std::shared_ptr<scene2::SceneNode>> _stamina;
+    
     /** Reference to the joystick object */
     std::shared_ptr<JoyStick> _joystick;
 
