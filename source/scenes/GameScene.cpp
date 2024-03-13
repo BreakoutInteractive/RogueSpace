@@ -366,8 +366,8 @@ void GameScene::preUpdate(float dt) {
             (*it)->setEnabled(false);
         }
         if ((*it)->getCollider()->isEnabled()) {
-            // enemy attacks if not stunned and within range of player
-            if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getAttackRange()) {
+            // enemy attacks if not stunned and within range of player and can see them
+            if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getAttackRange() && (*it)->getPlayerInSight()) {
                 Vec2 direction = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
                 direction.normalize();
                 float ang = acos(direction.dot(Vec2::UNIT_X));

@@ -23,34 +23,50 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
     // use raycasting for LOS
     float rayLength = e->getSightRange();
     Vec2 rayStart = e->getPosition();
-    Vec2 intersection = Vec2::ZERO;
+    Vec2 player = Vec2::ZERO;
+    float playerFraction;
+    float obstacleFraction;
     float angle = e->getFacingDir().getAngle();
     Vec2 rayEnd = Vec2();
     
     // callback function for ObstacleWorld rayCast()
     std::function<float(b2Fixture *, const Vec2, const Vec2, float)> callback;
-    callback = [&intersection](b2Fixture *fixture, const Vec2 point, const Vec2 normal, float fraction) {
-        // for now we only care if we see the player, obstacles will come later
+    callback = [&player, &playerFraction, &obstacleFraction](b2Fixture *fixture, const Vec2 point, const Vec2 normal, float fraction) {
+        // track if we see the player
         if (fixture->GetFilterData().categoryBits == CATEGORY_PLAYER) {
-            intersection = point;
-            return fraction;
+            player = point;
+            playerFraction = fraction;
+            return 1.0f;
+        }
+        // track if we see an obstacle
+        else if (fixture->GetFilterData().categoryBits == CATEGORY_WALL) {
+            if (fraction < obstacleFraction) {
+                obstacleFraction = fraction;
+            }
+            return 1.0f;
         }
         else return -1.0f;
     };
     
-    // find an intersection
+    // find an intersection not interrupted by a wall
     for (int i = -30; i <= 30; i+=5) {
+        player = Vec2::ZERO;
+        playerFraction = 2;
+        obstacleFraction = 2;
         float rayAngle = angle + (M_PI/180)*i;
         rayEnd = rayStart + rayLength * Vec2(cosf(rayAngle), sinf(rayAngle));
         
         _world->rayCast(callback, rayStart, rayEnd);
         
-        if (!intersection.isZero()) {
-            return intersection;
+        // did ray hit player before hitting any obstacle?
+        if (!player.isZero() && playerFraction < obstacleFraction) {
+            e->setPlayerInSight(true);
+            return player;
         }
     }
     
-    // no intersections found
+    // no valid player intersections found
+    e->setPlayerInSight(false);
     return Vec2::ZERO;
 }
 
@@ -109,9 +125,9 @@ void AIController::update(float dt) {
     }
     // TODO: implement the following
     // if enemy has LOS of player
-    //      move along shortest path to player
+    //      move along shortest path to player (determined by raycast)
     // otherwise
-    //      stop and look around for a bit (do we want this?) before either
+    //      move to the player's last seen position, stop, and look around for a bit (do we want this?) before either
     //          moving back to default position (for sentries) or
     //          moving back to the closest node on their patrol path (for patrol enemies)
 }

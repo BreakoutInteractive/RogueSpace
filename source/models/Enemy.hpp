@@ -36,6 +36,9 @@ protected:
     /** Enemy's sight range */
     float _sightRange;
     
+    /** Whether this enemy can currently see the player */
+    bool _playerInSight;
+    
     /** Enemy's attack range */
     float _attackRange;
     
@@ -284,6 +287,16 @@ public:
      * Sets the direction that the enemy is currently facing
      */
     void setFacingDir(cugl::Vec2 dir) { _facingDirection = dir; };
+    
+    /**
+     * Gets whether this enemy can currently see the player
+     */
+    bool getPlayerInSight() const { return _playerInSight; }
+    
+    /**
+     * Sets whether this enemy can currently see the player
+     */
+    void setPlayerInSight(bool value) { _playerInSight = value; }
     
     
 #pragma mark -
