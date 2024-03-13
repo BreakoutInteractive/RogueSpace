@@ -21,10 +21,12 @@ sources:                            # The list of the source code files
     - source/scenes/*.hpp
     - source/utility/*.hpp
     - source/utility/*.cpp
+    - source/components/*.cpp
+    - source/components/*.hpp
 
 # This must be one of portrait, landscape, portrait-flipped, landscape-flipped,
 targets:                        # The target platforms to build for
     - android                   # Android Studio
     - apple                     # XCode (note macOS and iOS use one project)
     - windows                   # Windows Sisual Studio
-    - cmake                     # This supports all Desktop platfor GB9E2BC GE0BE59F
+    - cmake                     # This supports all Desktop platfor GB9E2BC GE0BE59F GE0BE59F

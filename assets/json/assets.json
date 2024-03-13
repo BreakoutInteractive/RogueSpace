@@ -5,27 +5,6 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
-		"goal": {
-			"file":     "textures/goaldoor.png"
-		},
-        "crate01": {
-            "file":     "textures/crate01.png"
-        },
-        "crate02": {
-            "file":     "textures/crate02.png"
-        },
-        "rocket": {
-            "file":     "textures/rocket.png"
-        },
-        "flames": {
-            "file":     "textures/flames.png"
-        },
-        "flames-right": {
-            "file":     "textures/flames-right.png"
-        },
-        "flames-left": {
-            "file":     "textures/flames-left.png"
-        }, 
         "player-idle": {
             "file":     "textures/player_idle.png"
         },
@@ -52,6 +31,38 @@
         },
         "stick": {
             "file":     "textures/js_button.png"
+        },
+        "js_ring": {
+            "file":     "textures/js_ring.png"
+        },
+        "js_button": {
+            "file":     "textures/js_button.png"
+        },
+        "stamina": {
+            "file":     "textures/stamina.png"
+        },
+        "pause": {
+            "file":     "textures/pause.png"
+        },
+        "back": {
+            "file":     "textures/back.png"
+        },
+        "restart": {
+            "file":     "textures/restart.png"
+        },
+        "status_bar": {
+            "file":     "textures/status_bar.png",
+            "atlas":     {
+                "background" : [81, 13, 430, 40]
+            }
+        },
+        "hp": {
+            "file":     "textures/hp.png",
+            "atlas":     {
+                "foreground" : [25,   0, 321, 25],
+                "leftcap"    : [0,    0,  25, 25],
+                "rightcap"   : [321,  0, 344, 25]
+            }
         }
 	},
     "sounds": {

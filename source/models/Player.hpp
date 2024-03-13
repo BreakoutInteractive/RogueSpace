@@ -12,6 +12,8 @@
 #include "Counter.hpp"
 #include "GameObject.hpp"
 
+class Animation;
+
 /**
  * This class is the player object in this game.
  */
@@ -69,13 +71,15 @@ public:
     Counter _idleCycle;
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
-    
+
     int _hp;
     
     /**
      * decrement all counters
      */
     void updateCounters();
+    
+    std::shared_ptr<Animation> animation;
     
     
 #pragma mark Constructors
@@ -256,6 +260,11 @@ public:
      * Sets the direction that the player is currently facing
      */
     void setFacingDir(cugl::Vec2 dir);
+    
+    /**
+     * @return the maximum HP of the player;
+     */
+    int getMaxHP();
     
 
 #pragma mark -

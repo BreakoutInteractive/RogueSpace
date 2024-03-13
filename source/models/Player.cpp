@@ -10,6 +10,7 @@
 #include "Player.hpp"
 #include "CollisionConstants.hpp"
 #include "GameObject.hpp"
+#include "../components/Animation.hpp"
 
 //should be at least the enemy's attack time so that we can't get hit twice by the same attack
 #define HIT_TIME 16
@@ -23,6 +24,8 @@
 #define DODGE_DURATION 10
 
 #define HIT_TIME 10
+
+#define MAX_HP 3
 
 using namespace cugl;
 
@@ -90,7 +93,11 @@ void Player::dispose() {
 
 
 #pragma mark -
-#pragma mark Physics
+#pragma mark Properties
+
+int Player::getMaxHP(){
+    return MAX_HP;
+}
 
 #pragma mark -
 #pragma mark Animation
@@ -141,6 +148,12 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _idleAnimation = SpriteSheet::alloc(_playerTexture, 8, 8);
     _idleAnimation->setFrame(8 * _directionIndex);
     _activeAnimation = _idleAnimation;
+    
+    // example
+    animation = Animation::alloc(_attackAnimation, 2, false);
+    animation->addCallback(2.0, [this](){
+        CULog("done attacking");
+    });
 }
 
 void Player::animateParry() {
@@ -205,7 +218,7 @@ void Player::hit(Vec2 atkDir) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _dodgeDuration.isZero()) {
         _hitCounter.reset();
-        _hp -= 1;
+        _hp = std::max(0, _hp - 1);
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * 10); //tune this value (10)
     }
