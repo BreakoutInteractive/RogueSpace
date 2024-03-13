@@ -10,6 +10,7 @@
 #include "Player.hpp"
 #include "CollisionConstants.hpp"
 #include "GameObject.hpp"
+#include "../components/Animation.hpp"
 
 //should be at least the enemy's attack time so that we can't get hit twice by the same attack
 #define HIT_TIME 16
@@ -147,6 +148,12 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _idleAnimation = SpriteSheet::alloc(_playerTexture, 8, 8);
     _idleAnimation->setFrame(8 * _directionIndex);
     _activeAnimation = _idleAnimation;
+    
+    // example
+    animation = Animation::alloc(_attackAnimation, 2, false);
+    animation->addCallback(2.0, [this](){
+        CULog("done attacking");
+    });
 }
 
 void Player::animateParry() {

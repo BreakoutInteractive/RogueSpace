@@ -132,7 +132,7 @@ void InputController::update(float dt) {
 #else
     // MOBILE CONTROLS
     // TODO: in callbacks map the following to something (for when it is true)
-    _keyReset = false; // need to map something
+    //_keyReset = false; // need to map something
     _keyExit = false;
     
     // The actual updates to movement/dodge directions are all during callbacks
@@ -404,7 +404,9 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
             }
             else if (gestureMotion.y > 0){
                 _keyDebug = true;
-                CULog("debug");
+            }
+            else if (gestureMotion.x > EVENT_SWIPE_LENGTH/2){
+                _keyReset = true;
             }
         }
         bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition <= 20;

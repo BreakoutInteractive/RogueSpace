@@ -23,6 +23,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "../components/Animation.hpp"
 
 using namespace cugl;
 
@@ -388,6 +389,14 @@ void GameScene::preUpdate(float dt) {
             (*it)->getAttack()->setEnabled(false);
         }
         
+    }
+    
+    // EXAMPLE update
+    if (player->animation->isStarted()){
+        player->animation->update(dt);
+    }
+    if (player->animation->isCompleted()){
+        CULog("done playing");
     }
 }
 

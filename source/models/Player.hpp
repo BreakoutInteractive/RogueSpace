@@ -12,6 +12,8 @@
 #include "Counter.hpp"
 #include "GameObject.hpp"
 
+class Animation;
+
 /**
  * This class is the player object in this game.
  */
@@ -76,6 +78,8 @@ public:
      * decrement all counters
      */
     void updateCounters();
+    
+    std::shared_ptr<Animation> animation;
     
     
 #pragma mark Constructors

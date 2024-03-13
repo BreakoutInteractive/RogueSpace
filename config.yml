@@ -2,7 +2,7 @@
 name:   RogueSpace                   # The application display name
 short:  RS                        # A shortened name for reference
 appid:  breakout.interactive.rogue.space  # Application identifier for Mac, iOS, Android
-suffix: true
+suffix: GE0BE59F
 
 build:  build                       # The build directory (targets are each a subdirectory)
 assets: assets                      # The folder with the game assets (do not list asset)
@@ -29,4 +29,4 @@ targets:                        # The target platforms to build for
     - android                   # Android Studio
     - apple                     # XCode (note macOS and iOS use one project)
     - windows                   # Windows Sisual Studio
-    - cmake                     # This supports all Desktop platfor GB9E2BC GE0BE59F
+    - cmake                     # This supports all Desktop platfor GB9E2BC GE0BE59F GE0BE59F
