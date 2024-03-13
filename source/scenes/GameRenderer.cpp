@@ -8,6 +8,7 @@
 #include "GameRenderer.hpp"
 #include "JoyStick.hpp"
 #include "../models/LevelModel.hpp"
+#include "../models/Player.hpp"
 
 GameRenderer::GameRenderer(){
     Scene2();
@@ -21,9 +22,42 @@ GameRenderer::~GameRenderer(){
 }
 
 bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
+    Size dimen = Application::get()->getDisplaySize();
+    dimen *= 720/dimen.height;
+    if (assets == nullptr) {
+        return false;
+    } else if (!Scene2::init(dimen)) {
+        return false;
+    }
+    _assets = assets;
     _backgroundTexture = assets->get<Texture>("background");
-    // TODO: use assets to load scene nodes and add them to this scene
     _joystick->loadAssets(assets);
+    
+    // acquire the HUD nodes
+    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("HUD");
+
+    _pauseButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HUD_pause"));
+    _pauseButton->addListener([this](const std::string name, bool down){
+        if (down){
+            CULog("pause button is triggered");
+        }
+    });
+    
+    _joystickRing = _assets->get<scene2::SceneNode>("HUD_js_ring");
+    _joystickButton = _assets->get<scene2::SceneNode>("HUD_js_button");
+    
+    _hpBar = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_hp"));
+    
+    // readjust scene to screen
+    scene->setContentSize(dimen);
+    scene->doLayout(); // Repositions the HUD
+    
+    // activate UI
+    _pauseButton->activate();
+    _joystickRing->setVisible(false);
+    _joystickButton->setVisible(false);
+    
+    addChild(scene);
     return true;
 }
 
@@ -42,6 +76,10 @@ void GameRenderer::setJoystickPosition(Vec2 anchorPos, Vec2 screenPos){
 
 
 void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
+    
+    auto player = _level->getPlayer();
+    _hpBar->setProgress(player->_hp / (float) player->getMaxHP());
+    
     // using game camera, render the game
     if (_gameCam != nullptr){
         batch->begin(_gameCam->getCombined());
