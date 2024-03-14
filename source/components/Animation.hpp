@@ -64,7 +64,7 @@ public:
     }
     
     /**
-     * allocates an animation object for the given sprite sheet and duration.
+     * allocates an animation object for the given sprite sheet and duration in seconds
      */
     static std::shared_ptr<Animation> alloc(std::shared_ptr<cugl::SpriteSheet> filmStrip, float duration, bool looping){
         return std::make_shared<Animation>(filmStrip, duration, looping, 0, filmStrip->getSize()-1);
@@ -73,7 +73,7 @@ public:
      * destroys the animation object and releases all resources
      */
     ~Animation(){
-        // NO OP
+        _filmStrip = nullptr;
     }
     
 #pragma mark -
@@ -98,7 +98,7 @@ public:
     bool isStarted() { return _started; }
     
     /**
-     * adds the callback to be executed at the timestamp `time` ms into the animation
+     * adds the callback to be executed at the timestamp `time` seconds into the animation
      * @pre the animation cannot be started.
      */
     void addCallback(float time, std::function<void()>);
@@ -109,6 +109,11 @@ public:
     void onComplete(std::function<void()> func){
         addCallback(_duration, func);
     }
+    
+    /**
+     * retrieve a reference to the underlying sprite sheet
+     */
+    std::shared_ptr<cugl::SpriteSheet> getSpriteSheet(){ return _filmStrip; }
     
     
 #pragma mark -
@@ -145,10 +150,23 @@ public:
     void continueAnimation(){ _stop = false; }
     
     /**
-     * proceeds the animation forward by `delta` milliseconds
+     * proceeds the animation forward by `delta` seconds
      * if the current time passes any callbacks, they will be executed once (per loop).
      */
     void update(float delta);
+
+    /**
+     * resets the animation and sets the range of the frames. 
+     * The range must be valid. There are no other constraints.
+     */
+    void resetFrameRange(int startIndex, int endIndex);
+    
+    /**
+     * sets the animation frame range to another range of the same length.
+     *
+     * this is useful for switching to different parts of spritesheet (say 8 filmstrips being stored in one texture)
+     */
+    void setFrameRange(int startIndex, int endIndex);
     
 };
 

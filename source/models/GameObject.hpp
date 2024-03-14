@@ -10,6 +10,7 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
+#include "../components/Animation.hpp"
 
 using namespace cugl;
 
@@ -40,6 +41,9 @@ protected:
     
     /** the sprite outline (a sensor) */
     std::shared_ptr<cugl::physics2::Obstacle> _outlineSensor;
+    
+    /** the current  animation that is running for this game object */
+    std::shared_ptr<Animation> _currAnimation;
 
 public:
     
@@ -85,6 +89,20 @@ public:
      * @return the ratio of the player sprite to the physics body
      */
     cugl::Vec2 getDrawScale() const { return _drawScale; }
+    
+    /**
+     * updates the animation component (if any) of this game object by `dt` seconds
+     *
+     * if the animation has not started, it will start the animation instead.
+     */
+    virtual void updateAnimation(float dt);
+    
+    /**
+     * sets the current animation.
+     */
+    virtual void setAnimation(std::shared_ptr<Animation> animation) { 
+        _currAnimation = animation;
+    }
     
 public:
 #pragma mark -

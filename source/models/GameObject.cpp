@@ -14,6 +14,24 @@ GameObject::GameObject(){
     _enabled = true;
 }
 
+#pragma mark -
+#pragma mark Animation
+
+void GameObject::updateAnimation(float dt){
+    if (_currAnimation != nullptr){
+        if (_currAnimation->isStarted()){
+            _currAnimation->update(dt);
+        }
+        else {
+            _currAnimation->start();
+        }
+    }
+}
+
+
+#pragma mark -
+#pragma mark Physics
+
 void GameObject::setEnabled(bool value){
     _enabled = value;
     if (_collider != nullptr){
