@@ -12,6 +12,8 @@
 #include "Counter.hpp"
 #include "GameObject.hpp"
 
+class Animation;
+
 /**
  *  This class represents an enemy in the game.
  */
@@ -25,22 +27,50 @@ protected:
     /** The force applied to the player for general movement purposes */
     cugl::Vec2 _force;
 
-    /** The texture key for the player*/
-    std::string _textureKey;
+    /** The texture key for the enemy*/
+    std::string _enemyTextureKey;
     
-    /** The player texture*/
-    std::shared_ptr<cugl::Texture> _texture;
+    /** The texture key for the walk animation*/
+    std::string _walkTextureKey;
+    
+    /** The enemy texture*/
+    std::shared_ptr<cugl::Texture> _enemyTexture;
+    
+    /** The animation to use while idle */
+    std::shared_ptr<Animation> _idleAnimation;
+    
+    /** The animation to use while walking */
+    std::shared_ptr<Animation> _walkAnimation;
+    
+    /** The animation to use while attacking */
+    std::shared_ptr<Animation> _attackAnimation;
+    
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
-    float _range;
+    float _sightRange;
+    
+    /** Whether this enemy can currently see the player */
+    bool _playerInSight;
+    
+    /** Enemy's attack range */
+    float _attackRange;
+    
+    /** Enemy's movement speed */
+    float _moveSpeed;
     
     /** The enemy's current health */
     int _health;
     
+    /** The 8 directions ranging from front and going counter clockwise until front-right*/
+    cugl::Vec2 _directions[8];
+    
     /** The current direction the enemy is facing */
     cugl::Vec2 _facingDirection;
+    
+    /** the index of the 8-cardinal directions that most closely matches the direction the enemy faces*/
+    int _directionIndex;
     
     /** The enemy's default state */
     std::string _defaultState;
@@ -53,6 +83,8 @@ protected:
     
     /** The enemy's goal path index */
     int _pathIndex;
+    
+    std::shared_ptr<Animation> _animation;
     
 public:
 #pragma mark Counters
@@ -125,14 +157,24 @@ public:
 #pragma mark -
 #pragma mark Accessors
     /**
-     * Returns the sight range applied to this player.
+     * Returns the sight range applied to this enemy.
      *
      * Remember to modify the input values by the thrust amount before assigning
      * the value to force.
      *
      * @return the force applied to this player.
      */
-    const float getRange() const { return _range; }
+    const float getSightRange() const { return _sightRange; }
+    
+    /**
+     * Returns the attack range applied to this enemy.
+     *
+     * Remember to modify the input values by the thrust amount before assigning
+     * the value to force.
+     *
+     * @return the force applied to this player.
+     */
+    const float getAttackRange() const { return _attackRange; }
     
     /**
      * Returns the force applied to this player.
@@ -193,6 +235,11 @@ public:
      * @param value the x-component of the force applied to this player.
      */
     void setFY(float value) { _force.y = value; }
+    
+    /**
+     * Gets the movement speed of this enemy.
+     */
+    int getMoveSpeed() const { return _moveSpeed; }
     
     /**
      * Gets the current health of this enemy.
@@ -262,7 +309,17 @@ public:
     /**
      * Sets the direction that the enemy is currently facing
      */
-    void setFacingDir(cugl::Vec2 dir) { _facingDirection = dir; };
+    void setFacingDir(cugl::Vec2 dir);
+    
+    /**
+     * Gets whether this enemy can currently see the player
+     */
+    bool getPlayerInSight() const { return _playerInSight; }
+    
+    /**
+     * Sets whether this enemy can currently see the player
+     */
+    void setPlayerInSight(bool value) { _playerInSight = value; }
     
     
 #pragma mark -
@@ -276,7 +333,7 @@ public:
     *
     * @return the texture (key) for this player
     */
-    const std::string& getTextureKey() const { return _textureKey; }
+    const std::string& getTextureKey() const { return _enemyTextureKey; }
 
     /**
     * Returns the texture (key) for this player
@@ -286,12 +343,21 @@ public:
     *
     * @param  strip    the texture (key) for this player
     */
-    void setTextureKey(const std::string& key) { _textureKey = key; }    
+    void setTextureKey(const std::string& key) { _enemyTextureKey = key; }    
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+    
+    /** Change to using the default animation */
+    void animateDefault();
+    
+    /** Change to using the walk animation */
+    void animateWalk();
+    
+    /** Change to using the attack animation */
+    void animateAttack();
 
     /**
      * Method to call when an enemy is hit by an attack

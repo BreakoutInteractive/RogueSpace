@@ -5,9 +5,6 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
-        "enemy":{
-            "file":     "textures/lizard_idle_front.png"
-        },
         "floor": {
             "file":     "textures/iso_floor_tile.png"
         },
