@@ -363,15 +363,28 @@ void GameScene::preUpdate(float dt) {
                     ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                 }
                 
-                (*it)->getAttack()->setEnabled(true);
-                (*it)->getAttack()->setAwake(true);
-                (*it)->getAttack()->setAngle(ang);
-                (*it)->getAttack()->setPosition((*it)->getPosition());
                 (*it)->_atkCD.reset();
                 (*it)->_atkLength.reset();
+                (*it)->_atkPrep.reset();
             }
         }
-        if ((*it)->_atkLength.isZero()) {
+        // attack hitbox activates once windup animation finishes and if enemy is still alive at that point
+        if ((*it)->_atkPrep.isZero() && (*it)->isEnabled()) {
+            Vec2 direction = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
+            direction.normalize();
+            float ang = acos(direction.dot(Vec2::UNIT_X));
+            if (direction.y < 0){
+                // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+            }
+            
+            (*it)->getAttack()->setEnabled(true);
+            (*it)->getAttack()->setAwake(true);
+            (*it)->getAttack()->setAngle(ang);
+            (*it)->getAttack()->setPosition((*it)->getPosition());
+        }
+        // disable hitbox once attack animation completes or if enemy dies mid-attack
+        if ((*it)->_atkLength.isZero() || !(*it)->isEnabled()) {
             (*it)->getAttack()->setEnabled(false);
         }
         

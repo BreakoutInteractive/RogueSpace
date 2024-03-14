@@ -15,6 +15,8 @@ using namespace cugl;
 #define HIT_TIME 16
 /**the number of frames an attack will last**/
 #define ATK_TIME 45
+/** the number of frames before the enemy's attack hitbox activates */
+#define ATK_PREP 20
 /**the number of frames we wait before allowing another attack*/
 #define ATK_CD 120
 /**the number of frames an enemy will be stunned*/
@@ -59,6 +61,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     _moveSpeed = MOVE_SPEED;
     _hitCounter.setMaxCount(HIT_TIME);
     _atkLength.setMaxCount(ATK_TIME);
+    _atkPrep.setMaxCount(ATK_PREP);
     _atkCD.setMaxCount(ATK_CD);
     _stunCD.setMaxCount(STUN_CD);
     _sentryCD.setMaxCount(SENTRY_CD);
@@ -189,6 +192,7 @@ void Enemy::updateCounters() {
     }
     _sentryCD.decrement();
     _stunCD.decrement();
+    _atkPrep.decrement();
     _atkCD.decrement();
     _atkLength.decrement();
     _hitCounter.decrement();
