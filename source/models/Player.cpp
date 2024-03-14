@@ -61,8 +61,6 @@ bool Player::init(const Vec2 pos, const Size size) {
     _parryCD.setMaxCount(PARRY_CD);
     _dodgeCD.setMaxCount(DODGE_CD);
     _dodgeDuration.setMaxCount(DODGE_DURATION);
-    _idleCycle.setMaxCount(16);
-    _idleCycle.reset();
     _hp = 3;
     _hitCounter.setMaxCount(HIT_TIME);
     
@@ -99,11 +97,6 @@ int Player::getMaxHP(){
 
 #pragma mark -
 #pragma mark Animation
-
-
-void Player::setDrawScale(Vec2 scale) {
-    _drawScale = scale;
-}
 
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
@@ -144,12 +137,15 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _runAnimation = Animation::alloc(runSheet, 16/24.0, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
     
-    _currAnimation = _idleAnimation; // set runnning
-    
     // add callbacks
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
-        setAnimation(_idleAnimation);
+        setAnimation(_prevAnimation);
+    });
+    
+    _parryAnimation->onComplete([this](){
+        _parryAnimation->reset();
+        setAnimation(_prevAnimation);
     });
     
     
@@ -157,29 +153,40 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
 }
 
 void Player::animateParry() {
-    _currAnimation = _parryAnimation;
-    // MAYBE, we don't want to reset ?? (tweening unsure)
-    _idleAnimation->reset();
-    _runAnimation->reset();
-    _attackAnimation->reset();
+    setAnimation(_parryAnimation);
 }
 
 void Player::animateDefault() {
-    _currAnimation = _idleAnimation;
-    // MAYBE, we don't want to reset ?? (tweening unsure)
-    _idleAnimation->reset();
-    _runAnimation->reset();
-    _parryAnimation->reset();
+    setAnimation(_idleAnimation);
     
 }
 void Player::animateAttack() {
-    _currAnimation = _attackAnimation;
-    // MAYBE, we don't want to reset ?? (tweening unsure)
-    _idleAnimation->reset();
-    _runAnimation->reset();
-    _parryAnimation->reset();
+    _prevAnimation = _currAnimation;
+    setAnimation(_attackAnimation);
 }
 
+void Player::setAnimation(std::shared_ptr<Animation> animation){
+    if (_currAnimation != animation){
+        // MAYBE, we don't want to reset ?? (tweening unsure)
+        if (_currAnimation != nullptr){
+            _currAnimation->reset();
+        }
+        GameObject::setAnimation(animation);
+    }
+}
+
+void Player::updateAnimation(float dt){
+    GameObject::updateAnimation(dt); 
+    // let all callbacks run (through default update) before custom update
+    if (!_attackAnimation->isActive() && !_parryAnimation->isActive()){
+        if (!_collider->getLinearVelocity().isZero()){
+            setAnimation(_runAnimation);
+        }
+        else {
+            setAnimation(_idleAnimation);
+        }
+    }
+}
 
 #pragma mark -
 #pragma mark State Update

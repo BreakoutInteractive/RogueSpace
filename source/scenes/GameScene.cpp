@@ -434,16 +434,3 @@ Size GameScene::computeActiveSize() const {
     }
     return dimen;
 }
-
-
-#pragma mark -
-#pragma mark Collision Handling
-
-void GameScene::beginContact(b2Contact* contact) {
-    _collisionController.beginContact(contact);
-}
-
-
-void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-    _collisionController.beforeSolve(contact, oldManifold);
-}

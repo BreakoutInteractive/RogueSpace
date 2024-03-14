@@ -58,10 +58,9 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // Program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
-        CULog("reset: %bool", down);
         if (down) {
             _choice = Choice::RESTART;
-            CULog("reset: %bool", down);
+            CULog("resetting (pause screen)");
         }
     });
     _back->addListener([this](const std::string& name, bool down) {
