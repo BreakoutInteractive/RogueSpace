@@ -16,6 +16,7 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
+#include "../controllers/AudioController.hpp"
 #include "../controllers/CameraController.hpp"
 #include "../controllers/InputController.hpp"
 #include "../controllers/CollisionController.hpp"
@@ -43,6 +44,8 @@ protected:
     CameraController _camController;
     /** Controller for handling collisions */
     CollisionController _collisionController;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
@@ -57,7 +60,7 @@ protected:
     /** content offset to prevent displays on notch/adjusting aspect ratios*/
     cugl::Vec2 _offset;
     /** custom renderer for this scene */
-    GameRenderer _gameRenderer;
+    std::shared_ptr<GameRenderer> _gameRenderer;
 
     // MODEL
 
@@ -133,6 +136,16 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
+    
+    /**
+     * Returns a shared instance of the game renderer
+     */
+    std::shared_ptr<GameRenderer>& getRenderer(){return _gameRenderer;}
+    
+    /**
+     * Clears all previous inputs.
+     */
+    void clearInputs(){ _input.clear();}
     
     /**
      * Returns true if the level is completed.
@@ -248,11 +261,16 @@ public:
     void postUpdate(float remain);
     
     /**
+     * Restarts game scene to initial state.
+     */
+    void restart();
+    
+    /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
     virtual void render(const std::shared_ptr<SpriteBatch>& batch) override {
-        _gameRenderer.render(batch);
+        _gameRenderer->render(batch);
         Scene2::render(batch);
     }
     

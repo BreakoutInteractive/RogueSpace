@@ -35,11 +35,13 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     
     // acquire the HUD nodes
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("HUD");
+    _paused=false;
 
     _pauseButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HUD_pause"));
     _pauseButton->addListener([this](const std::string name, bool down){
         if (down){
-            CULog("pause button is triggered");
+            _paused=true;
+            _pauseButton->setVisible(false);
         }
     });
     
@@ -84,6 +86,17 @@ void GameRenderer::setJoystickPosition(Vec2 anchorPos, Vec2 screenPos){
     }
 }
 
+
+void GameRenderer::configurePauseButton(bool pause) {
+    if (pause) {
+        _pauseButton->deactivate();
+    } else{
+        _paused = pause;
+        _pauseButton->setDown(false);
+        _pauseButton->setVisible(!pause);
+        _pauseButton->activate();
+    }
+}
 
 void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
     

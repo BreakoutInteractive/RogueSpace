@@ -22,8 +22,13 @@ void CollisionController::setLevel(std::shared_ptr<LevelModel> level){
     _level = level;
 }
 
-void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets) {
+void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets, const std::shared_ptr<AudioController>& audio) {
     _assets = assets;
+    _audioController = audio;
+    
+    // Create the world and attach the listeners.
+    std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
+
 }
 
 
@@ -48,6 +53,7 @@ void CollisionController::beginContact(b2Contact* contact){
             if ((*it)->getPosition().y * (*it)->getDrawScale().y < _level->getPlayer()->getPosition().y * _level->getPlayer()->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
                 (*it)->hit(dir);
+                _audioController->playPlayerFX("attackHit");
                 CULog("Hit an enemy!");
             }
         }
@@ -74,6 +80,8 @@ void CollisionController::beginContact(b2Contact* contact){
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
                 if (player->_parryCD.isZero()) {
+                    physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+                    _audioController->playEnemyFX("attackHit", data1->getName());
                     player->hit(dir);
                     CULog("Player took damage!");
                 }

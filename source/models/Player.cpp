@@ -23,8 +23,6 @@
 
 #define DODGE_DURATION 10
 
-#define HIT_TIME 10
-
 #define MAX_HP 3
 
 using namespace cugl;
