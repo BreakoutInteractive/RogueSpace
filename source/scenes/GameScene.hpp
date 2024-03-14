@@ -16,9 +16,12 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
-#include "../controllers/InputController.hpp"
-#include "../models/LevelModel.hpp"
+#include "../controllers/AudioController.hpp"
 #include "../controllers/CameraController.hpp"
+#include "../controllers/InputController.hpp"
+#include "../controllers/CollisionController.hpp"
+#include "../models/LevelModel.hpp"
+#include "GameRenderer.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -39,18 +42,25 @@ protected:
     AIController _AIController;
     /** Controller to modify camera behavior */
     CameraController _camController;
+    /** Controller for handling collisions */
+    CollisionController _collisionController;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
     /** Reference to the win message label */
     std::shared_ptr<cugl::scene2::Label> _winNode;
+    /** Reference to the lose message label */
+    std::shared_ptr<cugl::scene2::Label> _loseNode;
     /** Reference to the reset message label */
     std::shared_ptr<cugl::scene2::Label> _resetNode;
-    
-    std::shared_ptr<Texture> _backgroundTexture;
+
     /** content offset to prevent displays on notch/adjusting aspect ratios*/
     cugl::Vec2 _offset;
+    /** custom renderer for this scene */
+    std::shared_ptr<GameRenderer> _gameRenderer;
 
     // MODEL
 
@@ -62,6 +72,8 @@ protected:
 
     /** Whether we have completed this "game" */
     bool _complete;
+    /** Whetehr we got defeated */
+    bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
     
@@ -126,6 +138,16 @@ public:
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
     
     /**
+     * Returns a shared instance of the game renderer
+     */
+    std::shared_ptr<GameRenderer>& getRenderer(){return _gameRenderer;}
+    
+    /**
+     * Clears all previous inputs.
+     */
+    void clearInputs(){ _input.clear();}
+    
+    /**
      * Returns true if the level is completed.
      *
      * If true, the level will advance after a countdown
@@ -133,6 +155,15 @@ public:
      * @return true if the level is completed.
      */
     bool isComplete( ) const { return _complete; }
+
+    /**
+     * Returns true if the player was defeated.
+     *
+     * If true, there will be a game over
+     *
+     * @return true if the player was defeated.
+     */
+    bool isDefeat() const { return _defeat; }
     
     /**
      * Sets whether the level is completed.
@@ -142,6 +173,15 @@ public:
      * @param value whether the level is completed.
      */
     void setComplete(bool value) { _complete = value; _winNode->setVisible(value); }
+
+    /**
+     * Sets whether the player was defeated
+     *
+     * If true, there will be a game over
+     *
+     * @param value whether the player was defeated
+     */
+    void setDefeat(bool value) { _defeat = value; _loseNode->setVisible(value); }
     
     
 #pragma mark -
@@ -221,46 +261,22 @@ public:
     void postUpdate(float remain);
     
     /**
+     * Restarts game scene to initial state.
+     */
+    void restart();
+    
+    /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
-    
-#pragma mark -
-#pragma mark Collision Handling
-    /**
-     * Processes the start of a collision
-     *
-     * This method is called when we first get a collision between two objects. 
-     * We use this method to test if it is the "right" kind of collision.  In 
-     * particular, we use it to test if we make it to the win door.
-     *
-     * @param  contact  The two bodies that collided
-     */
-    void beginContact(b2Contact* contact);
-
-    /**
-     * Handles any modifications necessary before collision resolution
-     *
-     * This method is called just before Box2D resolves a collision.  We use 
-     * this method to implement sound on contact, using the algorithms outlined 
-     * in Ian Parberry's "Introduction to Game Physics with Box2D".
-     *
-     * @param  contact  The two bodies that collided
-     * @param  contact  The collision manifold before contact
-     */
-    void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override {
+        _gameRenderer->render(batch);
+        Scene2::render(batch);
+    }
 
 protected:
 #pragma mark -
 #pragma mark Helpers
-    
-    /**
-     * Activates world collision callbacks on the given physics world and sets the onBeginContact and beforeSolve callbacks
-     *
-     * @param world the physics world to activate world collision callbacks on
-     */
-    void activateWorldCollisions(const std::shared_ptr<physics2::ObstacleWorld>& world);
     
     /**
      * Returns the active screen size of this scene.

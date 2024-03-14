@@ -5,11 +5,13 @@
 //  There is support for keyboard inputs.
 //
 //  Author: Zhiyuan Chen
-//  Version: 2/21/24
+//  Version: 3/5/24
 //
 #ifndef __INPUT_CONTROLLER_H__
 #define __INPUT_CONTROLLER_H__
 #include <cugl/cugl.h>
+
+using namespace cugl;
 
 /**
  * This class represents player input in the rocket demo.
@@ -28,9 +30,93 @@
  * in the constructor.
  */
 class InputController {
+
 private:
+    
 #pragma mark -
-#pragma mark Internal Input Raw Data
+#pragma mark Internal Types
+    
+    /**
+     * When a tap is finished, the data can be saved to denote whether the next tap initiates a double tap, triple tap, etc.
+     */
+    struct TapData {
+        /** whether the tap event is no longer valid*/
+        bool expired = true;
+        /** the position of the tap */
+        Vec2 pos;
+        /** the time when the tap was completed */
+        Timestamp timestamp;
+        
+        std::string toString() const {
+            return (expired ? "true " : "false ") + pos.toString() + " ";
+        }
+    };
+    
+    /**
+     * A gesture is defined by the starting position of a touch event,
+     * A gesture officially finishes when the touch is released. An inactive gesture can be safely discarded.
+     */
+    struct GestureData {
+        /** whether the touch event is still active*/
+        bool active = false;
+        /** where on the screen did the touch start */
+        Vec2 initialPos;
+        /** where on the screen is the touch currently*/
+        Vec2 curPos;
+        /** where on the screen was the touch last time before it moved*/
+        Vec2 prevPos;
+        /** the time when the touch was initiated */
+        Timestamp timestamp;
+        /** the identifier of this touch event */
+        TouchID touchID;
+        /** the data associated with this gesture's tap */
+        TapData tap;
+    };
+    
+    /**
+     * initialize gesture data based on event timestamp, position, id, etc.
+     */
+    void initGestureDataFromEvent(GestureData& data, const TouchEvent& event);
+    
+    /**
+     * reads release gesture assuming control scheme uses unified direction
+     */
+    void readEndGestureUnified(GestureData& _motionGesture, GestureData& _combatGesture, const TouchEvent& event);
+    
+    /**
+     * reads release gesture assuming control scheme uses omnidirectional controls
+     */
+    void readEndGestureOminidirectional(GestureData& _motionGesture, GestureData& _combatGesture, const TouchEvent& event);
+    
+#pragma mark -
+#pragma mark Touch Callbacks
+    /**
+     * Callback for the beginning of a touch event
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
+    void touchBeganCB(const TouchEvent& event, bool focus);
+    
+    /**
+     * Callback for the end of a touch event
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
+    void touchEndedCB(const TouchEvent& event, bool focus);
+    
+    /**
+     * Call back to execute when the finger moves.
+     *
+     * @param event     The event with the touch information
+     * @param previous  The previously reported finger location
+     * @param focus     Whether this device has focus (UNUSED)
+     */
+    void touchMotionCB(const TouchEvent& event, const Vec2 previous, bool focus);
+    
+#pragma mark -
+#pragma mark Internal Data
     
     // this section can be modified between calls to update()
     
@@ -49,49 +135,47 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
+    /** whether the weapon swap key is down*/
+    bool _keySwap;
     /** a vector cache representing the intended direction of movement*/
-    cugl::Vec2 _keyMoveDir;
+    Vec2 _keyMoveDir;
     /** a vector cache representing the intended direction of dodge*/
-    cugl::Vec2 _keyDodgeDir;
+    Vec2 _keyDodgeDir;
+    /** a vector cache representing the intended direction of attack*/
+    Vec2 _keyAttackDir;
 
     // TOUCH SUPPORT
-    /** The timestamp for the beginning of the current gesture */
-    cugl::Timestamp _timestamp;
+    
     /** The listener key associated with the touchscreen */
     uint32_t _touchKey;
-
-    /**
-     * A gesture is defined by the starting position of a touch event,
-     * A gesture officially finishes when the touch is released. An inactive gesture can be safely discarded.
-     */
-    struct GestureData {
-        /** whether the touch event is still active*/
-        bool active = false;
-        /** whether the touch event has been processed*/
-        bool processed = true;
-        /** where on the screen did the touch start */
-        cugl::Vec2 initialPos;
-        /** where on the screen is the touch currently*/
-        cugl::Vec2 curPos;
-        /** where on the screen was the touch last time before it moved*/
-        cugl::Vec2 prevPos;
-        /** the time when the touch was initiated */
-        cugl::Timestamp timestamp;
-        /** the identifier of this touch event */
-        cugl::TouchID touchID;
-    };
     
-    /**
-     * initialize gesture data based on event timestamp, position, id, etc.
-     */
-    void initGestureDataFromEvent(GestureData& data, const cugl::TouchEvent& event);
+    /** gesture data for controlling motion */
+    GestureData _motionGesture;
+    /** gesture data for controlling combat */
+    GestureData _combatGesture;
     
-    /** gesture data on the left hand side of the landscape screen*/
-    GestureData _leftGesture;
-    /** gesture data on the right hand side of the landscape screen*/
-    GestureData _rightGesture;
+    // TODO: this is temporary, subject to removal (used to toggle between settings)
+    /** gesture data for quick settings */
+    GestureData _settingsGesture;
+    
+    /** whether the  gestures have positions swapped. */
+    bool reversedGestures;
 
 protected:
+    
+#pragma mark -
+#pragma mark Input Scheme
+    
+    enum class ControlOption : int {
+        /** all directions sync with the direction the player is facing */
+        UNIFIED = 0,
+        /** movement direction does not matter */
+        OMNIDIRECTIONAL = 1
+    };
+    
+    /** the control set that the controller is offering */
+    ControlOption scheme = ControlOption::UNIFIED;
+    
 #pragma mark -
 #pragma mark Input Results (Abstraction Layer)
     
@@ -107,12 +191,14 @@ protected:
     bool _attackPressed;
     /** Whether the parry action was chosen */
     bool _parryPressed;
-    /** TODO: this should not be necessary; which direction did we attack*/
-    cugl::Vec2 _attackDir;
+    /** Whether the weapon swap action was chosen*/
+    bool _swapPressed;
+    /** unit direction of the attack*/
+    Vec2 _attackDir;
     /** unit vector direction of movement */
-    cugl::Vec2 _moveDir;
+    Vec2 _moveDir;
     /** unit vector direction of dodge motion */
-    cugl::Vec2 _dodgeDir;
+    Vec2 _dodgeDir;
     
 public:
 #pragma mark -
@@ -184,7 +270,7 @@ public:
      *
      * @return the unit vector direction of movement
      */
-    cugl::Vec2 getMoveDirection(){ return _moveDir; }
+    Vec2 getMoveDirection(){ return _moveDir; }
     
     /**
      * Returns true if the dodge input was triggered.
@@ -194,9 +280,9 @@ public:
     /**
      * Returns the unit vector direction of movement for dodge motion
      *
-     * The returned value can be anything in the event that {@link didDodge} is false.
+     * The returned value can be anything in the event that `didDodge` is false.
      */
-    cugl::Vec2 getDodgeDirection(){ return _dodgeDir; }
+    Vec2 getDodgeDirection(Vec2 facingDir);
     
     /**
      * Returns true if the parry input was triggered.
@@ -211,9 +297,14 @@ public:
     /**
      * Returns the vector direction of attack (i.e. the position of the mouse)
      *
-     * The returned value can be anything in the event that {@link didAttack} is false.
+     * The returned value can be anything in the event that `didAttack` is false.
      */
-    cugl::Vec2 getAttackDirection() const { return _attackDir; }
+    Vec2 getAttackDirection(Vec2 facingDir);
+    
+    /**
+     * @return true if the weapon swap input was triggered
+     */
+    bool didSwap() const {return _swapPressed; }
     
     /**
      * Returns true if the reset button was pressed.
@@ -236,33 +327,23 @@ public:
      */
     bool didExit() const { return _exitPressed; }
     
-    
-#pragma mark -
-#pragma mark Touch Callbacks
     /**
-     * Callback for the beginning of a touch event
-     *
-     * @param t     The touch information
-     * @param event The associated event
+     * @return whether there is touch event associated with the motion gesture
      */
-    void touchBeganCB(const cugl::TouchEvent& event, bool focus);
+    bool isMotionActive() const { return _motionGesture.active; }
     
     /**
-     * Callback for the end of a touch event
-     *
-     * @param t     The touch information
-     * @param event The associated event
+     * The returned value can be anything in the event that `isMotionActive` is false.
+     * @return the starting location of the touch event associated with the motion gesture
      */
-    void touchEndedCB(const cugl::TouchEvent& event, bool focus);
+    Vec2 getInitTouchLocation(){ return _motionGesture.initialPos;}
     
     /**
-     * Call back to execute when the finger moves.
-     *     *
-     * @param event     The event with the touch information
-     * @param previous  The previously reported finger location
-     * @param focus     Whether this device has focus (UNUSED)
+     * The returned value can be anything in the event that `isMotionActive` is false.
+     * @return the current location of the touch event associated with the motion gesture
      */
-    void touchMotionCB(const cugl::TouchEvent& event, const cugl::Vec2 previous, bool focus);
+    Vec2 getTouchLocation(){return _motionGesture.curPos; }
+    
 
 };
 

@@ -99,6 +99,7 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
     if (pNode->get("name")->toString() != "\"player\"") {
         CULogError("incorrect index for player node in JSON, node is %s", pNode->get("name")->toString().c_str());
     }
+    CULog(pNode->toString().c_str());
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
     std::shared_ptr<JsonValue> patt = pNode->get("objects")->get(0);
@@ -222,8 +223,8 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     _tileheight = json->get("tileheight")->asInt();
     ans->appendValue("width", 4.0 * _width);
     ans->appendValue("height", 2.0 * _height);
-    ans->appendValue("view-width", 2.0 * _width);
-    ans->appendValue("view-height", 1.0 * _height);
+    ans->appendValue("view-width", 24.0f);
+    ans->appendValue("view-height", 13.5f);
     
     std::shared_ptr<JsonValue> layers = json->get("layers");
     std::shared_ptr<JsonValue> floor = LevelParser::parseFloor(layers);
@@ -238,7 +239,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
 //    std::shared_ptr<JsonValue> boundaries = LevelParser::parseBoundaries(layers);
 //    ans->appendChild("enemies", boundaries);
     
-    CULog("%s", ans->toString().c_str());
+//    CULog("%s", ans->toString().c_str());
     
     return ans;
 }

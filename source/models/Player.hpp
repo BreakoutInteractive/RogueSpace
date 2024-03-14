@@ -10,11 +10,14 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
+#include "GameObject.hpp"
+
+class Animation;
 
 /**
- * This class is the player avatar for the player lander game.
+ * This class is the player object in this game.
  */
-class Player : public cugl::physics2::BoxObstacle {
+class Player : public GameObject {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Player);
@@ -31,22 +34,18 @@ protected:
     /** The texture key for the attack animation */
     std::string _attackTextureKey;
     
-    /** Cache object for transforming the force according the object angle */
-    cugl::Mat4 _affine;
-    
-    cugl::Vec2 _drawScale;
-    
     //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
-    /** player idle 8 frames indexed by `directionIndex` */
-    std::shared_ptr<cugl::SpriteSheet> _idleAnimation;
+    
+    /** The animaton to use while idle */
+    std::shared_ptr<Animation> _idleAnimation;
     /** The animation to use while parrying */
-    std::shared_ptr<cugl::SpriteSheet> _parryAnimation;
+    std::shared_ptr<Animation> _parryAnimation;
     /** The animation to use while attacking */
-    std::shared_ptr<cugl::SpriteSheet> _attackAnimation;
-    /** The animation we are currently drawing */
-    std::shared_ptr<cugl::SpriteSheet> _activeAnimation;
+    std::shared_ptr<Animation> _attackAnimation;
+    /** The animation to use while running */
+    std::shared_ptr<Animation> _runAnimation;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -57,8 +56,9 @@ protected:
     /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
     int _directionIndex;
     
+    std::shared_ptr<Animation> _prevAnimation;
+    
 public:
-    bool _attacking;
 #pragma mark -
 #pragma mark Counters
     /** attack cooldown counter*/
@@ -69,8 +69,10 @@ public:
     Counter _dodgeCD;
     /** counter that is active during the dodge motion*/
     Counter _dodgeDuration;
-    /** counter that is active during the idle cycle*/
-    Counter _idleCycle;
+    /** counter that is active while the player takes damage */
+    Counter _hitCounter;
+
+    int _hp;
     
     /**
      * decrement all counters
@@ -82,7 +84,7 @@ public:
     /**
      * Creates a new player at the origin.
      */
-    Player(void) : BoxObstacle(), _drawScale(1.0f, 1.0f) { }
+    Player(void) : GameObject() { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -102,7 +104,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init() override { return init(cugl::Vec2::ZERO,cugl::Size::ZERO); }
+    virtual bool init() { return init(cugl::Vec2::ZERO,cugl::Size::ZERO); }
     
     /**
      * Initializes a new player with the given position and unit size.
@@ -111,7 +113,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos) override { return init(pos,cugl::Size(1,1)); }
+    virtual bool init(const cugl::Vec2 pos) { return init(pos,cugl::Size(1,1)); }
     
     /**
      * Initializes a new player with the given position and size.
@@ -123,7 +125,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
     
     
 #pragma mark Static Constructors
@@ -257,10 +259,14 @@ public:
      */
     void setFacingDir(cugl::Vec2 dir);
     
+    /**
+     * @return the maximum HP of the player;
+     */
+    int getMaxHP();
+    
+
 #pragma mark -
 #pragma mark Animation
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
  
     /**
     * Returns the idle texture (key) for this player
@@ -322,35 +328,6 @@ public:
     void setAttackTextureKey(const std::string& key) { _attackTextureKey = key; }
     
     /**
-     * Sets the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @param scale The ratio of the player sprite to the physics body
-     */
-    void setDrawScale(cugl::Vec2 scale);
-    
-    /**
-     * Returns the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @return the ratio of the player sprite to the physics body
-     */
-    cugl::Vec2 getDrawScale() const { return _drawScale; }
-    
-    
-    /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
@@ -361,28 +338,21 @@ public:
     void animateDefault();
     /** Change to using the attack animation */
     void animateAttack();
+
+    /**
+    * Method to call when player is hit by an attack
+    * @param atkDir the normal vector of the direction of the attack that hit the player
+    */
+    void hit(cugl::Vec2 atkDir);
     
+    // INHERITED
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    void setAnimation(std::shared_ptr<Animation> animation) override;
+    void updateAnimation(float dt) override;
     
 #pragma mark -
 #pragma mark Physics
-    /**
-     * Applies the force to the body of this player
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
 
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * This method is called AFTER the collision resolution state. Therefore, it
-     * should not be used to process actions or any other gameplay information.
-     * Its primary purpose is to adjust changes to the fixture, which have to
-     * take place after collision.
-     *
-     * @param delta Timing values from parent loop
-     */
-//    virtual void update(float delta) override;
 };
 
 #endif /* Player_hpp */

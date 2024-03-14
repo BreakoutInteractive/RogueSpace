@@ -10,11 +10,14 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
+#include "GameObject.hpp"
+
+class Animation;
 
 /**
- * This class represents an enemy in the game.
+ *  This class represents an enemy in the game.
  */
-class Enemy : public cugl::physics2::BoxObstacle {
+class Enemy : public GameObject {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Enemy);
@@ -24,34 +27,84 @@ protected:
     /** The force applied to the player for general movement purposes */
     cugl::Vec2 _force;
 
-    /** The texture key for the player*/
-    std::string _textureKey;
+    /** The texture key for the enemy*/
+    std::string _enemyTextureKey;
     
-    /** Cache object for transforming the force according the object angle */
-    cugl::Mat4 _affine;
+    /** The texture key for the walk animation*/
+    std::string _walkTextureKey;
     
-    cugl::Vec2 _drawScale;
+    /** The enemy texture*/
+    std::shared_ptr<cugl::Texture> _enemyTexture;
     
-    /** The player texture*/
-    std::shared_ptr<cugl::Texture> _texture;
-
-    cugl::Color4 _tint;
-
-    Counter _hitCounter;
+    /** The animation to use while idle */
+    std::shared_ptr<Animation> _idleAnimation;
+    
+    /** The animation to use while walking */
+    std::shared_ptr<Animation> _walkAnimation;
+    
+    /** The animation to use while attacking */
+    std::shared_ptr<Animation> _attackAnimation;
+    
+    
+    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
-    float _range;
+    float _sightRange;
+    
+    /** Whether this enemy can currently see the player */
+    bool _playerInSight;
+    
+    /** Enemy's attack range */
+    float _attackRange;
+    
+    /** Enemy's movement speed */
+    float _moveSpeed;
     
     /** The enemy's current health */
     int _health;
     
+    /** The 8 directions ranging from front and going counter clockwise until front-right*/
+    cugl::Vec2 _directions[8];
+    
+    /** The current direction the enemy is facing */
+    cugl::Vec2 _facingDirection;
+    
+    /** the index of the 8-cardinal directions that most closely matches the direction the enemy faces*/
+    int _directionIndex;
+    
+    /** The enemy's default state */
+    std::string _defaultState;
+    
+    /** The enemy's patrol path */
+    std::vector<cugl::Vec2> _path;
+    
+    /** The enemy's goal position */
+    cugl::Vec2 _goal;
+    
+    /** The enemy's goal path index */
+    int _pathIndex;
+    
+    std::shared_ptr<Animation> _animation;
+    
 public:
+#pragma mark Counters
+    
+    Counter _atkLength;
+    
+    Counter _atkCD;
+    
+    Counter _stunCD;
+    
+    Counter _sentryCD;
+
+    Counter _hitCounter;
+    
 #pragma mark -
 #pragma mark Constructors
     /**
      * Creates a new enemy at the origin.
      */
-    Enemy(void) : BoxObstacle(), _drawScale(1.0f, 1.0f) { }
+    Enemy(void) : GameObject() { }
     
     /**
      * Destroys this player, releasing all resources.
@@ -76,7 +129,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
     
     
 #pragma mark Static Constructors
@@ -104,14 +157,24 @@ public:
 #pragma mark -
 #pragma mark Accessors
     /**
-     * Returns the sight range applied to this player.
+     * Returns the sight range applied to this enemy.
      *
      * Remember to modify the input values by the thrust amount before assigning
      * the value to force.
      *
      * @return the force applied to this player.
      */
-    const float getRange() const { return _range; }
+    const float getSightRange() const { return _sightRange; }
+    
+    /**
+     * Returns the attack range applied to this enemy.
+     *
+     * Remember to modify the input values by the thrust amount before assigning
+     * the value to force.
+     *
+     * @return the force applied to this player.
+     */
+    const float getAttackRange() const { return _attackRange; }
     
     /**
      * Returns the force applied to this player.
@@ -174,6 +237,11 @@ public:
     void setFY(float value) { _force.y = value; }
     
     /**
+     * Gets the movement speed of this enemy.
+     */
+    int getMoveSpeed() const { return _moveSpeed; }
+    
+    /**
      * Gets the current health of this enemy.
      */
     int getHealth() const { return _health; }
@@ -183,11 +251,79 @@ public:
      */
     void setHealth(int value) { _health = value; }
     
+    /**
+     * Gets this enemy's attack hitbox.
+     */
+    std::shared_ptr<cugl::physics2::WheelObstacle> getAttack() const { return _attack; }
+    
+    /**
+     * Sets this enemy's attack hitbox.
+     */
+    void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
+    
+    /**
+     * Gets this enemy's default state.
+     */
+    std::string getDefaultState() const { return _defaultState; }
+    
+    /**
+     * Sets this enemy's default state.
+     */
+    void setDefaultState(std::string value) { _defaultState = value; }
+    
+    /**
+     * Gets this enemy's patrol path.
+     */
+    std::vector<cugl::Vec2> getPath() const { return _path; }
+    
+    /**
+     * Sets this enemy's patrol path.
+     */
+    void setPath(std::vector<cugl::Vec2> value) { _path = value; }
+    
+    /**
+     * Gets this enemy's goal position.
+     */
+    cugl::Vec2 getGoal() const { return _goal; }
+    
+    /**
+     * Sets this enemy's goal position.
+     */
+    void setGoal(cugl::Vec2 value) { _goal = value; }
+    
+    /**
+     * Gets this enemy's goal path index.
+     */
+    int getPathIndex() const { return _pathIndex; }
+    
+    /**
+     * Sets this enemy's goal path index.
+     */
+    void setPathIndex(int value) { _pathIndex = value; }
+    
+    /**
+     * @return the unit vector direction that the enemy is facing towards
+     */
+    cugl::Vec2 getFacingDir() { return _facingDirection; }
+    
+    /**
+     * Sets the direction that the enemy is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir);
+    
+    /**
+     * Gets whether this enemy can currently see the player
+     */
+    bool getPlayerInSight() const { return _playerInSight; }
+    
+    /**
+     * Sets whether this enemy can currently see the player
+     */
+    void setPlayerInSight(bool value) { _playerInSight = value; }
+    
     
 #pragma mark -
 #pragma mark Animation
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
  
     /**
     * Returns the texture (key) for this player
@@ -197,7 +333,7 @@ public:
     *
     * @return the texture (key) for this player
     */
-    const std::string& getTextureKey() const { return _textureKey; }
+    const std::string& getTextureKey() const { return _enemyTextureKey; }
 
     /**
     * Returns the texture (key) for this player
@@ -207,56 +343,46 @@ public:
     *
     * @param  strip    the texture (key) for this player
     */
-    void setTextureKey(const std::string& key) { _textureKey = key; }
-    
-    /**
-     * Sets the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @param scale The ratio of the player sprite to the physics body
-     */
-    void setDrawScale(cugl::Vec2 scale);
-    
-    /**
-     * Returns the ratio of the player sprite to the physics body
-     *
-     * The player needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @return the ratio of the player sprite to the physics body
-     */
-    cugl::Vec2 getDrawScale() const { return _drawScale; }
-    
+    void setTextureKey(const std::string& key) { _enemyTextureKey = key; }    
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+    
+    /** Change to using the default animation */
+    void animateDefault();
+    
+    /** Change to using the walk animation */
+    void animateWalk();
+    
+    /** Change to using the attack animation */
+    void animateAttack();
 
     /**
      * Method to call when an enemy is hit by an attack
+     * @param atkDir the normal vector of the direction of the attack that hit this enemy
      */
-    void hit();
+    void hit(cugl::Vec2 atkDir);
+
+    /**
+     * Method to call when an enemy is stunned, e.g. when parried
+     */
+    void stun();
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    
+    void setDrawScale(cugl::Vec2 scale) override;
     
     
 #pragma mark -
 #pragma mark Physics
-    /**
-     * Applies the force to the body of this player
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
+//    /**
+//     * Applies the force to the body of this player
+//     *
+//     * This method should be called after the force attribute is set.
+//     */
+//    void applyForce();
 
 #pragma mark -
 #pragma mark State Update

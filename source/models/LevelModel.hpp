@@ -19,7 +19,6 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
-#include <vector>
 
 using namespace cugl;
 
@@ -30,6 +29,7 @@ class CrateModel;
 class Floor;
 class Player;
 class Enemy;
+class GameObject;
 
 #pragma mark -
 #pragma mark Level Model
@@ -62,6 +62,9 @@ protected:
     
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
+    
+    /** list of all moving game objects */
+    std::vector<std::shared_ptr<GameObject>> _dynamicObjects;
 
     std::shared_ptr<physics2::WheelObstacle> _atk;
     
@@ -77,6 +80,9 @@ protected:
     std::shared_ptr<scene2::SceneNode> _debugNode;
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
+    
+    // TODO: added so enemy data is from file, get this in Tiled. set up property types.
+    std::shared_ptr<JsonValue> tempData;
 
 #pragma mark Internal Helper Methods
     
@@ -195,6 +201,11 @@ public:
      * @return the enemies in this game level
      */
     const std::vector<std::shared_ptr<Enemy>> getEnemies() { return _enemies; }
+
+    /**
+     * @return the walls in this game level
+     */
+    const std::vector<std::shared_ptr<WallModel>> getWalls() { return _walls; }
 
 
 #pragma mark Physics Attributes

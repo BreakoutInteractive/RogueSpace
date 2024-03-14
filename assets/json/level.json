@@ -19,7 +19,9 @@
     "enemies": {
         "enemy-1": {
             "pos": [22, 13],
+            "path": [[22, 13], [19, 10], [22, 7], [25, 10]],
             "size": [0.6,0.6],
+            "defaultstate": "patrol",
             "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
@@ -31,7 +33,9 @@
         },
         "enemy-2": {
             "pos": [18, 13],
+            "path": [[18, 13]],
             "size": [0.6,0.6],
+            "defaultstate": "sentry",
             "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
@@ -43,7 +47,9 @@
         },
         "enemy-3": {
             "pos": [8, 8],
+            "path": [[8, 8], [12, 4], [20, 4], [12, 4]],
             "size": [0.6,0.6],
+            "defaultstate": "patrol",
             "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
@@ -54,8 +60,10 @@
             "health":       2
         },
         "enemy-4": {
-            "pos": [2, 6],
+            "pos": [4, 0],
+            "path": [[4, 0]],
             "size": [0.6,0.6],
+            "defaultstate": "sentry",
             "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
@@ -146,6 +154,5 @@
             "debugcolor":    "red",
             "debugopacity":  192
         }
-
     }
 }

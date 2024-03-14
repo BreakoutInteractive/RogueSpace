@@ -1,0 +1,16 @@
+{
+    "textures": {
+        "player-run": {
+            "file":     "textures/player_run.png"
+        },
+        "player-idle": {
+            "file":     "textures/player_idle.png"
+        },
+        "player-attack": {
+            "file":     "textures/player_slash.png"
+        },
+        "player-parry": {
+            "file":     "textures/player_parry.png"
+        }
+    }
+}

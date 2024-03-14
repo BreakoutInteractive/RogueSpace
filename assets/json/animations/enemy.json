@@ -1,0 +1,13 @@
+{
+    "textures": {
+        "enemy-walk": {
+            "file":     "textures/lizard_walk.png"
+        },
+        "enemy-idle": {
+            "file":     "textures/lizard_idle.png"
+        },
+        "enemy-attack": {
+            "file":     "textures/lizard_atk.png"
+        }
+    }
+}
