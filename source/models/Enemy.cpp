@@ -14,7 +14,7 @@ using namespace cugl;
 // should be at least the player's attack time so that it can't get hit twice by the same attack
 #define HIT_TIME 16
 /**the number of frames an attack will last**/
-#define ATK_TIME 18
+#define ATK_TIME 45
 /**the number of frames we wait before allowing another attack*/
 #define ATK_CD 120
 /**the number of frames an enemy will be stunned*/
@@ -124,8 +124,8 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, false);
-    _walkAnimation = Animation::alloc(walkSheet, 0.375f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 0.375f, false, 0, 17);
+    _walkAnimation = Animation::alloc(walkSheet, 0.4f, true, 0, 8);
+    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -177,7 +177,7 @@ void Enemy::stun() {
 }
 
 void Enemy::updateCounters() {
-    if (_atkCD.getCount() == _atkCD.getMaxCount() && _currAnimation != _attackAnimation) {
+    if (_atkLength.getCount() == _atkLength.getMaxCount() && _currAnimation != _attackAnimation) {
         _attackAnimation->reset();
         animateAttack();
     }
