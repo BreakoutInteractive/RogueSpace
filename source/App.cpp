@@ -32,6 +32,7 @@ void App::onStartup() {
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     _assets->loadDirectoryAsync("json/scenes.json", nullptr);
+    _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
     // Switch to deterministic mode
     setDeterministic(true);

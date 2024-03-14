@@ -23,6 +23,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "../components/Animation.hpp"
 
 using namespace cugl;
 
@@ -176,7 +177,6 @@ void GameScene::restart(){
     _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
     setComplete(false);
     setDefeat(false);
-    return;
 }
 
 
@@ -217,6 +217,12 @@ void GameScene::preUpdate(float dt) {
     if (_input.didExit())  {
         CULog("Shutting down");
         Application::get()->quit();
+    }
+    
+    // TODO: can be removed, but for pc devs to quickly reset
+    if (_input.didReset()){
+        restart();
+        return;
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
@@ -331,23 +337,12 @@ void GameScene::preUpdate(float dt) {
             }
         }
     }
-    //if (!player->_dodgeDuration.isZero()) {
-    //    auto force = _input.getDodgeDirection();
-    //    if (force.length() == 0){
-    //        // dodge in the direction currently facing. normalize so that the dodge is constant speed
-    //        force = player->getFacingDir().getNormalization();
-    //    }
-    //    //player->setLinearDamping(20);
-    //    player->setLinearVelocity(force * 50);
-    //    player->setSensor(true);
-    //    //player->applyForce();
-    //    player->setFacingDir(force);
-    //}
+
     if (player->_atkCD.isZero()) {
         atk->setEnabled(false);
     }
     //if/when we create a dodge animation, add a check for it here
-    if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
+    //if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
     
     //// if we not dodging or move
     //if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
@@ -356,8 +351,6 @@ void GameScene::preUpdate(float dt) {
     //    player->setForce(dampen * player->getLinearVelocity());
     //    player->applyForce();
     //}
-    
-    player->updateCounters();
     
 #pragma mark - Enemy movement
     _AIController.update(dt);
@@ -392,6 +385,10 @@ void GameScene::preUpdate(float dt) {
         }
         
     }
+    
+#pragma mark - Component Updates
+    player->updateCounters();
+    player->updateAnimation(dt);
 }
 
 

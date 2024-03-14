@@ -12,6 +12,8 @@
 #include "Counter.hpp"
 #include "GameObject.hpp"
 
+class Animation;
+
 /**
  * This class is the player object in this game.
  */
@@ -35,14 +37,15 @@ protected:
     //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
-    /** player idle 8 frames indexed by `directionIndex` */
-    std::shared_ptr<cugl::SpriteSheet> _idleAnimation;
+    
+    /** The animaton to use while idle */
+    std::shared_ptr<Animation> _idleAnimation;
     /** The animation to use while parrying */
-    std::shared_ptr<cugl::SpriteSheet> _parryAnimation;
+    std::shared_ptr<Animation> _parryAnimation;
     /** The animation to use while attacking */
-    std::shared_ptr<cugl::SpriteSheet> _attackAnimation;
-    /** The animation we are currently drawing */
-    std::shared_ptr<cugl::SpriteSheet> _activeAnimation;
+    std::shared_ptr<Animation> _attackAnimation;
+    /** The animation to use while running */
+    std::shared_ptr<Animation> _runAnimation;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -54,7 +57,6 @@ protected:
     int _directionIndex;
     
 public:
-    bool _attacking;
 #pragma mark -
 #pragma mark Counters
     /** attack cooldown counter*/

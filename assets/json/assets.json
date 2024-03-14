@@ -5,9 +5,6 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
-        "player-idle": {
-            "file":     "textures/player_idle.png"
-        },
         "enemy":{
             "file":     "textures/lizard_idle_front.png"
         },
@@ -22,9 +19,6 @@
         },
         "parry": {
             "file":     "textures/player_parry.png"
-        },
-        "attack": {
-            "file":     "textures/player_slash.png"
         },
         "joystick_base": {
             "file":     "textures/js_ring.png"
