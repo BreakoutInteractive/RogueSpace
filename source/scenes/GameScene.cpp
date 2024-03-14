@@ -349,7 +349,6 @@ void GameScene::preUpdate(float dt) {
     // enemy attacks
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        (*it)->updateCounters();
         if ((*it)->getHealth() <= 0) {
             (*it)->setEnabled(false);
         }
@@ -381,6 +380,10 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - Component Updates
     player->updateCounters();
     player->updateAnimation(dt);
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        (*it)->updateCounters();
+        (*it)->updateAnimation(dt);
+    }
 }
 
 
