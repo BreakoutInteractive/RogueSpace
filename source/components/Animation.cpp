@@ -22,7 +22,7 @@ Animation::Animation(std::shared_ptr<cugl::SpriteSheet> filmStrip, float duratio
 void Animation::start(){
     _nextCallback = _callbacks.begin();
     _started = true;
-    _filmStrip->setFrame(0);
+    _filmStrip->setFrame(_startIndex);
 }
 
 void Animation::reset(){
@@ -31,10 +31,26 @@ void Animation::reset(){
     _elapsed = 0;
 }
 
+void Animation::resetFrameRange(int startIndex, int endIndex){
+    CUAssertLog(endIndex >= startIndex, "end index must be greater than or equal to start");
+    CUAssertLog(startIndex >= 0, "start index must be valid");
+    reset();
+    _startIndex = startIndex;
+    _endIndex = endIndex;
+    _frameCount = _endIndex - _startIndex + 1;
+}
+
+void Animation::setFrameRange(int startIndex, int endIndex){
+    CUAssertLog(endIndex >= startIndex && endIndex + 1 - startIndex == _frameCount
+                && startIndex >= 0 &&
+                endIndex < _filmStrip->getSize() , "start and end does not satisfy prereq");
+    _startIndex = startIndex;
+    _endIndex = endIndex;
+}
+
 
 void Animation::update(float delta){
-    CUAssertLog(_started, "You must start the animation before running updates");
-    if (isCompleted()){
+    if (!_started || isCompleted()){
         return;
     }
     if (!_stop){
