@@ -12,9 +12,16 @@
 
 using namespace cugl;
 
-// BIG ASSUMPTION: the play area is always a square -- simply make designers use square even if it's bigger than necessary?
+bool LevelParser::readLayermap(const std::shared_ptr<JsonValue>& layers) {
+    for (int i = 0; i < layers->size(); i++) {
+        CULog(layers->get(i)->getString("name").c_str());
+        _layermap[layers->get(i)->getString("name")] = i;
+    }
+    return true;
+}
+
 const std::shared_ptr<JsonValue> LevelParser::translateJson(float w, float h) {
-    float x = _width * 2 - w + h;
+    float x = _width * 2 + w - h;
     float y = _height * 1.5 - (w + h) / 2;
     std::shared_ptr<JsonValue> ans = JsonValue::allocArray();
     ans->appendValue(x);
@@ -22,6 +29,7 @@ const std::shared_ptr<JsonValue> LevelParser::translateJson(float w, float h) {
     return ans;
 }
 
+// deprecated
 const std::shared_ptr<JsonValue> LevelParser::parseBoundaries(const std::shared_ptr<JsonValue>& layers) {
     std::shared_ptr<JsonValue> pNode = layers->get(7);
     if (pNode->get("name")->toString() != "\"collision\"") {
@@ -63,7 +71,8 @@ const std::shared_ptr<JsonValue> LevelParser::parseBoundaries(const std::shared_
 
 const std::shared_ptr<JsonValue> LevelParser::parseEnemies(const std::shared_ptr<JsonValue>& layers) {
     // get information
-    std::shared_ptr<JsonValue> pNode = layers->get(9);
+     std::shared_ptr<JsonValue> pNode = layers->get(_layermap[ENEMIES_FIELD]);
+//    std::shared_ptr<JsonValue> pNode = layers->get(9);
     if (pNode->get("name")->toString() != "\"mob_spawns\"") {
         CULogError("incorrect index for mobs in JSON, node is %s", pNode->get("name")->toString().c_str());
     }
@@ -95,11 +104,11 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemies(const std::shared_ptr
 
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue>& layers) {
     // get information
-    std::shared_ptr<JsonValue> pNode = layers->get(8);
+    std::shared_ptr<JsonValue> pNode = layers->get(_layermap[PLAYER_FIELD]);
+//    std::shared_ptr<JsonValue> pNode = layers->get(8);
     if (pNode->get("name")->toString() != "\"player\"") {
         CULogError("incorrect index for player node in JSON, node is %s", pNode->get("name")->toString().c_str());
     }
-    CULog(pNode->toString().c_str());
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
     std::shared_ptr<JsonValue> patt = pNode->get("objects")->get(0);
@@ -129,14 +138,11 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
 const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<JsonValue>& layers) {
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> tiles = JsonValue::allocObject();
-    // TODO: learn about frames and retrieving the correct texture for each part of the floor?
-    // TODO: standardize get indices for get, this check is good but should order Tiled layers
-    // TODO: append size[]???
 
     // bottom-right of iso view
-    std::shared_ptr<JsonValue> br = layers->get(0);
+    std::shared_ptr<JsonValue> br = layers->get(_layermap[BR_FIELD]);
     if (br->get("name")->toString() != "\"bottom_right\"") {
-        CULogError("incorrect index for player node in JSON, node is %s", br->get("name")->toString().c_str());
+        CULogError("incorrect index for br in JSON, node is %s", br->get("name")->toString().c_str());
     }
     std::shared_ptr<JsonValue> br_ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> br_tiles = JsonValue::allocArray();
@@ -144,7 +150,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     std::vector<int> br_dat = br->get("data")->asIntArray();
     for (int i = 0; i < _width; i++) {
         for (int j = 0; j < _height; j++) {
-            if (br_dat[_width * i + j] != 0) {
+            if (br_dat[_width * j + i] != 0) {
                 std::shared_ptr<JsonValue> tile = translateJson(i, j);
                 br_tiles->appendChild(tile);
                 c++;
@@ -156,9 +162,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     tiles->appendChild("bottom-right", br_ans);
     
     // bottom-left of iso view
-    std::shared_ptr<JsonValue> bl = layers->get(1);
+    std::shared_ptr<JsonValue> bl = layers->get(_layermap[BL_FIELD]);
     if (bl->get("name")->toString() != "\"bottom_left\"") {
-        CULogError("incorrect index for player node in JSON, node is %s", bl->get("name")->toString().c_str());
+        CULogError("incorrect index for bl in JSON, node is %s", bl->get("name")->toString().c_str());
     }
     std::shared_ptr<JsonValue> bl_ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> bl_tiles = JsonValue::allocArray();
@@ -166,7 +172,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     c = 0;
     for (int i = 0; i < _width; i++) {
         for (int j = 0; j < _height; j++) {
-            if (bl_dat[_width * i + j] != 0) {
+            if (bl_dat[_width * j + i] != 0) {
                 std::shared_ptr<JsonValue> tile = translateJson(i, j);
                 bl_tiles->appendChild(tile);
                 c++;
@@ -178,9 +184,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     tiles->appendChild("bottom-left", bl_ans);
     
     // top (floor) of iso view
-    std::shared_ptr<JsonValue> fl = layers->get(2);
+    std::shared_ptr<JsonValue> fl = layers->get(_layermap[FLOOR_FIELD]);
     if (fl->get("name")->toString() != "\"floor\"") {
-        CULogError("incorrect index for player node in JSON, node is %s", fl->get("name")->toString().c_str());
+        CULogError("incorrect index for floor in JSON, node is %s", fl->get("name")->toString().c_str());
     }
     std::shared_ptr<JsonValue> fl_ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> fl_tiles = JsonValue::allocArray();
@@ -188,7 +194,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     c = 0;
     for (int i = 0; i < _width; i++) {
         for (int j = 0; j < _height; j++) {
-            if (fl_dat[_width * i + j] != 0) {
+            if (fl_dat[_width * j + i] != 0) {
                 std::shared_ptr<JsonValue> tile = translateJson(i, j);
                 fl_tiles->appendChild(tile);
                 c++;
@@ -227,6 +233,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     ans->appendValue("view-height", 13.5f);
     
     std::shared_ptr<JsonValue> layers = json->get("layers");
+    readLayermap(layers);
     std::shared_ptr<JsonValue> floor = LevelParser::parseFloor(layers);
     ans->appendChild("floor", floor);
     

@@ -13,6 +13,12 @@
 #include <cugl/io/CUJsonReader.h>
 #include <cugl/io/CUJsonWriter.h>
 
+#define BL_FIELD            "bottom_left"
+#define BR_FIELD            "bottom_right"
+#define FLOOR_FIELD         "floor"
+#define PLAYER_FIELD        "player"
+#define ENEMIES_FIELD       "mob_spawns"
+
 using namespace cugl;
 
 class LevelParser {
@@ -24,6 +30,8 @@ protected:
     int _width;
     
     int _height;
+    
+    std::unordered_map<std::string, int> _layermap;
     
 public:
 #pragma mark -
@@ -49,7 +57,8 @@ public:
         return parseTiled(reader->readJson());
     }
     
-    // TODO: come up with a better name please
+    bool readLayermap(const std::shared_ptr<JsonValue>& json);
+    
     /**
      * Returns correct translated values from Tiled origin to game origin
      * Note that inputs/outputs describe lengths of tiles; the given x/y coordinate used in Tiled must be converted (divide by tile length) to use this
@@ -69,11 +78,7 @@ public:
      */
     const std::shared_ptr<JsonValue> parseFloor(const std::shared_ptr<JsonValue>& layers);
     
-    // TODO: reconsider this spec
-    // My current process is that it shouldn't matter what is drawn (or isn't drawn) for the polygonal obstacles created by this layer
-    // This layer should always exist and be transmitted for the physics engine
-    // Perhaps we can make wall-specific boundaries by specifying it within Tiled, and then deferring these to parseWalls
-    // But for now, this should be fine?
+    // DEPRECATED
     /**
      * Parses all collision boundaries -- includes invisible AND visible walls
      *
@@ -83,10 +88,7 @@ public:
      */
     const std::shared_ptr<JsonValue> parseBoundaries(const std::shared_ptr<JsonValue>& layers);
     
-    // TODO: what should I need to do here? let's think about it...
-    // I'm relaying the associated image, the location from the json, and the height?
-    // Rendering is a models problem, but I'll probably need to jump back here as walls are being implemented...?
-    // The 'stickers' probably also go here
+    // DEPRECATED
     /**
      * Parses all walls/objects and relay their data
      *
