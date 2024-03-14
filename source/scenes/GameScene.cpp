@@ -278,7 +278,7 @@ void GameScene::preUpdate(float dt) {
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
-    atk->setPosition(player->getPosition());
+    atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
@@ -374,7 +374,7 @@ void GameScene::preUpdate(float dt) {
                 (*it)->getAttack()->setEnabled(true);
                 (*it)->getAttack()->setAwake(true);
                 (*it)->getAttack()->setAngle(ang);
-                (*it)->getAttack()->setPosition((*it)->getPosition());
+                (*it)->getAttack()->setPosition((*it)->getPosition().add(0, 64 / (*it)->getDrawScale().y)); //64 is half of the enemy pixel height
                 (*it)->_atkCD.reset();
                 (*it)->_atkLength.reset();
             }
