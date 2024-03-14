@@ -55,11 +55,12 @@ _debug(false){}
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
+    _gameRenderer = std::make_shared<GameRenderer>();
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
-    } else if (!_gameRenderer.cugl::Scene2::init(dimen)){
+    } else if (!_gameRenderer->cugl::Scene2::init(dimen)){
         return false;
     }
     
@@ -74,8 +75,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     
-    _gameRenderer.init(_assets);
-    _gameRenderer.setGameElements(getCamera(), _level);
+    _gameRenderer->init(_assets);
+    _gameRenderer->setGameElements(getCamera(), _level);
     
     _input.init();
     _level->setAssets(_assets);
@@ -90,7 +91,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
                                           dimen.height/_level->getViewBounds().height;
     Vec2 drawScale(_scale, _scale);
     _level->setDrawScale(drawScale);
-    _gameRenderer.setDrawScale(drawScale);
+    _gameRenderer->setDrawScale(drawScale);
     
     _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
@@ -102,7 +103,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _collisionController.setLevel(_level);
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
-    
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -166,52 +166,53 @@ void GameScene::dispose() {
     }
 }
 
+void GameScene::restart(){
+    _assets->unload<LevelModel>(LEVEL_ONE_KEY);
+
+    // Load a new level and quit update
+    _resetNode->setVisible(true);
+    _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
+    _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
+    _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
+    setComplete(false);
+    setDefeat(false);
+    return;
+}
+
 
 #pragma mark -
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
-	if (_level == nullptr) {
-		return;
-	}
+    if (_level == nullptr) {
+        return;
+    }
 
-	// Check to see if new level loaded yet
-	if (_resetNode->isVisible()) {
-		if (_assets->complete()) {
-			_level = nullptr;
+    // Check to see if new level loaded yet
+    if (_resetNode->isVisible()) {
+        if (_assets->complete()) {
+            _level = nullptr;
       
-			// Access and initialize level
-			_level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
-			_level->setAssets(_assets);
-			_level->setDebugNode(_debugNode); // Obtains ownership of debug node.
-			_level->showDebug(_debug);
+            // Access and initialize level
+            _level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
+            _level->setAssets(_assets);
+            _level->setDebugNode(_debugNode); // Obtains ownership of debug node.
+            _level->showDebug(_debug);
             _level->setDrawScale(Vec2(_scale, _scale));
             _collisionController.setLevel(_level);
-            _gameRenderer.setGameElements(getCamera(), _level);
-			_resetNode->setVisible(false);
-		} else {
-			// Level is not loaded yet; refuse input
-			return;
-		}
-	}
+            _gameRenderer->setGameElements(getCamera(), _level);
+            _resetNode->setVisible(false);
+        } else {
+            // Level is not loaded yet; refuse input
+            return;
+        }
+    }
+    
     _input.update(dt);
     
     // Process the toggled key commands
     if (_input.didDebug()) {
         setDebug(!isDebug());
-    }
-    if (_input.didReset()) { 
-        // Unload the level but keep in memory temporarily
-        _assets->unload<LevelModel>(LEVEL_ONE_KEY);
-
-        // Load a new level and quit update
-        _resetNode->setVisible(true);
-        _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
-        _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
-        _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
-        setComplete(false);
-        setDefeat(false);
-        return;
     }
     if (_input.didExit())  {
         CULog("Shutting down");
@@ -246,11 +247,11 @@ void GameScene::preUpdate(float dt) {
     
 #ifdef CU_TOUCH_SCREEN
     if(_input.isMotionActive()){
-        _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
+        _gameRenderer->setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
     }
     else
     {
-        _gameRenderer.setJoystickVisible(false);
+        _gameRenderer->setJoystickVisible(false);
     }
 #endif
     
@@ -328,7 +329,7 @@ void GameScene::preUpdate(float dt) {
                 player->animateParry();
                 player->_parryCD.reset();
             }
-        }     
+        }
     }
     //if (!player->_dodgeDuration.isZero()) {
     //    auto force = _input.getDodgeDirection();

@@ -22,8 +22,6 @@
 
 #define DODGE_DURATION 10
 
-#define HIT_TIME 10
-
 #define MAX_HP 3
 
 using namespace cugl;
@@ -132,6 +130,7 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // cycle through active animation
     if (_activeAnimation == _idleAnimation){
         // check if we want to advance frame
+        // causes issue with pause where if _idleCycle.getCount() % 2  == 1 is true at time, frame increments infinity
         int newFrame = _idleAnimation->getFrame() + (_idleCycle.getCount() % 2  == 1);
         _idleAnimation->setFrame(newFrame);
     }
