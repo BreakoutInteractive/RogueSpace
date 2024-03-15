@@ -56,12 +56,11 @@ _debug(false){}
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
-    _gameRenderer = std::make_shared<GameRenderer>();
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
-    } else if (!_gameRenderer->cugl::Scene2::init(dimen)){
+    } else if (!_gameRenderer.cugl::Scene2::init(dimen)){
         return false;
     }
     
@@ -76,8 +75,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     _assets = assets;
     
-    _gameRenderer->init(_assets);
-    _gameRenderer->setGameElements(getCamera(), _level);
+    _gameRenderer.init(_assets);
+    _gameRenderer.setGameElements(getCamera(), _level);
     
     _input.init();
     _level->setAssets(_assets);
@@ -92,7 +91,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
                                           dimen.height/_level->getViewBounds().height;
     Vec2 drawScale(_scale, _scale);
     _level->setDrawScale(drawScale);
-    _gameRenderer->setDrawScale(drawScale);
+    _gameRenderer.setDrawScale(drawScale);
     
     _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
@@ -200,7 +199,7 @@ void GameScene::preUpdate(float dt) {
             _level->showDebug(_debug);
             _level->setDrawScale(Vec2(_scale, _scale));
             _collisionController.setLevel(_level);
-            _gameRenderer->setGameElements(getCamera(), _level);
+            _gameRenderer.setGameElements(getCamera(), _level);
             _resetNode->setVisible(false);
         } else {
             // Level is not loaded yet; refuse input
@@ -253,11 +252,11 @@ void GameScene::preUpdate(float dt) {
     
 #ifdef CU_TOUCH_SCREEN
     if(_input.isMotionActive()){
-        _gameRenderer->setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
+        _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
     }
     else
     {
-        _gameRenderer->setJoystickVisible(false);
+        _gameRenderer.setJoystickVisible(false);
     }
 #endif
     
@@ -273,6 +272,7 @@ void GameScene::preUpdate(float dt) {
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
+    
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
@@ -352,9 +352,12 @@ void GameScene::preUpdate(float dt) {
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
         }
+        if (!enemy->_stunCD.isZero()){
+            enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+            enemy->getAttack()->setEnabled(false);
+        }
         if (enemy->isEnabled()) {
-            // enemy attacks if not stunned and within range of player and can see them
-            // enemy can only begin an attack
+            // enemy can only begin an attack if not stunned and within range of player and can see them
             bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 Vec2 direction = player->getPosition() * player->getDrawScale() - enemy->getPosition() * enemy->getDrawScale();

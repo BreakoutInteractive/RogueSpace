@@ -56,6 +56,9 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pause_restart"));
     _back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pause_back"));
     
+    auto overlay = _assets->get<scene2::SceneNode>("pause_bg");
+    overlay->setContentSize(Application::get()->getDisplaySize());
+    
     // Program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
         if (down) {

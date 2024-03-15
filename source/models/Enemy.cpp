@@ -13,8 +13,6 @@ using namespace cugl;
 
 // should be at least the player's attack time so that it can't get hit twice by the same attack
 #define HIT_TIME 16
-/**the number of frames an attack will last**/
-#define ATK_TIME 45
 /**the number of frames we wait before allowing another attack*/
 #define ATK_CD 120
 /**the number of frames an enemy will be stunned*/
@@ -39,7 +37,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     std::string name("enemy");
     box->setName(name);
     b2Filter filter;
-    // this is an enemy and can collide with a player "shadow", an enemy "shadow", a wall, or an attack
+    // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
     filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
     box->setFilterData(filter);
@@ -48,7 +46,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
     shadow->setAngle(M_PI_4);
     shadow->setBodyType(b2_kinematicBody);
-    // this is an enemy "shadow" and can collide with the player or an enemy
+    // this is an enemy "shadow" and can collide with the player
     filter.categoryBits = CATEGORY_ENEMY_SHADOW;
     filter.maskBits = CATEGORY_PLAYER;
     shadow->setFilterData(filter);
@@ -190,11 +188,9 @@ void Enemy::setAttacking() {
 }
 
 void Enemy::setStunned() {
-    if (!_stunCD.isZero() || _state == EnemyState::STUNNED) {
+    if (_state == EnemyState::STUNNED) {
         return;
     }
-    _tint = Color4::YELLOW;
-    _collider->setLinearVelocity(Vec2::ZERO);
     _stunCD.reset();
     _atkCD.reset(); // stunning should reset attack
     // MAYBE, we don't want to reset ?? (tweening unsure)
@@ -209,10 +205,9 @@ void Enemy::setStunned() {
 
 
 void Enemy::hit(cugl::Vec2 atkDir) {
-    if (!_hitEffect->isStarted() || _hitEffect->isCompleted()) {
+    if (!_hitEffect->isActive()) {
         _hitCounter.reset();
         setHealth(getHealth()-1);
-        _tint = Color4::RED;
         _hitEffect->reset();
         _hitEffect->start();
         _collider->setLinearVelocity(atkDir*10); //tune this value (10)
@@ -231,6 +226,17 @@ void Enemy::updateAnimation(float dt){
         }
     }
     _hitEffect->update(dt);
+    if (_hitEffect->isActive()){
+        _tint =_tint = Color4::RED;
+    }
+    else if (_state == EnemyState::STUNNED){
+        // TODO: could possibly use stunned animation and remove this state altogether
+        _tint = Color4::YELLOW;
+    }
+    else if (_stunCD.isZero()) {
+        _tint = Color4::WHITE;
+    }
+
 }
 
 void Enemy::updateCounters() {
@@ -238,7 +244,6 @@ void Enemy::updateCounters() {
     _stunCD.decrement();
     _atkCD.decrement();
     _hitCounter.decrement();
-    if (_stunCD.isZero()) _tint = Color4::WHITE;
 }
 
 void Enemy::setFacingDir(cugl::Vec2 dir) {
@@ -258,15 +263,7 @@ void Enemy::setFacingDir(cugl::Vec2 dir) {
     _facingDirection = dir;
     
     if (prevDirection != _directionIndex){
-        int index = 0;
-        if (_directionIndex % 2 == 0) {
-            index = _directionIndex / 2;
-        }
-        else {
-            index = (_directionIndex - 1) / 2 + 4;
-        }
-        // TODO: idle animation spritesheet isn't ordered correctly, so this is a temporary solution while it's being fixed
-        _idleAnimation->setFrameRange(8 * index, 8 * index + 7);
+        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
         _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
         _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
     }

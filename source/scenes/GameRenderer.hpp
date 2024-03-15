@@ -123,9 +123,9 @@ public:
     void setJoystickVisible(bool visible) { _joystick->setActive(visible);}
     
     /**
-     * sets whether the pause button needs to be active or inactive and completes the necessary checks for either state
+     * sets whether or not this HUD scene is activated.
      */
-    void configurePauseButton(bool pause);
+    void setActivated(bool value);
         
     /**
      * Draws the game scene with the given sprite batch.

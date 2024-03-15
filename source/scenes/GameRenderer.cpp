@@ -41,7 +41,6 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     _pauseButton->addListener([this](const std::string name, bool down){
         if (down){
             _paused=true;
-            _pauseButton->setVisible(false);
         }
     });
     
@@ -87,14 +86,16 @@ void GameRenderer::setJoystickPosition(Vec2 anchorPos, Vec2 screenPos){
 }
 
 
-void GameRenderer::configurePauseButton(bool pause) {
-    if (pause) {
-        _pauseButton->deactivate();
-    } else{
-        _paused = pause;
+void GameRenderer::setActivated(bool value) {
+    if (value) {
         _pauseButton->setDown(false);
-        _pauseButton->setVisible(!pause);
+        _pauseButton->setVisible(true);
         _pauseButton->activate();
+        _paused = false;
+    } else{
+        _pauseButton->setVisible(false);
+        _pauseButton->deactivate();
+        _joystick->setActive(false);
     }
 }
 
