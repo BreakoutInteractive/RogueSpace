@@ -112,7 +112,7 @@ private:
     /** internal enemy state (for animation and triggering events) */
     EnemyState _state;
 
-public:
+public:    
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -386,6 +386,15 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+    
+    /** Change to using the default animation */
+    void animateDefault();
+    
+    /** Change to using the walk animation */
+    void animateWalk();
+    
+    /** Change to using the attack animation */
+    void animateAttack();
 
     /**
      * Method to call when an enemy is hit by an attack

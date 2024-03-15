@@ -25,9 +25,11 @@ protected:
     
     std::string _textureKey;
     
+    std::string _layer;
+    
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _texture;
-    
+        
 public:
     
 #pragma mark -
@@ -37,8 +39,10 @@ public:
      */
     Tile(Vec2 pos, std::string textureName);
     
-    static std::shared_ptr<Tile> alloc(const cugl::Vec2 pos, std::string textureName) {
-        return std::make_shared<Tile>(pos, textureName);
+    Tile(Vec2 pos, std::string textureName, std::string layer);
+    
+    static std::shared_ptr<Tile> alloc(const cugl::Vec2 pos, std::string textureName, std::string layer) {
+        return std::make_shared<Tile>(pos, textureName, layer);
     }
     
 #pragma mark -

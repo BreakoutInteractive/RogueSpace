@@ -26,7 +26,7 @@ protected:
         /** The pause scene */
         PAUSE,
         /** The scene to play the game */
-        GAME,
+        GAME
     };
     
     /** The global sprite batch for drawing (only want one of these) */
@@ -43,8 +43,6 @@ protected:
     PauseScene _pause;
     /** The current active scene */
     State _scene;
-    /** whether the assets have loaded */
-    bool _loaded;
         
     
 public:
@@ -58,7 +56,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    App() : cugl::Application(), _loaded(false){}
+    App() : cugl::Application() {}
     
     /**
      * Disposes of this application, releasing all resources.

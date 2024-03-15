@@ -73,7 +73,15 @@ void App::onResume() {
 #pragma mark Application Loop
 
 void App::update(float dt){
-    updateLoadingScene(0.1f);
+    if (_loading.isActive()) {
+        _loading.update(0.01f);
+    } else {
+        _loading.dispose(); // Disables the input listeners in this mode
+        _gameplay.init(_assets); // this makes GameScene active
+        _pause.init(_assets);
+        _scene = State::GAME;
+        setDeterministic(true);
+    }
 }
 
 void App::preUpdate(float dt) {
@@ -120,19 +128,6 @@ void App::postUpdate(float dt) {
             break;
         default:
             break;
-    }
-}
-    
-
-void App::updateLoadingScene(float dt) {
-    if (_loading.isActive()) {
-        _loading.update(dt);
-    } else {
-        _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets); // this makes GameScene active
-        _pause.init(_assets);
-        _scene = State::GAME;
-        setDeterministic(true);
     }
 }
 

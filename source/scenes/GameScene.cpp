@@ -108,7 +108,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // Create the scene graph nodes
     _debugNode = scene2::SceneNode::alloc();
-    _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    _debugNode->setContentSize(Application::get()->getDisplaySize());
     _debugNode->setPosition(Vec2::ZERO);
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setVisible(true);
@@ -195,9 +195,9 @@ void GameScene::preUpdate(float dt) {
             // Access and initialize level
             _level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
             _level->setAssets(_assets);
+            _level->setDrawScale(Vec2(_scale, _scale));
             _level->setDebugNode(_debugNode); // Obtains ownership of debug node.
             _level->showDebug(_debug);
-            _level->setDrawScale(Vec2(_scale, _scale));
             _collisionController.setLevel(_level);
             _gameRenderer.setGameElements(getCamera(), _level);
             _resetNode->setVisible(false);
@@ -351,6 +351,7 @@ void GameScene::preUpdate(float dt) {
         if (enemy->getHealth() <= 0) {
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
+            enemy->getColliderShadow()->setEnabled(false);
         }
         if (!enemy->_stunCD.isZero()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
@@ -367,6 +368,7 @@ void GameScene::preUpdate(float dt) {
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                     ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                 }
+                enemy->getAttack()->setPosition(enemy->getAttack()->getPosition().add(0, 64 / enemy->getDrawScale().y)); //64 is half of the pixel height of the enemy
                 enemy->getAttack()->setAngle(ang);
                 enemy->setAttacking();
             }

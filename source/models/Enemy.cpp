@@ -110,7 +110,7 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     spriteSheet->draw(batch, _tint, origin, transform);
 
-    if (_hitEffect->isStarted() && !_hitEffect->isCompleted()) {
+    if (_hitEffect->isActive()) {
         auto effSheet = _hitEffect->getSpriteSheet();
         Affine2 effTrans = Affine2();
         effTrans.scale(2);

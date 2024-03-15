@@ -60,8 +60,8 @@
             "health":       2
         },
         "enemy-4": {
-            "pos": [2, 6],
-            "path": [[2, 6]],
+            "pos": [4, 0],
+            "path": [[4, 0]],
             "size": [0.6,0.6],
             "defaultstate": "sentry",
             "bodytype":     "dynamic",
