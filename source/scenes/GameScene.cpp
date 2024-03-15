@@ -269,16 +269,12 @@ void GameScene::preUpdate(float dt) {
 
     //only move fast if we're not parrying or dodging
     if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        //player->setForce(moveForce * 5); //TODO: use json data
-        //player->applyForce();
-        player->getCollider()->setLinearVelocity(moveForce * 5);
+        player->getCollider()->setLinearVelocity(moveForce * 5); //TODO: use json data
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
-        //player->getShadow()->setLinearVelocity(Vec2::ZERO);
     }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
-    atk->setPosition(player->getPosition());
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
@@ -325,8 +321,11 @@ void GameScene::preUpdate(float dt) {
                 atk->setEnabled(true);
                 atk->setAwake(true);
                 atk->setAngle(ang);
+                atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
                 player->animateAttack();
                 player->_atkCD.reset();
+                _level->getPlayerAtk()->reset();
+                _level->getPlayerAtk()->start();
             }
             //for now, give lowest precendence to parry
             else if (_input.didParry()) {
@@ -338,38 +337,36 @@ void GameScene::preUpdate(float dt) {
         }
     }
 
-    if (player->_atkCD.isZero()) {
+    if (_level->getPlayerAtk()->isCompleted()) {
         atk->setEnabled(false);
     }
-    //if/when we create a dodge animation, add a check for it here
-    //if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
-    
-    //// if we not dodging or move
-    //if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
-    //    // dampen
-    //    float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
-    //    player->setForce(dampen * player->getLinearVelocity());
-    //    player->applyForce();
-    //}
+
     
 #pragma mark - Enemy movement
     _AIController.update(dt);
     // enemy attacks
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        if ((*it)->getHealth() <= 0) {
-            (*it)->setEnabled(false);
+        auto enemy = *it;
+        if (enemy->getHealth() <= 0) {
+            enemy->setEnabled(false);
+            enemy->getAttack()->setEnabled(false);
         }
-        if ((*it)->getCollider()->isEnabled()) {
+        if (enemy->isEnabled()) {
             // enemy attacks if not stunned and within range of player and can see them
-            if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getAttackRange() && (*it)->getPlayerInSight()) {
-                (*it)->_atkCD.reset();
-                (*it)->_atkLength.reset();
+            // enemy can only begin an attack
+            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
+            if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                Vec2 direction = player->getPosition() * player->getDrawScale() - enemy->getPosition() * enemy->getDrawScale();
+                direction.normalize();
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (direction.y < 0){
+                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                }
+                enemy->getAttack()->setAngle(ang);
+                enemy->setAttacking();
             }
-        }
-        // disable hitbox once attack animation completes or if enemy dies mid-attack
-        if ((*it)->_atkLength.isZero() || !(*it)->isEnabled()) {
-            (*it)->getAttack()->setEnabled(false);
         }
         
     }
@@ -377,6 +374,7 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - Component Updates
     player->updateCounters();
     player->updateAnimation(dt);
+    _level->getPlayerAtk()->update(dt);
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         (*it)->updateAnimation(dt);
@@ -385,9 +383,8 @@ void GameScene::preUpdate(float dt) {
 
 
 void GameScene::fixedUpdate(float step) {
-    // Turn the physics engine crank.
     if (_level != nullptr){
-        _level->getWorld()->update(step);
+        _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto player = _level->getPlayer();
         _camController.update(step);
         _camController.setTarget(player->getPosition() * player->getDrawScale());
@@ -396,9 +393,12 @@ void GameScene::fixedUpdate(float step) {
         
         auto enemies = _level->getEnemies();
         for (auto it = enemies.begin(); it != enemies.end(); ++it){
-            (*it)->syncPositions();
+            auto e = *it;
+            e->syncPositions();
+            e->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
         }
         player->syncPositions();
+        _level->getAttack()->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
     }
     
 }

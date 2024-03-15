@@ -14,6 +14,9 @@
         "atk": {
             "file":     "textures/attack.png"
         },
+        "player-atk": {
+            "file":     "textures/swipe_01.png"
+        },
         "parry": {
             "file":     "textures/player_parry.png"
         },
