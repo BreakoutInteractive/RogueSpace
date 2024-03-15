@@ -111,20 +111,32 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     transform.translate(getPosition() * _drawScale);
     
     spriteSheet->draw(batch, _tint, origin, transform);
+
+    if (_hitEffect->isStarted() && !_hitEffect->isCompleted()) {
+        auto effSheet = _hitEffect->getSpriteSheet();
+        Affine2 effTrans = Affine2();
+        effTrans.scale(2);
+        effTrans.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        Vec2 effOrigin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, effOrigin, effTrans);
+    }
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _enemyTexture = assets->get<Texture>("enemy-idle");
     auto walkTexture = assets->get<Texture>("enemy-walk");
     auto attackTexture = assets->get<Texture>("enemy-attack");
+    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
+    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
     _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
+    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -146,6 +158,10 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     });
     
     setAnimation(_idleAnimation);
+
+    _hitEffect->onComplete([this]() {
+        _hitEffect->reset();
+    });
 }
 
 void Enemy::setIdling() {
@@ -193,10 +209,12 @@ void Enemy::setStunned() {
 
 
 void Enemy::hit(cugl::Vec2 atkDir) {
-    if (_hitCounter.isZero()) {
+    if (!_hitEffect->isStarted() || _hitEffect->isCompleted()) {
         _hitCounter.reset();
         setHealth(getHealth()-1);
         _tint = Color4::RED;
+        _hitEffect->reset();
+        _hitEffect->start();
         _collider->setLinearVelocity(atkDir*10); //tune this value (10)
     }
 }
@@ -212,6 +230,7 @@ void Enemy::updateAnimation(float dt){
             setMoving();
         }
     }
+    _hitEffect->update(dt);
 }
 
 void Enemy::updateCounters() {
@@ -219,7 +238,7 @@ void Enemy::updateCounters() {
     _stunCD.decrement();
     _atkCD.decrement();
     _hitCounter.decrement();
-    if (_hitCounter.isZero() && _stunCD.isZero()) _tint = Color4::WHITE;
+    if (_stunCD.isZero()) _tint = Color4::WHITE;
 }
 
 void Enemy::setFacingDir(cugl::Vec2 dir) {

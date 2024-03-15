@@ -324,6 +324,8 @@ void GameScene::preUpdate(float dt) {
                 atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
                 player->animateAttack();
                 player->_atkCD.reset();
+                _level->getPlayerAtk()->reset();
+                _level->getPlayerAtk()->start();
             }
             //for now, give lowest precendence to parry
             else if (_input.didParry()) {
@@ -335,7 +337,7 @@ void GameScene::preUpdate(float dt) {
         }
     }
 
-    if (player->_atkCD.isZero()) {
+    if (_level->getPlayerAtk()->isCompleted()) {
         atk->setEnabled(false);
     }
 
@@ -372,6 +374,7 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - Component Updates
     player->updateCounters();
     player->updateAnimation(dt);
+    _level->getPlayerAtk()->update(dt);
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         (*it)->updateAnimation(dt);

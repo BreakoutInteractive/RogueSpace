@@ -44,6 +44,9 @@ protected:
     
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
+
+    /** The hit effect animation */
+    std::shared_ptr<Animation> _hitEffect;
     
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
@@ -398,7 +401,7 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
     void setDrawScale(cugl::Vec2 scale) override;
-    
+
     void updateAnimation(float dt) override;
     
     
