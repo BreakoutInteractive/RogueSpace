@@ -50,6 +50,13 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // Acquire the scene built by the asset loader and resize it the scene
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("pause");
+    
+    std::shared_ptr<scene2::PolygonNode> overlay = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("pause_bg"));
+    
+    // remove the overlay from scene graph and make it scale to parent container size (the screen)
+    overlay->removeFromParent();
+    overlay->setContentSize(dimen);
+    
     scene->setContentSize(dimen);
     scene->doLayout();
     _choice = Choice::NONE;
@@ -69,6 +76,7 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
+    addChild(overlay);
     addChild(scene);
     setActive(false);
     return true;

@@ -39,8 +39,6 @@ protected:
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
-    /** The controller for the game renderer */
-    std::shared_ptr<GameRenderer> _renderer;
     /** The controller for the pause screen */
     PauseScene _pause;
     /** The current active scene */
@@ -124,6 +122,20 @@ public:
     
     
 #pragma mark Application Loop    
+
+    /**
+     * The method called to update the application data.
+     *
+     * This is your core loop and should be replaced with your custom implementation.
+     * This method should contain any code that is not an OpenGL call.
+     *
+     * When overriding this method, you do not need to call the parent method
+     * at all. The default implmentation does nothing.
+     *
+     * @param dt    The amount of time (in seconds) since the last frame
+     */
+    virtual void update(float dt) override;
+
     /**
      * The method called to indicate the start of a deterministic loop.
      *

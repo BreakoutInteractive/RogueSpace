@@ -35,8 +35,6 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
-    // Switch to deterministic mode
-    setDeterministic(true);
 
 
     Application::onStartup(); // this is required
@@ -74,22 +72,34 @@ void App::onResume() {
 #pragma mark -
 #pragma mark Application Loop
 
+void App::update(float dt){
+    if (_loading.isActive()) {
+        _loading.update(0.01f);
+    } else {
+        _loading.dispose(); // Disables the input listeners in this mode
+        _gameplay.init(_assets); // this makes GameScene active
+        _pause.init(_assets);
+        _scene = State::GAME;
+        setDeterministic(true);
+    }
+}
+
 void App::preUpdate(float dt) {
     switch (_scene) {
         case LOAD:
-            updateLoadingScene(dt);
+            // only for intermediate loading screens
             break;
         case MENU:
             break;
         case PAUSE:
             _pause.setActive(true);
-            _renderer->configurePauseButton(true);
             updatePauseScene(dt);
             break;
         case GAME:
-            if(_renderer->getPaused()){
+            if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
                 _gameplay.clearInputs();
+                _gameplay.getRenderer().setActivated(false);
             }else{
                 _gameplay.preUpdate(dt);
             }
@@ -120,32 +130,19 @@ void App::postUpdate(float dt) {
             break;
     }
 }
-    
-
-void App::updateLoadingScene(float dt) {
-    if (_loading.isActive()) {
-        _loading.update(dt);
-    } else {
-        _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets); // this makes GameScene active
-        _renderer = _gameplay.getRenderer();
-        _pause.init(_assets);
-        _scene = State::GAME;
-    }
-}
 
 void App::updatePauseScene(float timestep) {
     _pause.update(timestep);
     switch (_pause.getChoice()) {
         case PauseScene::Choice::RESTART:
             _pause.setActive(false);
-            _renderer->configurePauseButton(false);
+            _gameplay.getRenderer().setActivated(true);
             _gameplay.restart();
             _scene = State::GAME;
             break;
         case PauseScene::Choice::GAME:
             _pause.setActive(false);
-            _renderer->configurePauseButton(false);
+            _gameplay.getRenderer().setActivated(true);
             _scene = State::GAME;
             break;
         case PauseScene::Choice::NONE:

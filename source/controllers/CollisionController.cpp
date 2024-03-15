@@ -86,7 +86,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     CULog("Player took damage!");
                 }
                 else {
-                    (*it)->stun();
+                    (*it)->setStunned();
                 }
             }
         }
@@ -115,22 +115,6 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         }
     }
 
-    // Play a sound if above threshold
-    // TODO: get the audio controller to play our SFX
-//    if (speed > SOUND_THRESHOLD) {
-//        // These keys result in a low number of sounds.  Too many == distortion.
-//        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-//        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-//
-//        if (data1 != nullptr && data2 != nullptr) {
-//            std::string key = (data1->getName() + data2->getName());
-//            auto source = _assets->get<Sound>(COLLISION_SOUND);
-//            if (!AudioEngine::get()->isActive(key)) {
-//                AudioEngine::get()->play(key, source, false, source->getVolume());
-//            }
-//        }
-//    }
-
     intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
@@ -139,6 +123,16 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
             //phase through enemies while dodging
             if (!_level->getPlayer()->_dodgeDuration.isZero()) contact->SetEnabled(false);
+        }
+        for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
+            intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());
+            if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
+                (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
+                //enemies phase through each other if one is idle/stunned
+                if (!(*it)->_stunCD.isZero() || !(*iter)->_stunCD.isZero()
+                    ||
+                    (*it)->getCollider()->getLinearVelocity().isZero() || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+            }
         }
     }
 }

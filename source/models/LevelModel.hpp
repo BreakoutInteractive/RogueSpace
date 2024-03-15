@@ -19,6 +19,7 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
+#include "../components/Animation.hpp"
 
 using namespace cugl;
 
@@ -78,11 +79,12 @@ protected:
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
+    
+    // TODO: to be deleted with full Tiled integration
+    std::shared_ptr<JsonValue> tempJSON;
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
-    
-    // TODO: added so enemy data is from file, get this in Tiled. set up property types.
-    std::shared_ptr<JsonValue> tempData;
+    std::shared_ptr<Animation> _playerAttack;
 
 #pragma mark Internal Helper Methods
     
@@ -206,6 +208,8 @@ public:
      * @return the walls in this game level
      */
     const std::vector<std::shared_ptr<WallModel>> getWalls() { return _walls; }
+
+    const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 
 
 #pragma mark Physics Attributes
