@@ -89,8 +89,6 @@ protected:
 public:
 #pragma mark Counters
     
-    Counter _atkLength;
-    
     Counter _atkCD;
     
     Counter _stunCD;

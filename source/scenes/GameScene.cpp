@@ -356,11 +356,11 @@ void GameScene::preUpdate(float dt) {
             // enemy attacks if not stunned and within range of player and can see them
             if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getAttackRange() && (*it)->getPlayerInSight()) {
                 (*it)->_atkCD.reset();
-                (*it)->_atkLength.reset();
+                (*it)->animateAttack();
             }
         }
-        // disable hitbox once attack animation completes or if enemy dies mid-attack
-        if ((*it)->_atkLength.isZero() || !(*it)->isEnabled()) {
+        // disable hitbox if enemy dies or is stunned mid-attack
+        if (!(*it)->isEnabled() || !(*it)->_stunCD.isZero()) {
             (*it)->getAttack()->setEnabled(false);
         }
         

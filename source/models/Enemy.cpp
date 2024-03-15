@@ -13,8 +13,6 @@ using namespace cugl;
 
 // should be at least the player's attack time so that it can't get hit twice by the same attack
 #define HIT_TIME 16
-/**the number of frames an attack will last**/
-#define ATK_TIME 45
 /**the number of frames we wait before allowing another attack*/
 #define ATK_CD 120
 /**the number of frames an enemy will be stunned*/
@@ -58,7 +56,6 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     _attackRange = ATK_RANGE;
     _moveSpeed = MOVE_SPEED;
     _hitCounter.setMaxCount(HIT_TIME);
-    _atkLength.setMaxCount(ATK_TIME);
     _atkCD.setMaxCount(ATK_CD);
     _stunCD.setMaxCount(STUN_CD);
     _sentryCD.setMaxCount(SENTRY_CD);
@@ -132,6 +129,7 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     // add callbacks
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
+        getAttack()->setEnabled(false);
         setAnimation(_idleAnimation);
     });
     _attackAnimation->addCallback(0.33f, [this](){
@@ -186,15 +184,7 @@ void Enemy::stun() {
 
 void Enemy::updateCounters() {
     b2Filter filter;
-    if (_atkLength.getCount() == _atkLength.getMaxCount() && _currAnimation != _attackAnimation) {
-        _attackAnimation->reset();
-        animateAttack();
-        // enable enemy-enemy collision
-        filter.categoryBits = CATEGORY_ENEMY;
-        filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
-        _collider->setFilterData(filter);
-    }
-    if (!getCollider()->getLinearVelocity().isZero() && _atkLength.isZero() && _currAnimation != _walkAnimation) {
+    if (!getCollider()->getLinearVelocity().isZero() && _currAnimation == _idleAnimation) {
         animateWalk();
         b2Filter filter;
         // enable enemy-enemy collision
@@ -213,7 +203,6 @@ void Enemy::updateCounters() {
     _sentryCD.decrement();
     _stunCD.decrement();
     _atkCD.decrement();
-    _atkLength.decrement();
     _hitCounter.decrement();
     if (_hitCounter.isZero() && _stunCD.isZero()) _tint = Color4::WHITE;
 }
