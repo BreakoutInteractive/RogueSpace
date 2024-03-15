@@ -86,7 +86,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     CULog("Player took damage!");
                 }
                 else {
-                    (*it)->stun();
+                    (*it)->setStunned();
                 }
             }
         }

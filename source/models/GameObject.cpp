@@ -18,12 +18,14 @@ GameObject::GameObject(){
 #pragma mark Animation
 
 void GameObject::updateAnimation(float dt){
-    if (_currAnimation != nullptr){
-        if (_currAnimation->isStarted()){
-            _currAnimation->update(dt);
-        }
-        else {
-            _currAnimation->start();
+    if (_enabled){
+        if (_currAnimation != nullptr){
+            if (_currAnimation->isStarted()){
+                _currAnimation->update(dt);
+            }
+            else {
+                _currAnimation->start();
+            }
         }
     }
 }

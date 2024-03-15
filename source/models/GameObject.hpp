@@ -94,6 +94,7 @@ public:
      * updates the animation component (if any) of this game object by `dt` seconds
      *
      * if the animation has not started, it will start the animation instead.
+     * @pre the object must be enabled for any updates.
      */
     virtual void updateAnimation(float dt);
     
