@@ -132,7 +132,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto runSheet = SpriteSheet::alloc(runTexture, 8, 16);
 
     // pass to animations
-    _parryAnimation = Animation::alloc(parrySheet, 1.0f, false);
+    _parryAnimation = Animation::alloc(parrySheet, 0.5f, false);
     _attackAnimation = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
     _runAnimation = Animation::alloc(runSheet, 16/24.0, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
@@ -140,12 +140,10 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     // add callbacks
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
-        setAnimation(_prevAnimation);
     });
     
     _parryAnimation->onComplete([this](){
         _parryAnimation->reset();
-        setAnimation(_prevAnimation);
     });
     
     
