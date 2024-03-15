@@ -14,7 +14,7 @@ using namespace cugl;
 // should be at least the player's attack time so that it can't get hit twice by the same attack
 #define HIT_TIME 16
 /**the number of frames an attack will last**/
-#define ATK_TIME 18
+#define ATK_TIME 45
 /**the number of frames we wait before allowing another attack*/
 #define ATK_CD 120
 /**the number of frames an enemy will be stunned*/
@@ -119,13 +119,13 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto walkTexture = assets->get<Texture>("enemy-walk");
     auto attackTexture = assets->get<Texture>("enemy-attack");
     
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 1, 1);
+    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
     
-    _idleAnimation = Animation::alloc(idleSheet, 1.0f, false);
-    _walkAnimation = Animation::alloc(walkSheet, 0.375f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 0.375f, false, 0, 17);
+    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
+    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
+    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -133,6 +133,14 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
         setAnimation(_idleAnimation);
+    });
+    _attackAnimation->addCallback(0.33f, [this](){
+        if (isEnabled()) {
+            getAttack()->setEnabled(true);
+            getAttack()->setAwake(true);
+            getAttack()->setAngle(getFacingDir().getAngle());
+            getAttack()->setPosition(getPosition());
+        }
     });
     
     setAnimation(_idleAnimation);
@@ -177,7 +185,7 @@ void Enemy::stun() {
 }
 
 void Enemy::updateCounters() {
-    if (_atkCD.getCount() == _atkCD.getMaxCount() && _currAnimation != _attackAnimation) {
+    if (_atkLength.getCount() == _atkLength.getMaxCount() && _currAnimation != _attackAnimation) {
         _attackAnimation->reset();
         animateAttack();
     }
@@ -212,6 +220,15 @@ void Enemy::setFacingDir(cugl::Vec2 dir) {
     _facingDirection = dir;
     
     if (prevDirection != _directionIndex){
+        int index = 0;
+        if (_directionIndex % 2 == 0) {
+            index = _directionIndex / 2;
+        }
+        else {
+            index = (_directionIndex - 1) / 2 + 4;
+        }
+        // idle animation spritesheet isn't ordered correctly, so this is a temporary solution while it's being fixed
+        _idleAnimation->setFrameRange(8 * index, 8 * index + 7);
         _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
         _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
     }

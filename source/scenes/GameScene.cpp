@@ -363,23 +363,12 @@ void GameScene::preUpdate(float dt) {
         if ((*it)->getCollider()->isEnabled()) {
             // enemy attacks if not stunned and within range of player and can see them
             if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getAttackRange() && (*it)->getPlayerInSight()) {
-                Vec2 direction = player->getPosition()*player->getDrawScale() - (*it)->getPosition()*(*it)->getDrawScale();
-                direction.normalize();
-                float ang = acos(direction.dot(Vec2::UNIT_X));
-                if (direction.y < 0){
-                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-                }
-                
-                (*it)->getAttack()->setEnabled(true);
-                (*it)->getAttack()->setAwake(true);
-                (*it)->getAttack()->setAngle(ang);
-                (*it)->getAttack()->setPosition((*it)->getPosition());
                 (*it)->_atkCD.reset();
                 (*it)->_atkLength.reset();
             }
         }
-        if ((*it)->_atkLength.isZero()) {
+        // disable hitbox once attack animation completes or if enemy dies mid-attack
+        if ((*it)->_atkLength.isZero() || !(*it)->isEnabled()) {
             (*it)->getAttack()->setEnabled(false);
         }
         
