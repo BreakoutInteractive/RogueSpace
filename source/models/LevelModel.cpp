@@ -80,10 +80,15 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     //_player->draw(batch);
     
-    //we add pi/2 to the angle since the sprite is pointing down but the hitbox points right by default
-    if (_atk->isEnabled()){
-        batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
-            _atk->getAngle() + M_PI_2, _atk->getPosition() * _scale);
+    if (_playerAttack->isStarted() && !_playerAttack->isCompleted()){
+        auto sheet = _playerAttack->getSpriteSheet();
+        Affine2 atkTrans = Affine2::createScale(ATK_RADIUS / ((Vec2)sheet->getFrameSize() / 2) * _scale);
+        //we subtract pi/2 from the angle since the animation is pointing up but the hitbox points right by default
+        atkTrans.rotate(_atk->getAngle() - M_PI_2);
+        atkTrans.translate(_atk->getPosition() * _scale);
+        sheet->draw(batch, Color4::WHITE, Vec2::Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
+        //batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
+        //    _atk->getAngle() + M_PI_2, _atk->getPosition() * _scale);
     }
     
     // make sure debug node is hidden when not active
@@ -146,6 +151,9 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
         _enemies[ii]->loadAssets(assets);
     }
     _attackAnimation = assets->get<Texture>("atk");
+    std::shared_ptr<Texture> t = assets->get<Texture>("player-atk");
+    std::shared_ptr<SpriteSheet> s = SpriteSheet::alloc(t, 2, 3);
+    _playerAttack = Animation::alloc(s,0.25f, false); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps)
 }
 
 

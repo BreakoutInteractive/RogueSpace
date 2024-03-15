@@ -327,6 +327,8 @@ void GameScene::preUpdate(float dt) {
                 atk->setAngle(ang);
                 player->animateAttack();
                 player->_atkCD.reset();
+                _level->getPlayerAtk()->reset();
+                _level->getPlayerAtk()->start();
             }
             //for now, give lowest precendence to parry
             else if (_input.didParry()) {
@@ -338,7 +340,7 @@ void GameScene::preUpdate(float dt) {
         }
     }
 
-    if (player->_atkCD.isZero()) {
+    if (_level->getPlayerAtk()->isCompleted()) {
         atk->setEnabled(false);
     }
     //if/when we create a dodge animation, add a check for it here
@@ -388,6 +390,7 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - Component Updates
     player->updateCounters();
     player->updateAnimation(dt);
+    _level->getPlayerAtk()->update(dt);
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         (*it)->updateAnimation(dt);

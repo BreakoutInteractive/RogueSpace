@@ -8,6 +8,9 @@
         },
         "enemy-attack": {
             "file":     "textures/lizard_atk.png"
+        },
+        "enemy-hit-effect": {
+            "file":     "textures/hit_01.png"
         }
     }
 }
