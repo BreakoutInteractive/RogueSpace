@@ -132,5 +132,15 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             //phase through enemies while dodging
             if (!_level->getPlayer()->_dodgeDuration.isZero()) contact->SetEnabled(false);
         }
+        for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
+            intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());
+            if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
+                (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
+                //enemies phase through each other if one is idle/stunned
+                if (!(*it)->_stunCD.isZero() || !(*iter)->_stunCD.isZero()
+                    ||
+                    (*it)->getCollider()->getLinearVelocity().isZero() || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+            }
+        }
     }
 }

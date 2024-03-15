@@ -39,7 +39,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
     box->setFilterData(filter);
     _collider = box;
     
@@ -186,19 +186,9 @@ void Enemy::updateCounters() {
     b2Filter filter;
     if (!getCollider()->getLinearVelocity().isZero() && _currAnimation == _idleAnimation) {
         animateWalk();
-        b2Filter filter;
-        // enable enemy-enemy collision
-        filter.categoryBits = CATEGORY_ENEMY;
-        filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
-        _collider->setFilterData(filter);
     }
     if ((getCollider()->getLinearVelocity().isZero() || !_stunCD.isZero()) && _currAnimation != _idleAnimation) {
         animateDefault();
-        b2Filter filter;
-        // disable enemy-enemy collision
-        filter.categoryBits = CATEGORY_ENEMY;
-        filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
-        _collider->setFilterData(filter);
     }
     _sentryCD.decrement();
     _stunCD.decrement();
