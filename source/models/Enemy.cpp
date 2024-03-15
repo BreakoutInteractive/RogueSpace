@@ -39,16 +39,16 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     std::string name("enemy");
     box->setName(name);
     b2Filter filter;
-    // this is an enemy and can collide with a player "shadow", an enemy "shadow", a wall, or an attack
+    // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
     box->setFilterData(filter);
     _collider = box;
     
     auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
     shadow->setAngle(M_PI_4);
     shadow->setBodyType(b2_kinematicBody);
-    // this is an enemy "shadow" and can collide with the player or an enemy
+    // this is an enemy "shadow" and can collide with the player
     filter.categoryBits = CATEGORY_ENEMY_SHADOW;
     filter.maskBits = CATEGORY_PLAYER;
     shadow->setFilterData(filter);
@@ -185,15 +185,30 @@ void Enemy::stun() {
 }
 
 void Enemy::updateCounters() {
+    b2Filter filter;
     if (_atkLength.getCount() == _atkLength.getMaxCount() && _currAnimation != _attackAnimation) {
         _attackAnimation->reset();
         animateAttack();
+        // enable enemy-enemy collision
+        filter.categoryBits = CATEGORY_ENEMY;
+        filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
+        _collider->setFilterData(filter);
     }
-    else if (!getCollider()->getLinearVelocity().isZero() && _atkLength.isZero() && _currAnimation != _walkAnimation) {
+    if (!getCollider()->getLinearVelocity().isZero() && _atkLength.isZero() && _currAnimation != _walkAnimation) {
         animateWalk();
+        b2Filter filter;
+        // enable enemy-enemy collision
+        filter.categoryBits = CATEGORY_ENEMY;
+        filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
+        _collider->setFilterData(filter);
     }
-    else if ((getCollider()->getLinearVelocity().isZero() || !_stunCD.isZero()) && _currAnimation != _idleAnimation) {
+    if ((getCollider()->getLinearVelocity().isZero() || !_stunCD.isZero()) && _currAnimation != _idleAnimation) {
         animateDefault();
+        b2Filter filter;
+        // disable enemy-enemy collision
+        filter.categoryBits = CATEGORY_ENEMY;
+        filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
+        _collider->setFilterData(filter);
     }
     _sentryCD.decrement();
     _stunCD.decrement();
@@ -220,15 +235,7 @@ void Enemy::setFacingDir(cugl::Vec2 dir) {
     _facingDirection = dir;
     
     if (prevDirection != _directionIndex){
-        int index = 0;
-        if (_directionIndex % 2 == 0) {
-            index = _directionIndex / 2;
-        }
-        else {
-            index = (_directionIndex - 1) / 2 + 4;
-        }
-        // idle animation spritesheet isn't ordered correctly, so this is a temporary solution while it's being fixed
-        _idleAnimation->setFrameRange(8 * index, 8 * index + 7);
+        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
         _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
         _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
     }
