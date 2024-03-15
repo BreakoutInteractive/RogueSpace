@@ -18,6 +18,10 @@
 //  Version: 1/20/16
 //
 #include "JSWallModel.hpp"
+#include <cugl/cugl.h>
+#include "CollisionConstants.hpp"
+
+using namespace cugl;
 
 #pragma mark -
 #pragma mark Initializers
@@ -36,9 +40,33 @@
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
 bool WallModel::init(const Poly2& poly, const Vec2 anchor) {
-	PolygonObstacle::initWithAnchor(poly,anchor);
-	std::string name("wall");
-	setName(name);
-	_wallTexture = "";
+    auto p = std::make_shared<physics2::PolygonObstacle>();
+    p->PolygonObstacle::initWithAnchor(poly,anchor);
+    _collider = p;
+    
+    b2Filter filter;
+    // this is a wall
+    filter.categoryBits = CATEGORY_WALL;
+    // a wall can collide with a player or an enemy
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+    p->setFilterData(filter);
+    
 	return true;
+}
+
+void WallModel::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+    Vec2 pos = getPosition();
+    Vec2 scl = getDrawScale();
+    int size = 2;
+    // batch draw(texture, color, origin, scale, angle, offset)
+    batch->draw(_texture, Color4::WHITE, Vec2(_texture->getWidth()/2, 0), size * scl/_texture->getWidth(), 0, ((pos - Vec2(0,0.5f))) * scl);
+}
+
+void WallModel::loadAssets(const std::shared_ptr<AssetManager> &assets){
+    if (_tall){
+        _texture = assets->get<Texture>("tall-wall");
+    }
+    else {
+        _texture = assets->get<Texture>("short-wall");
+    }
 }

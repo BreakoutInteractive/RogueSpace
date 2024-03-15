@@ -14,7 +14,7 @@
 
 //the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player
 //this is how sweeping melee attacks work in Hades
-#define ATK_RADIUS 4.0f
+#define ATK_RADIUS 2.0f
 
 /**
 * Creates a new, empty level.
@@ -55,6 +55,10 @@ void LevelModel::setDrawScale(Vec2 scale) {
     
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDrawScale(scale);
+    }
+    
+    for (int ii = 0; ii < _walls.size(); ii++){
+        _walls[ii]->setDrawScale(scale);
     }
 }
 
@@ -141,7 +145,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
-        _walls[ii]->setDebugScene(_debugNode);
+        _walls[ii]->getCollider()->setDebugScene(_debugNode);
+        _walls[ii]->getCollider()->setDebugColor(Color4::WHITE);
     }
 }
 
@@ -153,6 +158,11 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
     }
+    
+    for (int ii = 0; ii < _walls.size(); ii++){
+        _walls[ii]->loadAssets(assets);
+    }
+    
     _attackAnimation = assets->get<Texture>("atk");
     std::shared_ptr<Texture> t = assets->get<Texture>("player-atk");
     std::shared_ptr<SpriteSheet> s = SpriteSheet::alloc(t, 2, 3);
@@ -222,17 +232,30 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         return false;
     }
 
-//	auto walls = json->get(WALLS_FIELD);
-//	if (walls != nullptr) {
-//		// Convert the object to an array so we can see keys and values
-//		int wsize = (int)walls->size();
-//		for(int ii = 0; ii < wsize; ii++) {
-//			loadWall(walls->get(ii));
-//		}
-//	} else {
-//		CUAssertLog(false, "Failed to load walls");
-//		return false;
-//	}
+	auto walls = tempJSON->get("tall-walls");
+	if (walls != nullptr) {
+		// Convert the object to an array so we can see keys and values
+		int wsize = (int)walls->size();
+		for(int ii = 0; ii < wsize; ii++) {
+			loadWall(walls->get(ii), true);
+		}
+	} else {
+		CUAssertLog(false, "Failed to load walls");
+		return false;
+	}
+    
+    walls = tempJSON->get("short-walls");
+    if (walls != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int wsize = (int)walls->size();
+        CULog("we have %d shorts", wsize);
+        for(int ii = 0; ii < wsize; ii++) {
+            loadWall(walls->get(ii), false);
+        }
+    } else {
+        CUAssertLog(false, "Failed to load walls");
+        return false;
+    }
     
     auto enemiesJson = json->get("enemies");
     if (enemiesJson != nullptr){
@@ -256,9 +279,12 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         
         _dynamicObjects.push_back(_enemies[ii]); // add the enemies to sorting layer
     }
-//    for (int ii = 0; ii < _walls.size(); ii++){
-//        addObstacle(_walls[ii]);
-//    }
+    
+    for (int ii = 0; ii < _walls.size(); ii++){
+        //addObstacle(_walls[ii]);
+        _walls[ii]->addObstaclesToWorld(_world);
+        _dynamicObjects.push_back(_walls[ii]); // add the walls to sorting layer
+    }
     
     // load visuals (floor)
     auto floor = json->get("floor");
@@ -282,7 +308,8 @@ void LevelModel::unload() {
         }
         
         for(auto it = _walls.begin(); it != _walls.end(); ++it) {
-                _world->removeObstacle((*it));
+//                _world->removeObstacle((*it));
+            (*it)->removeObstaclesFromWorld(_world);
         }
     }
 	_enemies.clear();
@@ -447,14 +474,20 @@ bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
 }
 
 
-bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
-	bool success = true;
+bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json, bool isTall) {
 
-	int polysize = json->getInt(VERTICES_FIELD);
-	success = success && polysize > 0;
-
-	std::vector<float> vertices = json->get(BOUNDARY_FIELD)->asFloatArray();
-	success = success && 2*polysize == vertices.size();
+    auto positionData = json->asFloatArray();
+    float x = positionData[0];
+    float y = positionData[1];
+    std::vector<float> vertices;
+    vertices.push_back(x);
+    vertices.push_back(y-0.5);
+    vertices.push_back(x+1);
+    vertices.push_back(y);
+    vertices.push_back(x);
+    vertices.push_back(y+0.5);
+    vertices.push_back(x-1);
+    vertices.push_back(y);
 
     Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
 	Poly2 wall(verts,(int)vertices.size()/2);
@@ -465,38 +498,13 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
     triangulator.clear();
 	
 	// Get the object, which is automatically retained
-	std::shared_ptr<WallModel> wallobj = WallModel::alloc(wall);
-	wallobj->setName(json->key());
+    std::shared_ptr<WallModel> wallobj = std::make_shared<WallModel>(isTall);
+    wallobj->init(wall, Vec2::ANCHOR_CENTER);
 
-	std::string btype = json->getString(BODYTYPE_FIELD);
-	if (btype == STATIC_VALUE) {
-		wallobj->setBodyType(b2_staticBody);
-	}
-
-	wallobj->setDensity(json->getDouble(DENSITY_FIELD));
-	wallobj->setFriction(json->getDouble(FRICTION_FIELD));
-	wallobj->setRestitution(json->getDouble(RESTITUTION_FIELD));
-
-	// Set the texture value
-	success = success && json->get(TEXTURE_FIELD)->isString();
-	wallobj->setTextureKey(json->getString(TEXTURE_FIELD));
-	wallobj->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
-    
-    b2Filter filter;
-    // this is a wall
-    filter.categoryBits = CATEGORY_WALL;
-    // a wall can collide with a player or an enemy
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
-    wallobj->setFilterData(filter);
-
-	if (success) {
-		_walls.push_back(wallobj);
-	} else {
-		wallobj = nullptr;
-	}
+    _walls.push_back(wallobj);
 
 	vertices.clear();
-	return success;
+    return true;;
 }
 
 /**

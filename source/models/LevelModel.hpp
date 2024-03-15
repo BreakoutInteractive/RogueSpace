@@ -131,7 +131,7 @@ protected:
      * @retain the wall
      * @return true if the wall was successfully loaded
      */
-    bool loadWall(const std::shared_ptr<JsonValue>& json);
+    bool loadWall(const std::shared_ptr<JsonValue>& json, bool isTall);
 
     /**
      * Converts the string to a color
