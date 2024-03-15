@@ -73,14 +73,21 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }
     
     for (int ii = 0; ii < _enemies.size(); ii++){
-        if (_enemies[ii]->getAttack()->isEnabled()) {
-            batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
-                _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);
+        auto enemyAtk = _enemies[ii]->getAttack();
+        //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
+        if (enemyAtk->isEnabled()) {
+            auto sheet = _enemies[ii]->getHitboxAnimation()->getSpriteSheet();
+            Affine2 atkTrans = Affine2::createScale(ATK_RADIUS / ((Vec2)sheet->getFrameSize() / 2) * _scale);
+            atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
+            atkTrans.translate(enemyAtk->getPosition() * _scale);
+            sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
+            /*batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
+                _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);*/
         }
     }
     
     
-    if (_playerAttack->isStarted() && !_playerAttack->isCompleted()){
+    if (_playerAttack->isActive()){
         auto sheet = _playerAttack->getSpriteSheet();
         Affine2 atkTrans = Affine2::createScale(ATK_RADIUS / ((Vec2)sheet->getFrameSize() / 2) * _scale);
         //we subtract pi/2 from the angle since the animation is pointing up but the hitbox points right by default
@@ -150,13 +157,17 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _player->loadAssets(assets);
     _floor->loadAssets(assets);
 
+    _attackAnimation = assets->get<Texture>("atk");
+    std::shared_ptr<Texture> t = assets->get<Texture>("player-swipe");
+    std::shared_ptr<SpriteSheet> s = SpriteSheet::alloc(t, 2, 3);
+    _playerAttack = Animation::alloc(s, 0.25f, false); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps)
+    std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
+    std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 3);
+
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
+        _enemies[ii]->setHitboxAnimation(Animation::alloc(s2, 0.25f, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
     }
-    _attackAnimation = assets->get<Texture>("atk");
-    std::shared_ptr<Texture> t = assets->get<Texture>("player-atk");
-    std::shared_ptr<SpriteSheet> s = SpriteSheet::alloc(t, 2, 3);
-    _playerAttack = Animation::alloc(s,0.25f, false); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps)
 }
 
 

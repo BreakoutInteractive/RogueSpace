@@ -141,6 +141,7 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     // add callbacks
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
+        _hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
         _attack->setEnabled(false);
     });
@@ -148,6 +149,7 @@ void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation->addCallback(0.5f, [this](){
         if (isEnabled()) {
             _attack->setEnabled(true);
+            _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
             // TODO: clean this code
@@ -227,7 +229,7 @@ void Enemy::updateAnimation(float dt){
     }
     _hitEffect->update(dt);
     if (_hitEffect->isActive()){
-        _tint =_tint = Color4::RED;
+        _tint = Color4::RED;
     }
     else if (_state == EnemyState::STUNNED){
         // TODO: could possibly use stunned animation and remove this state altogether
@@ -236,7 +238,7 @@ void Enemy::updateAnimation(float dt){
     else if (_stunCD.isZero()) {
         _tint = Color4::WHITE;
     }
-
+    _hitboxAnimation->update(dt);
 }
 
 void Enemy::updateCounters() {

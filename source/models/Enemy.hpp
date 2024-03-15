@@ -44,6 +44,8 @@ protected:
     
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
+    /** The animation of the hitbox while attacking */
+    std::shared_ptr<Animation> _hitboxAnimation;
 
     /** The hit effect animation */
     std::shared_ptr<Animation> _hitEffect;
@@ -338,6 +340,9 @@ public:
     
 #pragma mark -
 #pragma mark Animation and State
+
+    void setHitboxAnimation(std::shared_ptr<Animation> animation) { _hitboxAnimation = animation; }
+    std::shared_ptr<Animation> getHitboxAnimation() const { return _hitboxAnimation; }
     
     /** current enemy state  */
     EnemyState getState() { return _state;}
