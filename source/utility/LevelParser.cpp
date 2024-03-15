@@ -14,7 +14,6 @@ using namespace cugl;
 
 bool LevelParser::readLayermap(const std::shared_ptr<JsonValue>& layers) {
     for (int i = 0; i < layers->size(); i++) {
-        CULog(layers->get(i)->getString("name").c_str());
         _layermap[layers->get(i)->getString("name")] = i;
     }
     return true;
@@ -32,9 +31,6 @@ const std::shared_ptr<JsonValue> LevelParser::translateJson(float w, float h) {
 // deprecated
 const std::shared_ptr<JsonValue> LevelParser::parseBoundaries(const std::shared_ptr<JsonValue>& layers) {
     std::shared_ptr<JsonValue> pNode = layers->get(7);
-    if (pNode->get("name")->toString() != "\"collision\"") {
-        CULogError("incorrect index for mobs in JSON, node is %s", pNode->get("name")->toString().c_str());
-    }
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
     std::shared_ptr<JsonValue> bounds = pNode->get("objects");
@@ -71,30 +67,52 @@ const std::shared_ptr<JsonValue> LevelParser::parseBoundaries(const std::shared_
 
 const std::shared_ptr<JsonValue> LevelParser::parseEnemies(const std::shared_ptr<JsonValue>& layers) {
     // get information
-     std::shared_ptr<JsonValue> pNode = layers->get(_layermap[ENEMIES_FIELD]);
-//    std::shared_ptr<JsonValue> pNode = layers->get(9);
-    if (pNode->get("name")->toString() != "\"mob_spawns\"") {
-        CULogError("incorrect index for mobs in JSON, node is %s", pNode->get("name")->toString().c_str());
-    }
+    std::shared_ptr<JsonValue> spawns = layers->get(_layermap[ENEMY_SPAWN_FIELD]);
+    std::shared_ptr<JsonValue> paths = layers->get(_layermap[ENEMY_PATH_FIELD])->get("objects");
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
-    std::shared_ptr<JsonValue> enemies = pNode->get("objects");
     
+    std::shared_ptr<JsonValue> enemies = spawns->get("objects");
+    int path_pointer = 0;
+    std::shared_ptr<JsonValue> tempProps;
     for (int i = 0; i < (int) enemies->size(); i++) {
         std::shared_ptr<JsonValue> enemy = enemies->get(i);
         std::shared_ptr<JsonValue> new_mob = JsonValue::allocObject();
+        
         float px = enemy->get("x")->asFloat();
         float py = enemy->get("y")->asFloat();
-        std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
+        
+        // TODO: some literals here, de-refence them
+        new_mob->appendValue("defaultstate", enemy->get("properties")->get(0)->getString("value"));
+        int sid = enemy->get("properties")->get(1)->getInt("value");
+        std::shared_ptr<JsonValue> path_nodes = JsonValue::allocArray();
+        // check and add spawn point
+        std::shared_ptr<JsonValue> node = paths->get(path_pointer);
+        if (node->getInt("id") != sid) {
+            CULogError("incorrect initialization of path");
+        }
+        // loop over path nodes
+        while (sid != 0) {
+            if (path_pointer > paths->size()) {
+                CULogError("out of bounds error, path node pointer");
+            }
+            node = paths->get(path_pointer);
+            sid = node->get("properties")->get(0)->getInt("value");
+            path_nodes->appendChild(translateJson(node->getFloat("x") / (_tilewidth / 2), node->getFloat("y") / _tileheight));
+            path_pointer++;
+        }
+        
         std::shared_ptr<JsonValue> size = JsonValue::allocArray();
         size->appendValue(0.6);
         size->appendValue(0.6);
         new_mob->appendChild("size", size);
-        new_mob->appendChild("pos", pos);
-        new_mob->appendValue("density", 1.0);
+        new_mob->appendChild("pos", translateJson(px / (_tilewidth / 2), py / _tileheight));
+        new_mob->appendChild("path", path_nodes);
+        new_mob->appendValue("density", 0.5);
         new_mob->appendValue("friction", 0.1);
         new_mob->appendValue("restitution", 0.0);
         new_mob->appendValue("rotation", false);
         new_mob->appendValue("health", 2.0);
+        new_mob->appendValue("bodytype", (std::string) "dynamic");
         new_mob->appendValue("texture", (std::string) "enemy");
         new_mob->appendValue("debugcolor", (std::string) "green");
         ans->appendChild(enemy->getString("name"), new_mob);
@@ -105,10 +123,6 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemies(const std::shared_ptr
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue>& layers) {
     // get information
     std::shared_ptr<JsonValue> pNode = layers->get(_layermap[PLAYER_FIELD]);
-//    std::shared_ptr<JsonValue> pNode = layers->get(8);
-    if (pNode->get("name")->toString() != "\"player\"") {
-        CULogError("incorrect index for player node in JSON, node is %s", pNode->get("name")->toString().c_str());
-    }
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
     std::shared_ptr<JsonValue> patt = pNode->get("objects")->get(0);
@@ -128,6 +142,7 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
     ans->appendValue("friction", 0.1);
     ans->appendValue("restitution", 0.0);
     ans->appendValue("rotation", false);
+    ans->appendValue("bodytype", (std::string) "dynamic");
     ans->appendValue("texture", (std::string) "player-idle");
     ans->appendValue("parry", (std::string) "parry");
     ans->appendValue("attack", (std::string) "attack");
@@ -141,9 +156,6 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
 
     // bottom-right of iso view
     std::shared_ptr<JsonValue> br = layers->get(_layermap[BR_FIELD]);
-    if (br->get("name")->toString() != "\"bottom_right\"") {
-        CULogError("incorrect index for br in JSON, node is %s", br->get("name")->toString().c_str());
-    }
     std::shared_ptr<JsonValue> br_ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> br_tiles = JsonValue::allocArray();
     int c = 0;
@@ -163,9 +175,6 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     
     // bottom-left of iso view
     std::shared_ptr<JsonValue> bl = layers->get(_layermap[BL_FIELD]);
-    if (bl->get("name")->toString() != "\"bottom_left\"") {
-        CULogError("incorrect index for bl in JSON, node is %s", bl->get("name")->toString().c_str());
-    }
     std::shared_ptr<JsonValue> bl_ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> bl_tiles = JsonValue::allocArray();
     std::vector<int> bl_dat = bl->get("data")->asIntArray();
@@ -185,9 +194,6 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     
     // top (floor) of iso view
     std::shared_ptr<JsonValue> fl = layers->get(_layermap[FLOOR_FIELD]);
-    if (fl->get("name")->toString() != "\"floor\"") {
-        CULogError("incorrect index for floor in JSON, node is %s", fl->get("name")->toString().c_str());
-    }
     std::shared_ptr<JsonValue> fl_ans = JsonValue::allocObject();
     std::shared_ptr<JsonValue> fl_tiles = JsonValue::allocArray();
     std::vector<int> fl_dat = fl->get("data")->asIntArray();

@@ -227,7 +227,8 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 //		return false;
 //	}
     
-    auto enemiesJson = tempData->get("enemies");
+    // auto enemiesJson = tempData->get("enemies");
+    auto enemiesJson = json->get("enemies");
     if (enemiesJson != nullptr){
         loadEnemies(enemiesJson);
     }

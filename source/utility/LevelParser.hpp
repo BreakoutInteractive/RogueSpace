@@ -13,11 +13,14 @@
 #include <cugl/io/CUJsonReader.h>
 #include <cugl/io/CUJsonWriter.h>
 
+// these should probably be abstracted to LevelConstants
+// along with the texture names and a few constants for sizes and stuff
 #define BL_FIELD            "bottom_left"
 #define BR_FIELD            "bottom_right"
 #define FLOOR_FIELD         "floor"
 #define PLAYER_FIELD        "player"
-#define ENEMIES_FIELD       "mob_spawns"
+#define ENEMY_SPAWN_FIELD   "mob_spawns"
+#define ENEMY_PATH_FIELD    "paths"
 
 using namespace cugl;
 
