@@ -91,8 +91,6 @@ public:
     
     Counter _atkLength;
     
-    Counter _atkPrep;
-    
     Counter _atkCD;
     
     Counter _stunCD;
