@@ -25,6 +25,7 @@ using namespace cugl;
 
 // forward reference
 class LevelModel;
+class PauseScene;
 
 class GameRenderer : public cugl::Scene2 {
     
@@ -60,6 +61,8 @@ private:
     std::shared_ptr<Camera> _gameCam;
     /** Reference to the level to be rendered */
     std::shared_ptr<LevelModel> _level;
+    /** whether the pause button has been clicked */
+    bool _paused;
 
 public:
 #pragma mark -
@@ -82,6 +85,13 @@ public:
      * @return true if the renderer is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<AssetManager>& assets);
+    
+    /**
+     * Returns whether pause button as been pressed.
+     *
+     * @return true if the button has been pressed, false otherwise.
+     */
+    bool getPaused(){return _paused;}
     
     /**
      * sets the game scene camera and level to be used to render the game
@@ -112,6 +122,11 @@ public:
      */
     void setJoystickVisible(bool visible) { _joystick->setActive(visible);}
     
+    /**
+     * sets whether or not this HUD scene is activated.
+     */
+    void setActivated(bool value);
+        
     /**
      * Draws the game scene with the given sprite batch.
      */

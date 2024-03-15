@@ -56,6 +56,8 @@ protected:
     /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
     int _directionIndex;
     
+    std::shared_ptr<Animation> _prevAnimation;
+    
 public:
 #pragma mark -
 #pragma mark Counters
@@ -67,8 +69,6 @@ public:
     Counter _dodgeCD;
     /** counter that is active during the dodge motion*/
     Counter _dodgeDuration;
-    /** counter that is active during the idle cycle*/
-    Counter _idleCycle;
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
 
@@ -343,12 +343,12 @@ public:
     * Method to call when player is hit by an attack
     * @param atkDir the normal vector of the direction of the attack that hit the player
     */
-    void hit(cugl::Vec2 atkDir);
+    void hit(cugl::Vec2 atkDir, int damage = 1);
     
     // INHERITED
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
-    void setDrawScale(cugl::Vec2 scale) override;
-    
+    void setAnimation(std::shared_ptr<Animation> animation) override;
+    void updateAnimation(float dt) override;
     
 #pragma mark -
 #pragma mark Physics

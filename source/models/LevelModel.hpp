@@ -19,6 +19,7 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
+#include "../components/Animation.hpp"
 
 using namespace cugl;
 
@@ -80,6 +81,7 @@ protected:
     std::shared_ptr<scene2::SceneNode> _debugNode;
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
+    std::shared_ptr<Animation> _playerAttack;
 
 #pragma mark Internal Helper Methods
     
@@ -203,6 +205,8 @@ public:
      * @return the walls in this game level
      */
     const std::vector<std::shared_ptr<WallModel>> getWalls() { return _walls; }
+
+    const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 
 
 #pragma mark Physics Attributes

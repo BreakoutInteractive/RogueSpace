@@ -177,6 +177,12 @@ void InputController::clear() {
     _motionGesture.active = false;
     _combatGesture.active = false;
     _settingsGesture.active = false;
+    _moveDir = Vec2::ZERO;
+    _keyMoveDir = Vec2::ZERO;
+    _dodgeDir = Vec2::ZERO;
+    _keyDodgeDir = Vec2::ZERO;
+    _attackDir = Vec2::ZERO;
+    _keyAttackDir= Vec2::ZERO;
 }
 
 #pragma mark -

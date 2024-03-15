@@ -25,7 +25,7 @@ void App::onStartup() {
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
     
     // Create a "loading" screen
-    _loaded = false;
+    _scene = State::LOAD;
     _loading.init(_assets);
     
     // Queue the other assets
@@ -36,12 +36,14 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
 
+
     Application::onStartup(); // this is required
 }
 
 void App::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
+    _pause.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -70,45 +72,104 @@ void App::onResume() {
 #pragma mark -
 #pragma mark Application Loop
 
-
-void App::update(float timestep) {
-    if (!_loaded && _loading.isActive()) {
-        _loading.update(0.01f);
-    } else if (!_loaded) {
-        _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets); // this makes GameScene active
-        _loaded = true;
-        
-        // Switch to deterministic mode
-        setDeterministic(true);
-	}
+void App::update(float dt){
+    updateLoadingScene(0.1f);
 }
 
-
 void App::preUpdate(float dt) {
-    _gameplay.preUpdate(dt);
+    switch (_scene) {
+        case LOAD:
+            // only for intermediate loading screens
+            break;
+        case MENU:
+            break;
+        case PAUSE:
+            _pause.setActive(true);
+            updatePauseScene(dt);
+            break;
+        case GAME:
+            if(_gameplay.getRenderer().getPaused()){
+                _scene = State::PAUSE;
+                _gameplay.clearInputs();
+                _gameplay.getRenderer().setActivated(false);
+            }else{
+                _gameplay.preUpdate(dt);
+            }
+            break;
+    }
 }
 
 
 void App::fixedUpdate() {
-    // Compute time to report to game scene version of fixedUpdate
-    float time = getFixedStep()/1000000.0f;
-    _gameplay.fixedUpdate(time);
+    switch (_scene) {
+        case GAME:
+            // Compute time to report to game scene version of fixedUpdate
+            _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
+            break;
+        default:
+            break;
+    }
 }
 
 
 void App::postUpdate(float dt) {
-    // Compute time to report to game scene version of postUpdate
-    float time = getFixedRemainder()/1000000.0f;
-    _gameplay.postUpdate(time);
+    switch (_scene) {
+        case GAME:
+            // Compute time to report to game scene version of postUpdate
+            _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
+            break;
+        default:
+            break;
+    }
+}
+    
+
+void App::updateLoadingScene(float dt) {
+    if (_loading.isActive()) {
+        _loading.update(dt);
+    } else {
+        _loading.dispose(); // Disables the input listeners in this mode
+        _gameplay.init(_assets); // this makes GameScene active
+        _pause.init(_assets);
+        _scene = State::GAME;
+        setDeterministic(true);
+    }
+}
+
+void App::updatePauseScene(float timestep) {
+    _pause.update(timestep);
+    switch (_pause.getChoice()) {
+        case PauseScene::Choice::RESTART:
+            _pause.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _gameplay.restart();
+            _scene = State::GAME;
+            break;
+        case PauseScene::Choice::GAME:
+            _pause.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _scene = State::GAME;
+            break;
+        case PauseScene::Choice::NONE:
+            break;
+    }
 }
 
 
 void App::draw() {
-    if (!_loaded) {
-        _loading.render(_batch);
-    } else {
-        _gameplay.render(_batch);
+    switch (_scene) {
+        case LOAD:
+            _loading.render(_batch);
+            break;
+        case PAUSE:
+            _gameplay.render(_batch);
+            _pause.render(_batch);
+            break;
+        case GAME:
+            _gameplay.render(_batch);
+            break;
+        default:
+            break;
     }
 }
 

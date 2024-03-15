@@ -16,6 +16,7 @@
 #include <vector>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
+#include "../controllers/AudioController.hpp"
 #include "../controllers/CameraController.hpp"
 #include "../controllers/InputController.hpp"
 #include "../controllers/CollisionController.hpp"
@@ -43,6 +44,8 @@ protected:
     CameraController _camController;
     /** Controller for handling collisions */
     CollisionController _collisionController;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
     
     // VIEW
     /** Reference to the physics node of this scene graph */
@@ -133,6 +136,16 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
+    
+    /**
+     * Returns a reference to the game renderer
+     */
+    GameRenderer& getRenderer(){return _gameRenderer;}
+    
+    /**
+     * Clears all previous inputs.
+     */
+    void clearInputs(){ _input.clear();}
     
     /**
      * Returns true if the level is completed.
@@ -248,6 +261,11 @@ public:
     void postUpdate(float remain);
     
     /**
+     * Restarts game scene to initial state.
+     */
+    void restart();
+    
+    /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
@@ -255,31 +273,6 @@ public:
         _gameRenderer.render(batch);
         Scene2::render(batch);
     }
-    
-#pragma mark -
-#pragma mark Collision Handling
-    /**
-     * Processes the start of a collision
-     *
-     * This method is called when we first get a collision between two objects. 
-     * We use this method to test if it is the "right" kind of collision.  In 
-     * particular, we use it to test if we make it to the win door.
-     *
-     * @param  contact  The two bodies that collided
-     */
-    void beginContact(b2Contact* contact);
-
-    /**
-     * Handles any modifications necessary before collision resolution
-     *
-     * This method is called just before Box2D resolves a collision.  We use 
-     * this method to implement sound on contact, using the algorithms outlined 
-     * in Ian Parberry's "Introduction to Game Physics with Box2D".
-     *
-     * @param  contact  The two bodies that collided
-     * @param  contact  The collision manifold before contact
-     */
-    void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
 
 protected:
 #pragma mark -

@@ -44,6 +44,9 @@ protected:
     
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
+
+    /** The hit effect animation */
+    std::shared_ptr<Animation> _hitEffect;
     
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
@@ -91,12 +94,25 @@ public:
     
     Counter _atkCD;
     
-    Counter _stunCD;
+    Counter _stunCD; //todo: if stun animation exists, remove counter.
     
     Counter _sentryCD;
 
     Counter _hitCounter;
     
+    enum class EnemyState : int {
+        IDLE = 1,
+        MOVING = 2,
+        ATTACKING = 3,
+        STUNNED = 4
+    };
+    
+private:
+    
+    /** internal enemy state (for animation and triggering events) */
+    EnemyState _state;
+
+public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -321,7 +337,30 @@ public:
     
     
 #pragma mark -
-#pragma mark Animation
+#pragma mark Animation and State
+    
+    /** current enemy state  */
+    EnemyState getState() { return _state;}
+    
+    /** Set idle state and change to using the idle animation */
+    void setIdling();
+    
+    /** Set moving state and change to using the walk animation */
+    void setMoving();
+    
+    /** Set attack state and change to using the attack animation */
+    void setAttacking();
+    
+    /** Set stunned state and change to using the stunned animation */
+    void setStunned();
+    
+    /**
+     * whether enemy is attacking
+     */
+    bool isAttacking(){ return _state == EnemyState::ATTACKING; }
+    /** whether enemy is stunned */
+    bool isStunned(){ return _state == EnemyState::STUNNED; }
+    
  
     /**
     * Returns the texture (key) for this player
@@ -347,15 +386,6 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
-    
-    /** Change to using the default animation */
-    void animateDefault();
-    
-    /** Change to using the walk animation */
-    void animateWalk();
-    
-    /** Change to using the attack animation */
-    void animateAttack();
 
     /**
      * Method to call when an enemy is hit by an attack
@@ -371,6 +401,8 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
     void setDrawScale(cugl::Vec2 scale) override;
+
+    void updateAnimation(float dt) override;
     
     
 #pragma mark -

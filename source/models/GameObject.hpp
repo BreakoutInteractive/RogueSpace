@@ -63,9 +63,9 @@ public:
     virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) = 0;
     
     /**
-     * Sets the ratio of the player sprite to the physics body
+     * Sets the ratio of the sprite to the physics body
      *
-     * The player needs this value to convert correctly between the physics
+     * This value is needed to convert correctly between the physics
      * coordinates and the drawing screen coordinates.  Otherwise it will
      * interpret one Box2D unit as one pixel.
      *
@@ -94,6 +94,7 @@ public:
      * updates the animation component (if any) of this game object by `dt` seconds
      *
      * if the animation has not started, it will start the animation instead.
+     * @pre the object must be enabled for any updates.
      */
     virtual void updateAnimation(float dt);
     

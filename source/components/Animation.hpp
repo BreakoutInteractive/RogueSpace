@@ -1,9 +1,6 @@
 //
 //  Animation.hpp
 //
-//  This module provides a very simple interface to play animations and attach
-//  callback events at different timestamps of the animation.
-//
 //  Author: Zhiyuan Chen
 //  Version: 3/13/24
 
@@ -13,6 +10,11 @@
 
 using namespace cugl;
 
+
+/**
+ This class provides a very simple interface to play animations and attach callback events at different timestamps of the animation. An animation can be defined as a subsequence of a spritesheet so
+ multiple animations may share the same animation object.
+ */
 class Animation {
     
 private:

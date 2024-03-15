@@ -10,6 +10,8 @@
 #ifndef __COLLISION_CONTROLLER_HPP__
 #define __COLLISION_CONTROLLER_HPP__
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
+
 
 using namespace cugl;
 
@@ -29,6 +31,10 @@ private:
 
     /** reference to assets directory */
     std::shared_ptr<AssetManager> _assets;
+    
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
+
 
 public:
 
@@ -44,7 +50,7 @@ public:
     /**
      * loads the necessary assets for the controller
      */
-    void setAssets(const std::shared_ptr<AssetManager>& assets);
+    void setAssets(const std::shared_ptr<AssetManager>& assets, const std::shared_ptr<AudioController>& audio);
 
 
 #pragma mark -

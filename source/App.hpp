@@ -10,12 +10,25 @@
 #include <cugl/cugl.h>
 #include "scenes/GameScene.hpp"
 #include "scenes/LoadingScene.hpp"
+#include "scenes/PauseScene.hpp"
 
 /**
  * This class represents the application root for the ship demo.
  */
 class App : public cugl::Application {
 protected:
+    
+    enum State {
+        /** The loading scene */
+        LOAD,
+        /** The main menu scene */
+        MENU,
+        /** The pause scene */
+        PAUSE,
+        /** The scene to play the game */
+        GAME,
+    };
+    
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
@@ -26,9 +39,13 @@ protected:
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
-    
-    /** Whether or not we have finished loading all assets */
+    /** The controller for the pause screen */
+    PauseScene _pause;
+    /** The current active scene */
+    State _scene;
+    /** whether the assets have loaded */
     bool _loaded;
+        
     
 public:
 #pragma mark Constructors
@@ -41,7 +58,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    App() : cugl::Application(), _loaded(false) {}
+    App() : cugl::Application(), _loaded(false){}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -106,7 +123,8 @@ public:
     virtual void onResume()  override;
     
     
-#pragma mark Application Loop
+#pragma mark Application Loop    
+
     /**
      * The method called to update the application data.
      *
@@ -119,7 +137,7 @@ public:
      * @param dt    The amount of time (in seconds) since the last frame
      */
     virtual void update(float dt) override;
-    
+
     /**
      * The method called to indicate the start of a deterministic loop.
      *
@@ -200,5 +218,25 @@ public:
      * at all. The default implmentation does nothing.
      */
     virtual void draw() override;
+private:
+    /**
+     * Inidividualized update method for the pause scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the loading scene.
+     *
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updatePauseScene(float dt);
+    
+    /**
+     * Inidividualized update method for the loading scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the loading scene.
+     *
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updateLoadingScene(float dt);
 };
 #endif /* __APP_H__ */

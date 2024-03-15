@@ -93,15 +93,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _level->setDrawScale(drawScale);
     _gameRenderer.setDrawScale(drawScale);
     
-    
+    _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
     _AIController.init(_level);
-    _collisionController.setAssets(_assets);
-    _collisionController.setLevel(_level);
     
+    _collisionController.setLevel(_level);
+    _audioController->init(_assets);
+    _collisionController.setAssets(_assets, _audioController);
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -165,56 +166,62 @@ void GameScene::dispose() {
     }
 }
 
+void GameScene::restart(){
+    _assets->unload<LevelModel>(LEVEL_ONE_KEY);
+
+    // Load a new level and quit update
+    _resetNode->setVisible(true);
+    _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
+    _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
+    _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
+    setComplete(false);
+    setDefeat(false);
+}
+
 
 #pragma mark -
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
-	if (_level == nullptr) {
-		return;
-	}
+    if (_level == nullptr) {
+        return;
+    }
 
-	// Check to see if new level loaded yet
-	if (_resetNode->isVisible()) {
-		if (_assets->complete()) {
-			_level = nullptr;
+    // Check to see if new level loaded yet
+    if (_resetNode->isVisible()) {
+        if (_assets->complete()) {
+            _level = nullptr;
       
-			// Access and initialize level
-			_level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
-			_level->setAssets(_assets);
-			_level->setDebugNode(_debugNode); // Obtains ownership of debug node.
-			_level->showDebug(_debug);
+            // Access and initialize level
+            _level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
+            _level->setAssets(_assets);
+            _level->setDebugNode(_debugNode); // Obtains ownership of debug node.
+            _level->showDebug(_debug);
             _level->setDrawScale(Vec2(_scale, _scale));
             _collisionController.setLevel(_level);
             _gameRenderer.setGameElements(getCamera(), _level);
-			_resetNode->setVisible(false);
-		} else {
-			// Level is not loaded yet; refuse input
-			return;
-		}
-	}
+            _resetNode->setVisible(false);
+        } else {
+            // Level is not loaded yet; refuse input
+            return;
+        }
+    }
+    
     _input.update(dt);
     
     // Process the toggled key commands
     if (_input.didDebug()) {
         setDebug(!isDebug());
     }
-    if (_input.didReset()) { 
-        // Unload the level but keep in memory temporarily
-        _assets->unload<LevelModel>(LEVEL_ONE_KEY);
-
-        // Load a new level and quit update
-        _resetNode->setVisible(true);
-        _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
-        _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
-        _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
-        setComplete(false);
-        setDefeat(false);
-        return;
-    }
     if (_input.didExit())  {
         CULog("Shutting down");
         Application::get()->quit();
+    }
+    
+    // TODO: can be removed, but for pc devs to quickly reset
+    if (_input.didReset()){
+        restart();
+        return;
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
@@ -261,16 +268,13 @@ void GameScene::preUpdate(float dt) {
 
     //only move fast if we're not parrying or dodging
     if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        //player->setForce(moveForce * 5); //TODO: use json data
-        //player->applyForce();
-        player->getCollider()->setLinearVelocity(moveForce * 5);
+        player->getCollider()->setLinearVelocity(moveForce * 5); //TODO: use json data
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
-        //player->getShadow()->setLinearVelocity(Vec2::ZERO);
     }
+    
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
-    atk->setPosition(player->getPosition());
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
     if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
@@ -317,8 +321,11 @@ void GameScene::preUpdate(float dt) {
                 atk->setEnabled(true);
                 atk->setAwake(true);
                 atk->setAngle(ang);
+                atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
                 player->animateAttack();
                 player->_atkCD.reset();
+                _level->getPlayerAtk()->reset();
+                _level->getPlayerAtk()->start();
             }
             //for now, give lowest precendence to parry
             else if (_input.didParry()) {
@@ -327,41 +334,42 @@ void GameScene::preUpdate(float dt) {
                 player->animateParry();
                 player->_parryCD.reset();
             }
-        }     
+        }
     }
 
-    if (player->_atkCD.isZero()) {
+    if (_level->getPlayerAtk()->isCompleted()) {
         atk->setEnabled(false);
     }
-    //if/when we create a dodge animation, add a check for it here
-    //if (player->_parryCD.isZero() && player->_atkCD.isZero()) player->animateDefault();
-    
-    //// if we not dodging or move
-    //if (moveForce.length() == 0 && player->_dodgeDuration.isZero()){
-    //    // dampen
-    //    float dampen = _atkCD > 0 ? -10.0f : -2.0f ; //dampen faster when attacking
-    //    player->setForce(dampen * player->getLinearVelocity());
-    //    player->applyForce();
-    //}
+
     
 #pragma mark - Enemy movement
     _AIController.update(dt);
     // enemy attacks
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        if ((*it)->getHealth() <= 0) {
-            (*it)->setEnabled(false);
+        auto enemy = *it;
+        if (enemy->getHealth() <= 0) {
+            enemy->setEnabled(false);
+            enemy->getAttack()->setEnabled(false);
         }
-        if ((*it)->getCollider()->isEnabled()) {
-            // enemy attacks if not stunned and within range of player and can see them
-            if ((*it)->_atkCD.isZero() && (*it)->_stunCD.isZero() && (*it)->getPosition().distance(player->getPosition()) <= (*it)->getAttackRange() && (*it)->getPlayerInSight()) {
-                (*it)->_atkCD.reset();
-                (*it)->animateAttack();
+        if (!enemy->_stunCD.isZero()){
+            enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+            enemy->getAttack()->setEnabled(false);
+        }
+        if (enemy->isEnabled()) {
+            // enemy can only begin an attack if not stunned and within range of player and can see them
+            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
+            if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                Vec2 direction = player->getPosition() * player->getDrawScale() - enemy->getPosition() * enemy->getDrawScale();
+                direction.normalize();
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (direction.y < 0){
+                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                }
+                enemy->getAttack()->setAngle(ang);
+                enemy->setAttacking();
             }
-        }
-        // disable hitbox if enemy dies or is stunned mid-attack
-        if (!(*it)->isEnabled() || !(*it)->_stunCD.isZero()) {
-            (*it)->getAttack()->setEnabled(false);
         }
         
     }
@@ -369,6 +377,7 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - Component Updates
     player->updateCounters();
     player->updateAnimation(dt);
+    _level->getPlayerAtk()->update(dt);
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         (*it)->updateAnimation(dt);
@@ -377,9 +386,8 @@ void GameScene::preUpdate(float dt) {
 
 
 void GameScene::fixedUpdate(float step) {
-    // Turn the physics engine crank.
     if (_level != nullptr){
-        _level->getWorld()->update(step);
+        _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto player = _level->getPlayer();
         _camController.update(step);
         _camController.setTarget(player->getPosition() * player->getDrawScale());
@@ -388,16 +396,19 @@ void GameScene::fixedUpdate(float step) {
         
         auto enemies = _level->getEnemies();
         for (auto it = enemies.begin(); it != enemies.end(); ++it){
-            (*it)->syncPositions();
+            auto e = *it;
+            e->syncPositions();
+            e->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
         }
         player->syncPositions();
+        _level->getAttack()->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
     }
     
 }
 
 
 void GameScene::postUpdate(float remain) {
-	// TODO: possibly apply interpolation.
+    // TODO: possibly apply interpolation.
     // We will need more data structures for this
 }
 
@@ -417,17 +428,4 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
-}
-
-
-#pragma mark -
-#pragma mark Collision Handling
-
-void GameScene::beginContact(b2Contact* contact) {
-    _collisionController.beginContact(contact);
-}
-
-
-void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-    _collisionController.beforeSolve(contact, oldManifold);
 }
