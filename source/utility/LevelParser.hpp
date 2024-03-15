@@ -13,7 +13,7 @@
 #include <cugl/io/CUJsonReader.h>
 #include <cugl/io/CUJsonWriter.h>
 
-// these should probably be abstracted to LevelConstants
+// TODO: these should probably be abstracted to LevelConstants
 // along with the texture names and a few constants for sizes and stuff
 #define BL_FIELD            "bottom_left"
 #define BR_FIELD            "bottom_right"
@@ -26,14 +26,19 @@ using namespace cugl;
 
 class LevelParser {
 protected:
+    /** width of (non-staggered) tile */
     int _tilewidth;
     
+    /** height of (non-staggered) tile */
     int _tileheight;
     
+    /** width of play area */
     int _width;
     
+    /** height of play area */
     int _height;
     
+    /** parsing map to correctly direct sub-objects from the JSON */
     std::unordered_map<std::string, int> _layermap;
     
 public:
@@ -67,13 +72,12 @@ public:
      * Note that inputs/outputs describe lengths of tiles; the given x/y coordinate used in Tiled must be converted (divide by tile length) to use this
      * @param w  the isometric x coordinate to be converted
      * @param h the isometric y coordinate to be converted
-     * @param arr whether to return Array or Object 
      *
      */
     const std::shared_ptr<JsonValue> translateJson(float w, float h);
     
     /**
-     * Parses the three floor view layers 
+     * Parses the three floor view layers
      *
      * @param layers  the layers JSON node extracted to take floor data from
      * @return an ArrayType node to attach to the main level JSON
@@ -81,8 +85,8 @@ public:
      */
     const std::shared_ptr<JsonValue> parseFloor(const std::shared_ptr<JsonValue>& layers);
     
-    // DEPRECATED
     /**
+     * DEPRECATED
      * Parses all collision boundaries -- includes invisible AND visible walls
      *
      * @param layers  the layers JSON node extracted to take floor data from
@@ -91,8 +95,8 @@ public:
      */
     const std::shared_ptr<JsonValue> parseBoundaries(const std::shared_ptr<JsonValue>& layers);
     
-    // DEPRECATED
     /**
+     * DEPRECATED
      * Parses all walls/objects and relay their data
      *
      * @param layers  the layers JSON node extracted to take floor data from
@@ -110,7 +114,6 @@ public:
      */
     const std::shared_ptr<JsonValue> parsePlayer(const std::shared_ptr<JsonValue>& layers);
     
-    // TODO: include path data? very long way away
     /**
      * Parses specifications for enemies
      *

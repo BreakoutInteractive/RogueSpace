@@ -41,16 +41,16 @@ const std::shared_ptr<JsonValue> LevelParser::parseBoundaries(const std::shared_
         std::shared_ptr<JsonValue> vertices = JsonValue::allocArray();
         for (int s = 0; s < bound->get("polygon")->size(); s++) {
             std::shared_ptr<JsonValue> vertex = bound->get("polygon")->get(s);
-            float px = vertex->get("x")->asFloat();
-            float py = vertex->get("y")->asFloat();
+            float px = vertex->getFloat("x");
+            float py = vertex->getFloat("y");
             std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
             vertices->appendValue(pos->get(0)->asFloat());
             vertices->appendValue(pos->get(1)->asFloat());
         }
         new_bound->appendChild("boundary", vertices);
         new_bound->appendValue("vertices", (int) bound->get("polygon")->size() / 2.0);
-//        float px = enemy->get("x")->asFloat();
-//        float py = enemy->get("y")->asFloat();
+//        float px = enemy->getFloat("x");
+//        float py = enemy->getFloat("y");
 //        std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
         
         new_bound->appendValue("density", 0.0);
@@ -78,10 +78,10 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemies(const std::shared_ptr
         std::shared_ptr<JsonValue> enemy = enemies->get(i);
         std::shared_ptr<JsonValue> new_mob = JsonValue::allocObject();
         
-        float px = enemy->get("x")->asFloat();
-        float py = enemy->get("y")->asFloat();
+        float px = enemy->getFloat("x");
+        float py = enemy->getFloat("y");
         
-        // TODO: some literals here, de-refence them
+        // TODO: some literals here, de-reference them
         new_mob->appendValue("defaultstate", enemy->get("properties")->get(0)->getString("value"));
         int sid = enemy->get("properties")->get(1)->getInt("value");
         std::shared_ptr<JsonValue> path_nodes = JsonValue::allocArray();
@@ -126,14 +126,14 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
     std::shared_ptr<JsonValue> patt = pNode->get("objects")->get(0);
-    float px = patt->get("x")->asFloat();
-    float py = patt->get("y")->asFloat();
+    float px = patt->getFloat("x");
+    float py = patt->getFloat("y");
     std::shared_ptr<JsonValue> pos = translateJson(px / (_tilewidth / 2), py / _tileheight);
     
     // construct
     ans->appendChild("pos", pos);
     
-    // TODO: offload to LevelModel function?
+    // TODO: offload this information to LevelModel function?
     std::shared_ptr<JsonValue> size = JsonValue::allocArray();
     size->appendValue(1.0);
     size->appendValue(1.0);
@@ -214,14 +214,13 @@ const std::shared_ptr<JsonValue> LevelParser::parseFloor(const std::shared_ptr<J
     ans->appendChild("tiles", tiles);
     ans->appendValue("use-grid", false);
     ans->appendValue("layers", 3.0);
-    // TODO: abstract texture file name away
+    // TODO: abstract texture file name and size away
     ans->appendValue("texture", (std::string) "floor-new");
     std::shared_ptr<JsonValue> size = JsonValue::allocArray();
     // LITERAL
     size->appendValue(2.0);
     size->appendValue(2.0);
     ans->appendChild("size", size);
-    // CULog("%s", ans->toString().c_str());
     return ans;
 }
 
@@ -229,10 +228,10 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     std::shared_ptr<JsonValue> ans = JsonValue::allocObject();
     
     // single attributes
-    _width = json->get("width")->asInt();
-    _height = json->get("height")->asInt();
-    _tilewidth = json->get("tilewidth")->asInt();
-    _tileheight = json->get("tileheight")->asInt();
+    _width = json->getInt("width");
+    _height = json->getInt("height");
+    _tilewidth = json->getInt("tilewidth");
+    _tileheight = json->getInt("tileheight");
     ans->appendValue("width", 4.0 * _width);
     ans->appendValue("height", 2.0 * _height);
     ans->appendValue("view-width", 24.0f);
@@ -251,8 +250,6 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     
 //    std::shared_ptr<JsonValue> boundaries = LevelParser::parseBoundaries(layers);
 //    ans->appendChild("enemies", boundaries);
-    
-//    CULog("%s", ans->toString().c_str());
     
     return ans;
 }

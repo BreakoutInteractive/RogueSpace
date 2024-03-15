@@ -169,16 +169,10 @@ void LevelModel::showDebug(bool flag) {
  * @return true if successfully loaded the asset from a file
  */
 bool LevelModel::preload(const std::string file) {
-	std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
-    tempData = reader->readJson(); // store the original needed data
-    
     LevelParser ls = LevelParser();
-//    CULog(file.c_str());
     std::shared_ptr<JsonValue> newParse = ls.preload("json/test_room.json");
     CULog(newParse->toString().c_str());
     return preload(newParse);
-//    preload(newParse);
-//	return preload(reader->readJson());
 }
 
 /**
@@ -227,7 +221,6 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 //		return false;
 //	}
     
-    // auto enemiesJson = tempData->get("enemies");
     auto enemiesJson = json->get("enemies");
     if (enemiesJson != nullptr){
         loadEnemies(enemiesJson);
