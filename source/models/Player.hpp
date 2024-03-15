@@ -343,7 +343,7 @@ public:
     * Method to call when player is hit by an attack
     * @param atkDir the normal vector of the direction of the attack that hit the player
     */
-    void hit(cugl::Vec2 atkDir);
+    void hit(cugl::Vec2 atkDir, int damage = 1);
     
     // INHERITED
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;

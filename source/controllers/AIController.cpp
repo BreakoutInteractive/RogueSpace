@@ -77,7 +77,7 @@ void AIController::update(float dt) {
             Vec2 intersection = lineOfSight((*it), _player);
             // enemies should follow the player if they see them
             if (!intersection.isZero()) {
-                CULog("Player spotted!");
+                //CULog("Player spotted!");
                 (*it)->setGoal(intersection);
                 Vec2 dir = intersection - (*it)->getPosition();
                 dir.normalize();

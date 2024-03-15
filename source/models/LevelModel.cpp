@@ -5,6 +5,7 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
 
@@ -90,11 +91,14 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         //    _atk->getAngle() + M_PI_2, _atk->getPosition() * _scale);
     }
     
+    
     // make sure debug node is hidden when not active
     _atk->getDebugNode()->setVisible(_atk->isEnabled());
     
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
+        _enemies[ii]->getCollider()->getDebugNode()->setVisible(_enemies[ii]->isEnabled());
+        _enemies[ii]->getColliderShadow()->getDebugNode()->setVisible(_enemies[ii]->isEnabled());
     }
 
 }
@@ -110,10 +114,10 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 	if (_debugNode != nullptr) {
 		clearDebugNode();
 	}
-
+    
 	_debugNode = scene2::SceneNode::alloc();
-	_scale.set(node->getContentSize().width/_viewBounds.width,
-             node->getContentSize().height/_viewBounds.height);
+	//_scale.set(node->getContentSize().width/_viewBounds.width,
+             //node->getContentSize().height/_viewBounds.height);
 
     _debugNode->setScale(_scale); // Debug node draws in PHYSICS coordinates
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -133,7 +137,7 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _enemies[ii]->getAttack()->setDebugScene(_debugNode);
         _enemies[ii]->getAttack()->setDebugColor(Color4::RED);
         _enemies[ii]->getColliderShadow()->setDebugScene(_debugNode);
-        _enemies[ii]->getColliderShadow()->setDebugColor(Color4::RED);
+        _enemies[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
@@ -175,8 +179,13 @@ void LevelModel::showDebug(bool flag) {
  * @return true if successfully loaded the asset from a file
  */
 bool LevelModel::preload(const std::string file) {
-	std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
-	return preload(reader->readJson());
+    LevelParser ls = LevelParser();
+    std::shared_ptr<JsonValue> newParse = ls.preload("json/test_room.json");
+//    CULog(newParse->toString().c_str());
+    
+    std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
+    tempJSON = reader->readJson();
+    return preload(newParse);
 }
 
 /**
@@ -213,17 +222,17 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         return false;
     }
 
-	auto walls = json->get(WALLS_FIELD);
-	if (walls != nullptr) {
-		// Convert the object to an array so we can see keys and values
-		int wsize = (int)walls->size();
-		for(int ii = 0; ii < wsize; ii++) {
-			loadWall(walls->get(ii));
-		}
-	} else {
-		CUAssertLog(false, "Failed to load walls");
-		return false;
-	}
+//	auto walls = json->get(WALLS_FIELD);
+//	if (walls != nullptr) {
+//		// Convert the object to an array so we can see keys and values
+//		int wsize = (int)walls->size();
+//		for(int ii = 0; ii < wsize; ii++) {
+//			loadWall(walls->get(ii));
+//		}
+//	} else {
+//		CUAssertLog(false, "Failed to load walls");
+//		return false;
+//	}
     
     auto enemiesJson = json->get("enemies");
     if (enemiesJson != nullptr){
@@ -247,9 +256,9 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         
         _dynamicObjects.push_back(_enemies[ii]); // add the enemies to sorting layer
     }
-    for (int ii = 0; ii < _walls.size(); ii++){
-        addObstacle(_walls[ii]);
-    }
+//    for (int ii = 0; ii < _walls.size(); ii++){
+//        addObstacle(_walls[ii]);
+//    }
     
     // load visuals (floor)
     auto floor = json->get("floor");
@@ -399,19 +408,22 @@ bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
     bool useGrid = json->get("use-grid")->asBool();
     if (!useGrid){
         // load all tiles as given
-        auto tilesData = json->get("tiles");
-        int count = (int)tilesData->size();
-
-        for(int ii = 0; ii < count; ii++) {
-            auto tileData = tilesData->get(ii);
-            auto posData = tileData->get(POSITION_FIELD);
-            Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
-            auto tile = Tile::alloc(pos, textureName);
-            tiles.emplace_back(tile);
+        
+        std::string layers[] = {"bottom-right", "bottom-left", "floor"};
+        for (int i = 0; i < json->get("layers")->asInt(); i++) {
+            // TODO: convert information about the layer kind into
+            std::shared_ptr<JsonValue> layerData = json->get("tiles")->get(layers[i]);
+            for (int j = 0; j < (int) layerData->get("size")->asInt(); j++) {
+                std::vector<float> posData = layerData->get("tiles")->get(j)->asFloatArray();
+                Vec2 pos(posData[0], posData[1]);
+                auto tile = Tile::alloc(pos, textureName, layers[i]);
+                tiles.emplace_back(tile);
+            }
         }
     }
     else {
         // generate grid of tiles automatically
+        // deprecated?
         auto grid = json->get("grid");
         auto startData = grid->get("start");
         Vec2 startPos(startData->get(0)->asFloat(), startData->get(1)->asFloat());
@@ -422,7 +434,7 @@ bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
             Vec2 firstTilePos = startPos + Vec2(size.x / 2 * i, -size.y / 4 * i );
             for (int j = 0; j < cols; j++){
                 Vec2 pos = firstTilePos - Vec2(size.x / 2 * j, size.y/4 * j);
-                auto tile = Tile::alloc(pos, textureName);
+                auto tile = Tile::alloc(pos, textureName, "");
                 tiles.emplace_back(tile);
             }
         }

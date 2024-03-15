@@ -79,6 +79,9 @@ protected:
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
+    
+    // TODO: to be deleted with full Tiled integration
+    std::shared_ptr<JsonValue> tempJSON;
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
     std::shared_ptr<Animation> _playerAttack;

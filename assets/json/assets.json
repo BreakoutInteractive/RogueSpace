@@ -8,6 +8,9 @@
         "floor": {
             "file":     "textures/iso_floor_tile.png"
         },
+        "floor-new": {
+            "file":     "textures/tiles_test.png"
+        },
         "background": {
             "file":     "textures/space_background.png"
         },
