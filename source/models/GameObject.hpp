@@ -165,7 +165,7 @@ public:
     {
         Vec2 p2 = other.getPosition();
         Vec2 p1 = getPosition();
-        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x <= p2.x));
+        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x < p2.x));
     }
 
 };
