@@ -13,6 +13,7 @@ Animation::Animation(std::shared_ptr<cugl::SpriteSheet> filmStrip, float duratio
     _looping = looping;
     _elapsed = 0;
     _started = false;
+    _stop = false;
     _startIndex = startIndex;
     _endIndex = endIndex;
     _frameCount = _endIndex - _startIndex + 1;
