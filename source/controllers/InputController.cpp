@@ -397,48 +397,48 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     
     
     // TODO: this is temporary setting on screen
-    if (_settingsGesture.active && event.touch == _settingsGesture.touchID){
-        _settingsGesture.active = false;
-        Vec2 gestureMotion = event.position - _settingsGesture.initialPos;
-        float changeInPosition = gestureMotion.length();
-        auto elapsed = event.timestamp.ellapsedMillis(_settingsGesture.timestamp);
+    // if (_settingsGesture.active && event.touch == _settingsGesture.touchID){
+    //     _settingsGesture.active = false;
+    //     Vec2 gestureMotion = event.position - _settingsGesture.initialPos;
+    //     float changeInPosition = gestureMotion.length();
+    //     auto elapsed = event.timestamp.ellapsedMillis(_settingsGesture.timestamp);
         
-        if (changeInPosition >= EVENT_SWIPE_LENGTH){
-            // this is a swipe up, change controls.
-            if (gestureMotion.y < 0){
-                scheme = (scheme == ControlOption::UNIFIED) ? ControlOption::OMNIDIRECTIONAL : ControlOption::UNIFIED;
-            }
-            else if (gestureMotion.y > 0){
-                _keyDebug = true;
-            }
-            else if (gestureMotion.x > EVENT_SWIPE_LENGTH/2){
-                _keyReset = true;
-            }
-        }
-        bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition <= 20;
-        TapData& tap = _settingsGesture.tap;
-        if (is_tap_event){
-            if (tap.expired){
-                // first tap, so we should renew the data so to anticipate a second tap.
-                tap.expired = false;
-                tap.timestamp = event.timestamp;
-                tap.pos = _settingsGesture.initialPos;
-            }
-            else {
-                // second tap, check the difference in time
-                auto curStartTime = _settingsGesture.timestamp;
-                auto prevEndTime = tap.timestamp;
-                auto timeDiff = curStartTime.ellapsedMillis(prevEndTime);
-                if (timeDiff <= DOUBLE_TAP_TIME_GAP){
-                    reversedGestures = !reversedGestures; // double tap performed
-                }
-                tap.expired = true; // clear the tap data.
-            }
-        }
-        else { 
-            tap.expired = true; // clear the tap data.
-        }
-    }
+    //     if (changeInPosition >= EVENT_SWIPE_LENGTH){
+    //         // this is a swipe up, change controls.
+    //         if (gestureMotion.y < 0){
+    //             scheme = (scheme == ControlOption::UNIFIED) ? ControlOption::OMNIDIRECTIONAL : ControlOption::UNIFIED;
+    //         }
+    //         else if (gestureMotion.y > 0){
+    //             _keyDebug = true;
+    //         }
+    //         else if (gestureMotion.x > EVENT_SWIPE_LENGTH/2){
+    //             _keyReset = true;
+    //         }
+    //     }
+    //     bool is_tap_event = elapsed <= HOLD_TIME && changeInPosition <= 20;
+    //     TapData& tap = _settingsGesture.tap;
+    //     if (is_tap_event){
+    //         if (tap.expired){
+    //             // first tap, so we should renew the data so to anticipate a second tap.
+    //             tap.expired = false;
+    //             tap.timestamp = event.timestamp;
+    //             tap.pos = _settingsGesture.initialPos;
+    //         }
+    //         else {
+    //             // second tap, check the difference in time
+    //             auto curStartTime = _settingsGesture.timestamp;
+    //             auto prevEndTime = tap.timestamp;
+    //             auto timeDiff = curStartTime.ellapsedMillis(prevEndTime);
+    //             if (timeDiff <= DOUBLE_TAP_TIME_GAP){
+    //                 reversedGestures = !reversedGestures; // double tap performed
+    //             }
+    //             tap.expired = true; // clear the tap data.
+    //         }
+    //     }
+    //     else { 
+    //         tap.expired = true; // clear the tap data.
+    //     }
+    // }
 }
 
 void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 previous, bool focus) {
