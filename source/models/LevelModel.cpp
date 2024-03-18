@@ -8,13 +8,10 @@
 #include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
+#include "GameConstants.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
-
-//the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player
-//this is how sweeping melee attacks work in Hades
-#define ATK_RADIUS 4.0f
 
 /**
 * Creates a new, empty level.
@@ -77,7 +74,7 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
         if (enemyAtk->isEnabled()) {
             auto sheet = _enemies[ii]->getHitboxAnimation()->getSpriteSheet();
-            Affine2 atkTrans = Affine2::createScale(ATK_RADIUS / ((Vec2)sheet->getFrameSize() / 2) * _scale);
+            Affine2 atkTrans = Affine2::createScale( GameConstants::ENEMY_MELEE_ATK_RANGE/ ((Vec2)sheet->getFrameSize() / 2) * _scale);
             atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
             atkTrans.translate(enemyAtk->getPosition() * _scale);
             sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
@@ -89,7 +86,7 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     if (_playerAttack->isActive()){
         auto sheet = _playerAttack->getSpriteSheet();
-        Affine2 atkTrans = Affine2::createScale(ATK_RADIUS / ((Vec2)sheet->getFrameSize() / 2) * _scale);
+        Affine2 atkTrans = Affine2::createScale(GameConstants::PLAYER_MELEE_ATK_RANGE / ((Vec2)sheet->getFrameSize() / 2) * _scale);
         //we subtract pi/2 from the angle since the animation is pointing up but the hitbox points right by default
         atkTrans.rotate(_atk->getAngle() - M_PI_2);
         atkTrans.translate(_atk->getPosition() * _scale);
@@ -345,7 +342,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
     }
 
     //setup the attack for collision detection
-	_atk = physics2::WheelObstacle::alloc(pos, ATK_RADIUS);
+	_atk = physics2::WheelObstacle::alloc(pos, GameConstants::PLAYER_MELEE_ATK_RANGE);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);
     b2Filter filter;
@@ -395,7 +392,7 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         
         // attack setup
         b2Filter filter;
-        auto attack = physics2::WheelObstacle::alloc(pos, ATK_RADIUS); //for now enemies have same attack radius as player
+        auto attack = physics2::WheelObstacle::alloc(pos, GameConstants::ENEMY_MELEE_ATK_RANGE);
         attack->setSensor(true);
         attack->setBodyType(b2_dynamicBody);
         // this is an attack

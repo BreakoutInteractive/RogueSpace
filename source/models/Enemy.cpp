@@ -8,23 +8,9 @@
 #include "Enemy.hpp"
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
+#include "GameConstants.hpp"
 
 using namespace cugl;
-
-// should be at least the player's attack time so that it can't get hit twice by the same attack
-#define HIT_TIME 16
-/**the number of frames we wait before allowing another attack*/
-#define ATK_CD 120
-/**the number of frames an enemy will be stunned*/
-#define STUN_CD 60
-/**the number of frames a sentry will wait before rotating**/
-#define SENTRY_CD 120
-/**the sight range of an enemy**/
-#define SIGHT_RANGE 8
-/**the attack range of an enemy**/
-#define ATK_RANGE 4
-/**the default movement speed for an enemy**/
-#define MOVE_SPEED 2
 
 #pragma mark -
 #pragma mark Constructors
@@ -52,13 +38,13 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
     
-    _sightRange = SIGHT_RANGE; // TODO: factor this into JSON constants
-    _attackRange = ATK_RANGE;
-    _moveSpeed = MOVE_SPEED;
-    _hitCounter.setMaxCount(HIT_TIME);
-    _atkCD.setMaxCount(ATK_CD);
-    _stunCD.setMaxCount(STUN_CD);
-    _sentryCD.setMaxCount(SENTRY_CD);
+    _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
+    _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
+    _moveSpeed = GameConstants::ENEMY_MOVE_SPEED;
+    _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
+    _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
+    _stunCD.setMaxCount(GameConstants::ENEMY_STUN_COOLDOWN);
+    _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down

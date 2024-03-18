@@ -10,20 +10,8 @@
 #include "Player.hpp"
 #include "CollisionConstants.hpp"
 #include "GameObject.hpp"
+#include "GameConstants.hpp"
 #include "../components/Animation.hpp"
-
-//should be at least the enemy's attack time so that we can't get hit twice by the same attack
-#define HIT_TIME 16
-/**the number of frames we wait before allowing another attack, also currently the length of the attack*/
-#define ATK_CD 16
-/**the number of frames we wait before allowing another parry, also currently the length of the parry*/
-#define PARRY_CD 6
-/**the number of frames we wait before allowing another dodge*/
-#define DODGE_CD 60
-
-#define DODGE_DURATION 10
-
-#define MAX_HP 3
 
 using namespace cugl;
 
@@ -56,13 +44,12 @@ bool Player::init(const Vec2 pos, const Size size) {
     _colliderShadow = boxShadow; // attach Component
     
     // set the counter properties
-    _hitCounter.setMaxCount(HIT_TIME);
-    _atkCD.setMaxCount(ATK_CD);
-    _parryCD.setMaxCount(PARRY_CD);
-    _dodgeCD.setMaxCount(DODGE_CD);
-    _dodgeDuration.setMaxCount(DODGE_DURATION);
-    _hp = 3;
-    _hitCounter.setMaxCount(HIT_TIME);
+    _hitCounter.setMaxCount(GameConstants::PLAYER_IFRAME);
+    _atkCD.setMaxCount(GameConstants::PLAYER_ATTACK_COOLDOWN);
+    _parryCD.setMaxCount(GameConstants::PLAYER_PARRY_COOLDOWN);
+    _dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
+    _dodgeDuration.setMaxCount(GameConstants::PLAYER_DODGE_DURATION);
+    _hp = GameConstants::PLAYER_MAX_HP;
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -92,7 +79,7 @@ void Player::dispose() {
 #pragma mark Properties
 
 int Player::getMaxHP(){
-    return MAX_HP;
+    return GameConstants::PLAYER_MAX_HP;
 }
 
 #pragma mark -
