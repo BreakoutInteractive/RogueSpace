@@ -40,15 +40,15 @@ private:
      * When a tap is finished, the data can be saved to denote whether the next tap initiates a double tap, triple tap, etc.
      */
     struct TapData {
-        /** whether the tap event is no longer valid*/
-        bool expired = true;
-        /** the position of the tap */
+        /** the number of valid taps associated with a given touch*/
+        int count = 0;
+        /** the position of the last tap */
         Vec2 pos;
-        /** the time when the tap was completed */
+        /** the time when the last tap was completed */
         Timestamp timestamp;
         
         std::string toString() const {
-            return (expired ? "true " : "false ") + pos.toString() + " ";
+            return ("taps " + std::to_string(count)) + pos.toString() + " ";
         }
     };
     
@@ -69,7 +69,7 @@ private:
         Timestamp timestamp;
         /** the identifier of this touch event */
         TouchID touchID;
-        /** the data associated with this gesture's tap */
+        /** the data associated with this gesture's tap motion */
         TapData tap;
     };
     
@@ -77,16 +77,6 @@ private:
      * initialize gesture data based on event timestamp, position, id, etc.
      */
     void initGestureDataFromEvent(GestureData& data, const TouchEvent& event);
-    
-    /**
-     * reads release gesture assuming control scheme uses unified direction
-     */
-    void readEndGestureUnified(GestureData& _motionGesture, GestureData& _combatGesture, const TouchEvent& event);
-    
-    /**
-     * reads release gesture assuming control scheme uses omnidirectional controls
-     */
-    void readEndGestureOminidirectional(GestureData& _motionGesture, GestureData& _combatGesture, const TouchEvent& event);
     
 #pragma mark -
 #pragma mark Touch Callbacks
@@ -122,7 +112,6 @@ private:
     
     /** Whether or not this input is active */
     bool _active;
-    // KEYBOARD EMULATION
     /** Whether the dodge  key is down */
     bool  _keyDodge;
     /** Whether the parry key is down */
@@ -135,8 +124,6 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
-    /** whether the weapon swap key is down*/
-    bool _keySwap;
     /** a vector cache representing the intended direction of movement*/
     Vec2 _keyMoveDir;
     /** a vector cache representing the intended direction of dodge*/
@@ -154,11 +141,7 @@ private:
     /** gesture data for controlling combat */
     GestureData _combatGesture;
     
-    // TODO: this is temporary, subject to removal (used to toggle between settings)
-    /** gesture data for quick settings */
-    GestureData _settingsGesture;
-    
-    /** whether the  gestures have positions swapped. */
+    /** whether the gestures have positions swapped. */
     bool reversedGestures;
 
 protected:
@@ -167,14 +150,20 @@ protected:
 #pragma mark Input Scheme
     
     enum class ControlOption : int {
-        /** all directions sync with the direction the player is facing */
-        UNIFIED = 0,
-        /** movement direction does not matter */
-        OMNIDIRECTIONAL = 1
+        HOLD_PARRY = 0,
+        DOUBLE_TAP_PARRY = 1
+    };
+    
+    enum class Mode : int {
+        MELEE = 0,
+        RANGE = 1
     };
     
     /** the control set that the controller is offering */
-    ControlOption scheme = ControlOption::UNIFIED;
+    ControlOption scheme = ControlOption::DOUBLE_TAP_PARRY;
+    
+    /** the current control mode of the controller */
+    Mode mode = Mode::MELEE;
     
 #pragma mark -
 #pragma mark Input Results (Abstraction Layer)
@@ -191,8 +180,6 @@ protected:
     bool _attackPressed;
     /** Whether the parry action was chosen */
     bool _parryPressed;
-    /** Whether the weapon swap action was chosen*/
-    bool _swapPressed;
     /** unit direction of the attack*/
     Vec2 _attackDir;
     /** unit vector direction of movement */
@@ -300,11 +287,6 @@ public:
      * The returned value can be anything in the event that `didAttack` is false.
      */
     Vec2 getAttackDirection(Vec2 facingDir);
-    
-    /**
-     * @return true if the weapon swap input was triggered
-     */
-    bool didSwap() const {return _swapPressed; }
     
     /**
      * Returns true if the reset button was pressed.
