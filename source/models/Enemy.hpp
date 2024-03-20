@@ -56,8 +56,14 @@ protected:
     /** Enemy's sight range */
     float _sightRange;
     
+    /** Enemy's proximity range */
+    float _proximityRange;
+    
     /** Whether this enemy can currently see the player */
     bool _playerInSight;
+    
+    /** The player's last seen location */
+    cugl::Vec2 _playerLoc;
     
     /** Enemy's attack range */
     float _attackRange;
@@ -79,6 +85,9 @@ protected:
     
     /** The enemy's default state */
     std::string _defaultState;
+    
+    /** Whether the enemy is currently in its default state */
+    bool _isDefault;
     
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
@@ -181,6 +190,26 @@ public:
      * @return the force applied to this player.
      */
     const float getSightRange() const { return _sightRange; }
+    
+    /**
+     * Returns the proximity range applied to this enemy.
+     *
+     * Remember to modify the input values by the thrust amount before assigning
+     * the value to force.
+     *
+     * @return the force applied to this player.
+     */
+    const float getProximityRange() const { return _proximityRange; }
+    
+    /**
+     * Returns this enemy's last known location of the player.
+     */
+    const cugl::Vec2 getPlayerLoc() const { return _playerLoc; }
+    
+    /**
+     * Sets this enemy's last known location of the player.
+     */
+    void setPlayerLoc(cugl::Vec2 value) { _playerLoc = value; }
     
     /**
      * Returns the attack range applied to this enemy.
@@ -286,6 +315,16 @@ public:
      * Sets this enemy's default state.
      */
     void setDefaultState(std::string value) { _defaultState = value; }
+    
+    /**
+     * Gets whether this enemy is in its default state
+     */
+    bool isDefault() const { return _isDefault; }
+    
+    /**
+     * Sets whether this enemy is in its default state
+     */
+    void setDefault(bool value) { _isDefault = value; }
     
     /**
      * Gets this enemy's patrol path.

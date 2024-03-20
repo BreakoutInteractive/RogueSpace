@@ -30,6 +30,8 @@ public:
     static int ENEMY_SENTRY_COOLDOWN;
     /**the sight range of an enemy**/
     static float ENEMY_SIGHT_RANGE;
+    /** the proximity range of an enemy*/
+    static float ENEMY_PROXIMITY_RANGE;
     /**the melee attack range of an enemy**/
     static float ENEMY_MELEE_ATK_RANGE;
     /**the default movement speed for an enemy**/

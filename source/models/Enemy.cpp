@@ -38,7 +38,10 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
     
+    _isDefault = true;
+    _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
+    _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
     _moveSpeed = GameConstants::ENEMY_MOVE_SPEED;
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
