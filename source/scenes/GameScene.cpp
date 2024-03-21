@@ -251,6 +251,12 @@ void GameScene::preUpdate(float dt) {
     auto _dodgeCD = player->_dodgeCD.getCount();
     
 #ifdef CU_TOUCH_SCREEN
+    if(_input.isRangeCombatActive()){
+        _gameRenderer.getJoyStick()->tint.set(Color4::RED);
+    }
+    else {
+        _gameRenderer.getJoyStick()->tint.set(Color4::WHITE);
+    }
     if(_input.isMotionActive()){
         _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
     }
@@ -267,7 +273,7 @@ void GameScene::preUpdate(float dt) {
     
 
     //only move fast if we're not parrying or dodging
-    if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+    if (_parryCD == 0 && _atkCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(moveForce * 5); //TODO: use json data
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);

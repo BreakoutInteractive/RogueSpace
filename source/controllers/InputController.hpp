@@ -71,6 +71,8 @@ private:
         TouchID touchID;
         /** the data associated with this gesture's tap motion */
         TapData tap;
+        /** Whether the current touch ever moved (drastically) from initial position*/
+        bool touchMoved;
     };
     
     /**
@@ -309,6 +311,8 @@ public:
      */
     bool didExit() const { return _exitPressed; }
     
+#pragma mark -
+#pragma mark Input Results (Mobile Only)
     /**
      * @return whether there is touch event associated with the motion gesture
      */
@@ -318,14 +322,18 @@ public:
      * The returned value can be anything in the event that `isMotionActive` is false.
      * @return the starting location of the touch event associated with the motion gesture
      */
-    Vec2 getInitTouchLocation(){ return _motionGesture.initialPos;}
+    Vec2 getInitTouchLocation() const { return _motionGesture.initialPos;}
     
     /**
      * The returned value can be anything in the event that `isMotionActive` is false.
      * @return the current location of the touch event associated with the motion gesture
      */
-    Vec2 getTouchLocation(){return _motionGesture.curPos; }
+    Vec2 getTouchLocation() const {return _motionGesture.curPos; }
     
+    /**
+     * @return whether the ranged attack is initiating
+     */
+    bool isRangeCombatActive() const { return mode == Mode::RANGE && _combatGesture.active && !_combatGesture.touchMoved; }
 
 };
 

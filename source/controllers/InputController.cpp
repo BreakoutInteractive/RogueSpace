@@ -11,22 +11,22 @@ using namespace cugl;
 /** The key for exitting the game */
 #define EXIT_KEY  KeyCode::ESCAPE
 
-/** How far we must swipe in any direction for a dodge gesture i*/
-#define DODGE_SWIPE_LENGTH 175
-/** How far we must swipe in any direction for a movement gesture i*/
-#define MOVE_SWIPE_LENGTH 100
-/** the minimum amount of milliseconds for a press to be considered a hold*/
-#define HOLD_TIME 300
-/** the maximum change in position for a hold to not be considered a drag/swipe*/
-#define HOLD_IN_PLACE_CONSTRAINT 50
-/** the maximum number of milliseconds for a tap to be considered */
-#define TAP_TIME 150
+/** How far we must swipe (in pixels) in any direction for a dodge gesture*/
+const int DODGE_SWIPE_LENGTH = 175;
 /** the maximum amount of milliseconds for a motion swipe to be considered a dodge*/
-#define DODGE_SWIPE_TIME 200
-/** horizontal constraint for a swipe to qualify for upwards or downwards */
-#define VSWIPE_HORIZONTAL_DIFF 250
+const int DODGE_SWIPE_TIME = 75;
+/** How far we must swipe in any direction for a movement gesture i*/
+const int MOVE_SWIPE_LENGTH = 100;
+/** the minimum amount of milliseconds for a press to be considered a hold*/
+const u_long HOLD_TIME = 300;
+/** the maximum change in position for a hold to not be considered a drag/swipe*/
+const int HOLD_POS_DELTA = 50;
+/** the maximum number of milliseconds for a tap to be considered */
+const u_long TAP_TIME = 150;
 /** the maximum amount of milliseconds between the end of the first tap and the start of the second tap*/
-#define DOUBLE_TAP_TIME_GAP 200
+const u_long DOUBLE_TAP_TIME_GAP = 200;
+/** the distance needed to pull the joystick backwards to fire the projectile */
+const float DRAG_DISTANCE = 100;
 
 
 #pragma mark -
@@ -247,6 +247,7 @@ void InputController::initGestureDataFromEvent(GestureData& data, const cugl::To
     data.curPos = event.position;
     data.initialPos = data.curPos;
     data.touchID = event.touch;
+    data.touchMoved = false;
     
     // if previous tap is active but the start of this touch is too far apart from the end of the first tap, clear the previous tap.
     // if we do not do this, then tap orders such as 1-tap 1-tap 2-tap will not be read
@@ -286,6 +287,7 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         Vec2 swipeDir = touchPos - _combatGesture.initialPos;
         float changeInPosition = swipeDir.length();
         auto elapsed = event.timestamp.ellapsedMillis(_combatGesture.timestamp);
+        // CULog("%llu, %f", elapsed, changeInPosition);
         
         // DODGE: swipe in any direction
         if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME){
@@ -293,15 +295,14 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
             _keyDodge = true;
         }
         
-        // ATTACK: quick tap
-        // CULog("%llu, %f", elapsed, changeInPosition);
-        if (elapsed <= TAP_TIME && changeInPosition <= HOLD_IN_PLACE_CONSTRAINT){
+        // MELEE ATTACK: quick tap
+        if (mode == Mode::MELEE && elapsed <= TAP_TIME && changeInPosition <= HOLD_POS_DELTA && !_combatGesture.touchMoved){
             _keyAttack = true;
         }
         
         // PARRY (hold option)
         if (scheme == ControlOption::HOLD_PARRY){
-            if (changeInPosition < HOLD_IN_PLACE_CONSTRAINT && elapsed >= HOLD_TIME){
+            if (mode == Mode::MELEE && changeInPosition < HOLD_POS_DELTA && elapsed >= HOLD_TIME && !_combatGesture.touchMoved){
                 _keyParry = true;
             }
         }
@@ -312,10 +313,11 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         Vec2 swipeDir = touchPos - _motionGesture.initialPos;
         float changeInPosition = swipeDir.length();
         auto elapsed = event.timestamp.ellapsedMillis(_motionGesture.timestamp);
+        
         // PARRY (double tap option)
         if (scheme == ControlOption::DOUBLE_TAP_PARRY){
-            TapData& tap = _motionGesture.tap;
-            if (elapsed <= TAP_TIME && changeInPosition <= HOLD_IN_PLACE_CONSTRAINT){
+            if (elapsed <= TAP_TIME && changeInPosition <= HOLD_POS_DELTA){
+                TapData& tap = _motionGesture.tap;
                 if (tap.count == 0){
                     tap.timestamp = event.timestamp;
                     tap.pos = _motionGesture.initialPos;
@@ -323,14 +325,27 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
                 }
                 else {
                     // second tap, check the difference in time
+                    // check difference in position between second tap and first tap
                     auto curStartTime = _motionGesture.timestamp;
                     auto prevEndTime = tap.timestamp;
+                    auto curStartPos = _motionGesture.curPos;
+                    auto prevStartPos = tap.pos;
                     auto timeDiff = curStartTime.ellapsedMillis(prevEndTime);
-                    if (timeDiff <= DOUBLE_TAP_TIME_GAP){
+                    auto posDiff = (curStartPos - prevStartPos).length();
+                    // CULog("DTAP data: %llu, %f", timeDiff, posDiff);
+                    if (timeDiff <= DOUBLE_TAP_TIME_GAP && posDiff <= HOLD_POS_DELTA){
                         _keyParry = true;
                     }
                     tap.count = 0; // clear the tap data (it is now processed)
                 }
+            }
+        }
+        
+        // FIRE (SHOOTING MODE)
+        if (mode == Mode::RANGE && _combatGesture.active && !_combatGesture.touchMoved){
+            if (changeInPosition >= DRAG_DISTANCE){
+                _keyAttackDir.set(-swipeDir.x, swipeDir.y); // the signs are correct
+                _keyAttack = true;
             }
         }
         
@@ -345,6 +360,18 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         return;;
     }
     Vec2 touchPos = event.position;
+    
+    // check if we ever moved the combat touch (this disables all attacks)
+    if (_combatGesture.active && _combatGesture.touchID == event.touch
+        && !_combatGesture.touchMoved){
+        Vec2 swipeDir = touchPos - _combatGesture.initialPos;
+        float changeInPosition = swipeDir.length();
+        auto elapsed = event.timestamp.ellapsedMillis(_combatGesture.timestamp);
+        if (changeInPosition > HOLD_POS_DELTA){
+            _combatGesture.touchMoved = true;
+        }
+    }
+    
     
     if (_motionGesture.active && _motionGesture.touchID == event.touch){
         _motionGesture.prevPos = previous;

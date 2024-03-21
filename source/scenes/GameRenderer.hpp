@@ -122,6 +122,8 @@ public:
      */
     void setJoystickVisible(bool visible) { _joystick->setActive(visible);}
     
+    std::shared_ptr<JoyStick> getJoyStick(){ return _joystick; }
+    
     /**
      * sets whether or not this HUD scene is activated.
      */

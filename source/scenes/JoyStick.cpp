@@ -105,10 +105,10 @@ void JoyStick::draw(const std::shared_ptr<SpriteBatch>& batch) {
         Affine2 transBall;
         transBall.scale(Vec2(_drawBaseScale));
         transBall.translate(_joyBall->position);
-            
-        batch->draw(_ballTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), ballOrigin, transBall);
-        batch->draw(_baseTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), baseOrigin, transBase);
         
+        tint.a = 255 * 0.5f * _time / HOLD_TIME;
+        batch->draw(_ballTexture, tint, ballOrigin, transBall);
+        batch->draw(_baseTexture, tint, baseOrigin, transBase);
         if(_time<HOLD_TIME){
             _time+=1;
         }

@@ -64,6 +64,8 @@ private:
 #pragma mark The Base
 public:
     
+    cugl::Color4 tint = cugl::Color4::WHITE;
+    
     JoyStick();
     
     JoyStick(const cugl::Vec2 p, cugl::Vec2 scale);
