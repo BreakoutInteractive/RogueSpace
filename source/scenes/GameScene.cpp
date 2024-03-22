@@ -249,6 +249,19 @@ void GameScene::preUpdate(float dt) {
     auto _atkCD = player->_atkCD.getCount();
     auto _parryCD = player->_parryCD.getCount();
     auto _dodgeCD = player->_dodgeCD.getCount();
+        
+    if (_input.didUpgradeAtk()){
+        CULog("upgraded Attack");
+        player->upgradeAtkDamage();
+    }
+    if (_input.didUpgradeDefense()){
+        CULog("upgraded Defense");
+        player->upgradeDefense();
+    }
+    if (_input.didUpgradeMove()){
+        CULog("upgraded Movement");
+        player->upgradeMoveSpeed();
+    }
     
 #ifdef CU_TOUCH_SCREEN
     if(_input.isMotionActive()){
@@ -268,7 +281,7 @@ void GameScene::preUpdate(float dt) {
 
     //only move fast if we're not parrying or dodging
     if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        player->getCollider()->setLinearVelocity(moveForce * 5); //TODO: use json data
+        player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale()); //TODO: use json data
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
