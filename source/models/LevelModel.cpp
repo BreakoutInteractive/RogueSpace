@@ -381,7 +381,6 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
 }
 
 bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
-    CULog(json->toString().c_str());
     std::vector<std::shared_ptr<JsonValue>> layers = json->children();
     for (int ii = 0; ii < layers.size(); ii++){
         auto tileArray = layers[ii]->children();
@@ -392,7 +391,6 @@ bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
         }
         _tileLayers.push_back(tileLayer);
     }
-    CULog("layer count %d", _tileLayers.size());
     return true;
 }
 

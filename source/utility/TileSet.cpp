@@ -5,22 +5,21 @@
 //  Created by Zhiyuan Chen on 3/20/24.
 //
 
-#define NAME            "name"
+#define IMAGE_KEY       "image"
 #define IMG_WIDTH       "imagewidth"
 #define IMG_HEIGHT      "imageheight"
-#define TILE_WIDTH       "tilewidth"
-#define TILE_HEIGHT      "tileheight"
+#define TILE_WIDTH      "tilewidth"
+#define TILE_HEIGHT     "tileheight"
 #define TILE_SPACING    "spacing"
 
+
 #include "Tileset.hpp"
+#include "Helper.hpp"
 
 Tileset::Tileset(std::shared_ptr<JsonValue> json){
-    if (json->has("image")){
-        auto name = json->getString(NAME);
-        CUAssertLog(name != "", "texture name must be given for proper rendering");
-        _imageProperties.name = name;
-        int iwidth = json->getInt(IMG_WIDTH);
-        int iheight = json->getInt(IMG_HEIGHT);
+    if (json->has(IMAGE_KEY)){
+        auto source = json->getString(IMAGE_KEY);
+        _imageProperties.name = Helper::fileName(Helper::baseName(source));
         int tileCount = json->getInt("tilecount");
         int columns = json->getInt("columns");;
         _imageProperties.tileWidth = json->getInt(TILE_WIDTH);

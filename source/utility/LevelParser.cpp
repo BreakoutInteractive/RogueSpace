@@ -11,6 +11,7 @@
 #include <cugl/io/CUJsonReader.h>
 #include <cugl/io/CUJsonWriter.h>
 #include "Tileset.hpp"
+#include "Helper.hpp"
 
 using namespace cugl;
 
@@ -29,9 +30,16 @@ void LevelParser::loadTilesets(const std::shared_ptr<AssetManager>& assets){
     // TODO: make the following into a loop, using a single json file to store all available tiled sets
     // 1. get the list of all Tiled tileset json files
     // 2. allocate Tileset objects
-    std::shared_ptr<JsonValue> tsJson = assets->get<JsonValue>("terrain");
-    
-    _sets[std::string("terrain") + ".json"] = std::make_shared<Tileset>(tsJson);
+    std::shared_ptr<JsonValue> loadedAssets = assets->get<JsonValue>("assets-tileset");
+    std::shared_ptr<JsonValue> loadedJsonTilesets = loadedAssets->get("jsons");
+    CUAssertLog(loadedJsonTilesets != nullptr, "<tilesetName>.json files not specified in correct loading file");
+    auto jsons = loadedJsonTilesets->children();
+    for (int ii = 0; ii < jsons.size(); ii++){
+        std::string name = jsons[ii]->key();
+        std::shared_ptr<JsonValue> tilesetJsonFile = assets->get<JsonValue>(name);
+        CUAssertLog(tilesetJsonFile != nullptr, "tileset json file not found");
+        _sets[name] = std::make_shared<Tileset>(tilesetJsonFile);
+    }
 }
 
 void LevelParser::parseTilesetDependency(std::shared_ptr<JsonValue> tilesets){
@@ -54,7 +62,7 @@ const std::pair<std::string, int> LevelParser::getTilesetNameFromID(int id){
         int firstGid = json->getInt(FIRSTGID);
         if (firstGid <= id){
             newId = id - firstGid;
-            name = baseName(json->getString("source"));
+            name = Helper::fileName(Helper::baseName(json->getString("source")));
         }
         else {
             break;
@@ -78,7 +86,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiledLayer(const std::shared_
             int idx = h * width + w;
             long gid = matrix[idx];
             if (gid != 0){
-                // bottom LEFT coordinates of tile
+                // bottom LEFT coordinates of tile (later adjusted so that we get the bottom CENTER)
                 float x,y;
                 if (h % 2 == 0){
                     x = w * _tileWidth;
@@ -90,9 +98,6 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiledLayer(const std::shared_
                 }
                 y = _mapHeight - y; // tile coordinates are inverted
                 // find the tile's corresponding tileset and retrieve texture information
-                if (gid > 100000){
-                    CULog("%ld", gid);
-                }
                 int tileId = (int)gid & 0xFFFFFFF;
                 auto [tilesetName, id] = getTilesetNameFromID(tileId);
                 std::shared_ptr<Tileset> ts = _sets.find(tilesetName)->second;

@@ -35,6 +35,7 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
+    _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
 
 
     Application::onStartup(); // this is required

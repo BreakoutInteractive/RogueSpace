@@ -63,9 +63,6 @@
                 "leftcap"    : [0,    0,  25, 25],
                 "rightcap"   : [321,  0, 344, 25]
             }
-        },
-        "terrain" : {
-            "file":      "textures/terrain.png"
         }
 	},
     "sounds": {
@@ -116,9 +113,9 @@
 			"size":     64
 		}
 	},
-    "jsons": {
+    "jsons":{
         "level1": "json/level.json",
-        "terrain": "json/tiled/terrain.json",
-        "example": "json/tiled/example_parse.json"
+        "example": "json/tiled/example_parse.json",
+        "assets-tileset": "json/assets-tileset.json"
     }
 }

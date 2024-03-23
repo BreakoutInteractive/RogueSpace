@@ -52,14 +52,6 @@ private:
     void parseTilesetDependency(std::shared_ptr<JsonValue> tilesets);
     
     /**
-     * @return name of file in a given filepath
-     */
-    std::string baseName(std::string const & path)
-    {
-      return path.substr(path.find_last_of("/\\") + 1);
-    }
-    
-    /**
      * find the tileset name for the given global identifier (with flags removed)
      * constructs the corresponding id in the tileset
      * @return the pair containing the name of the tileset (eg. example.json) and the index of the tile in the tileset
