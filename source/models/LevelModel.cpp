@@ -2,10 +2,9 @@
 #include "LevelModel.hpp"
 #include "LevelConstants.hpp"
 #include "JSWallModel.hpp"
-#include "Floor.hpp"
+#include "TileLayer.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
-#include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
 #include "GameConstants.hpp"
@@ -13,10 +12,12 @@
 #pragma mark -
 #pragma mark Static Constructors
 
+using namespace cugl;
+
 /**
 * Creates a new, empty level.
 */
-LevelModel::LevelModel(void) : Asset(),
+LevelModel::LevelModel(void):
 _world(nullptr),
 _debugNode(nullptr)
 {
@@ -43,11 +44,8 @@ void LevelModel::setDrawScale(Vec2 scale) {
     else {
         CUAssertLog(false, "Failed to set draw scale for player");
     }
-    if (_floor != nullptr) {
-        _floor->setDrawScale(scale);
-    }
-    else {
-        CUAssertLog(false, "Failed to set draw scale for floor");
+    for (int ii = 0; ii < _tileLayers.size(); ii++){
+        _tileLayers[ii]->setDrawScale(scale);
     }
     
     for (int ii = 0; ii < _enemies.size(); ii++){
@@ -56,7 +54,9 @@ void LevelModel::setDrawScale(Vec2 scale) {
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    _floor->draw(batch);
+    for (int ii = 0; ii < _tileLayers.size(); ii++){
+        _tileLayers[ii]->draw(batch);
+    }
     
     // sort elements to be drawn
     std::sort(_dynamicObjects.begin(), _dynamicObjects.end(),
@@ -152,7 +152,9 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _assets = assets;
     _player->loadAssets(assets);
-    _floor->loadAssets(assets);
+    for (int ii = 0; ii < _tileLayers.size(); ii++){
+        _tileLayers[ii]->loadAssets(assets);
+    }
 
     _attackAnimation = assets->get<Texture>("atk");
     std::shared_ptr<Texture> t = assets->get<Texture>("player-swipe");
@@ -176,46 +178,19 @@ void LevelModel::showDebug(bool flag) {
 
 
 #pragma mark -
-#pragma mark Asset Loading
-/**
- * Loads this game level from the source file
- *
- * This load method should NEVER access the AssetManager.  Assets are loaded in
- * parallel, not in sequence.  If an asset (like a game level) has references to
- * other assets, then these should be connected later, during scene initialization.
- *
- * @return true if successfully loaded the asset from a file
- */
-bool LevelModel::preload(const std::string file) {
-    LevelParser ls = LevelParser();
-    std::shared_ptr<JsonValue> newParse = ls.preload("json/test_room.json");
-//    CULog(newParse->toString().c_str());
-    
-    std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
-    tempJSON = reader->readJson();
-    return preload(newParse);
-}
+#pragma mark Level Loading
 
-/**
- * Loads this game level from the source file
- *
- * This load method should NEVER access the AssetManager.  Assets are loaded in
- * parallel, not in sequence.  If an asset (like a game level) has references to
- * other assets, then these should be connected later, during scene initialization.
- *
- * @return true if successfully loaded the asset from a file
- */
-bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
+bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<JsonValue> parsedJson) {
 	if (json == nullptr) {
 		CUAssertLog(false, "Failed to load level file");
 		return false;
 	}
 	// Initial geometry
-	float w = json->get(WIDTH_FIELD)->asFloat();
-	float h = json->get(HEIGHT_FIELD)->asFloat();
+	float w = parsedJson->get(WIDTH_FIELD)->asFloat();
+	float h = parsedJson->get(HEIGHT_FIELD)->asFloat();
 	_bounds.size.set(w, h);
-    float vw = json->get("view-width")->asFloat();
-    float vh = json->get("view-height")->asFloat();
+    float vw = parsedJson->get("view-width")->asFloat();
+    float vh = parsedJson->get("view-height")->asFloat();
     _viewBounds.set(vw, vh);
 
 	/** Create the physics world */
@@ -268,13 +243,13 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 //        addObstacle(_walls[ii]);
 //    }
     
-    // load visuals (floor)
-    auto floor = json->get("floor");
-    if (floor != nullptr){
-        loadFloor(floor);
+    // load tile layers
+    auto tileLayers = parsedJson->get("tiles");
+    if (tileLayers != nullptr){
+        loadTileLayers(tileLayers);
     }
     else {
-        CUAssertLog(false, "Failed to load floor tiles");
+        CUAssertLog(false, "Failed to find any tile layers");
         return false;
     }
     
@@ -297,15 +272,15 @@ void LevelModel::unload() {
 	_walls.clear();
     
     _player->removeObstaclesFromWorld(_world);
-    
     _player = nullptr;
-    _floor = nullptr;
+    
     if (_world != nullptr) {
         _world->clear();
         _world = nullptr;
     }
     
     _dynamicObjects.clear();
+    _tileLayers.clear();
 }
 
 
@@ -405,53 +380,20 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
     return true;
 }
 
-bool LevelModel::loadFloor(const std::shared_ptr<JsonValue> &json){
-    bool success = true;
-    auto sizeData = json->get(SIZE_FIELD);
-    success = success && sizeData->isArray();
-    Vec2 size(sizeData->get(0)->asFloat(), sizeData->get(1)->asFloat());
-    std::string textureName = json->getString(TEXTURE_FIELD);
-    std::vector<std::shared_ptr<Tile>> tiles;
-    
-    bool useGrid = json->get("use-grid")->asBool();
-    if (!useGrid){
-        // load all tiles as given
-        
-        std::string layers[] = {"bottom-right", "bottom-left", "floor"};
-        for (int i = 0; i < json->get("layers")->asInt(); i++) {
-            // TODO: convert information about the layer kind into
-            std::shared_ptr<JsonValue> layerData = json->get("tiles")->get(layers[i]);
-            for (int j = 0; j < (int) layerData->get("size")->asInt(); j++) {
-                std::vector<float> posData = layerData->get("tiles")->get(j)->asFloatArray();
-                Vec2 pos(posData[0], posData[1]);
-                auto tile = Tile::alloc(pos, textureName, layers[i]);
-                tiles.emplace_back(tile);
-            }
+bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
+    CULog(json->toString().c_str());
+    std::vector<std::shared_ptr<JsonValue>> layers = json->children();
+    for (int ii = 0; ii < layers.size(); ii++){
+        auto tileArray = layers[ii]->children();
+        std::shared_ptr<TileLayer> tileLayer = TileLayer::alloc();
+        for (int idx = 0; idx < tileArray.size(); idx++){
+            std::shared_ptr<Tile> tile = Tile::alloc(tileArray[idx]);
+            tileLayer->addTile(tile);
         }
+        _tileLayers.push_back(tileLayer);
     }
-    else {
-        // generate grid of tiles automatically
-        // deprecated?
-        auto grid = json->get("grid");
-        auto startData = grid->get("start");
-        Vec2 startPos(startData->get(0)->asFloat(), startData->get(1)->asFloat());
-        int rows = grid->get("rows")->asInt();
-        int cols = grid->get("columns")->asInt();
-        for (int i = 0; i < rows; i++){
-            // compute the first on row
-            Vec2 firstTilePos = startPos + Vec2(size.x / 2 * i, -size.y / 4 * i );
-            for (int j = 0; j < cols; j++){
-                Vec2 pos = firstTilePos - Vec2(size.x / 2 * j, size.y/4 * j);
-                auto tile = Tile::alloc(pos, textureName, "");
-                tiles.emplace_back(tile);
-            }
-        }
-    }
-    
-    _floor = Floor::alloc(size, tiles);
-    _floor->setDrawScale(_scale);
-    
-    return success;
+    CULog("layer count %d", _tileLayers.size());
+    return true;
 }
 
 

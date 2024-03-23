@@ -64,10 +64,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
+    _parser.loadTilesets(assets);
     
     _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
-    _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    auto parsed = _parser.parseTiled(assets->get<JsonValue>("example"));
+    _level = LevelModel::alloc(assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
     if (_level == nullptr) {
         CULog("Fail!");
         return false;
@@ -167,13 +169,16 @@ void GameScene::dispose() {
 }
 
 void GameScene::restart(){
-    _assets->unload<LevelModel>(LEVEL_ONE_KEY);
-
-    // Load a new level and quit update
-    _resetNode->setVisible(true);
-    _assets->load<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE); //TODO: reload current level in dynamic level loading
-    _AIController.init(_assets->get<LevelModel>(LEVEL_ONE_KEY));
-    _collisionController.setLevel(_assets->get<LevelModel>(LEVEL_ONE_KEY));
+    // reload the current level
+    auto parsed = _parser.parseTiled(_assets->get<JsonValue>("example"));
+    _level = LevelModel::alloc(_assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
+    _debugNode->removeAllChildren();
+    _level->setAssets(_assets);
+    _level->setDrawScale(Vec2(_scale, _scale));
+    _level->setDebugNode(_debugNode);
+    _AIController.init(_level);
+    _collisionController.setLevel(_level);
+    _gameRenderer.setGameElements(getCamera(), _level);
     setComplete(false);
     setDefeat(false);
 }
@@ -185,26 +190,6 @@ void GameScene::restart(){
 void GameScene::preUpdate(float dt) {
     if (_level == nullptr) {
         return;
-    }
-
-    // Check to see if new level loaded yet
-    if (_resetNode->isVisible()) {
-        if (_assets->complete()) {
-            _level = nullptr;
-      
-            // Access and initialize level
-            _level = _assets->get<LevelModel>(LEVEL_ONE_KEY); //TODO: dynamic level loading
-            _level->setAssets(_assets);
-            _level->setDrawScale(Vec2(_scale, _scale));
-            _level->setDebugNode(_debugNode); // Obtains ownership of debug node.
-            _level->showDebug(_debug);
-            _collisionController.setLevel(_level);
-            _gameRenderer.setGameElements(getCamera(), _level);
-            _resetNode->setVisible(false);
-        } else {
-            // Level is not loaded yet; refuse input
-            return;
-        }
     }
     
     _input.update(dt);

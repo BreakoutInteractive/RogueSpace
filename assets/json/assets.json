@@ -63,6 +63,9 @@
                 "leftcap"    : [0,    0,  25, 25],
                 "rightcap"   : [321,  0, 344, 25]
             }
+        },
+        "terrain" : {
+            "file":      "textures/terrain.png"
         }
 	},
     "sounds": {
@@ -112,5 +115,10 @@
 			"file":     "fonts/RetroGame.ttf",
 			"size":     64
 		}
-	}
+	},
+    "jsons": {
+        "level1": "json/level.json",
+        "terrain": "json/tiled/terrain.json",
+        "example": "json/tiled/example_parse.json"
+    }
 }
