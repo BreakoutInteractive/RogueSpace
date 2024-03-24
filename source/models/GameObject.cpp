@@ -58,7 +58,6 @@ void GameObject::syncPositions(){
     if (_outlineSensor != nullptr){
         _outlineSensor->setPosition(pos);
     }
-    _position.set(pos);
 }
 
 void GameObject::addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world){

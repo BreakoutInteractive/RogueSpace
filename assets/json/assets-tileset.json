@@ -1,0 +1,12 @@
+{
+    "textures": {
+        "terrain" : {
+            "file":      "textures/terrain.png"
+        }
+    },
+    "jsons": {
+        "terrain": "json/tiled/tilesets/terrain.json",
+        "terrain2": "json/tiled/tilesets/terrain2.json"
+    }
+}
+
