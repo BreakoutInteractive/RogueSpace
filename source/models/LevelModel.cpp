@@ -7,6 +7,8 @@
 #include "Enemy.hpp"
 #include "MeleeEnemy.hpp"
 #include "RangedEnemy.hpp"
+#include "RangedLizard.hpp"
+#include "MageAlien.hpp"
 #include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"

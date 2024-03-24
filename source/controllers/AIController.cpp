@@ -3,6 +3,8 @@
 #include "../models/Enemy.hpp"
 #include "../models/MeleeEnemy.hpp"
 #include "../models/RangedEnemy.hpp"
+#include "../models/RangedLizard.hpp"
+#include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
 #include "../models/CollisionConstants.hpp"
 

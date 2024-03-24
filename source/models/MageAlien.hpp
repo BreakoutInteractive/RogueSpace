@@ -1,16 +1,16 @@
 //
-//  RangedEnemy.hpp
+//  MageAlien.hpp
 //  RS
 //
-//  Created by Dylan McIntyre on 3/23/24.
+//  Created by Dylan McIntyre on 3/24/24.
 //
 
-#ifndef RangedEnemy_hpp
-#define RangedEnemy_hpp
+#ifndef MageAlien_hpp
+#define MageAlien_hpp
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
-#include "Enemy.hpp"
+#include "RangedEnemy.hpp"
 #include "GameObject.hpp"
 
 class Animation;
@@ -18,20 +18,10 @@ class Animation;
 /**
  *  This class represents a ranged enemy in the game.
  */
-class RangedEnemy : public Enemy {
+class MageAlien : public RangedEnemy {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(RangedEnemy);
-    
-protected:
-    // TODO: change this to projectile when implemented
-    std::shared_ptr<cugl::physics2::WheelObstacle> _projectile;
-    
-    /** The enemy projectile texture*/
-    std::shared_ptr<cugl::Texture> _projectileTexture;
-    
-    /** The enemy projectile speed*/
-    float _projectileSpeed;
+    CU_DISALLOW_COPY_AND_ASSIGN(MageAlien);
     
 public:
 #pragma mark -
@@ -39,12 +29,12 @@ public:
     /**
      * Creates a new enemy at the origin.
      */
-    RangedEnemy(void) : Enemy() { }
+    MageAlien(void) : RangedEnemy() { }
     
     /**
      * Destroys this player, releasing all resources.
      */
-    virtual ~RangedEnemy(void) { dispose(); }
+    virtual ~MageAlien(void) { dispose(); }
     
     /**
      * Disposes all resources and assets
@@ -83,10 +73,10 @@ public:
      *
      * @return a newly allocated player with the given position
      */
-    static std::shared_ptr<RangedEnemy> alloc(const cugl::Vec2 pos, const cugl::Size size) {
-        auto result = std::make_shared<RangedEnemy>();
+    static std::shared_ptr<MageAlien> alloc(const cugl::Vec2 pos, const cugl::Size size) {
+        auto result = std::make_shared<MageAlien>();
         return (result->init(pos,size) ? result : nullptr);
     }
 };
 
-#endif /* RangedEnemy_hpp */
+#endif /* MageAlien_hpp */

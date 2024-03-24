@@ -5,6 +5,8 @@
 #include "../models/Enemy.hpp"
 #include "../models/MeleeEnemy.hpp"
 #include "../models/RangedEnemy.hpp"
+#include "../models/RangedLizard.hpp"
+#include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>

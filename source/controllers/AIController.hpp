@@ -19,6 +19,8 @@ class Player;
 class Enemy;
 class MeleeEnemy;
 class RangedEnemy;
+class RangedLizard;
+class MageAlien;
 class LevelModel;
 
 class AIController {
