@@ -45,7 +45,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 9);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 16);
-    auto attackSheet = SpriteSheet::alloc(attackTexture, 16, 7);
+    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 14);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     

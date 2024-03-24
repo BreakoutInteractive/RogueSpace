@@ -94,7 +94,7 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2();
-    transform.scale(0.5);
+    // transform.scale(0.5);
     transform.translate(getPosition() * _drawScale);
     
     spriteSheet->draw(batch, _tint, origin, transform);
