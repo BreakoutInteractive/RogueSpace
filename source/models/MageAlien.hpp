@@ -54,7 +54,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
 #pragma mark Static Constructors
     
@@ -77,6 +77,19 @@ public:
         auto result = std::make_shared<MageAlien>();
         return (result->init(pos,size) ? result : nullptr);
     }
+    
+#pragma mark -
+#pragma mark Animation and State
+    
+    /**
+     * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
+     */
+    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
+    
+    /**
+     * Sets the direction that the enemy is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir) override;
 };
 
 #endif /* MageAlien_hpp */

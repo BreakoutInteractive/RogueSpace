@@ -64,7 +64,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
 #pragma mark Static Constructors
     

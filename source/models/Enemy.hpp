@@ -46,6 +46,9 @@ protected:
     std::shared_ptr<Animation> _attackAnimation;
     /** The animation of the hitbox while attacking */
     std::shared_ptr<Animation> _hitboxAnimation;
+    
+    /** The animation to use while stunned */
+    std::shared_ptr<Animation> _stunAnimation;
 
     /** The hit effect animation */
     std::shared_ptr<Animation> _hitEffect;
@@ -364,7 +367,7 @@ public:
     /**
      * Sets the direction that the enemy is currently facing
      */
-    void setFacingDir(cugl::Vec2 dir);
+    virtual void setFacingDir(cugl::Vec2 dir);
     
     /**
      * Gets whether this enemy can currently see the player
@@ -429,7 +432,7 @@ public:
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
-    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+    virtual void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
     
     /** Change to using the default animation */
     void animateDefault();

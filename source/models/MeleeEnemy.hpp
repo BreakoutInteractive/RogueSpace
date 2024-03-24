@@ -24,7 +24,7 @@ private:
     CU_DISALLOW_COPY_AND_ASSIGN(MeleeEnemy);
     
 protected:
-    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
+    // std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
 public:
 #pragma mark -
@@ -57,7 +57,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
+    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
 #pragma mark Static Constructors
     
@@ -87,7 +87,12 @@ public:
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
-    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
+    
+    /**
+     * Sets the direction that the enemy is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir) override;
     
 };
 
