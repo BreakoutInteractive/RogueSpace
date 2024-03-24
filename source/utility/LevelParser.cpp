@@ -313,11 +313,14 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
         vertices.push_back(Vec2(point->getFloat("x"), point->getFloat("y")));
     }
     Size tileSize(textureData.lengthX, textureData.lengthY);
+    Vec2 scale = (Vec2)(objectSize / tileSize);
+    scaleCollider(vertices, scale);
     parseCollider(vertices, origin, tileSize, tilePos);
     
     // adjust collider size
-    Vec2 vertexScaleFactor = (Vec2)(objectSize / tileSize) / _tileDimension;
-    scaleCollider(vertices, vertexScaleFactor);
+    scale = Vec2(1,1)/_tileDimension;
+    scaleCollider(vertices, scale);
+    
     
     // set collider data (for physics)
     std::shared_ptr<JsonValue> colliderData = JsonValue::allocObject();
