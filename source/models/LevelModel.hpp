@@ -30,6 +30,8 @@ class CrateModel;
 class Floor;
 class Player;
 class Enemy;
+class MeleeEnemy;
+class RangedEnemy;
 class GameObject;
 
 #pragma mark -

@@ -5,6 +5,8 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "MeleeEnemy.hpp"
+#include "RangedEnemy.hpp"
 #include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"

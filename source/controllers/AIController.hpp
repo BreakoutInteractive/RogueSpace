@@ -17,6 +17,8 @@
 
 class Player;
 class Enemy;
+class MeleeEnemy;
+class RangedEnemy;
 class LevelModel;
 
 class AIController {

@@ -14,6 +14,8 @@
 #include "GameScene.hpp"
 #include "../models/LevelConstants.hpp"
 #include "../models/Enemy.hpp"
+#include "../models/MeleeEnemy.hpp"
+#include "../models/RangedEnemy.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>

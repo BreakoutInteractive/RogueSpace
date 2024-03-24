@@ -1,6 +1,8 @@
 #include "AIController.hpp"
 #include "../models/LevelModel.hpp"
 #include "../models/Enemy.hpp"
+#include "../models/MeleeEnemy.hpp"
+#include "../models/RangedEnemy.hpp"
 #include "../models/Player.hpp"
 #include "../models/CollisionConstants.hpp"
 
@@ -74,7 +76,6 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
 
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
-        CULog("Stunned? %d", (*it)->isStunned());
         //enemies shouldn't move when stunned or while attacking
         if ((*it)->isAttacking()) {
             (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);

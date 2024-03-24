@@ -25,6 +25,8 @@ float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
 
 float GameConstants::ENEMY_MELEE_ATK_RANGE = 4;
 
+float GameConstants::ENEMY_RANGED_ATK_RANGE = 8;
+
 float GameConstants::ENEMY_MOVE_SPEED = 2;
 
 
