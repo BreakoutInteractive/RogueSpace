@@ -42,7 +42,7 @@ void Tile::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
 void Tile::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Vec2& drawScale){
     if (_texture != nullptr){
         Vec2 origin(_texture->getWidth()/2, 0);
-//        CULog("size: %s", (_size * drawScale).toString().c_str());
+        //CULog("size: %s", (_size * drawScale).toString().c_str());
         batch->draw(_texture, origin, _size * drawScale / _texture->getSize(), 0, _pos * drawScale);
     }
 }
