@@ -16,7 +16,7 @@
 #include "Tileset.hpp"
 #include "Helper.hpp"
 
-Tileset::Tileset(std::shared_ptr<JsonValue> json){
+Tileset::Tileset(const std::shared_ptr<JsonValue> json){
     if (json->has(IMAGE_KEY)){
         auto source = json->getString(IMAGE_KEY);
         _imageProperties.name = Helper::fileName(Helper::baseName(source));
@@ -27,17 +27,26 @@ Tileset::Tileset(std::shared_ptr<JsonValue> json){
         _imageProperties.rows = tileCount / columns;
         _imageProperties.columns = columns;
         _imageProperties.spacing = json->getInt(TILE_SPACING);
-        type = TilesetType::IMAGE;
+        _type = TilesetType::IMAGE;
+        
+        std::shared_ptr<JsonValue> tilesJson = json->get("tiles");
+        if (tilesJson != nullptr){
+            auto tiles = tilesJson->children();
+            for (std::shared_ptr<JsonValue>& tile: tiles) {
+                int id = tile->getInt("id");
+                _tiles[id] = tile;
+            }
+        }
     }
     else {
         // TODO: support collection types
         CUAssertLog(false, "unsupported collection sets");
-        type = TilesetType::COLLECTION;
+        _type = TilesetType::COLLECTION;
     }
 }
 
 bool Tileset::containsId(int id){
-    if (type == TilesetType::IMAGE){
+    if (_type == TilesetType::IMAGE){
         int maxId = _imageProperties.rows * _imageProperties.columns - 1;
         return 0 <= id && id <= maxId;
     }
@@ -48,10 +57,10 @@ bool Tileset::containsId(int id){
     }
 }
 
-Tileset::TextureRegionData Tileset:: getTextureData(int id){
+Tileset::TextureRegionData Tileset::getTextureData(int id){
     TextureRegionData atlas;
     
-    if (type == TilesetType::IMAGE){
+    if (_type == TilesetType::IMAGE){
         int row = id / _imageProperties.columns;
         int col = id % _imageProperties.columns;
         atlas.source = _imageProperties.name;
@@ -60,6 +69,19 @@ Tileset::TextureRegionData Tileset:: getTextureData(int id){
         atlas.lengthX = _imageProperties.tileWidth;
         atlas.lengthY = _imageProperties.tileHeight;
     }
+    else {
+        // TODO: support collection types
+        CUAssertLog(false, "unsupported collection sets");
+    }
     
     return atlas;
+}
+
+std::shared_ptr<JsonValue> Tileset::getTileData(int id){
+    std::shared_ptr<JsonValue> data = nullptr;
+    auto iterator = _tiles.find(id);
+    if (iterator != _tiles.end()){
+        data = iterator->second;
+    }
+    return data;
 }

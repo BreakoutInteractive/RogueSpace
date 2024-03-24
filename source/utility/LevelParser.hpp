@@ -38,6 +38,15 @@ protected:
     /** the tilesets used by the given map, sorted by their firstgid */
     std::vector<std::shared_ptr<JsonValue>> _mapTilesets;
     
+#pragma mark Parsing Output Containers
+    
+    /** the data associated with walls */
+    std::shared_ptr<JsonValue> _wallData;
+    /** the data associated with the player */
+    std::shared_ptr<JsonValue> _playerData;
+    /** the data associated with the enemies */
+    std::shared_ptr<JsonValue> _enemyData;
+    
 private:
     
     /** the set of tilesets (mapped from json name to tileset data structure */
@@ -63,11 +72,20 @@ private:
      */
     const Tileset::TextureRegionData getRegionFromID(int id);
     
-    
     /**
-     * parses a tiled layer and produces the data needed to initialize an  tiled layer (for rendering)
+     * parses a tiled layer and produces the data needed to initialize a tiled layer (for rendering)
      */
     const std::shared_ptr<JsonValue> parseTiledLayer(const std::shared_ptr<JsonValue> layer);
+    
+    /**
+     * parses an object layer and loads the data needed to initialize various object classes
+     */
+    void parseObjectLayer(const std::shared_ptr<JsonValue> layer);
+    
+    /**
+     * parses a wall object and produces the corresponding data for Wall model
+     */
+    const std::shared_ptr<JsonValue> parseWall(const std::shared_ptr<JsonValue>& json);
     
 public:
 #pragma mark -

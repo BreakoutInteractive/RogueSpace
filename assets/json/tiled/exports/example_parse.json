@@ -1,12 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"json",
-         "target":"exports\/example_parse.json"
-        }
-    },
  "height":28,
  "infinite":false,
  "layers":[
@@ -200,7 +192,7 @@
                  "id":24,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":640,
@@ -212,7 +204,7 @@
                  "id":25,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":1152,
@@ -224,7 +216,7 @@
                  "id":30,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":640,
@@ -236,7 +228,7 @@
                  "id":31,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":1152,
@@ -248,7 +240,7 @@
                  "id":32,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":896,
@@ -260,7 +252,7 @@
                  "id":33,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":974.378689408354,
@@ -283,11 +275,11 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"tilesets\/terrain.json"
+         "source":"..\/tilesets\/terrain.json"
         }, 
         {
          "firstgid":226,
-         "source":"tilesets\/terrain2.json"
+         "source":"..\/tilesets\/terrain2.json"
         }],
  "tilewidth":128,
  "type":"map",

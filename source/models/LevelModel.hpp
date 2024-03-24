@@ -24,9 +24,7 @@
 using namespace cugl;
 
 /** Forward references to the various classes used by this level */
-class ExitModel;
-class WallModel;
-class CrateModel;
+class Wall;
 class TileLayer;
 class Player;
 class Enemy;
@@ -72,7 +70,7 @@ protected:
     std::vector<std::shared_ptr<TileLayer>> _tileLayers;
     
     /** Reference to all the walls */
-    std::vector<std::shared_ptr<WallModel>> _walls;
+    std::vector<std::shared_ptr<Wall>> _walls;
 
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -180,7 +178,7 @@ public:
     /**
      * @return the walls in this game level
      */
-    const std::vector<std::shared_ptr<WallModel>> getWalls() { return _walls; }
+    const std::vector<std::shared_ptr<Wall>> getWalls() { return _walls; }
 
     const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 

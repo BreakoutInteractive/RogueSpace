@@ -1,4 +1,10 @@
 {
+    "jsons":{
+        "level1": "json/level.json",
+        "example": "json/tiled/exports/example_parse.json",
+        "assets-tileset": "json/assets-tileset.json"
+    },
+    
 	"textures": {
 		"earth": {
 			"file":     "textures/earthtile.png",
@@ -112,10 +118,5 @@
 			"file":     "fonts/RetroGame.ttf",
 			"size":     64
 		}
-	},
-    "jsons":{
-        "level1": "json/level.json",
-        "example": "json/tiled/example_parse.json",
-        "assets-tileset": "json/assets-tileset.json"
-    }
+	}
 }

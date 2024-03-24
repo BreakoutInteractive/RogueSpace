@@ -1,7 +1,7 @@
 #include <cugl/assets/CUJsonLoader.h>
 #include "LevelModel.hpp"
 #include "LevelConstants.hpp"
-#include "JSWallModel.hpp"
+#include "Wall.hpp"
 #include "TileLayer.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
@@ -46,6 +46,10 @@ void LevelModel::setDrawScale(Vec2 scale) {
     }
     for (int ii = 0; ii < _tileLayers.size(); ii++){
         _tileLayers[ii]->setDrawScale(scale);
+    }
+    
+    for (int ii = 0; ii < _walls.size(); ii++){
+        _walls[ii]->setDrawScale(scale);
     }
     
     for (int ii = 0; ii < _enemies.size(); ii++){
@@ -126,6 +130,7 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     _debugNode->setScale(_scale); // Debug node draws in PHYSICS coordinates
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setPosition(Vec2::ZERO);
+    _debugNode->setVisible(false);
     node->addChild(_debugNode);
     
     // debug node should be added once objects are initialized
@@ -145,7 +150,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
-        _walls[ii]->setDebugScene(_debugNode);
+        _walls[ii]->getCollider()->setDebugScene(_debugNode);
+        _walls[ii]->getCollider()->setDebugColor(Color4::WHITE);
     }
 }
 
@@ -154,6 +160,10 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _player->loadAssets(assets);
     for (int ii = 0; ii < _tileLayers.size(); ii++){
         _tileLayers[ii]->loadAssets(assets);
+    }
+    
+    for (int ii = 0; ii < _walls.size(); ii++){
+        _walls[ii]->loadAssets(assets);
     }
 
     _attackAnimation = assets->get<Texture>("atk");
@@ -205,17 +215,17 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<Js
         return false;
     }
 
-//	auto walls = json->get(WALLS_FIELD);
-//	if (walls != nullptr) {
-//		// Convert the object to an array so we can see keys and values
-//		int wsize = (int)walls->size();
-//		for(int ii = 0; ii < wsize; ii++) {
-//			loadWall(walls->get(ii));
-//		}
-//	} else {
-//		CUAssertLog(false, "Failed to load walls");
-//		return false;
-//	}
+	auto walls = parsedJson->get(WALL_FIELD);
+	if (walls != nullptr) {
+		// Convert the object to an array so we can see keys and values
+		int wsize = (int)walls->size();
+		for(int ii = 0; ii < wsize; ii++) {
+			loadWall(walls->get(ii));
+		}
+	} else {
+		CUAssertLog(false, "Failed to load walls");
+		return false;
+	}
     
     auto enemiesJson = json->get("enemies");
     if (enemiesJson != nullptr){
@@ -239,9 +249,11 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<Js
         
         _dynamicObjects.push_back(_enemies[ii]); // add the enemies to sorting layer
     }
-//    for (int ii = 0; ii < _walls.size(); ii++){
-//        addObstacle(_walls[ii]);
-//    }
+    
+    for (int ii = 0; ii < _walls.size(); ii++){
+        _walls[ii]->addObstaclesToWorld(_world);
+        _dynamicObjects.push_back(_walls[ii]); // TODO: need to separate out walls to reduce sorting overhead;
+    }
     
     // load tile layers
     auto tileLayers = parsedJson->get("tiles");
@@ -265,7 +277,7 @@ void LevelModel::unload() {
         }
         
         for(auto it = _walls.begin(); it != _walls.end(); ++it) {
-                _world->removeObstacle((*it));
+            (*it)->removeObstaclesFromWorld(_world);
         }
     }
 	_enemies.clear();
@@ -398,52 +410,24 @@ bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
 bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	bool success = true;
 
-	int polysize = json->getInt(VERTICES_FIELD);
-	success = success && polysize > 0;
-
-	std::vector<float> vertices = json->get(BOUNDARY_FIELD)->asFloatArray();
-	success = success && 2*polysize == vertices.size();
-
+    std::shared_ptr<JsonValue> colliderData = json->get("collider");
+    Vec2 obstaclePosition(colliderData->getFloat("x"), colliderData->getFloat("y"));
+	std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
+	success = vertices.size() >= 2 && vertices.size() % 2 == 0;
+    
     Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
-	Poly2 wall(verts,(int)vertices.size()/2);
+	Poly2 polygon(verts,(int)vertices.size()/2);
 	EarclipTriangulator triangulator;
-	triangulator.set(wall.vertices);
+	triangulator.set(polygon.vertices);
 	triangulator.calculate();
-	wall.setIndices(triangulator.getTriangulation());
+	polygon.setIndices(triangulator.getTriangulation());
     triangulator.clear();
 	
 	// Get the object, which is automatically retained
-	std::shared_ptr<WallModel> wallobj = WallModel::alloc(wall);
-	wallobj->setName(json->key());
-
-	std::string btype = json->getString(BODYTYPE_FIELD);
-	if (btype == STATIC_VALUE) {
-		wallobj->setBodyType(b2_staticBody);
-	}
-
-	wallobj->setDensity(json->getDouble(DENSITY_FIELD));
-	wallobj->setFriction(json->getDouble(FRICTION_FIELD));
-	wallobj->setRestitution(json->getDouble(RESTITUTION_FIELD));
-
-	// Set the texture value
-	success = success && json->get(TEXTURE_FIELD)->isString();
-	wallobj->setTextureKey(json->getString(TEXTURE_FIELD));
-	wallobj->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
-    
-    b2Filter filter;
-    // this is a wall
-    filter.categoryBits = CATEGORY_WALL;
-    // a wall can collide with a player or an enemy
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
-    wallobj->setFilterData(filter);
-
-	if (success) {
-		_walls.push_back(wallobj);
-	} else {
-		wallobj = nullptr;
-	}
-
-	vertices.clear();
+    if (success){
+        std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
+        _walls.push_back(wallobj);
+    }
 	return success;
 }
 

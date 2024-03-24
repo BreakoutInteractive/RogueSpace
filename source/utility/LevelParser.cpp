@@ -12,6 +12,8 @@
 #include <cugl/io/CUJsonWriter.h>
 #include "Tileset.hpp"
 #include "Helper.hpp"
+#include <string>
+#include <sstream>
 
 using namespace cugl;
 
@@ -21,15 +23,13 @@ using namespace cugl;
 #define TYPE            "type"
 #define VISIBLE         "visible"
 #define FIRSTGID        "firstgid"
-
+#define CLASS_WALL      "Wall"
+#define CLASS_COLLIDER  "Collider"
 
 #pragma mark -
 #pragma mark Loading Dependencies (Assets)
 
 void LevelParser::loadTilesets(const std::shared_ptr<AssetManager>& assets){
-    // TODO: make the following into a loop, using a single json file to store all available tiled sets
-    // 1. get the list of all Tiled tileset json files
-    // 2. allocate Tileset objects
     std::shared_ptr<JsonValue> loadedAssets = assets->get<JsonValue>("assets-tileset");
     std::shared_ptr<JsonValue> loadedJsonTilesets = loadedAssets->get("jsons");
     CUAssertLog(loadedJsonTilesets != nullptr, "<tilesetName>.json files not specified in correct loading file");
@@ -42,15 +42,105 @@ void LevelParser::loadTilesets(const std::shared_ptr<AssetManager>& assets){
     }
 }
 
+
+#pragma mark -
+#pragma mark Polygon
+
+/**
+ * given the list of collider objects on a tile, find the FIRST json shape with the Collider type
+ */
+std::shared_ptr<JsonValue> getCollider(std::shared_ptr<JsonValue>& tileObjects){
+    std::shared_ptr<JsonValue> collider = nullptr;
+    std::vector<std::shared_ptr<JsonValue>> objectGroup = tileObjects->children();
+    for (auto& object : objectGroup){
+        std::string type = object->getString(TYPE);
+        if (type == CLASS_COLLIDER){
+            collider = object;
+            break;
+        }
+    }
+    return collider;
+}
+
+/**
+ * Tiled vertices specify a polygon in screen space coordinates which requires negating vertical direction.
+ *
+ * (1) specify origin irelative to the BOTTOM CENTER cartesian tile-space. This is (0,0) but shifted to the right by width/2
+ * (2) negate y component of each vertex (which is in relative coordinates from the origin),
+ * (3) Add the origin and the object position to each vertex so the vertices are  in the same cartesian space as the object position (game cartesian space)
+ * (4) find the center of the polygon and replace origin with this new position
+ */
+void parseCollider(std::vector<Vec2>& vertices, Vec2& origin, Size tileDimensions, const Vec2& objectPosition){
+    // step 1
+    origin.set(origin.x - tileDimensions.width/2, tileDimensions.height - origin.y);
+    // step 2
+    float maxx = -INFINITY;
+    float minx = INFINITY;
+    float maxy = -INFINITY;
+    float miny = INFINITY;
+    for (Vec2& vertex: vertices){
+        // step 2 and 3
+        vertex.y *= -1;
+        vertex.add(origin).add(objectPosition);
+        if (vertex.x > maxx){
+            maxx = vertex.x;
+        }
+        if (vertex.x < minx){
+            minx = vertex.x;
+        }
+        if (vertex.y > maxy){
+            maxy = vertex.y;
+        }
+        if (vertex.y < miny){
+            miny = vertex.y;
+        }
+    }
+    // step 4
+    origin.set((minx + maxx)/2, (miny + maxy)/2);
+}
+
+/**
+ * given vertices of the collider (in cartesian coordinates relative to its origin), scale the collider by the ratio of
+ * the object size to tile size times unit tile size
+ */
+void scaleCollider(std::vector<Vec2>& vertices, Vec2& scaleFactor){
+    for (Vec2& vertex: vertices){
+        vertex.scale(scaleFactor);
+    }
+}
+
+#pragma mark -
+#pragma mark Data Converters
+
+std::shared_ptr<JsonValue> convertVerticesToJSON(std::vector<Vec2>& vertices){
+    std::shared_ptr<JsonValue> array = JsonValue::allocArray();
+    for (Vec2& vertex: vertices){
+        array->appendChild(JsonValue::alloc(vertex.x));
+        array->appendChild(JsonValue::alloc(vertex.y));
+    }
+    return array;
+}
+
+std::shared_ptr<JsonValue> convertTextureDataToJSON(Tileset::TextureRegionData& textureData){
+    std::shared_ptr<JsonValue> textureJson = JsonValue::allocObject();
+    textureJson->appendChild("texture", JsonValue::alloc(textureData.source));
+    textureJson->appendChild("minx", JsonValue::alloc((long)textureData.startX));
+    textureJson->appendChild("miny", JsonValue::alloc((long)textureData.startY));
+    textureJson->appendChild("maxx", JsonValue::alloc((long)(textureData.startX + textureData.lengthX)));
+    textureJson->appendChild("maxy", JsonValue::alloc((long)(textureData.startY + textureData.lengthY)));
+    return textureJson;
+}
+
+
+#pragma mark -
+#pragma mark Parsing Dependency
+
 void LevelParser::parseTilesetDependency(std::shared_ptr<JsonValue> tilesets){
     // Maybe we can do a little more to optimize dependency search in `getTilesetNameFromID`
     _mapTilesets.clear();
     std::vector<std::shared_ptr<JsonValue>> dependencies = tilesets->children();
     _mapTilesets = dependencies;
 }
-
-#pragma mark -
-#pragma mark Parsing
 
 const std::pair<std::string, int> LevelParser::getTilesetNameFromID(int id){
     std::string name = "";
@@ -70,6 +160,22 @@ const std::pair<std::string, int> LevelParser::getTilesetNameFromID(int id){
     }
     CUAssertLog(name != "", "id not valid in map, is the tileset referenced by the map?");
     return std::make_pair(name, newId);
+}
+
+#pragma mark -
+#pragma mark Parsing Layers
+
+void LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
+    long id = layer->getInt("id");
+    auto objects = layer->get("objects")->children();
+    for (std::shared_ptr<JsonValue>& object: objects) {
+        std::string type = object->getString(TYPE);
+        if (type == CLASS_WALL){
+            std::shared_ptr<JsonValue> data = parseWall(object);
+            data->appendChild("layer-id", JsonValue::alloc(id));
+            _wallData->appendChild(data);
+        }
+    }
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseTiledLayer(const std::shared_ptr<JsonValue> layer){
@@ -103,12 +209,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiledLayer(const std::shared_
                 std::shared_ptr<Tileset> ts = _sets.find(tilesetName)->second;
                 auto textureData = ts->getTextureData(id);
                 std::shared_ptr<JsonValue> tileData = JsonValue::allocObject();
-                std::shared_ptr<JsonValue> textureJson = JsonValue::allocObject();
-                textureJson->appendChild("texture", JsonValue::alloc(textureData.source));
-                textureJson->appendChild("minx", JsonValue::alloc((long)textureData.startX));
-                textureJson->appendChild("miny", JsonValue::alloc((long)textureData.startY));
-                textureJson->appendChild("maxx", JsonValue::alloc((long)(textureData.startX + textureData.lengthX)));
-                textureJson->appendChild("maxy", JsonValue::alloc((long)(textureData.startY + textureData.lengthY)));
+                std::shared_ptr<JsonValue> textureJson = convertTextureDataToJSON(textureData);
                 tileData->appendChild("asset", textureJson);
                 // adjust x location to the center of the tile, since tiles MAY cover multiple tiles, it is not necessarily half way point of a tile width
                 x += textureData.lengthX/2.0f;
@@ -133,10 +234,8 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     // IMPLEMENTATION NOTES:
     // JsonValue get(Key) is O(#children)
     // JsonValue get(index) is constant time
-    
-    std::shared_ptr<JsonValue> levelData = JsonValue::allocObject();
-    
     CUAssertLog(json->getString("orientation") == "staggered", "Please use staggered isometric maps.");
+    CUAssertLog(json->getString("staggerindex") == "odd", "Please use odd-staggered maps");
     
     // retrieve map attributes
     _tileWidth = json->getInt("tilewidth");
@@ -144,32 +243,93 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     _mapWidth = (json->getInt("width") + 0.5f) * _tileWidth;
     _mapHeight = (json->getInt("height")/2.0f + 0.5f) * _tileHeight;
     _tileDimension = std::min(_tileWidth, _tileHeight);
+    
+    // create the data containers
+    std::shared_ptr<JsonValue> levelData = JsonValue::allocObject();
+    /** the data associated with each layer of tiles (pairs of layer name followed by */
+    std::shared_ptr<JsonValue> tileLayersData = JsonValue::allocObject();
+    _wallData =  JsonValue::allocArray();
+    _playerData = JsonValue::allocObject();
+    _enemyData = JsonValue::allocArray();
+    
     // set box2d map and camera attributes
     levelData->appendValue("width", _mapWidth/_tileDimension);
     levelData->appendValue("height", _mapHeight/_tileDimension);
     levelData->appendValue("view-width", 16.0f);
     levelData->appendValue("view-height", 9.0f);
     
+    // parsing the layers
     parseTilesetDependency(json->get("tilesets"));
-    
-    std::shared_ptr<JsonValue> tileLayersData = JsonValue::allocObject();
     std::vector<std::shared_ptr<JsonValue>> layers = json->get(LAYERS_KEY)->children();
-    int layerCount = 0;
     for (auto it = layers.begin(); it != layers.end(); it++){
-        std::shared_ptr<JsonValue> layerData = *it;
-        std::string type = layerData->getString(TYPE);
+        std::shared_ptr<JsonValue> layerJson = *it;
+        std::string type = layerJson->getString(TYPE);
         if (type == TILE_LAYER){
-            layerCount++;
-            if (layerData->getBool(VISIBLE)){
-                std::string uniqueID = "layer-" + std::to_string(layerCount) + "-";
-                tileLayersData->appendChild(uniqueID + layerData->getString("name"), parseTiledLayer(layerData));
+            std::string uniqueID = "layer-" + std::to_string(layerJson->getInt("id")) + "-";
+            if (layerJson->getBool(VISIBLE)){
+                tileLayersData->appendChild(uniqueID + layerJson->getString("name"), parseTiledLayer(layerJson));
             }
         }
         else if (type == OBJECT_LAYER){
-            // TODO: next up
+            parseObjectLayer(layerJson);
         }
     }
     levelData->appendChild("tiles", tileLayersData);
-    
+    levelData->appendChild("walls", _wallData);
     return levelData;
+}
+
+#pragma mark -
+#pragma mark Parsing Objects
+
+const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<JsonValue>& json){
+    
+    std::shared_ptr<JsonValue> data = JsonValue::allocObject();
+    int tileId = json->getLong("gid") & 0xFFFFFFF;
+    CUAssertLog(tileId != 0, "object %d error: the class 'Wall' should be used exclusively on tiles", tileId);
+    auto [tilesetName, id] = getTilesetNameFromID(tileId);
+    std::shared_ptr<Tileset> ts = _sets.find(tilesetName)->second;
+    Tileset::TextureRegionData textureData = ts->getTextureData(id);
+    std::shared_ptr<JsonValue> tileData = ts->getTileData(id);
+    CUAssertLog(tileData != nullptr, "object gid %d corresponds to tile %d which has no meta data", tileId, id);
+    
+    // add asset data
+    data->appendChild("asset", convertTextureDataToJSON(textureData));
+    
+    // get collider
+    std::shared_ptr<JsonValue> tileObjects = tileData->get(OBJECT_LAYER)->get("objects");
+    std::shared_ptr<JsonValue> colliderJson = getCollider(tileObjects);
+    CUAssertLog(colliderJson != nullptr, "tileset %s: the tile %d is missing collider object with class Collider", tilesetName.c_str(), id);
+    
+    // load object properties
+    Vec2 tilePos(json->getFloat("x"), _mapHeight - json->getFloat("y"));
+    Size objectSize(json->getFloat("width"), json->getFloat("height"));
+    
+    // load collider properties
+    Vec2 origin(colliderJson->getFloat("x"), colliderJson->getFloat("y"));
+    std::vector<Vec2> vertices;
+    auto points = colliderJson->get("polygon")->children();
+    for (auto& point : points){
+        vertices.push_back(Vec2(point->getFloat("x"), point->getFloat("y")));
+    }
+    Size tileSize(textureData.lengthX, textureData.lengthY);
+    parseCollider(vertices, origin, tileSize, tilePos);
+    
+    // adjust collider size
+    Vec2 vertexScaleFactor = (Vec2)(objectSize / tileSize) / _tileDimension;
+    scaleCollider(vertices, vertexScaleFactor);
+    
+    // set collider data (for physics)
+    std::shared_ptr<JsonValue> colliderData = JsonValue::allocObject();
+    colliderData->appendChild("vertices", convertVerticesToJSON(vertices));
+    colliderData->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
+    colliderData->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
+    data->appendChild("collider", colliderData);
+    
+    // set object data (for rendering)
+    data->appendChild("x", JsonValue::alloc(tilePos.x/_tileDimension));
+    data->appendChild("y", JsonValue::alloc(tilePos.y/_tileDimension));
+    data->appendChild("width", JsonValue::alloc(objectSize.width / _tileDimension));
+    data->appendChild("height", JsonValue::alloc(objectSize.height / _tileDimension));
+    return data;
 }

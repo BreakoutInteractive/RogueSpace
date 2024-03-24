@@ -48,8 +48,7 @@
 #define RIGHT_SOUND_FIELD   "right-sound"
 
 /** The wall specific fields */
-#define VERTICES_FIELD      "vertices"
-#define BOUNDARY_FIELD      "boundary"
+#define WALL_FIELD          "walls"
 
 /** The key for our loaded level */
 #define LEVEL_ONE_KEY       "level1"

@@ -33,10 +33,11 @@ private:
     /** Image tileset properties */
     ImageProps _imageProperties;
     
-    TilesetType type;
+    /** the type of tileset */
+    TilesetType _type;
     
-    /** the associated list of tiles in this tileset (may be empty) */
-    std::shared_ptr<JsonValue> tiles;
+    /** the set of tiles in this tileset (may be empty) */
+    std::unordered_map<int, std::shared_ptr<JsonValue>> _tiles;
     
 public:
     
@@ -67,6 +68,12 @@ public:
      * @return texture subregion data for the given valid `id`
      */
     TextureRegionData getTextureData(int id);
+    
+    
+    /**
+     * @return Json data associated with the given id, may be null if no such tile
+     */
+    std::shared_ptr<JsonValue> getTileData(int id);
     
     /**
      * @return whether the given tile id exists in this tileset

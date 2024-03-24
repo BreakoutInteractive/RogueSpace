@@ -55,6 +55,9 @@ public:
         _texture = nullptr;
     }
     
+    /**
+     * allocates a tile with json data
+     */
     static std::shared_ptr<Tile> alloc(std::shared_ptr<JsonValue> data) {
         return std::make_shared<Tile>(data);
     }

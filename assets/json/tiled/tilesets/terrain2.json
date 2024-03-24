@@ -1,5 +1,5 @@
 { "columns":7,
- "image":"..\/..\/textures\/terrain.png",
+ "image":"..\/..\/..\/textures\/terrain.png",
  "imageheight":2048,
  "imagewidth":2048,
  "margin":8,

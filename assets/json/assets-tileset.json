@@ -5,8 +5,8 @@
         }
     },
     "jsons": {
-        "terrain": "json/tiled/terrain.json",
-        "terrain2": "json/tiled/terrain2.json"
+        "terrain": "json/tiled/tilesets/terrain.json",
+        "terrain2": "json/tiled/tilesets/terrain2.json"
     }
 }
 

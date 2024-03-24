@@ -170,9 +170,9 @@ void GameScene::dispose() {
 
 void GameScene::restart(){
     // reload the current level
+    _debugNode->removeAllChildren();
     auto parsed = _parser.parseTiled(_assets->get<JsonValue>("example"));
     _level = LevelModel::alloc(_assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
-    _debugNode->removeAllChildren();
     _level->setAssets(_assets);
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
@@ -196,6 +196,7 @@ void GameScene::preUpdate(float dt) {
     
     // Process the toggled key commands
     if (_input.didDebug()) {
+        CULog("debug toggled");
         setDebug(!isDebug());
     }
     if (_input.didExit())  {
@@ -250,6 +251,10 @@ void GameScene::preUpdate(float dt) {
         player->setFacingDir(moveForce);
     }
     
+    if (player->_dodgeDuration.isZero() && player->getCollider()->isBullet()){
+        player->getCollider()->setBullet(false);
+    }
+    
 
     //only move fast if we're not parrying or dodging
     if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
@@ -275,6 +280,7 @@ void GameScene::preUpdate(float dt) {
             }
             //player->setLinearDamping(20);
             player->getCollider()->setLinearVelocity(force * 30);
+            player->getCollider()->setBullet(true);
             //player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
         }
