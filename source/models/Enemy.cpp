@@ -224,13 +224,15 @@ void Enemy::updateAnimation(float dt){
     if (_hitEffect->isActive()){
         _tint = Color4::RED;
     }
+    else if (_state == EnemyState::STUNNED && _stunCD.isZero()) {
+        _tint = Color4::WHITE;
+        setIdling();
+    }
     else if (_state == EnemyState::STUNNED){
         // TODO: could possibly use stunned animation and remove this state altogether
         _tint = Color4::YELLOW;
     }
-    else if (_stunCD.isZero()) {
-        _tint = Color4::WHITE;
-    }
+    
     _hitboxAnimation->update(dt);
 }
 

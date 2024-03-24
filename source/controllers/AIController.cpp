@@ -74,8 +74,12 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
 
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
-        //enemies shouldn't move when stunned
-        if (!(*it)->isStunned()) {
+        CULog("Stunned? %d", (*it)->isStunned());
+        //enemies shouldn't move when stunned or while attacking
+        if ((*it)->isAttacking()) {
+            (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+        }
+        if (!(*it)->isStunned() && !(*it)->isAttacking()) {
             Vec2 intersection = lineOfSight((*it), _player);
             // enemies should follow the player if they see them
             if (!intersection.isZero()) {
