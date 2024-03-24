@@ -232,6 +232,9 @@ void Enemy::updateAnimation(float dt){
         // TODO: could possibly use stunned animation and remove this state altogether
         _tint = Color4::YELLOW;
     }
+    else {
+        _tint = Color4::WHITE;
+    }
     
     _hitboxAnimation->update(dt);
 }
