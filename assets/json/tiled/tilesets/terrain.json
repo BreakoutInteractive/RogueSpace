@@ -1,12 +1,4 @@
 { "columns":15,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"json",
-         "target":"..\/exports\/terrain.json"
-        }
-    },
  "image":"..\/..\/..\/textures\/terrain.png",
  "imageheight":2048,
  "imagewidth":2048,
@@ -23,7 +15,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -75,7 +66,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -205,7 +195,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -249,7 +238,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -293,7 +281,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

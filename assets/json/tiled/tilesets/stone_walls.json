@@ -1,12 +1,4 @@
 { "columns":8,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"json",
-         "target":"..\/exports\/stone_walls.json"
-        }
-    },
  "image":"..\/..\/..\/textures\/stone_walls.png",
  "imageheight":800,
  "imagewidth":1096,

@@ -28,20 +28,18 @@ Tileset::Tileset(const std::shared_ptr<JsonValue> json){
         _imageProperties.columns = columns;
         _imageProperties.spacing = json->getInt(TILE_SPACING);
         _type = TilesetType::IMAGE;
-        
-        std::shared_ptr<JsonValue> tilesJson = json->get("tiles");
-        if (tilesJson != nullptr){
-            auto tiles = tilesJson->children();
-            for (std::shared_ptr<JsonValue>& tile: tiles) {
-                int id = tile->getInt("id");
-                _tiles[id] = tile;
-            }
-        }
     }
     else {
-        // TODO: support collection types
-        CUAssertLog(false, "unsupported collection sets");
         _type = TilesetType::COLLECTION;
+    }
+    // store the tiles data
+    std::shared_ptr<JsonValue> tilesJson = json->get("tiles");
+    if (tilesJson != nullptr){
+        auto tiles = tilesJson->children();
+        for (std::shared_ptr<JsonValue>& tile: tiles) {
+            int id = tile->getInt("id");
+            _tiles[id] = tile;
+        }
     }
 }
 
@@ -51,9 +49,7 @@ bool Tileset::containsId(int id){
         return 0 <= id && id <= maxId;
     }
     else {
-        // TODO: support collection types
-        CUAssertLog(false, "unsupported collection sets");
-        return false;
+        return _tiles.find(id) != _tiles.end();
     }
 }
 
@@ -70,10 +66,16 @@ Tileset::TextureRegionData Tileset::getTextureData(int id){
         atlas.lengthY = _imageProperties.tileHeight;
     }
     else {
-        // TODO: support collection types
-        CUAssertLog(false, "unsupported collection sets");
+        auto tileData = getTileData(id);
+        if (tileData != nullptr){
+            std::string source = tileData->getString(IMAGE_KEY);
+            atlas.source = Helper::fileName(Helper::baseName(source));
+            atlas.startX = 0;
+            atlas.startY = 0;
+            atlas.lengthX = tileData->getInt(IMG_WIDTH);
+            atlas.lengthY = tileData->getInt(IMG_HEIGHT);
+        }
     }
-    
     return atlas;
 }
 

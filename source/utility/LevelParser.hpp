@@ -87,6 +87,17 @@ private:
      */
     const std::shared_ptr<JsonValue> parseWall(const std::shared_ptr<JsonValue>& json);
     
+    /**
+     * parses a player object and produces the corresponding data for Player model
+     */
+    const std::shared_ptr<JsonValue> parsePlayer(const std::shared_ptr<JsonValue>& json);
+    
+    /**
+     * parses an object and its physics components
+     */
+    const std::shared_ptr<JsonValue> parsePhysicsObject(const std::shared_ptr<JsonValue>& objectJson, bool parseAsset, bool parseCollider, bool parseHitbox);
+    
+    
 public:
 #pragma mark -
 #pragma mark Constructors

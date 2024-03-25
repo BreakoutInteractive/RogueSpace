@@ -14,14 +14,15 @@ def extract_subregions(input_image_path, output_folder):
     width, height = image.size
 
     # Define the size of subregions
-    subregion_size = 64
+    subregion_size_height = 128
+    subregion_size_width = 128
     image_name = os.path.splitext(os.path.basename(input_image_path))[0]
 
     # Iterate over the image and extract subregions
-    for y in range(0, height, subregion_size):
-        for x in range(0, width, subregion_size):
+    for y in range(0, height, subregion_size_height):
+        for x in range(0, width, subregion_size_width):
             # Define the region to extract
-            box = (x, y, x + subregion_size, y + subregion_size)
+            box = (x, y, x + subregion_size_width, y + subregion_size_height)
 
             # Crop the subregion
             subregion = image.crop(box)

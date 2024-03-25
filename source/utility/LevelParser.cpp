@@ -24,7 +24,9 @@ using namespace cugl;
 #define VISIBLE         "visible"
 #define FIRSTGID        "firstgid"
 #define CLASS_WALL      "Wall"
+#define CLASS_PLAYER    "Player"
 #define CLASS_COLLIDER  "Collider"
+#define CLASS_HITBOX    "Hitbox"
 
 #pragma mark -
 #pragma mark Loading Dependencies (Assets)
@@ -44,25 +46,31 @@ void LevelParser::loadTilesets(const std::shared_ptr<AssetManager>& assets){
 
 
 #pragma mark -
-#pragma mark Polygon
+#pragma mark Geometry and Shapes Retrieval
 
 /**
- * given the list of collider objects on a tile, find the FIRST json shape with the Collider type
+ * given the json list of objects on a tile, find the FIRST json shape with the given type
  */
-std::shared_ptr<JsonValue> getCollider(std::shared_ptr<JsonValue>& tileObjects){
-    std::shared_ptr<JsonValue> collider = nullptr;
+std::shared_ptr<JsonValue> getObjectByType(std::shared_ptr<JsonValue>& tileObjects, std::string type){
+    std::shared_ptr<JsonValue> obj = nullptr;
     std::vector<std::shared_ptr<JsonValue>> objectGroup = tileObjects->children();
     for (auto& object : objectGroup){
-        std::string type = object->getString(TYPE);
-        if (type == CLASS_COLLIDER){
-            collider = object;
+        std::string objType = object->getString(TYPE);
+        if (objType == type){
+            obj = object;
             break;
         }
     }
-    return collider;
+    return obj;
 }
 
+
+#pragma mark -
+#pragma mark Polygon
+
 /**
+ * Modifies the vertices and origin of a polygon to be in the correct pixel positions in cartesian space.
+ *
  * Tiled vertices specify a polygon in screen space coordinates which requires negating vertical direction.
  *
  * (1) specify origin irelative to the BOTTOM CENTER cartesian tile-space. This is (0,0) but shifted to the right by width/2
@@ -70,7 +78,8 @@ std::shared_ptr<JsonValue> getCollider(std::shared_ptr<JsonValue>& tileObjects){
  * (3) Add the origin and the object position to each vertex so the vertices are  in the same cartesian space as the object position (game cartesian space)
  * (4) find the center of the polygon and replace origin with this new position
  */
-void parseCollider(std::vector<Vec2>& vertices, Vec2& origin, Size tileDimensions, const Vec2& objectPosition){
+void parsePolygonCollider(std::vector<Vec2>& vertices, Vec2& origin, Size tileDimensions, Vec2 objectPosition, Size objectSize){
+    Vec2 scaleFactor = (Vec2) (objectSize / tileDimensions);
     // step 1
     origin.set(origin.x - tileDimensions.width/2, tileDimensions.height - origin.y);
     // step 2
@@ -81,6 +90,7 @@ void parseCollider(std::vector<Vec2>& vertices, Vec2& origin, Size tileDimension
     for (Vec2& vertex: vertices){
         // step 2 and 3
         vertex.y *= -1;
+        vertex.scale(scaleFactor);
         vertex.add(origin).add(objectPosition);
         if (vertex.x > maxx){
             maxx = vertex.x;
@@ -103,11 +113,30 @@ void parseCollider(std::vector<Vec2>& vertices, Vec2& origin, Size tileDimension
  * given vertices of the collider (in cartesian coordinates relative to its origin), scale the collider by the ratio of
  * the object size to tile size times unit tile size
  */
-void scaleCollider(std::vector<Vec2>& vertices, Vec2& scaleFactor){
+void scalePolygonCollider(std::vector<Vec2>& vertices, Vec2 scaleFactor){
     for (Vec2& vertex: vertices){
         vertex.scale(scaleFactor);
     }
 }
+
+#pragma mark -
+#pragma mark Box
+
+/**
+ * scales a box collider based on the ratio of the predefined object size (tile dimensions) and the actual object size.
+ *
+ * the origin is set to the center world position of the collider (vertically and horizontally)
+ */
+void parseBoxCollider(Vec2& dimension, Vec2& origin, Size tileDimensions, Vec2 objectPosition, Size objectSize){
+    Vec2 scaleFactor = (Vec2) (objectSize / tileDimensions);
+    origin.add(dimension/2);
+    // invert, set collider origin to the bottom center of tile
+    origin.set(origin.x - tileDimensions.width/2, tileDimensions.height - origin.y);
+    origin.scale(scaleFactor);
+    origin.add(objectPosition);
+    dimension.scale(scaleFactor);
+}
+
 
 #pragma mark -
 #pragma mark Data Converters
@@ -170,10 +199,18 @@ void LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
     auto objects = layer->get("objects")->children();
     for (std::shared_ptr<JsonValue>& object: objects) {
         std::string type = object->getString(TYPE);
+        std::shared_ptr<JsonValue> data;
         if (type == CLASS_WALL){
-            std::shared_ptr<JsonValue> data = parseWall(object);
-            data->appendChild("layer-id", JsonValue::alloc(id));
+            data = parseWall(object);
             _wallData->appendChild(data);
+        }
+        else if (type == CLASS_PLAYER){
+            CUAssertLog(_playerData == nullptr, "uh oh!, multiple players found");
+            data = parsePlayer(object);
+        }
+        
+        if (data != nullptr){
+            data->appendChild("layer-id", JsonValue::alloc(id));
         }
     }
 }
@@ -249,7 +286,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     /** the data associated with each layer of tiles (pairs of layer name followed by */
     std::shared_ptr<JsonValue> tileLayersData = JsonValue::allocObject();
     _wallData =  JsonValue::allocArray();
-    _playerData = JsonValue::allocObject();
+    _playerData = nullptr;
     _enemyData = JsonValue::allocArray();
     
     // set box2d map and camera attributes
@@ -276,6 +313,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     }
     levelData->appendChild("tiles", tileLayersData);
     levelData->appendChild("walls", _wallData);
+    levelData->appendChild("player", _playerData);
     return levelData;
 }
 
@@ -283,10 +321,19 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
 #pragma mark Parsing Objects
 
 const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<JsonValue>& json){
+    return parsePhysicsObject(json, true, true, false);
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue> &json){
+    _playerData = parsePhysicsObject(json, false, true, true);
+    return _playerData;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parsePhysicsObject(const std::shared_ptr<JsonValue> &json, bool parseAsset, bool parseCollider, bool parseHitbox){
     
     std::shared_ptr<JsonValue> data = JsonValue::allocObject();
     int tileId = json->getLong("gid") & 0xFFFFFFF;
-    CUAssertLog(tileId != 0, "object %d error: the class 'Wall' should be used exclusively on tiles", tileId);
+    CUAssertLog(tileId != 0, "object %lu error: object does not belong to a tile", json->getLong("gid"));
     auto [tilesetName, id] = getTilesetNameFromID(tileId);
     std::shared_ptr<Tileset> ts = _sets.find(tilesetName)->second;
     Tileset::TextureRegionData textureData = ts->getTextureData(id);
@@ -294,45 +341,64 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
     CUAssertLog(tileData != nullptr, "object gid %d corresponds to tile %d which has no meta data", tileId, id);
     
     // add asset data
-    data->appendChild("asset", convertTextureDataToJSON(textureData));
-    
-    // get collider
-    std::shared_ptr<JsonValue> tileObjects = tileData->get(OBJECT_LAYER)->get("objects");
-    std::shared_ptr<JsonValue> colliderJson = getCollider(tileObjects);
-    CUAssertLog(colliderJson != nullptr, "tileset %s: the tile %d is missing collider object with class Collider", tilesetName.c_str(), id);
+    if (parseAsset){
+        data->appendChild("asset", convertTextureDataToJSON(textureData));
+    }
     
     // load object properties
     Vec2 tilePos(json->getFloat("x"), _mapHeight - json->getFloat("y"));
     Size objectSize(json->getFloat("width"), json->getFloat("height"));
-    
-    // load collider properties
-    Vec2 origin(colliderJson->getFloat("x"), colliderJson->getFloat("y"));
-    std::vector<Vec2> vertices;
-    auto points = colliderJson->get("polygon")->children();
-    for (auto& point : points){
-        vertices.push_back(Vec2(point->getFloat("x"), point->getFloat("y")));
-    }
     Size tileSize(textureData.lengthX, textureData.lengthY);
-    Vec2 scale = (Vec2)(objectSize / tileSize);
-    scaleCollider(vertices, scale);
-    parseCollider(vertices, origin, tileSize, tilePos);
-    
-    // adjust collider size
-    scale = Vec2(1,1)/_tileDimension;
-    scaleCollider(vertices, scale);
-    
-    
-    // set collider data (for physics)
-    std::shared_ptr<JsonValue> colliderData = JsonValue::allocObject();
-    colliderData->appendChild("vertices", convertVerticesToJSON(vertices));
-    colliderData->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
-    colliderData->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
-    data->appendChild("collider", colliderData);
     
     // set object data (for rendering)
     data->appendChild("x", JsonValue::alloc(tilePos.x/_tileDimension));
     data->appendChild("y", JsonValue::alloc(tilePos.y/_tileDimension));
     data->appendChild("width", JsonValue::alloc(objectSize.width / _tileDimension));
     data->appendChild("height", JsonValue::alloc(objectSize.height / _tileDimension));
+    
+    // get components
+    std::shared_ptr<JsonValue> tileObjects = tileData->get(OBJECT_LAYER)->get("objects");
+    
+    if (parseCollider){
+        // load collider properties
+        std::shared_ptr<JsonValue> colliderJson = getObjectByType(tileObjects, CLASS_COLLIDER);
+        CUAssertLog(colliderJson != nullptr, "tileset %s: the tile %d is missing collider object with class Collider", tilesetName.c_str(), id);
+        
+        Vec2 origin(colliderJson->getFloat("x"), colliderJson->getFloat("y"));
+        std::vector<Vec2> vertices;
+        auto points = colliderJson->get("polygon")->children();
+        for (auto& point : points){
+            vertices.push_back(Vec2(point->getFloat("x"), point->getFloat("y")));
+        }
+        parsePolygonCollider(vertices, origin, tileSize, tilePos, objectSize);
+        
+        // adjust collider size to be in terms of physics units
+        scalePolygonCollider(vertices, Vec2::ONE/_tileDimension);
+        
+        // set collider data (for physics)
+        std::shared_ptr<JsonValue> colliderData = JsonValue::allocObject();
+        colliderData->appendChild("shape", JsonValue::alloc(std::string("polygon")));    // TODO: support other shapes if necessary
+        colliderData->appendChild("vertices", convertVerticesToJSON(vertices));
+        colliderData->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
+        colliderData->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
+        data->appendChild("collider", colliderData);
+    }
+    
+    if (parseHitbox){
+        // load the hitbox
+        std::shared_ptr<JsonValue> hitboxJSON = getObjectByType(tileObjects, CLASS_HITBOX);
+        CUAssertLog(hitboxJSON != nullptr, "tileset %s: the tile %d is missing hitbox object with class Hitbox", tilesetName.c_str(), id);
+        Vec2 origin(hitboxJSON->getFloat("x"), hitboxJSON->getFloat("y"));
+        Vec2 dimension(hitboxJSON->getFloat("width"), hitboxJSON->getFloat("height"));
+        parseBoxCollider(dimension, origin, tileSize, tilePos, objectSize);
+        std::shared_ptr<JsonValue> hitboxData = JsonValue::allocObject();
+        hitboxData->appendChild("shape", JsonValue::alloc(std::string("box")));    // TODO: support other shapes if necessary
+        hitboxData->appendChild("width", JsonValue::alloc(dimension.x/_tileDimension));
+        hitboxData->appendChild("height", JsonValue::alloc(dimension.y/_tileDimension));
+        hitboxData->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
+        hitboxData->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
+        data->appendChild("hitbox", hitboxData);
+    }
+    
     return data;
 }

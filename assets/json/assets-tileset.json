@@ -8,8 +8,8 @@
         }
     },
     "jsons": {
+        "entities": "json/tiled/tilesets/entities.json",
         "terrain": "json/tiled/tilesets/terrain.json",
-        "terrain2": "json/tiled/tilesets/terrain2.json",
         "stone_walls": "json/tiled/tilesets/stone_walls.json"
     }
 }
