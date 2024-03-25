@@ -5,6 +5,11 @@
 #include "TileLayer.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "MeleeEnemy.hpp"
+#include "RangedEnemy.hpp"
+#include "RangedLizard.hpp"
+#include "MageAlien.hpp"
+#include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
 #include "GameConstants.hpp"
@@ -84,6 +89,10 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
             sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
             /*batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
                 _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);*/
+        }
+        if (_enemies[ii]->isEnabled()) {
+            batch->draw(_attackAnimation, Color4(255,255,255,64), (Vec2)_attackAnimation->getSize() / 2, _enemies[ii]->getSightRange()/((Vec2)_attackAnimation->getSize()/2) * _scale,
+                        _enemies[ii]->getFacingDir().getAngle() + M_PI_2, _enemies[ii]->getPosition() * _scale);
         }
     }
     
@@ -349,6 +358,16 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
         Size size(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
         auto enemy = Enemy::alloc(pos, size);
+        std::string enemyType = json->getString("type");
+        if (enemyType == "melee-lizard") {
+            enemy = MeleeEnemy::alloc(pos, size);
+        }
+        else if (enemyType == "ranged-lizard") {
+            enemy = RangedLizard::alloc(pos, size);
+        }
+        else if (enemyType == "caster") {
+            enemy = MageAlien::alloc(pos, size);
+        }
         auto enemyCollider = enemy->getCollider();
         enemyCollider->setName("enemy-" + std::to_string(ii));
         enemyCollider->setDensity(json->getDouble(DENSITY_FIELD));

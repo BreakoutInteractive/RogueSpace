@@ -28,6 +28,10 @@ class Wall;
 class TileLayer;
 class Player;
 class Enemy;
+class MeleeEnemy;
+class RangedEnemy;
+class RangedLizard;
+class MageAlien;
 class GameObject;
 
 #pragma mark -

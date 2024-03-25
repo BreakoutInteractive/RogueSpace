@@ -28,6 +28,7 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "melee-lizard",
             "debugcolor":   "green",
             "health":       2
         },
@@ -42,6 +43,7 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "ranged-lizard",
             "debugcolor":   "green",
             "health":       2
         },
@@ -56,6 +58,7 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "melee-lizard",
             "debugcolor":   "green",
             "health":       2
         },
@@ -70,6 +73,7 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "caster",
             "debugcolor":   "green",
             "health":       3
         }
