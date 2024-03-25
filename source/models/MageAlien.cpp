@@ -50,7 +50,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
-    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 15);
+    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
     _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 13);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
     _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
@@ -101,7 +101,7 @@ void MageAlien::setFacingDir(cugl::Vec2 dir) {
     
     if (prevDirection != _directionIndex){
         _idleAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
-        _walkAnimation->setFrameRange(16 * _directionIndex, 16 * _directionIndex + 15);
+        _walkAnimation->setFrameRange(16 * _directionIndex + 6, 16 * _directionIndex + 13);
         _attackAnimation->setFrameRange(14 * _directionIndex, 14 * _directionIndex + 13);
         _stunAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
     }
