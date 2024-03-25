@@ -4,6 +4,11 @@
         "drawFill": false,
         "id": 7,
         "members": [
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
         ],
         "name": "Caster",
         "type": "class",
@@ -61,6 +66,12 @@
         "id": 6,
         "members": [
             {
+                "name": "enemy_type",
+                "propertyType": "Type",
+                "type": "string",
+                "value": "MELEE"
+            },
+            {
                 "name": "path",
                 "type": "object",
                 "value": 0
@@ -71,6 +82,24 @@
         "useAs": [
             "object",
             "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 9,
+        "members": [
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "Path",
+        "type": "class",
+        "useAs": [
+            "object",
             "project"
         ]
     },
@@ -87,5 +116,16 @@
             "tile",
             "project"
         ]
+    },
+    {
+        "id": 10,
+        "name": "Type",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "RANGE",
+            "MELEE"
+        ],
+        "valuesAsFlags": false
     }
 ]
