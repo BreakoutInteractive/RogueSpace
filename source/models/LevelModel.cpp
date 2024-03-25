@@ -162,6 +162,11 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _walls[ii]->getCollider()->setDebugScene(_debugNode);
         _walls[ii]->getCollider()->setDebugColor(Color4::WHITE);
     }
+    
+    for (int ii = 0; ii < _boundaries.size(); ii++){
+        _boundaries[ii]->setDebugScene(_debugNode);
+        _boundaries[ii]->setDebugColor(Color4::WHITE);
+    }
 }
 
 void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
@@ -226,7 +231,6 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<Js
 
 	auto walls = parsedJson->get(WALL_FIELD);
 	if (walls != nullptr) {
-		// Convert the object to an array so we can see keys and values
 		int wsize = (int)walls->size();
 		for(int ii = 0; ii < wsize; ii++) {
 			loadWall(walls->get(ii));
@@ -236,12 +240,33 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<Js
 		return false;
 	}
     
+    auto boundaries = parsedJson->get(BOUNDARY_FIELD);
+    if (boundaries != nullptr) {
+        int size = (int)boundaries->size();
+        for(int ii = 0; ii < size; ii++) {
+            loadBoundary(boundaries->get(ii));
+        }
+    } else {
+        CUAssertLog(false, "Failed to load walls");
+        return false;
+    }
+    
     auto enemiesJson = json->get("enemies");
     if (enemiesJson != nullptr){
         loadEnemies(enemiesJson);
     }
     else {
         CUAssertLog(false, "Failed to load enemies");
+        return false;
+    }
+    
+    // load tile layers
+    auto tileLayers = parsedJson->get("tiles");
+    if (tileLayers != nullptr){
+        loadTileLayers(tileLayers);
+    }
+    else {
+        CUAssertLog(false, "Failed to find any tile layers");
         return false;
     }
 
@@ -264,14 +289,8 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<Js
         _dynamicObjects.push_back(_walls[ii]); // TODO: need to separate out walls to reduce sorting overhead;
     }
     
-    // load tile layers
-    auto tileLayers = parsedJson->get("tiles");
-    if (tileLayers != nullptr){
-        loadTileLayers(tileLayers);
-    }
-    else {
-        CUAssertLog(false, "Failed to find any tile layers");
-        return false;
+    for (int ii = 0; ii < _boundaries.size(); ii++){
+        addObstacle(_boundaries[ii]);
     }
     
     
@@ -287,6 +306,9 @@ void LevelModel::unload() {
         
         for(auto it = _walls.begin(); it != _walls.end(); ++it) {
             (*it)->removeObstaclesFromWorld(_world);
+        }
+        for(auto it = _boundaries.begin(); it != _boundaries.end(); ++it) {
+            _world->removeObstacle(*it);
         }
     }
 	_enemies.clear();
@@ -450,16 +472,37 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	return success;
 }
 
-/**
-* Converts the string to a color
-*
-* Right now we only support the following colors: yellow, red, blur, green,
-* black, and grey.
-*
-* @param  name the color name
-*
-* @return the color for the string
-*/
+bool LevelModel::loadBoundary(const std::shared_ptr<JsonValue>& json) {
+    bool success = true;
+    
+    Vec2 pos(json->getFloat("x"), json->getFloat("y"));
+    std::vector<float> vertices = json->get("vertices")->asFloatArray();
+    success = vertices.size() >= 2 && vertices.size() % 2 == 0;
+    
+    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
+    Poly2 polygon(verts,(int)vertices.size()/2);
+    EarclipTriangulator triangulator;
+    triangulator.set(polygon.vertices);
+    triangulator.calculate();
+    polygon.setIndices(triangulator.getTriangulation());
+    triangulator.clear();
+    
+    // Get the object, which is automatically retained
+    if (success){
+        auto p = std::make_shared<physics2::PolygonObstacle>();
+        p->PolygonObstacle::init(polygon, pos);
+        b2Filter filter;
+        // this is a wall
+        filter.categoryBits = CATEGORY_WALL;
+        // a wall can collide with a player or an enemy
+        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+        p->setFilterData(filter);
+        _boundaries.push_back(p);
+    }
+    return success;
+}
+
+
 Color4 LevelModel::parseColor(std::string name) {
 	if (name == "yellow") {
 		return Color4::YELLOW;

@@ -208,6 +208,14 @@ void LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
             CUAssertLog(_playerData == nullptr, "uh oh!, multiple players found");
             data = parsePlayer(object);
         }
+        else if (type == CLASS_COLLIDER){
+            data = parseCustomCollision(object);
+            _boundaryData->appendChild(data);
+        }
+        else if (type == "Lizard" || type == "Caster"){
+            //CULog(type.c_str());
+            //CULog(parsePlayer(object)->toString().c_str());
+        }
         
         if (data != nullptr){
             data->appendChild("layer-id", JsonValue::alloc(id));
@@ -288,6 +296,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     _wallData =  JsonValue::allocArray();
     _playerData = nullptr;
     _enemyData = JsonValue::allocArray();
+    _boundaryData = JsonValue::allocArray();
     
     // set box2d map and camera attributes
     levelData->appendValue("width", _mapWidth/_tileDimension);
@@ -314,6 +323,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     levelData->appendChild("tiles", tileLayersData);
     levelData->appendChild("walls", _wallData);
     levelData->appendChild("player", _playerData);
+    levelData->appendChild("boundaries", _boundaryData);
     return levelData;
 }
 
@@ -327,6 +337,31 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue> &json){
     _playerData = parsePhysicsObject(json, false, true, true);
     return _playerData;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::shared_ptr<JsonValue> &json){
+
+    // load collider properties
+    Vec2 pos(json->getFloat("x"), _mapHeight - json->getFloat("y"));
+    Vec2 origin(json->getFloat("x"), json->getFloat("y"));
+    std::vector<Vec2> vertices;
+    auto points = json->get("polygon")->children();
+    for (auto& point : points){
+        vertices.push_back(Vec2(point->getFloat("x"), point->getFloat("y")));
+    }
+    auto artificialSize = Size(origin.x * 2, origin.y);
+    parsePolygonCollider(vertices, origin, artificialSize, pos, artificialSize);
+    // adjust collider size to be in terms of physics units
+    scalePolygonCollider(vertices, Vec2::ONE/_tileDimension);
+    
+    // finalize data
+    std::shared_ptr<JsonValue> data = JsonValue::allocObject();
+    // TODO: support other shapes if necessary
+    data->appendChild("shape", JsonValue::alloc(std::string("polygon")));
+    data->appendChild("vertices", convertVerticesToJSON(vertices));
+    data->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
+    data->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
+    return data;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parsePhysicsObject(const std::shared_ptr<JsonValue> &json, bool parseAsset, bool parseCollider, bool parseHitbox){

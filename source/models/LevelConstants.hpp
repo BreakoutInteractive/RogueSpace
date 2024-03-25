@@ -49,6 +49,7 @@
 
 /** The wall specific fields */
 #define WALL_FIELD          "walls"
+#define BOUNDARY_FIELD      "boundaries"
 
 /** The key for our loaded level */
 #define LEVEL_ONE_KEY       "level1"

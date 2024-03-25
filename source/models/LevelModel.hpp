@@ -76,14 +76,14 @@ protected:
     /** Reference to all the walls */
     std::vector<std::shared_ptr<Wall>> _walls;
 
+    /** Reference to all custom boundaries (box2d obstacles) */
+    std::vector<std::shared_ptr<physics2::Obstacle>> _boundaries;
+    
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
-    
-    // TODO: to be deleted with full Tiled integration
-    std::shared_ptr<JsonValue> tempJSON;
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
     std::shared_ptr<Animation> _playerAttack;
@@ -134,6 +134,15 @@ protected:
      * @return true if the wall was successfully loaded
      */
     bool loadWall(const std::shared_ptr<JsonValue>& json);
+    
+    /**
+     * Loads a single collision object
+     *
+     * @param  reader   a JSON reader with cursor ready to read the custom boundary
+     *
+     * @return true if the collision object was successfully loaded
+     */
+    bool loadBoundary(const std::shared_ptr<JsonValue>& json);
 
     /**
      * Converts the string to a color

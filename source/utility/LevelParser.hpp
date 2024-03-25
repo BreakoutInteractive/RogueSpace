@@ -46,6 +46,8 @@ protected:
     std::shared_ptr<JsonValue> _playerData;
     /** the data associated with the enemies */
     std::shared_ptr<JsonValue> _enemyData;
+    /** the data associated with custom boundaries */
+    std::shared_ptr<JsonValue> _boundaryData;
     
 private:
     
@@ -91,6 +93,11 @@ private:
      * parses a player object and produces the corresponding data for Player model
      */
     const std::shared_ptr<JsonValue> parsePlayer(const std::shared_ptr<JsonValue>& json);
+    
+    /**
+     * parses a collider detached from any object. These form the customized boundaries of the map.
+     */
+    const std::shared_ptr<JsonValue> parseCustomCollision(const std::shared_ptr<JsonValue>& json);
     
     /**
      * parses an object and its physics components
