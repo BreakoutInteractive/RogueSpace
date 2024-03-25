@@ -1,0 +1,1 @@
+this folder contains json files representing the levels of our game. You should not be modifying them directly as these as exported files.

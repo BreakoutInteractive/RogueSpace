@@ -8,38 +8,84 @@
 #ifndef LevelParser_hpp
 #define LevelParser_hpp
 
-#include <stdio.h>
 #include <cugl/cugl.h>
 #include <cugl/io/CUJsonReader.h>
 #include <cugl/io/CUJsonWriter.h>
-
-// TODO: these should probably be abstracted to LevelConstants
-// along with the texture names and a few constants for sizes and stuff
-#define BL_FIELD            "bottom_left"
-#define BR_FIELD            "bottom_right"
-#define FLOOR_FIELD         "floor"
-#define PLAYER_FIELD        "player"
-#define ENEMY_SPAWN_FIELD   "mob_spawns"
-#define ENEMY_PATH_FIELD    "paths"
+#include "Tileset.hpp"
 
 using namespace cugl;
 
 class LevelParser {
 protected:
-    /** width of (non-staggered) tile */
-    int _tilewidth;
     
-    /** height of (non-staggered) tile */
-    int _tileheight;
+    // INTERNAL INTERMEDIATE DATA (this can be modified during the parsing phase)
     
-    /** width of play area */
-    int _width;
+    /** pixel width of tile */
+    int _tileWidth;
     
-    /** height of play area */
-    int _height;
+    /** pixel height of tile */
+    int _tileHeight;
     
-    /** parsing map to correctly direct sub-objects from the JSON */
-    std::unordered_map<std::string, int> _layermap;
+    /** the number of pixels corresponding to a single box 2d unit */
+    float _tileDimension;
+    
+    /** pixel width of tiled map*/
+    float _mapWidth;
+    
+    /** pixel height of tiled map */
+    float _mapHeight;
+    
+    /** the tilesets used by the given map, sorted by their firstgid */
+    std::vector<std::shared_ptr<JsonValue>> _mapTilesets;
+    
+#pragma mark Parsing Output Containers
+    
+    /** the data associated with walls */
+    std::shared_ptr<JsonValue> _wallData;
+    /** the data associated with the player */
+    std::shared_ptr<JsonValue> _playerData;
+    /** the data associated with the enemies */
+    std::shared_ptr<JsonValue> _enemyData;
+    
+private:
+    
+    /** the set of tilesets (mapped from json name to tileset data structure */
+    std::unordered_map<std::string, std::shared_ptr<Tileset>> _sets;
+    
+#pragma mark -
+#pragma mark Internal Parsing Helpers
+    
+    /**
+     * load the dependencies of the current tiled map to resolve references
+     */
+    void parseTilesetDependency(std::shared_ptr<JsonValue> tilesets);
+    
+    /**
+     * find the tileset name for the given global identifier (with flags removed)
+     * constructs the corresponding id in the tileset
+     * @return the pair containing the name of the tileset (eg. example.json) and the index of the tile in the tileset
+     */
+    const std::pair<std::string, int> getTilesetNameFromID(int id);
+    
+    /**
+     * find the texture region to draw given the global identifier
+     */
+    const Tileset::TextureRegionData getRegionFromID(int id);
+    
+    /**
+     * parses a tiled layer and produces the data needed to initialize a tiled layer (for rendering)
+     */
+    const std::shared_ptr<JsonValue> parseTiledLayer(const std::shared_ptr<JsonValue> layer);
+    
+    /**
+     * parses an object layer and loads the data needed to initialize various object classes
+     */
+    void parseObjectLayer(const std::shared_ptr<JsonValue> layer);
+    
+    /**
+     * parses a wall object and produces the corresponding data for Wall model
+     */
+    const std::shared_ptr<JsonValue> parseWall(const std::shared_ptr<JsonValue>& json);
     
 public:
 #pragma mark -
@@ -55,73 +101,17 @@ public:
      */
     ~LevelParser(){}
     
-    /**
-     * Loads this game level from the source Tiled json
-     *
-     * @return the json used directly for game
-     */
-    const std::shared_ptr<JsonValue> preload(const std::string file) {
-        std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
-        return parseTiled(reader->readJson());
-    }
     
-    bool readLayermap(const std::shared_ptr<JsonValue>& json);
+#pragma mark
+#pragma mark Assets
     
     /**
-     * Returns correct translated values from Tiled origin to game origin
-     * Note that inputs/outputs describe lengths of tiles; the given x/y coordinate used in Tiled must be converted (divide by tile length) to use this
-     * @param w  the isometric x coordinate to be converted
-     * @param h the isometric y coordinate to be converted
-     *
+     * populate parser with preloaded tilesets to assist data parsing of tiles
      */
-    const std::shared_ptr<JsonValue> translateJson(float w, float h);
+    void loadTilesets(const std::shared_ptr<AssetManager>& assets);
     
-    /**
-     * Parses the three floor view layers
-     *
-     * @param layers  the layers JSON node extracted to take floor data from
-     * @return an ArrayType node to attach to the main level JSON
-     *
-     */
-    const std::shared_ptr<JsonValue> parseFloor(const std::shared_ptr<JsonValue>& layers);
-    
-    /**
-     * DEPRECATED
-     * Parses all collision boundaries -- includes invisible AND visible walls
-     *
-     * @param layers  the layers JSON node extracted to take floor data from
-     * @return an ArrayType node to attach to the main level JSON
-     *
-     */
-    const std::shared_ptr<JsonValue> parseBoundaries(const std::shared_ptr<JsonValue>& layers);
-    
-    /**
-     * DEPRECATED
-     * Parses all walls/objects and relay their data
-     *
-     * @param layers  the layers JSON node extracted to take floor data from
-     * @return an ArrayType node to attach to the main level JSON
-     *
-     */
-    const std::shared_ptr<JsonValue> parseWalls(const std::shared_ptr<JsonValue>& layers);
-    
-    /**
-     * Parses specifications for the player
-     *
-     * @param layers  the layers JSON node extracted to take floor data from
-     * @return an ArrayType node to attach to the main level JSON
-     *
-     */
-    const std::shared_ptr<JsonValue> parsePlayer(const std::shared_ptr<JsonValue>& layers);
-    
-    /**
-     * Parses specifications for enemies
-     *
-     * @param layers  the layers JSON node extracted to take floor data from
-     * @return an ArrayType node to attach to the main level JSON
-     *
-     */
-    const std::shared_ptr<JsonValue> parseEnemies(const std::shared_ptr<JsonValue>& layers);
+#pragma mark
+#pragma mark Utility
     
     /**
      * Parses Tiled-produced json to game json for level

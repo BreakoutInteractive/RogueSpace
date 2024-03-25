@@ -1,0 +1,30 @@
+[
+    {
+        "color": "#fff4c183",
+        "drawFill": false,
+        "id": 2,
+        "members": [
+        ],
+        "name": "Wall",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ff000000",
+        "drawFill": true,
+        "id": 3,
+        "members": [
+        ],
+        "name": "Collider",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    }
+]

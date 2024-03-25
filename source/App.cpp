@@ -22,7 +22,8 @@ void App::onStartup() {
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
     _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook());
-    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
+//    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
+    _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
     
     // Create a "loading" screen
     _scene = State::LOAD;
@@ -34,7 +35,7 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
-    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
+    _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
 
 
     Application::onStartup(); // this is required
