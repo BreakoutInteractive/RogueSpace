@@ -357,7 +357,17 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         auto sizeArray = json->get(SIZE_FIELD);
         Vec2 pos(posData->get(0)->asFloat(), posData->get(1)->asFloat());
         Size size(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
-        auto enemy = MageAlien::alloc(pos, size);
+        auto enemy = Enemy::alloc(pos, size);
+        std::string enemyType = json->getString("type");
+        if (enemyType == "melee-lizard") {
+            enemy = MeleeEnemy::alloc(pos, size);
+        }
+        else if (enemyType == "ranged-lizard") {
+            enemy = RangedLizard::alloc(pos, size);
+        }
+        else if (enemyType == "caster") {
+            enemy = MageAlien::alloc(pos, size);
+        }
         auto enemyCollider = enemy->getCollider();
         enemyCollider->setName("enemy-" + std::to_string(ii));
         enemyCollider->setDensity(json->getDouble(DENSITY_FIELD));
