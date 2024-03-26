@@ -42,7 +42,9 @@ private:
     
     std::shared_ptr<scene2::SceneNode> _joystickRing;
     
-    std::shared_ptr<scene2::SceneNode> _joystickButton;
+    std::shared_ptr<scene2::SceneNode> _joystickMoveButton;
+    
+    std::shared_ptr<scene2::SceneNode> _joystickAimButton;
     
     std::vector<std::shared_ptr<scene2::SceneNode>> _stamina;
     

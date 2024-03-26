@@ -19,6 +19,8 @@ public:
     public:
         /** ball position */
         cugl::Vec2 position;
+        /** The texture for the joystick aim sprite. */
+        std::shared_ptr<cugl::Texture> currTexture;
         /** The drawing scale of the joystick ball */
         cugl::Vec2 _drawBallScale;
         
@@ -38,7 +40,10 @@ public:
     
 private:
     /** The texture for the joystick ball sprite. */
-    std::shared_ptr<cugl::Texture> _ballTexture;
+    std::shared_ptr<cugl::Texture> _ballMoveTexture;
+    
+    /** The texture for the joystick aim sprite. */
+    std::shared_ptr<cugl::Texture> _ballAimTexture;
     
     /** The texture for the joystick base sprite. */
     std::shared_ptr<cugl::Texture> _baseTexture;

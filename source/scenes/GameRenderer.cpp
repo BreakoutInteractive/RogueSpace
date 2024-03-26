@@ -45,17 +45,18 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     });
     
     _joystickRing = _assets->get<scene2::SceneNode>("HUD_js-ring");
-    _joystickButton = _assets->get<scene2::SceneNode>("HUD_js-button");
+    _joystickMoveButton = _assets->get<scene2::SceneNode>("HUD_js-button");
+    _joystickAimButton = _assets->get<scene2::SceneNode>("HUD_aim-button");
     
-    int count = 5; // possibility that this is retrievable from scene graph?
-    for (int i = 1; i <= count; i++){
-        _stamina.push_back(_assets->get<scene2::SceneNode>("HUD_status_stamina-" + std::to_string(i)));
-    }
-    
-    // testing disable
-    for (auto it = _stamina.begin(); it != _stamina.end(); it++){
-        (*it)->setVisible(false);
-    }
+    int count = 2; // possibility that this is retrievable from scene graph?
+        for (int i = 1; i <= count; i++){
+            _stamina.push_back(_assets->get<scene2::SceneNode>("HUD_status_cooldown-" + std::to_string(i)));
+        }
+        
+        // testing disable
+        for (auto it = _stamina.begin(); it != _stamina.end(); it++){
+            (*it)->setVisible(false);
+        }
     
     _hpBar = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_hp"));
     
@@ -66,7 +67,8 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     // activate UI
     _pauseButton->activate();
     _joystickRing->setVisible(false);
-    _joystickButton->setVisible(false);
+    _joystickMoveButton->setVisible(false);
+    _joystickAimButton->setVisible(false);
     
     addChild(scene);
     return true;

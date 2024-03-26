@@ -220,7 +220,7 @@ void Player::hit(Vec2 atkDir, int damage) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _dodgeDuration.isZero()) {
         _hitCounter.reset();
-        _hp = std::fmax(0, (_hp - damage*_defenseUpgrade));
+        _hp = std::fmax(0, (_hp - .1));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * 10); //tune this value (10)
     }
