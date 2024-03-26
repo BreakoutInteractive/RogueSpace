@@ -1,0 +1,16 @@
+{
+    "textures": {
+        "terrain" : {
+            "file":      "textures/terrain.png"
+        },
+        "stone_walls": {
+            "file":     "textures/stone_walls.png"
+        }
+    },
+    "jsons": {
+        "entities": "json/tiled/tilesets/entities.json",
+        "terrain": "json/tiled/tilesets/terrain.json",
+        "stone_walls": "json/tiled/tilesets/stone_walls.json"
+    }
+}
+

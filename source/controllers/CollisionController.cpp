@@ -3,6 +3,10 @@
 #include "CollisionController.hpp"
 #include "../models/LevelConstants.hpp"
 #include "../models/Enemy.hpp"
+#include "../models/MeleeEnemy.hpp"
+#include "../models/RangedEnemy.hpp"
+#include "../models/RangedLizard.hpp"
+#include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
@@ -57,13 +61,13 @@ void CollisionController::beginContact(b2Contact* contact){
                 CULog("Hit an enemy!");
             }
         }
-        //player takes damage if running into enemy while not dodging
-        else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
-            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
-            dir.normalize();
-            if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
-        }
+        //update (commenting out the below) : player NO LONGER takes damage if running into enemy while not dodging
+        // else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+        //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+        //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
+        //     dir.normalize();
+        //     if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
+        // }
     }
     // enemy attack
     std::shared_ptr<Player> player = _level->getPlayer();

@@ -4,8 +4,8 @@
     "view-width": 32.0,
     "view-height": 18.0,
     "player": {
-        "pos": [24, 6],
-        "size": [1,1],
+        "pos": [21.249998, 13.553881],
+        "size": [0.3,0.3],
         "bodytype":      "dynamic",
         "density":        0.5,
         "friction":       0.1,
@@ -18,22 +18,23 @@
     },
     "enemies": {
         "enemy-1": {
-            "pos": [22, 13],
-            "path": [[22, 13], [19, 10], [22, 7], [25, 10]],
+            "pos": [6.627894, 9.971924],
+            "path": [[6.627894, 9.971924]],
             "size": [0.6,0.6],
-            "defaultstate": "patrol",
+            "defaultstate": "sentry",
             "bodytype":     "dynamic",
             "density":      1.0,
             "friction":     0.1,
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "melee-lizard",
             "debugcolor":   "green",
             "health":       2
         },
         "enemy-2": {
-            "pos": [18, 13],
-            "path": [[18, 13]],
+            "pos": [13.434381, 5.207834],
+            "path": [[13.434381, 5.207834]],
             "size": [0.6,0.6],
             "defaultstate": "sentry",
             "bodytype":     "dynamic",
@@ -42,12 +43,13 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "ranged-lizard",
             "debugcolor":   "green",
             "health":       2
         },
         "enemy-3": {
-            "pos": [8, 8],
-            "path": [[8, 8], [12, 4], [20, 4], [12, 4]],
+            "pos": [9.558827, 11.890790],
+            "path": [[9.558827, 11.890790], [11, 13], [13, 13], [12, 8]],
             "size": [0.6,0.6],
             "defaultstate": "patrol",
             "bodytype":     "dynamic",
@@ -56,12 +58,13 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "melee-lizard",
             "debugcolor":   "green",
             "health":       2
         },
         "enemy-4": {
-            "pos": [4, 0],
-            "path": [[4, 0]],
+            "pos": [6.790236, 11.351460],
+            "path": [[6.790236, 11.351460]],
             "size": [0.6,0.6],
             "defaultstate": "sentry",
             "bodytype":     "dynamic",
@@ -70,89 +73,9 @@
             "restitution":  0,
             "rotation":     false,
             "texture":      "enemy",
+            "type":         "caster",
             "debugcolor":   "green",
             "health":       3
-        }
-    },
-    "floor": {
-        "debug-only-description": "collection of tiles that make up the floor",
-        "debug-only-detail": "for sake of not blowing up the JSON file at this stage, `tiles` will contain the list of desirable tiles to draw and if we want a grid, use grid field",
-        "fields": "tiles are drawn starting at an offset of (-width/2, -height/4)",
-        "size": [4, 4],
-        "texture":       "floor",
-        "use-grid" :    true,
-        "grid": {
-            "start": [20, 15],
-            "columns": 10,
-            "rows": 10
-        },
-        "tiles":{
-            "tile1": {
-                "pos": [8, 6]
-            },
-            "tile2": {
-                "pos": [7, 5.5]
-            },
-            "tile3": {
-                "pos": [6, 5]
-            }
-        }
-    },
-    "walls": {
-        "wall1": {
-            "vertices": 3,
-            "boundary": [ 20.0, 16.0,  18.0,  17.0, 0.0,  6.0],
-            "bodytype":      "static",
-            "density":        0.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "texture":       "earth",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "wall2": {
-            "vertices": 3,
-            "boundary": [32.0, 10.0, 22.0, 17, 20.0, 16.0],
-            "bodytype":      "static",
-            "density":        0.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "texture":       "earth",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "wall3": {
-            "vertices": 4,
-            "boundary": [32.0, 10.0, 32.0, 2, 33.0, 2.0, 33.0, 10.0],
-            "bodytype":      "static",
-            "density":        0.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "texture":       "earth",
-            "debugcolor":    "yellow",
-            "debugopacity":  192
-        },
-        "wall4": {
-            "vertices": 6,
-            "boundary": [12.0, 0.05, 12.0, 0, 28.0, 0, 32, 2, 32.05, 2.05, 28.0, 0.05],
-            "bodytype":      "static",
-            "density":        0.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "texture":       "earth",
-            "debugcolor":    "red",
-            "debugopacity":  192
-        },
-        "wall5": {
-            "vertices": 4,
-            "boundary": [0.0, 6.0, 12.0, 0.0, 12.05, 0.05, 0.05, 6.05],
-            "bodytype":      "static",
-            "density":        0.0,
-            "friction":       0.2,
-            "restitution":    0.1,
-            "texture":       "earth",
-            "debugcolor":    "red",
-            "debugopacity":  192
         }
     }
 }

@@ -140,6 +140,15 @@ public:
 #pragma mark -
 #pragma mark Properties
     
+    /**
+     * Many positions may be associated with a given game object due to variations between hitboxes, sprites, animations, etc.
+     * An object may need a separate position for rendering or used as a reference point for components.
+     * 
+     * When a game object is enabled with physics, the returned position by default is the physics location.
+     *
+     * Note: you can retrieve positions of components directly.
+     *
+     */
     virtual Vec2 getPosition() const {
         if (_collider != nullptr){
             return _collider->getPosition();
@@ -165,7 +174,7 @@ public:
     {
         Vec2 p2 = other.getPosition();
         Vec2 p1 = getPosition();
-        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x <= p2.x));
+        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x < p2.x));
     }
 
 };

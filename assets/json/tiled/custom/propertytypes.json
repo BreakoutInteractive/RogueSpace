@@ -1,0 +1,131 @@
+[
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 7,
+        "members": [
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "Caster",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffff2600",
+        "drawFill": true,
+        "id": 8,
+        "members": [
+        ],
+        "name": "Hitbox",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#fff4c183",
+        "drawFill": false,
+        "id": 2,
+        "members": [
+        ],
+        "name": "Wall",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffffffff",
+        "drawFill": true,
+        "id": 3,
+        "members": [
+        ],
+        "name": "Collider",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 6,
+        "members": [
+            {
+                "name": "enemy_type",
+                "propertyType": "Type",
+                "type": "string",
+                "value": "MELEE"
+            },
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "Lizard",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 9,
+        "members": [
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "Path",
+        "type": "class",
+        "useAs": [
+            "object",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 5,
+        "members": [
+        ],
+        "name": "Player",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "id": 10,
+        "name": "Type",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "RANGE",
+            "MELEE"
+        ],
+        "valuesAsFlags": false
+    }
+]
