@@ -430,7 +430,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
                 {
@@ -508,8 +507,8 @@
                  "type":"Player",
                  "visible":true,
                  "width":128,
-                 "x":1359.99985879824,
-                 "y":764.551643406333
+                 "x":1225.29300413242,
+                 "y":675.958061414043
                 }],
          "opacity":1,
          "type":"objectgroup",

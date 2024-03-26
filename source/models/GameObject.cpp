@@ -42,8 +42,8 @@ void GameObject::setEnabled(bool value){
     if (_colliderShadow != nullptr){
         _colliderShadow->setEnabled(_enabled);
     }
-    if (_outlineSensor != nullptr){
-        _outlineSensor->setEnabled(_enabled);
+    if (_sensor != nullptr){
+        _sensor->setEnabled(_enabled);
     }
 }
 
@@ -51,12 +51,13 @@ void GameObject::syncPositions(){
     Vec2 pos = _position;
     if (_collider != nullptr){
         pos = _collider->getPosition();
+        _position = pos - _colliderOffset;
     }
     if (_colliderShadow != nullptr){
         _colliderShadow->setPosition(pos);
     }
-    if (_outlineSensor != nullptr){
-        _outlineSensor->setPosition(pos);
+    if (_sensor != nullptr){
+        _sensor->setPosition(pos + _sensorOffset);
     }
 }
 
@@ -64,14 +65,16 @@ void GameObject::addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> wo
     if (_collider != nullptr){
         world->addObstacle(_collider);
         _collider->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(this);
+        _colliderOffset.set(_collider->getPosition() - _position);
     }
     if (_colliderShadow != nullptr){
         world->addObstacle(_colliderShadow);
         _colliderShadow->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(this);
     }
-    if (_outlineSensor != nullptr){
-        world->addObstacle(_outlineSensor);
-        _outlineSensor->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(this);
+    if (_sensor != nullptr){
+        world->addObstacle(_sensor);
+        _sensor->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(this);
+        _sensorOffset.set(_sensor->getPosition() - _collider->getPosition());
     }
 }
 
@@ -82,7 +85,19 @@ void GameObject::removeObstaclesFromWorld(std::shared_ptr<physics2::ObstacleWorl
     if (_colliderShadow != nullptr){
         world->removeObstacle(_colliderShadow);
     }
-    if (_outlineSensor != nullptr){
-        world->removeObstacle(_outlineSensor);
+    if (_sensor != nullptr){
+        world->removeObstacle(_sensor);
+    }
+}
+
+void GameObject::setDebugNode(const std::shared_ptr<scene2::SceneNode> &debugNode){
+    if (_collider != nullptr){
+        _collider->setDebugScene(debugNode);
+    }
+    if (_colliderShadow != nullptr){
+        _colliderShadow->setDebugScene(debugNode);
+    }
+    if (_sensor != nullptr){
+        _sensor->setDebugScene(debugNode);
     }
 }

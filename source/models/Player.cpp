@@ -19,29 +19,55 @@ using namespace cugl;
 #pragma mark Constructors
 
 
-bool Player::init(const Vec2 pos, const Size size) {
+bool Player::init(std::shared_ptr<JsonValue> playerData) {
+    bool success = true;
+    _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
+    std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
+    Vec2 playerColliderPos(colliderData->getFloat("x"), colliderData->getFloat("y"));
+    std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
+    success = vertices.size() >= 2 && vertices.size() % 2 == 0;
+    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
+    Poly2 polygon(verts,(int)vertices.size()/2);
+    EarclipTriangulator triangulator;
+    triangulator.set(polygon.vertices);
+    triangulator.calculate();
+    polygon.setIndices(triangulator.getTriangulation());
+    
     // set up collider
-    auto box = std::make_shared<physics2::BoxObstacle>();
-    box->init(pos, size);
-    std::string name("player-collider");
-    box->setName(name);
+    auto collider = std::make_shared<physics2::PolygonObstacle>();
+    collider->init(polygon, playerColliderPos);
+    collider->setName(std::string("player-collider"));
     // this is a player and can collide with an enemy "shadow", a wall, or an attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
     filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK;
-    box->setFilterData(filter);
-    _collider = box;    // attach Component
+    collider->setFilterData(filter);
+    _collider = collider;                   // attach Component
     
     // set the player collider-shadow
-    auto boxShadow = std::make_shared<physics2::BoxObstacle>();
-    boxShadow->init(pos, size);
-    std::string name2("player-obstacle");
-    boxShadow->setName(name2);
-    boxShadow->setBodyType(b2_kinematicBody);
+    auto colliderShadow = std::make_shared<physics2::PolygonObstacle>();
+    colliderShadow->init(polygon, playerColliderPos);
+    colliderShadow->setName(std::string("player-collider-shadow"));
+    colliderShadow->setBodyType(b2_kinematicBody);
     filter.categoryBits = CATEGORY_PLAYER_SHADOW;
     filter.maskBits = CATEGORY_ENEMY;
-    boxShadow->setFilterData(filter);
-    _colliderShadow = boxShadow; // attach Component
+    colliderShadow->setFilterData(filter);
+    _colliderShadow = colliderShadow;       // attach Component
+    _colliderShadow->setDebugColor(Color4::BLACK);
+    
+    // set the player hitbox sensor
+    std::shared_ptr<JsonValue> hitboxData = playerData->get("hitbox");
+    Size hitboxSize(hitboxData->getFloat("width"), hitboxData->getFloat("height"));
+    Vec2 hitboxPos(hitboxData->getFloat("x"), hitboxData->getFloat("y"));
+    auto hitbox = physics2::BoxObstacle::alloc(hitboxPos, hitboxSize);
+    hitbox->setBodyType(b2_kinematicBody);
+    hitbox->setSensor(true);
+    hitbox->setName(std::string("player-hitbox"));
+    filter.categoryBits = CATEGORY_HITBOX;
+    filter.maskBits = CATEGORY_ATTACK;
+    hitbox->setFilterData(filter);
+    _sensor = hitbox;
+    _sensor->setDebugColor(Color4::RED);
     
     // set the counter properties
     _hitCounter.setMaxCount(GameConstants::PLAYER_IFRAME);
@@ -64,12 +90,6 @@ bool Player::init(const Vec2 pos, const Size size) {
     return true;
 }
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
 void Player::dispose() {
     _playerTextureKey = "";
 }
@@ -86,19 +106,18 @@ int Player::getMaxHP(){
 #pragma mark Animation
 
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    
     // TODO: render player with appropriate scales (right now default size)
     auto spriteSheet = _currAnimation->getSpriteSheet();
     
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
-    Affine2 transform = Affine2::createTranslation(getPosition() * _drawScale);
+    Affine2 transform = Affine2::createTranslation(_position * _drawScale);
     spriteSheet->draw(batch, _tint, origin, transform);
     
     // render player differently while dodging (add fading effect)
     if (!_dodgeDuration.isZero()) {
         for (int i = 2; i < 10; i += 2) {
             auto color = Color4(Vec4(1, 1, 1, 1 - i * 0.1));
-            Affine2 localTrans = Affine2::createTranslation((getPosition() - _collider->getLinearVelocity() * (i * 0.01)) * _drawScale);
+            Affine2 localTrans = Affine2::createTranslation((_position - _collider->getLinearVelocity() * (i * 0.01)) * _drawScale);
             spriteSheet->draw(batch, color, origin, localTrans);
         }
     }

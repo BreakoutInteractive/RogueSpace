@@ -180,6 +180,7 @@ void GameScene::restart(){
     _level->setAssets(_assets);
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
+    setDebug(isDebug());
     _AIController.init(_level);
     _collisionController.setLevel(_level);
     _gameRenderer.setGameElements(getCamera(), _level);

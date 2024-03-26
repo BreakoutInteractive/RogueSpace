@@ -101,7 +101,7 @@ protected:
      * @retain the player
      * @return true if the player was successfully loaded
      */
-    bool loadPlayer(const std::shared_ptr<JsonValue>& json);
+    bool loadPlayer(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json);
     
     /**
      * Loads the enemy object

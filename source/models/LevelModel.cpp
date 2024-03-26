@@ -143,9 +143,7 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     node->addChild(_debugNode);
     
     // debug node should be added once objects are initialized
-    _player->getCollider()->setDebugScene(_debugNode);
-    _player->getColliderShadow()->setDebugScene(_debugNode);
-    _player->getColliderShadow()->setDebugColor(Color4::RED);
+    _player->setDebugNode(_debugNode);
     _atk->setDebugScene(_debugNode);
     _atk->setDebugColor(Color4::RED);
 
@@ -222,7 +220,7 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& json, std::shared_ptr<Js
     
     auto playerJson = json->get(PLAYER_FIELD);
     if (playerJson != nullptr){
-        loadPlayer(playerJson);
+        loadPlayer(playerJson, parsedJson->get("player"));
     }
     else {
         CUAssertLog(false, "Failed to load player");
@@ -330,36 +328,29 @@ void LevelModel::unload() {
 #pragma mark -
 #pragma mark Individual Loaders
 
-bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> &json){
+bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json){
     bool success = true;
-    auto posData = json->get(POSITION_FIELD);
-    success = success && posData->isArray();
-    Vec2 pos = Vec2(posData->get(0)->asFloat(), posData->get(1)->asFloat());
-
-    auto sizeArray = json->get(SIZE_FIELD);
-    success = success && sizeArray->isArray();
-    Vec2 size = Vec2(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
-
 
     // Get the object, which is automatically retained
-    _player = Player::alloc(pos,(Size) size);
+    _player = Player::alloc(json);
     auto playerCollider = _player->getCollider();
-    playerCollider->setDensity(json->getDouble(DENSITY_FIELD));
-    playerCollider->setFriction(json->getDouble(FRICTION_FIELD));
-    playerCollider->setRestitution(json->getDouble(RESTITUTION_FIELD));
-    playerCollider->setFixedRotation(!json->getBool(ROTATION_FIELD));
-    playerCollider->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
-    _player->setTextureKey(json->getString(TEXTURE_FIELD)); //idle spritesheet
-    _player->setParryTextureKey(json->getString(PARRY_FIELD));
-    _player->setAttackTextureKey(json->getString(ATTACK_FIELD));
+    playerCollider->setDensity(constants->getDouble(DENSITY_FIELD));
+    playerCollider->setFriction(constants->getDouble(FRICTION_FIELD));
+    playerCollider->setRestitution(constants->getDouble(RESTITUTION_FIELD));
+    playerCollider->setFixedRotation(!constants->getBool(ROTATION_FIELD));
+    playerCollider->setDebugColor(parseColor(constants->getString(DEBUG_COLOR_FIELD)));
+    _player->setTextureKey(constants->getString(TEXTURE_FIELD)); //idle spritesheet
+    _player->setParryTextureKey(constants->getString(PARRY_FIELD));
+    _player->setAttackTextureKey(constants->getString(ATTACK_FIELD));
     _player->setDrawScale(_scale);
 
-    std::string btype = json->getString(BODYTYPE_FIELD);
+    std::string btype = constants->getString(BODYTYPE_FIELD);
     if (btype == STATIC_VALUE) {
         playerCollider->setBodyType(b2_staticBody);
     }
 
     //setup the attack for collision detection
+    Vec2 pos(json->getFloat("x"), json->getFloat("y"));
 	_atk = physics2::WheelObstacle::alloc(pos, GameConstants::PLAYER_MELEE_ATK_RANGE);
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);

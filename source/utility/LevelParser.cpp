@@ -323,6 +323,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     levelData->appendChild("tiles", tileLayersData);
     levelData->appendChild("walls", _wallData);
     levelData->appendChild("player", _playerData);
+    levelData->appendChild("enemies", _enemyData);
     levelData->appendChild("boundaries", _boundaryData);
     return levelData;
 }
