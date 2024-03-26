@@ -124,6 +124,8 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
+    /** Whether the weapon swap key is down */
+    bool  _keySwap;
     /** a vector cache representing the intended direction of movement*/
     Vec2 _keyMoveDir;
     /** a vector cache representing the intended direction of dodge*/
@@ -180,6 +182,8 @@ protected:
     bool _attackPressed;
     /** Whether the parry action was chosen */
     bool _parryPressed;
+    /** Whether the swap action was chosen */
+    bool _swapPressed;
     /** unit direction of the attack*/
     Vec2 _attackDir;
     /** unit vector direction of movement */
@@ -308,6 +312,13 @@ public:
      * @return true if the exit button was pressed.
      */
     bool didExit() const { return _exitPressed; }
+
+    /**
+     * Returns true if the swap button was pressed.
+     *
+     * @return true if the swap button was pressed.
+     */
+    bool didSwap() const { return _swapPressed; }
     
     /**
      * @return whether there is touch event associated with the motion gesture

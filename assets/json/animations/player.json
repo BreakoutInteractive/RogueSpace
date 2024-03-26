@@ -11,6 +11,9 @@
         },
         "player-parry": {
             "file":     "textures/player_parry.png"
+        },
+        "player-projectile": {
+            "file":     "textures/player_bow_projectile.png"
         }
     }
 }

@@ -98,6 +98,11 @@ public:
      * @return whether the animation has been started
      */
     bool isStarted() { return _started; }
+
+    /**
+     * @return the time elapsed since the start of this animation cycle
+     */
+    float elapsed() { return _elapsed; }
     
     /**
      * adds the callback to be executed at the timestamp `time` seconds into the animation

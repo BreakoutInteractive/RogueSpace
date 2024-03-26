@@ -57,9 +57,14 @@ protected:
     int _directionIndex;
     
     std::shared_ptr<Animation> _prevAnimation;
+
+    //if the player is attacking with the ranged weapon
+    bool _shooting;
     
 public:
 #pragma mark -
+    enum weapon { MELEE, RANGED };
+    weapon _weapon;
 #pragma mark Counters
     /** attack cooldown counter*/
     Counter _atkCD;
@@ -79,7 +84,7 @@ public:
      */
     void updateCounters();
     
-    
+
 #pragma mark Constructors
     /**
      * Creates a new player at the origin.
@@ -263,6 +268,12 @@ public:
      * @return the maximum HP of the player;
      */
     int getMaxHP();
+
+    bool isAttacking();
+
+    void setShooting(bool b) { _shooting = b; };
+
+    void swapWeapon() { _weapon = static_cast<weapon>((_weapon + 1) % 2); }
     
 
 #pragma mark -

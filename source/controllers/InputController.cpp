@@ -104,6 +104,7 @@ void InputController::update(float dt) {
     if (_keyAttack) _attackDir = (mouse->pointerPosition());
     _keyParry = mouse->buttonPressed().hasRight();
     _keyDodge = keys->keyDown(KeyCode::SPACE);
+    _keySwap = keys->keyPressed(KeyCode::LEFT_SHIFT);
     
     // move with WASD
     bool left = keys->keyDown(KeyCode::A);
@@ -148,6 +149,7 @@ void InputController::update(float dt) {
     _attackPressed = _keyAttack;
     _dodgePressed = _keyDodge;
     _parryPressed = _keyParry;
+    _swapPressed = _keySwap;
     
     _moveDir.set(_keyMoveDir).normalize();
     _dodgeDir.set(_keyDodgeDir).normalize();

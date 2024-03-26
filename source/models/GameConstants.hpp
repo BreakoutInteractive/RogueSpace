@@ -34,6 +34,12 @@ public:
     static float ENEMY_MELEE_ATK_RANGE;
     /**the default movement speed for an enemy**/
     static float ENEMY_MOVE_SPEED;
+    /** the speed of an enemy projectile */
+    static float PROJ_SPEED_E;
+    /** half of the size of an enemy projectile */
+    static float PROJ_SIZE_E_HALF;
+    /** how many seconds the enemy projectile lasts, not including the explosion animation */
+    static float PROJ_TIME_E;
 
 #pragma mark -
 #pragma mark Player Constants
@@ -62,6 +68,12 @@ public:
      this is how sweeping melee attacks work in Hades
      */
     static float PLAYER_MELEE_ATK_RANGE;
+    /** the speed of a player projectile */
+    static float PROJ_SPEED_P;
+    /** half of the size of a player projectile */
+    static float PROJ_SIZE_P_HALF;
+    /** how many seconds the player projectile lasts, not including the explosion animation */
+    static float PROJ_TIME_P;
 };
 
 

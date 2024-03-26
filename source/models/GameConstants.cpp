@@ -25,6 +25,12 @@ float GameConstants::ENEMY_MELEE_ATK_RANGE = 4;
 
 float GameConstants::ENEMY_MOVE_SPEED = 2;
 
+float GameConstants::PROJ_SPEED_E = 10.0f;
+
+float GameConstants::PROJ_SIZE_E_HALF = 1.5f;
+
+float GameConstants::PROJ_TIME_E = 1.0f;
+
 
 #pragma mark -
 #pragma mark Player
@@ -42,3 +48,9 @@ float GameConstants::PLAYER_DODGE_DURATION = 10;
 int GameConstants::PLAYER_MAX_HP = 3;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 4.0f;
+
+float GameConstants::PROJ_SPEED_P = 10.0f;
+
+float GameConstants::PROJ_SIZE_P_HALF = 1.5f;
+
+float GameConstants::PROJ_TIME_P = 1.0f;

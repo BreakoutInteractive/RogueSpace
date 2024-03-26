@@ -20,6 +20,8 @@ using namespace cugl;
 
 
 bool Player::init(const Vec2 pos, const Size size) {
+    _weapon = MELEE;
+    _shooting = false;
     // set up collider
     auto box = std::make_shared<physics2::BoxObstacle>();
     box->init(pos, size);
@@ -80,6 +82,15 @@ void Player::dispose() {
 
 int Player::getMaxHP(){
     return GameConstants::PLAYER_MAX_HP;
+}
+
+bool Player::isAttacking() {
+    switch (_weapon) {
+    case MELEE:
+        return _attackAnimation->isActive();
+    case RANGED:
+        return _shooting;
+    }
 }
 
 #pragma mark -
