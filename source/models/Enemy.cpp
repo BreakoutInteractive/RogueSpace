@@ -16,21 +16,31 @@ using namespace cugl;
 #pragma mark Constructors
 
 
-bool Enemy::init(const Vec2 pos, const Size size) {
-    auto box = std::make_shared<physics2::BoxObstacle>();
-    box->init(pos,size);
-    box->setAngle(M_PI_4);
-    std::string name("enemy");
-    box->setName(name);
+bool Enemy::init(std::shared_ptr<JsonValue> data) {
+    _position.set(data->getFloat("x"), data->getFloat("y"));
+    std::shared_ptr<JsonValue> colliderData = data->get("collider");
+    Vec2 colliderPos(colliderData->getFloat("x"), colliderData->getFloat("y"));
+    std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
+    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
+    Poly2 polygon(verts,(int)vertices.size()/2);
+    EarclipTriangulator triangulator;
+    triangulator.set(polygon.vertices);
+    triangulator.calculate();
+    polygon.setIndices(triangulator.getTriangulation());
+    
+    
+    auto collider = std::make_shared<physics2::PolygonObstacle>();
+    collider->init(polygon, colliderPos);
+    std::string name("enemy-collider");
+    collider->setName(name);
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
     filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
-    box->setFilterData(filter);
-    _collider = box;
+    collider->setFilterData(filter);
+    _collider = collider;   // attach the collider to the game object
     
-    auto shadow = physics2::BoxObstacle::alloc(pos, (Size) size);
-    shadow->setAngle(M_PI_4);
+    auto shadow = physics2::PolygonObstacle::alloc(polygon,colliderPos);
     shadow->setBodyType(b2_kinematicBody);
     // this is an enemy "shadow" and can collide with the player
     filter.categoryBits = CATEGORY_ENEMY_SHADOW;
@@ -38,6 +48,21 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
     
+    // set the enemy hitbox sensor
+    std::shared_ptr<JsonValue> hitboxData = data->get("hitbox");
+    Size hitboxSize(hitboxData->getFloat("width"), hitboxData->getFloat("height"));
+    Vec2 hitboxPos(hitboxData->getFloat("x"), hitboxData->getFloat("y"));
+    auto hitbox = physics2::BoxObstacle::alloc(hitboxPos, hitboxSize);
+    hitbox->setBodyType(b2_kinematicBody);
+    hitbox->setSensor(true);
+    hitbox->setName(std::string("enemy-hitbox"));
+    filter.categoryBits = CATEGORY_HITBOX;
+    filter.maskBits = CATEGORY_ATTACK;
+    hitbox->setFilterData(filter);
+    _sensor = hitbox;
+    _sensor->setDebugColor(Color4::RED);
+    
+    // initialize enemy properties
     _isDefault = true;
     _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
@@ -197,10 +222,10 @@ void Enemy::setStunned() {
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir) {
+void Enemy::hit(cugl::Vec2 atkDir, float damage) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
-        setHealth(getHealth()-1);
+        setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();
         _collider->setLinearVelocity(atkDir*10); //tune this value (10)

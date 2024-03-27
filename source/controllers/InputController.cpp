@@ -114,6 +114,10 @@ void InputController::update(float dt) {
     bool up   = keys->keyDown(KeyCode::W);
     bool down = keys->keyDown(KeyCode::S);
     
+    defenseUpgrade = keys->keyReleased(KeyCode::NUM_1);
+    atkUpgrade = keys->keyReleased(KeyCode::NUM_2);
+    moveUpgrade = keys->keyReleased(KeyCode::NUM_3);
+        
     // Directional controls
     float _horizontal = 0.0f;
     if (right) _horizontal += 1.0f;

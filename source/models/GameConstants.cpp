@@ -55,6 +55,12 @@ float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
 
 int GameConstants::PLAYER_MAX_HP = 3;
 
+float GameConstants::PLAYER_MOVE_SPEED =5;
+
+float GameConstants::PLAYER_DEFENSE = 1;
+
+float GameConstants::PLAYER_ATK_DAMAGE =1;
+
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 2.0f;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;

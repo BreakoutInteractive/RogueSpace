@@ -18,8 +18,6 @@
 #include <cugl/physics2/CUObstacleWorld.h>
 #include <vector>
 #include <cugl/assets/CUAsset.h>
-#include <cugl/io/CUJsonReader.h>
-#include "JoyStick.hpp"
 
 using namespace cugl;
 
@@ -42,17 +40,19 @@ private:
     
     std::shared_ptr<scene2::SceneNode> _joystickRing;
     
-    std::shared_ptr<scene2::SceneNode> _joystickButton;
+    std::shared_ptr<scene2::SceneNode> _joystickMoveButton;
+    
+    std::shared_ptr<scene2::SceneNode> _joystickAimButton;
+    
+    /** the currently active joystick button node */
+    std::shared_ptr<scene2::SceneNode> _activeJoystick;
+    
+    int _holdCounter;
     
     std::vector<std::shared_ptr<scene2::SceneNode>> _stamina;
-    
-    /** Reference to the joystick object */
-    std::shared_ptr<JoyStick> _joystick;
 
     /** the background behind the game*/
     std::shared_ptr<Texture> _backgroundTexture;
-    
-    
     
 #pragma mark -
 #pragma mark Game Components
@@ -63,6 +63,10 @@ private:
     std::shared_ptr<LevelModel> _level;
     /** whether the pause button has been clicked */
     bool _paused;
+    
+    void hideJoysticks();
+    
+    void setJoystickPosition(Vec2 screenPos);
 
 public:
 #pragma mark -
@@ -108,19 +112,23 @@ public:
 #pragma mark View (Methods)
     
     /**
-     * sets the rendering scale (from world to screen)
+     * adjusts the active joystick position given an anchor screen position and the actual touch screen position
      */
-    void setDrawScale(Vec2 scale);
+    void updateJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos);
+    
+
+    void setJoystickMode();
+
+    void setAimJoystickMode();
     
     /**
-     * sets the joystick position given an anchor screen position and the actual touch screen position
+     * sets whether the cooldown should be visible
      */
-    void setJoystickPosition(Vec2 anchorPos, Vec2 screenPos);
-    
-    /**
-     * sets whether the joystick should be visible
-     */
-    void setJoystickVisible(bool visible) { _joystick->setActive(visible);}
+    void setCooldownVisible (bool value) {
+        for (auto it = _stamina.begin(); it != _stamina.end(); it++){
+            (*it)->setVisible(value);
+        }
+    }
     
     /**
      * sets whether or not this HUD scene is activated.

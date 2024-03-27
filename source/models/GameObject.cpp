@@ -38,12 +38,15 @@ void GameObject::setEnabled(bool value){
     _enabled = value;
     if (_collider != nullptr){
         _collider->setEnabled(_enabled);
+        _collider->getDebugNode()->setVisible(_enabled);
     }
     if (_colliderShadow != nullptr){
         _colliderShadow->setEnabled(_enabled);
+        _colliderShadow->getDebugNode()->setVisible(_enabled);
     }
     if (_sensor != nullptr){
         _sensor->setEnabled(_enabled);
+        _sensor->getDebugNode()->setVisible(_enabled);
     }
 }
 

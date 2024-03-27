@@ -16,8 +16,8 @@ using namespace cugl;
 #pragma mark Constructors
 
 
-bool RangedLizard::init(const Vec2 pos, const Size size) {
-    RangedEnemy::init(pos, size);
+bool RangedLizard::init(std::shared_ptr<JsonValue> data) {
+    RangedEnemy::init(data);
     
     return true;
 }

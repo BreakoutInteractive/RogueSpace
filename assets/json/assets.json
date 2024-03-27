@@ -1,7 +1,7 @@
 {
     "jsons":{
         "level1": "json/level.json",
-        "example": "json/tiled/exports/example_level.json",
+        "example": "json/tiled/exports/alpha_level.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
@@ -32,20 +32,20 @@
         "parry": {
             "file":     "textures/player_parry.png"
         },
-        "joystick_base": {
-            "file":     "textures/js_ring.png"
-        },
-        "stick": {
-            "file":     "textures/js_button.png"
-        },
         "js_ring": {
             "file":     "textures/js_ring.png"
         },
         "js_button": {
             "file":     "textures/js_button.png"
         },
+        "aim_button": {
+            "file": "textures/aim_button.png"
+        },
         "stamina": {
             "file":     "textures/stamina.png"
+        },
+        "cooldown": {
+            "file": "textures/cooldown.png"
         },
         "pause": {
             "file":     "textures/pause.png"
@@ -56,18 +56,21 @@
         "restart": {
             "file":     "textures/restart.png"
         },
-        "status_bar": {
-            "file":     "textures/status_bar.png",
-            "atlas":     {
-                "background" : [81, 13, 430, 40]
+        "outline": {
+            "file": "textures/outline.png"
+        },
+        "bar": {
+            "file": "textures/bar.png",
+            "atlas": {
+                "background" : [6, 2, 354, 26]
             }
         },
         "hp": {
             "file":     "textures/hp.png",
             "atlas":     {
-                "foreground" : [25,   0, 321, 25],
+                "foreground" : [25,   0, 325, 25],
                 "leftcap"    : [0,    0,  25, 25],
-                "rightcap"   : [321,  0, 344, 25]
+                "rightcap"   : [326,  0, 350, 25]
             }
         }
 	},

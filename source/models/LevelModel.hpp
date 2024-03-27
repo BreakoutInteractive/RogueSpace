@@ -112,7 +112,7 @@ protected:
      *
      * The enemies will be stored in the  `_enemies` field and retained.
      */
-    bool loadEnemies(const std::shared_ptr<JsonValue>& json);
+    bool loadEnemies(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
     
     
     /**

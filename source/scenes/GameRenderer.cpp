@@ -6,19 +6,19 @@
 //
 
 #include "GameRenderer.hpp"
-#include "JoyStick.hpp"
 #include "../models/LevelModel.hpp"
 #include "../models/Player.hpp"
 
+#define HOLD_TIME 25
+
 GameRenderer::GameRenderer(){
     Scene2();
-    /** Create joystick */
-    _joystick = std::make_shared<JoyStick>(Vec2::ZERO, Vec2::ZERO);
+    _holdCounter = 0;
 }
 
 GameRenderer::~GameRenderer(){
-    _joystick = nullptr;
     _level = nullptr;
+    _gameCam = nullptr;
 }
 
 bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
@@ -31,7 +31,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     }
     _assets = assets;
     _backgroundTexture = assets->get<Texture>("background");
-    _joystick->loadAssets(assets);
+
     
     // acquire the HUD nodes
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("HUD");
@@ -41,21 +41,24 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     _pauseButton->addListener([this](const std::string name, bool down){
         if (down){
             _paused=true;
+            hideJoysticks();
         }
     });
     
     _joystickRing = _assets->get<scene2::SceneNode>("HUD_js-ring");
-    _joystickButton = _assets->get<scene2::SceneNode>("HUD_js-button");
+    _joystickMoveButton = _assets->get<scene2::SceneNode>("HUD_js-button");
+    _joystickAimButton = _assets->get<scene2::SceneNode>("HUD_aim-button");
+    _activeJoystick = _joystickMoveButton;
     
-    int count = 5; // possibility that this is retrievable from scene graph?
-    for (int i = 1; i <= count; i++){
-        _stamina.push_back(_assets->get<scene2::SceneNode>("HUD_status_stamina-" + std::to_string(i)));
-    }
-    
-    // testing disable
-    for (auto it = _stamina.begin(); it != _stamina.end(); it++){
-        (*it)->setVisible(false);
-    }
+    int count = 2; // possibility that this is retrievable from scene graph?
+        for (int i = 1; i <= count; i++){
+            _stamina.push_back(_assets->get<scene2::SceneNode>("HUD_status_cooldown-" + std::to_string(i)));
+        }
+        
+        // testing disable
+        for (auto it = _stamina.begin(); it != _stamina.end(); it++){
+            (*it)->setVisible(true);
+        }
     
     _hpBar = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_hp"));
     
@@ -65,26 +68,66 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     
     // activate UI
     _pauseButton->activate();
-    _joystickRing->setVisible(false);
-    _joystickButton->setVisible(false);
+    hideJoysticks();
     
     addChild(scene);
     return true;
 }
 
-void GameRenderer::setDrawScale(Vec2 scale){
-    _joystick->setDrawScale(scale.set(0.75, 0.75));
+void GameRenderer::hideJoysticks(){
+    _joystickRing->setVisible(false);
+    _joystickMoveButton->setVisible(false);
+    _joystickAimButton->setVisible(false);
 }
 
-void GameRenderer::setJoystickPosition(Vec2 anchorPos, Vec2 screenPos){
-    if (!_joystick->getActive()) {
-        _joystick->updateBasePos(screenToWorldCoords(anchorPos));
+void GameRenderer::setJoystickMode(){
+    _activeJoystick = _joystickMoveButton;
+    _joystickAimButton->setVisible(false);
+}
+
+void GameRenderer::setAimJoystickMode(){
+    _activeJoystick = _joystickAimButton;
+    _joystickMoveButton->setVisible(false);
+}
+
+void GameRenderer::updateJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos){
+    if (touched){
+        if (!_joystickRing->isVisible()){
+            if (anchorScreenPos != screenPos){
+                _joystickRing->setPosition(screenToWorldCoords(anchorScreenPos));
+                _joystickRing->setVisible(true);
+            }
+        }
+        setJoystickPosition(screenPos);
+        _holdCounter = std::min(_holdCounter + 1, HOLD_TIME);
+        Color4 tint(Vec4(1,1,1, _holdCounter/(float)HOLD_TIME));
+        _joystickRing->setColor(tint);
+        _activeJoystick->setColor(tint);
     }
     else {
-        _joystick->updateBallPos(screenToWorldCoords(screenPos));
+        hideJoysticks();
+        _holdCounter = 0;
     }
+    
 }
 
+void GameRenderer::setJoystickPosition(Vec2 screenPos){
+    Vec2 buttonPosition = screenToWorldCoords(screenPos);
+    float radius = _joystickRing->getSize().width/2 - _activeJoystick->getSize().width/2;
+    if (buttonPosition.distance(_joystickRing->getPosition()) < radius){
+        _activeJoystick->setPosition(buttonPosition);
+    }else{
+        cugl::Vec2 touch2base(buttonPosition - _joystickRing->getPosition());
+        float angle = atan2(touch2base.y, touch2base.x);
+        float xDist = sin(angle-1.5708)*radius;
+        float yDist = cos(angle-1.5708)*radius;
+        Vec2 basePos = _joystickRing->getPosition();
+        _activeJoystick->setPosition(Vec2(basePos.x-xDist, basePos.y+yDist));
+    }
+    if (_joystickRing->isVisible()){
+        _activeJoystick->setVisible(true);
+    }
+}
 
 void GameRenderer::setActivated(bool value) {
     if (value) {
@@ -95,7 +138,6 @@ void GameRenderer::setActivated(bool value) {
     } else{
         _pauseButton->setVisible(false);
         _pauseButton->deactivate();
-        _joystick->setActive(false);
     }
 }
 
@@ -116,10 +158,6 @@ void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
         batch->end();
     }
     
-    // render HUD
-    batch->begin(getCamera()->getCombined());
-    _joystick->draw(batch);
-    batch->end();
     Scene2::render(batch);  // call base method to render scene nodes
 }
 
