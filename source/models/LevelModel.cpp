@@ -413,6 +413,7 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> &data){
         b2Filter filter;
         auto attack = physics2::WheelObstacle::alloc(pos, GameConstants::ENEMY_MELEE_ATK_RANGE);
         attack->setSensor(true);
+        attack->setName("enemy-attack");
         attack->setBodyType(b2_dynamicBody);
         // this is an attack
         filter.categoryBits = CATEGORY_ATTACK;
