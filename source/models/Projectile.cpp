@@ -13,7 +13,8 @@ bool Projectile::playerInit(Vec2 pos, const std::shared_ptr<AssetManager>& asset
 	v.push_back(pos+Vec2(-GameConstants::PROJ_SIZE_P_HALF, 0));
 	v.push_back(pos+Vec2(0, -GameConstants::PROJ_SIZE_P_HALF));
 	v.push_back(pos+Vec2(GameConstants::PROJ_SIZE_P_HALF, 0));
-	EarclipTriangulator et = EarclipTriangulator::EarclipTriangulator(v);
+    EarclipTriangulator et;
+    et.set(v);
 	et.calculate();
 	Poly2 poly = et.getPolygon();
 	std::shared_ptr<physics2::PolygonObstacle> obs = physics2::PolygonObstacle::allocWithAnchor(poly, Vec2(0.5f,0.5f));
@@ -129,7 +130,10 @@ bool Projectile::isCompleted() {
 			//if this can hit enemies, it belongs to the player
 			return _currAnimation->elapsed() >= GameConstants::PROJ_TIME_P;
 	}
-	else if (_state == EXPLODING) return !_currAnimation->isActive();
+    else if (_state == EXPLODING) {return !_currAnimation->isActive();}
+    // ??
+    return false;
+    
 }
 
 void Projectile::dispose() { 

@@ -339,11 +339,6 @@ public:
     bool didSwap() const { return _swapPressed; }
     
     /**
-     * @return true if the swap button was pressed;
-     */
-    bool didSwap() const { return _swapPressed; }
-    
-    /**
      * @return whether the ranged attack is initiating
      */
     bool isRangeCombatActive() const {
