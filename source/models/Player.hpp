@@ -38,6 +38,7 @@ protected:
     /** The player texture*/
     std::shared_ptr<cugl::Texture> _playerTexture;
     
+    //TODO: there are a lot of these, maybe put them in a hash table with key = animation name
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
     /** The animation to use while parrying */
@@ -46,6 +47,24 @@ protected:
     std::shared_ptr<Animation> _attackAnimation;
     /** The animation to use while running */
     std::shared_ptr<Animation> _runAnimation;
+    /** The animaton to use while idle and using the bow */
+    std::shared_ptr<Animation> _bowIdleAnimation;
+    /** The animation to use while charging the bow */
+    std::shared_ptr<Animation> _chargingAnimation;
+    /** The animation to use while the bow is charged */
+    std::shared_ptr<Animation> _chargedAnimation;
+    /** The animation to use when the bow is shot */
+    std::shared_ptr<Animation> _shotAnimation;
+    /** The animation to use when recovering from shooting the bow */
+    std::shared_ptr<Animation> _recoveryAnimation;
+    /** The animation to use while running and using the bow*/
+    std::shared_ptr<Animation> _bowRunAnimation;
+    /** The effect to use while charging the bow */
+    std::shared_ptr<Animation> _chargingEffect;
+    /** The effect to use while the bow is charged */
+    std::shared_ptr<Animation> _chargedEffect;
+    /** The effect to use when the bow is shot */
+    std::shared_ptr<Animation> _shotEffect;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -58,13 +77,20 @@ protected:
     
     std::shared_ptr<Animation> _prevAnimation;
 
-    //if the player is attacking with the ranged weapon
-    bool _shooting;
+    /** how long we have been charging for */
+    float _charge;
+    /** how long we have been dodging for */
+    float _dodge;
+    /** how long we have been parrying for */
+    float _parry;
     
 public:
 #pragma mark -
     enum weapon { MELEE, RANGED };
+    //TODO: modify more stuff (in particular, animation) to use states. Add hit and knockback states
+    enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRY, DODGE};
     weapon _weapon;
+    state _state;
 #pragma mark Counters
     /** attack cooldown counter*/
     Counter _atkCD;
@@ -210,10 +236,9 @@ public:
 
     bool isAttacking();
 
-    void setShooting(bool b) { _shooting = b; };
-
     void swapWeapon() { _weapon = static_cast<weapon>((_weapon + 1) % 2); }
     
+    void resetCharge() { _charge = 0; }
 
 #pragma mark -
 #pragma mark Animation
@@ -282,12 +307,16 @@ public:
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
 
-    /** Change to using the parry animation */
+    /** Change to using the parry animation and change state to PARRY */
     void animateParry();
-    /** Change to using the default animation */
+    /** Change to using the default (idle) animation and change state to IDLE */
     void animateDefault();
-    /** Change to using the attack animation */
+    /** Change to using the melee attack animation and change state to ATTACK */
     void animateAttack();
+    /** Change to using the charging animation and change state to CHARGE. Also start the charging effect */
+    void animateCharge();
+    /** Change to using the shooting animation and change state to SHOT */
+    void animateShot();
 
     /**
     * Method to call when player is hit by an attack
@@ -300,6 +329,7 @@ public:
     void setAnimation(std::shared_ptr<Animation> animation) override;
     void updateAnimation(float dt) override;
     
+    void update(float dt);
 #pragma mark -
 #pragma mark Physics
 

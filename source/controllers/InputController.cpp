@@ -101,7 +101,9 @@ void InputController::update(float dt) {
 
     //attack on left click, parry on right click
     _keyAttack = mouse->buttonPressed().hasLeft();
-    if (_keyAttack) _attackDir = (mouse->pointerPosition());
+    if (_keyAttack) _keyAttackDir = (mouse->pointerPosition());
+    _keyAttackDown = mouse->buttonDown().hasLeft();
+    _keyAttackReleased = mouse->buttonReleased().hasLeft();
     _keyParry = mouse->buttonPressed().hasRight();
     _keyDodge = keys->keyDown(KeyCode::SPACE);
     _keySwap = keys->keyPressed(KeyCode::LEFT_SHIFT);
@@ -147,6 +149,8 @@ void InputController::update(float dt) {
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     _attackPressed = _keyAttack;
+    _attackDown = _keyAttackDown;
+    _attackReleased = _keyAttackReleased;
     _dodgePressed = _keyDodge;
     _parryPressed = _keyParry;
     _swapPressed = _keySwap;
@@ -174,6 +178,7 @@ void InputController::clear() {
     _exitPressed  = false;
     _dodgePressed = false;
     _attackPressed = false;
+    _attackReleased = false;
     _parryPressed = false;
     _moveDir.setZero();
     _dodgeDir.setZero();
@@ -183,6 +188,7 @@ void InputController::clear() {
     _keyDodge = false;
     _keyParry = false;
     _keyAttack = false;
+    _keyAttackReleased = false;
     _keyReset = false;
     _keyDebug = false;
     _keyExit = false;

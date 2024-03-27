@@ -61,10 +61,14 @@ public:
     static int PLAYER_ATTACK_COOLDOWN;
     /**the number of frames we wait before allowing another parry, also currently the length of the parry*/
     static int PLAYER_PARRY_COOLDOWN;
+    /**the number of seconds we wait before allowing another parry, also currently the length of the parry*/
+    static float PLAYER_PARRY_TIME;
     /**the number of frames we wait before allowing another dodge*/
     static int PLAYER_DODGE_COOLDOWN;
     /** the number of frames for the dodge effect to last*/
     static float PLAYER_DODGE_DURATION;
+    /** the number of seconds for the dodge effect to last*/
+    static float PLAYER_DODGE_TIME;
     /** player initial HP */
     static int PLAYER_MAX_HP;
     /** player melee attack range
@@ -80,6 +84,8 @@ public:
     static float PROJ_SIZE_P_HALF;
     /** how many seconds the player projectile lasts, not including the explosion animation */
     static float PROJ_TIME_P;
+    /** how many seconds it takes for the player to charge the ranged attack */
+    static float CHARGE_TIME;
 };
 
 

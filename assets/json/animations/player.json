@@ -14,6 +14,15 @@
         },
         "player-projectile": {
             "file":     "textures/player_bow_projectile.png"
+        },
+        "player-ranged": {
+            "file":     "textures/player_bow_attack.png"
+        },
+        "player-bow-idle": {
+            "file":     "textures/player_bow_idle.png"
+        },
+        "player-bow-run": {
+            "file":     "textures/player_bow_run.png"
         }
     }
 }

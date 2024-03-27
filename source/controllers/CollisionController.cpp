@@ -66,7 +66,7 @@ void CollisionController::beginContact(b2Contact* contact){
         //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
         //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
         //     dir.normalize();
-        //     if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
+        //     if (_level->getPlayer()->_state!=Player::state::DODGE) _level->getPlayer()->hit(dir);
         // }
         //player ranged attack
         for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
@@ -165,7 +165,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
             //phase through enemies while dodging
-            if (!_level->getPlayer()->_dodgeDuration.isZero()) contact->SetEnabled(false);
+            if (_level->getPlayer()->_state == Player::state::DODGE) contact->SetEnabled(false);
         }
         for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
             intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());

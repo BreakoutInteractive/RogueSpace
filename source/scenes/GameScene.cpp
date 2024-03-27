@@ -258,13 +258,14 @@ void GameScene::preUpdate(float dt) {
         player->setFacingDir(moveForce);
     }
     
-    if (player->_dodgeDuration.isZero() && player->getCollider()->isBullet()){
+    if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
     
 
-    //only move if we're not parrying or dodging
-    if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+    //only move if we're not parrying or dodging or recovering
+    if (player->_state != Player::state::PARRY && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY 
+        && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         switch (player->_weapon) {
         case Player::weapon::MELEE:
             player->getCollider()->setLinearVelocity(moveForce * 5); //TODO: use json data
@@ -283,7 +284,7 @@ void GameScene::preUpdate(float dt) {
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
+    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
@@ -299,8 +300,10 @@ void GameScene::preUpdate(float dt) {
             player->getCollider()->setBullet(true);
             //player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
+            player->resetCharge();
+            player->_state = Player::state::DODGE;
         }
-        else if (player->_dodgeDuration.isZero()) { //not dodging
+        else if (player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY) { //not dodging or recovering
             //for now, give middle precedence to attack
             if (_input.didAttack()) {
                 Vec2 direction = Vec2::ZERO;
@@ -339,20 +342,42 @@ void GameScene::preUpdate(float dt) {
                     _level->getPlayerAtk()->start();
                     break;
                 case Player::weapon::RANGED:
-                    //ranged attack
-                    direction = _input.getAttackDirection(player->getFacingDir());
-                    ang = acos(direction.dot(Vec2::UNIT_X));
-                    if (direction.y < 0) {
-                        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-                        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-                    }
-                    std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), _assets);
-                    p->setDrawScale(Vec2(_scale, _scale));
-                    _level->addProjectile(p);
-                    std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
-                    obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_P,0).rotate(ang));
-                    obs->setAngle(ang);
+                    player->resetCharge();
+                    player->animateCharge();
+                    player->getCollider()->setLinearVelocity(Vec2::ZERO);
                     break;
+                }
+            }
+            else if (_input.didCharge()) {
+                Vec2 direction = Vec2::ZERO;
+                float ang = 0;
+                if (player->_weapon == Player::weapon::RANGED) {
+                    //TODO: face the appropriate direction
+                }
+            }
+            else if (_input.didShoot()) {
+                Vec2 direction = Vec2::ZERO;
+                float ang = 0;
+                if (player->_weapon == Player::weapon::RANGED) {
+                    //only shoot when fully charged
+                    if (player->_state == Player::state::CHARGED) {
+                        //ranged attack
+                        direction = _input.getAttackDirection(player->getFacingDir());
+                        ang = acos(direction.dot(Vec2::UNIT_X));
+                        if (direction.y < 0) {
+                            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                        }
+                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), _assets);
+                        p->setDrawScale(Vec2(_scale, _scale));
+                        _level->addProjectile(p);
+                        std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
+                        obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
+                        obs->setAngle(ang);
+                        player->animateShot();
+                    }
+                    else player->animateDefault();
+                    player->resetCharge();
                 }
             }
             //for now, give lowest precendence to parry. only allow it with the melee weapon
@@ -405,8 +430,7 @@ void GameScene::preUpdate(float dt) {
     }
     
 #pragma mark - Component Updates
-    player->updateCounters();
-    player->updateAnimation(dt);
+    player->update(dt);
     _level->getPlayerAtk()->update(dt);
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();

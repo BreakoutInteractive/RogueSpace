@@ -46,10 +46,12 @@ int GameConstants::PLAYER_IFRAME = 16;
 int GameConstants::PLAYER_ATTACK_COOLDOWN =  16;
 
 int GameConstants::PLAYER_PARRY_COOLDOWN = 6;
+float GameConstants::PLAYER_PARRY_TIME = 0.2f;
 
 int GameConstants::PLAYER_DODGE_COOLDOWN = 60;
 
 float GameConstants::PLAYER_DODGE_DURATION = 10;
+float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
 
 int GameConstants::PLAYER_MAX_HP = 3;
 
@@ -60,3 +62,5 @@ float GameConstants::PROJ_SPEED_P = 10.0f;
 float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
 float GameConstants::PROJ_TIME_P = 1.0f;
+
+float GameConstants::CHARGE_TIME = 0.5f;
