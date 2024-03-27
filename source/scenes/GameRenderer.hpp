@@ -125,6 +125,15 @@ public:
     void setJoystickVisible(bool visible) { _joystick->setActive(visible);}
     
     /**
+     * sets whether the cooldown should be visible
+     */
+    void setCooldownVisible (bool visible) {
+        for (auto it = _stamina.begin(); it != _stamina.end(); it++){
+            (*it)->setVisible(visible);
+        }
+    }
+    
+    /**
      * sets whether or not this HUD scene is activated.
      */
     void setActivated(bool value);

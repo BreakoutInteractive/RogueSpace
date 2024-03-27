@@ -41,6 +41,7 @@ JoyStick::JoyStick(const cugl::Vec2 p, cugl::Vec2 scale){
     _active = false;
     _time=0;
     _joyBall = std::make_shared<Ball>(_basePosition);
+    _isAiming = false;
 }
 
 
@@ -69,6 +70,7 @@ void JoyStick::updateBallPos( cugl::Vec2 inputPos) {
 
 void JoyStick::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _ballMoveTexture = assets->get<Texture>("js_button");
+    _joyBall->setBallTexture(_ballMoveTexture);
     _ballAimTexture = assets->get<Texture>("aim_button");
     _baseTexture = assets->get<Texture>("js_ring");
     _radius = _baseTexture->getWidth()/2.0f;
@@ -96,8 +98,14 @@ void JoyStick::setDrawScale(cugl::Vec2 scale){
  */
 void JoyStick::draw(const std::shared_ptr<SpriteBatch>& batch) {
     if (_active && _baseTexture && _ballMoveTexture && _ballAimTexture) {
-        Vec2 baseOrigin(_ballMoveTexture->getSize()/2);
-        Vec2 ballOrigin(_ballMoveTexture->getSize()/2);
+        if (_isAiming) {
+            _joyBall->currTexture = _ballAimTexture;
+        }else{
+            _joyBall->currTexture = _ballMoveTexture;
+        }
+        
+        Vec2 baseOrigin(_baseTexture->getSize()/2);
+        Vec2 ballOrigin(_joyBall->currTexture->getSize()/2);
 
         Affine2 transBase;
         transBase.scale(_drawBaseScale);
@@ -107,7 +115,7 @@ void JoyStick::draw(const std::shared_ptr<SpriteBatch>& batch) {
         transBall.scale(Vec2(_drawBaseScale));
         transBall.translate(_joyBall->position);
             
-        batch->draw(_ballMoveTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), ballOrigin, transBall);
+        batch->draw(_joyBall->currTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), ballOrigin, transBall);
         batch->draw(_baseTexture, Color4(Vec4(1,1,1,.5*_time/HOLD_TIME)), baseOrigin, transBase);
         
         if(_time<HOLD_TIME){

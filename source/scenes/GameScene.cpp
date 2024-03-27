@@ -240,18 +240,6 @@ void GameScene::preUpdate(float dt) {
     auto _parryCD = player->_parryCD.getCount();
     auto _dodgeCD = player->_dodgeCD.getCount();
         
-    if (_input.didUpgradeAtk()){
-        CULog("upgraded Attack");
-        player->upgradeAtkDamage();
-    }
-    if (_input.didUpgradeDefense()){
-        CULog("upgraded Defense");
-        player->upgradeDefense();
-    }
-    if (_input.didUpgradeMove()){
-        CULog("upgraded Movement");
-        player->upgradeMoveSpeed();
-    }
     
 #ifdef CU_TOUCH_SCREEN
     if(_input.isMotionActive()){
@@ -271,6 +259,9 @@ void GameScene::preUpdate(float dt) {
     if (player->_dodgeDuration.isZero() && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
+    if(player->_dodgeCD.isZero()){
+        _gameRenderer.setCooldownVisible(true);
+    }
     
 
     //only move fast if we're not parrying or dodging
@@ -288,6 +279,7 @@ void GameScene::preUpdate(float dt) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
+            _gameRenderer.setCooldownVisible(false);
             player->_dodgeDuration.reset(); // set dodge frames
             //dodge
             auto force = _input.getDodgeDirection(player->getFacingDir());

@@ -36,6 +36,8 @@ public:
          * Moves the joystick ball one animation frame
          */
         void update(const cugl::Vec2 p);
+        
+        void setBallTexture(std::shared_ptr<cugl::Texture> texture) { currTexture= texture; }
     };
     
 private:
@@ -56,6 +58,9 @@ private:
     
     /** Whether the joystick is active or not  */
     float _active;
+    
+    /** Whether the player is aiming or not  */
+    bool _isAiming;
     
     /** The position of a general joystick */
     cugl::Vec2 _basePosition;
@@ -79,6 +84,13 @@ public:
      * @param p     The joystick position.
      */
     void setActive(bool active);
+    
+    /**
+     * Triggers the aim joystick.
+     *
+     * @param p     The joystick position.
+     */
+    void triggerAim(bool aiming){_isAiming=aiming;}
     
     /**
      * Spawns joystick at the given location.

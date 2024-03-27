@@ -62,15 +62,15 @@
         "bar": {
             "file": "textures/bar.png",
             "atlas": {
-                "background" : [0, 0, 359, 29]
+                "background" : [6, 2, 354, 26]
             }
         },
         "hp": {
             "file":     "textures/hp.png",
             "atlas":     {
-                "foreground" : [25,   0, 300, 25],
+                "foreground" : [25,   0, 325, 25],
                 "leftcap"    : [0,    0,  25, 25],
-                "rightcap"   : [300,  0, 350, 25]
+                "rightcap"   : [326,  0, 350, 25]
             }
         }
 	},

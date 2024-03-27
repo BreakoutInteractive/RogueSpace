@@ -55,7 +55,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
         
         // testing disable
         for (auto it = _stamina.begin(); it != _stamina.end(); it++){
-            (*it)->setVisible(false);
+            (*it)->setVisible(true);
         }
     
     _hpBar = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_hp"));
