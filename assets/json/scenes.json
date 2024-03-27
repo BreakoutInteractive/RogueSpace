@@ -642,11 +642,11 @@
               0
             ],
             "range": [
-              0,
-              200
+              1,
+              20
             ],
-            "value": 100,
-            "tick": 10,
+            "value": 2,
+            "tick": 0.1,
             "snap": true
           },
           "layout": {
@@ -706,11 +706,11 @@
               0
             ],
             "range": [
-              0,
-              200
+              1,
+              20
             ],
-            "value": 100,
-            "tick": 10,
+            "value": 2,
+            "tick": 0.1,
             "snap": true
           },
           "layout": {

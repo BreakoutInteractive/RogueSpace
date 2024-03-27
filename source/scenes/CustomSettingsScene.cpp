@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "CustomSettingsScene.hpp"
+#include "GameConstants.hpp"
 
 using namespace cugl;
 using namespace std;
@@ -61,10 +62,13 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
         }
     });
     
-    std::string stringArray[] = {"pms", "ems"};
-    for (int i = 0; i < std::size(stringArray); i++) {
-        std::shared_ptr<cugl::scene2::Slider> si = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("settings_" + stringArray[i] + "-action"));
-        std::shared_ptr<cugl::scene2::Label> li  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("settings_" + stringArray[i] + "-label"));
+    // TODO: abstract this
+    _varMap.push_back("pms");
+    _varMap.push_back("ems");
+    
+    for (int i = 0; i < _varMap.size(); i++) {
+        std::shared_ptr<cugl::scene2::Slider> si = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("settings_" + _varMap[i] + "-action"));
+        std::shared_ptr<cugl::scene2::Label> li  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("settings_" + _varMap[i] + "-label"));
         float vi = si->getValue();
         _sliders.push_back(si);
         _labels.push_back(li);
@@ -77,6 +81,7 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
             if (value != _values[i]) {
                 _values[i] = value;
                 _labels[i]->setText(temp_label + cugl::strtool::to_string(_values[i],1));
+                CustomSettingsScene::writeTo(i);
             }
         });
     }
@@ -95,6 +100,16 @@ void CustomSettingsScene::dispose() {
         removeAllChildren();
         _active = false;
     }
+}
+
+bool CustomSettingsScene::writeTo(int i) {
+    std::string var = _varMap[i];
+    if (var == "pms") {
+        GameConstants::PLAYER_MOVE_SPEED = _values[i];
+    } else if (var == "ems") {
+        GameConstants::ENEMY_MOVE_SPEED = _values[i];
+    }
+    return true;
 }
 
 /**

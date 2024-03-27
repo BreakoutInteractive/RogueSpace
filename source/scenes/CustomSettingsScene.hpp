@@ -46,6 +46,9 @@ protected:
     std::vector<std::shared_ptr<cugl::scene2::Label>> _labels;
     std::vector<float> _values;
     
+    // TODO: temp, fix this
+    std::vector<std::string> _varMap;
+    
     /** The player choice */
     Choice _choice;
     
@@ -108,6 +111,12 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+    
+    /**
+     *
+     * Write settings values to game constants level
+     */
+    bool writeTo(int i);
 
 };
 
