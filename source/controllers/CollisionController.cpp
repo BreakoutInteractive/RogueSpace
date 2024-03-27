@@ -56,7 +56,7 @@ void CollisionController::beginContact(b2Contact* contact){
             float ang = acos(dir.dot(Vec2::UNIT_X));
             if ((*it)->getPosition().y * (*it)->getDrawScale().y < _level->getPlayer()->getPosition().y * _level->getPlayer()->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                (*it)->hit(dir);
+                (*it)->hit(dir, _level->getPlayer()->getAtkDamage());
                 _audioController->playPlayerFX("attackHit");
                 CULog("Hit an enemy!");
             }

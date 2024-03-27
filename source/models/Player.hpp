@@ -26,6 +26,13 @@ protected:
 
     /** The force applied to the player for general movement purposes */
     cugl::Vec2 _force;
+    
+    /** accumulated defense buff*/
+    double _defenseUpgrade;
+    /** accumulated attack buff*/
+    double _atkDamage;
+    /** accumulated move buff*/
+    double _moveScale;
 
     /** The texture key for the player*/
     std::string _playerTextureKey;
@@ -72,7 +79,7 @@ public:
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
 
-    int _hp;
+    float _hp;
     
     /**
      * decrement all counters
@@ -147,6 +154,35 @@ public:
      * @param value  the force applied to this player.
      */
     void setForce(const cugl::Vec2 value) { _force.set(value); }
+    
+    /**
+     * Gets the movement boost accumulated by this player.
+     *
+     */
+    const int getMoveScale() const {return _moveScale;}
+    
+    /**
+     * Increments the movement boost by a fixed amount.
+     *
+     */
+    void upgradeMoveSpeed() {_moveScale+=(float)1/15;}
+    
+    /**
+     * Gets the attack strength accumulated by this player.
+     *
+     */
+    const int getAtkDamage() const {return _atkDamage;}
+    
+    /**
+     * Increments the attack damage  by a fixed amount.
+     */
+    void upgradeAtkDamage() {_atkDamage+=(float)1/20;}
+    
+    /**
+     * Increments the defense boost by a fixed amount.
+     *
+     */
+    void upgradeDefense(){_defenseUpgrade-=(float)1/16;}
 
     /**
      * Returns the x-component of the force applied to this player.

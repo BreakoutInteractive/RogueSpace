@@ -59,6 +59,12 @@ public:
     static float PLAYER_DODGE_DURATION;
     /** player initial HP */
     static int PLAYER_MAX_HP;
+    /** player initial movement speed */
+    static float PLAYER_MOVE_SPEED;
+    /** player initial defense */
+    static float PLAYER_DEFENSE;
+    /** player initial attack damage */
+    static float PLAYER_ATK_DAMAGE;
     /** player melee attack range
      
      the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player.

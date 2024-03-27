@@ -21,7 +21,6 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
-#include "JoyStick.hpp"
 
 #include <ctime>
 #include <string>
@@ -64,8 +63,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
-    } else if (!_gameRenderer.cugl::Scene2::init(dimen)){
-        return false;
     }
     
     _parser.loadTilesets(assets);
@@ -97,7 +94,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
                                           dimen.height/_level->getViewBounds().height;
     Vec2 drawScale(_scale, _scale);
     _level->setDrawScale(drawScale);
-    _gameRenderer.setDrawScale(drawScale);
     
     _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
@@ -240,15 +236,11 @@ void GameScene::preUpdate(float dt) {
     auto _atkCD = player->_atkCD.getCount();
     auto _parryCD = player->_parryCD.getCount();
     auto _dodgeCD = player->_dodgeCD.getCount();
+        
     
 #ifdef CU_TOUCH_SCREEN
-    if(_input.isMotionActive()){
-        _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
-    }
-    else
-    {
-        _gameRenderer.setJoystickVisible(false);
-    }
+    // TODO: do checks for holding combat mode to switch the active joystick....
+    _gameRenderer.updateJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
 #endif
     
     // update the direction the player is facing
@@ -259,11 +251,14 @@ void GameScene::preUpdate(float dt) {
     if (player->_dodgeDuration.isZero() && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
+    if(player->_dodgeCD.isZero()){
+        _gameRenderer.setCooldownVisible(true);
+    }
     
 
     //only move fast if we're not parrying or dodging
     if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        player->getCollider()->setLinearVelocity(moveForce * 5); //TODO: use json data
+        player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale()); //TODO: use json data
     } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
@@ -276,6 +271,7 @@ void GameScene::preUpdate(float dt) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
+            _gameRenderer.setCooldownVisible(false);
             player->_dodgeDuration.reset(); // set dodge frames
             //dodge
             auto force = _input.getDodgeDirection(player->getFacingDir());

@@ -222,10 +222,10 @@ void Enemy::setStunned() {
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir) {
+void Enemy::hit(cugl::Vec2 atkDir, float damage) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
-        setHealth(getHealth()-1);
+        setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();
         _collider->setLinearVelocity(atkDir*10); //tune this value (10)

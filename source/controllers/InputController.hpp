@@ -180,6 +180,11 @@ protected:
     bool _attackPressed;
     /** Whether the parry action was chosen */
     bool _parryPressed;
+    
+    bool defenseUpgrade;
+    bool atkUpgrade;
+    bool moveUpgrade;
+    
     /** unit direction of the attack*/
     Vec2 _attackDir;
     /** unit vector direction of movement */
@@ -263,6 +268,12 @@ public:
      * Returns true if the dodge input was triggered.
      */
     bool didDodge() const { return _dodgePressed; }
+        
+    bool didUpgradeMove() const { return moveUpgrade; }
+    
+    bool didUpgradeDefense() const { return defenseUpgrade; }
+    
+    bool didUpgradeAtk() const { return atkUpgrade; }
     
     /**
      * Returns the unit vector direction of movement for dodge motion

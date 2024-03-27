@@ -431,8 +431,9 @@ public:
     /**
      * Method to call when an enemy is hit by an attack
      * @param atkDir the normal vector of the direction of the attack that hit this enemy
+     * @param damage the amount of hp to lose
      */
-    void hit(cugl::Vec2 atkDir);
+    void hit(cugl::Vec2 atkDir, float damage);
 
     /**
      * Method to call when an enemy is stunned, e.g. when parried
