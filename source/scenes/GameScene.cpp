@@ -21,7 +21,6 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
-#include "JoyStick.hpp"
 
 #include <ctime>
 #include <string>
@@ -64,8 +63,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
-    } else if (!_gameRenderer.cugl::Scene2::init(dimen)){
-        return false;
     }
     
     _parser.loadTilesets(assets);
@@ -97,7 +94,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
                                           dimen.height/_level->getViewBounds().height;
     Vec2 drawScale(_scale, _scale);
     _level->setDrawScale(drawScale);
-    _gameRenderer.setDrawScale(drawScale);
     
     _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
@@ -242,13 +238,8 @@ void GameScene::preUpdate(float dt) {
         
     
 #ifdef CU_TOUCH_SCREEN
-    if(_input.isMotionActive()){
-        _gameRenderer.setJoystickPosition(_input.getInitTouchLocation(), _input.getTouchLocation());
-    }
-    else
-    {
-        _gameRenderer.setJoystickVisible(false);
-    }
+    // TODO: do checks for holding combat mode to switch the active joystick....
+    _gameRenderer.updateJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
 #endif
     
     // update the direction the player is facing
