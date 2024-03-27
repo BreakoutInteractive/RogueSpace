@@ -42,6 +42,11 @@
         "drawFill": false,
         "id": 3,
         "members": [
+            {
+                "name": "passable",
+                "type": "bool",
+                "value": false
+            }
         ],
         "name": "Wall",
         "type": "class",
