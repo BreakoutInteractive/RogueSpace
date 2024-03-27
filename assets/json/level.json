@@ -1,11 +1,7 @@
 {
-	"width":    42.0,
-	"height":   28.0,
-    "view-width": 32.0,
-    "view-height": 18.0,
+    "view-width": 16.0,
+    "view-height": 9.0,
     "player": {
-        "pos": [21.249998, 13.553881],
-        "size": [0.3,0.3],
         "bodytype":      "dynamic",
         "density":        0.5,
         "friction":       0.1,
@@ -16,66 +12,12 @@
         "attack":        "attack",
         "debugcolor":    "blue"
     },
-    "enemies": {
-        "enemy-1": {
-            "pos": [6.627894, 9.971924],
-            "path": [[6.627894, 9.971924]],
-            "size": [0.6,0.6],
-            "defaultstate": "sentry",
-            "bodytype":     "dynamic",
-            "density":      1.0,
-            "friction":     0.1,
-            "restitution":  0,
-            "rotation":     false,
-            "texture":      "enemy",
-            "type":         "melee-lizard",
-            "debugcolor":   "green",
-            "health":       2
-        },
-        "enemy-2": {
-            "pos": [13.434381, 5.207834],
-            "path": [[13.434381, 5.207834]],
-            "size": [0.6,0.6],
-            "defaultstate": "sentry",
-            "bodytype":     "dynamic",
-            "density":      1.0,
-            "friction":     0.1,
-            "restitution":  0,
-            "rotation":     false,
-            "texture":      "enemy",
-            "type":         "ranged-lizard",
-            "debugcolor":   "green",
-            "health":       2
-        },
-        "enemy-3": {
-            "pos": [9.558827, 11.890790],
-            "path": [[9.558827, 11.890790], [11, 13], [13, 13], [12, 8]],
-            "size": [0.6,0.6],
-            "defaultstate": "patrol",
-            "bodytype":     "dynamic",
-            "density":      1.0,
-            "friction":     0.1,
-            "restitution":  0,
-            "rotation":     false,
-            "texture":      "enemy",
-            "type":         "melee-lizard",
-            "debugcolor":   "green",
-            "health":       2
-        },
-        "enemy-4": {
-            "pos": [6.790236, 11.351460],
-            "path": [[6.790236, 11.351460]],
-            "size": [0.6,0.6],
-            "defaultstate": "sentry",
-            "bodytype":     "dynamic",
-            "density":      1.0,
-            "friction":     0.1,
-            "restitution":  0,
-            "rotation":     false,
-            "texture":      "enemy",
-            "type":         "caster",
-            "debugcolor":   "green",
-            "health":       3
-        }
+    "enemy": {
+        "bodytype":     "dynamic",
+        "density":      1.0,
+        "friction":     0.1,
+        "restitution":  0,
+        "rotation":     false,
+        "debugcolor":   "green"
     }
 }

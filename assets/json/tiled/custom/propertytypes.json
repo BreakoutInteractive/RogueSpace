@@ -2,8 +2,13 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 7,
+        "id": 1,
         "members": [
+            {
+                "name": "hp",
+                "type": "int",
+                "value": 3
+            },
             {
                 "name": "path",
                 "type": "object",
@@ -21,7 +26,7 @@
     {
         "color": "#ffff2600",
         "drawFill": true,
-        "id": 8,
+        "id": 2,
         "members": [
         ],
         "name": "Hitbox",
@@ -35,7 +40,7 @@
     {
         "color": "#fff4c183",
         "drawFill": false,
-        "id": 2,
+        "id": 3,
         "members": [
         ],
         "name": "Wall",
@@ -49,7 +54,7 @@
     {
         "color": "#ffffffff",
         "drawFill": true,
-        "id": 3,
+        "id": 4,
         "members": [
         ],
         "name": "Collider",
@@ -63,13 +68,18 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 6,
+        "id": 5,
         "members": [
             {
                 "name": "enemy_type",
                 "propertyType": "Type",
                 "type": "string",
                 "value": "MELEE"
+            },
+            {
+                "name": "hp",
+                "type": "int",
+                "value": 2
             },
             {
                 "name": "path",
@@ -88,7 +98,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 9,
+        "id": 6,
         "members": [
             {
                 "name": "path",
@@ -99,6 +109,7 @@
         "name": "Path",
         "type": "class",
         "useAs": [
+            "property",
             "object",
             "project"
         ]
@@ -106,7 +117,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 5,
+        "id": 7,
         "members": [
         ],
         "name": "Player",
@@ -118,7 +129,7 @@
         ]
     },
     {
-        "id": 10,
+        "id": 8,
         "name": "Type",
         "storageType": "string",
         "type": "enum",

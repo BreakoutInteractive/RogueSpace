@@ -141,8 +141,8 @@
                  "type":"Wall",
                  "visible":true,
                  "width":128,
-                 "x":833.826776438523,
-                 "y":676.634187472271
+                 "x":1034.69018933834,
+                 "y":524.442137836692
                 }, 
                 {
                  "gid":49,
@@ -430,6 +430,7 @@
         {
          "draworder":"topdown",
          "id":9,
+         "locked":true,
          "name":"entities",
          "objects":[
                 {
@@ -443,6 +444,11 @@
                          "propertytype":"Type",
                          "type":"string",
                          "value":"MELEE"
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"int",
+                         "value":2
                         }, 
                         {
                          "name":"path",
@@ -485,6 +491,11 @@
                          "propertytype":"Type",
                          "type":"string",
                          "value":"MELEE"
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"int",
+                         "value":2
                         }, 
                         {
                          "name":"path",
@@ -569,6 +580,11 @@
                          "propertytype":"Type",
                          "type":"string",
                          "value":"MELEE"
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"int",
+                         "value":2
                         }, 
                         {
                          "name":"path",
@@ -768,7 +784,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }],

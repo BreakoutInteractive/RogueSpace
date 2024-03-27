@@ -64,7 +64,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
+    virtual bool init(std::shared_ptr<JsonValue> data) override;
     
 #pragma mark Static Constructors
     
@@ -83,9 +83,9 @@ public:
      *
      * @return a newly allocated player with the given position
      */
-    static std::shared_ptr<RangedEnemy> alloc(const cugl::Vec2 pos, const cugl::Size size) {
+    static std::shared_ptr<RangedEnemy> alloc(std::shared_ptr<JsonValue> data) {
         auto result = std::make_shared<RangedEnemy>();
-        return (result->init(pos,size) ? result : nullptr);
+        return (result->init(data) ? result : nullptr);
     }
 };
 

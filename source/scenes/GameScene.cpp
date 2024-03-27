@@ -347,7 +347,6 @@ void GameScene::preUpdate(float dt) {
         if (enemy->getHealth() <= 0) {
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
-            enemy->getColliderShadow()->setEnabled(false);
         }
         if (!enemy->_stunCD.isZero()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);

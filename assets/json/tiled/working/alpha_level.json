@@ -1583,14 +1583,14 @@
                         {
                          "name":"path",
                          "type":"object",
-                         "value":273
+                         "value":274
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":896,
-                 "y":1184
+                 "x":890.366437272684,
+                 "y":1129.36824006465
                 }, 
                 {
                  "gid":251,
@@ -1685,14 +1685,14 @@
                         {
                          "name":"path",
                          "type":"object",
-                         "value":275
+                         "value":267
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":768,
-                 "y":1504
+                 "x":766.056173138448,
+                 "y":1489.47843205822
                 }, 
                 {
                  "height":0,
@@ -1836,7 +1836,7 @@
                         {
                          "name":"path",
                          "type":"object",
-                         "value":273
+                         "value":54
                         }],
                  "rotation":0,
                  "type":"Path",
@@ -1847,24 +1847,6 @@
                 }, 
                 {
                  "height":0,
-                 "id":273,
-                 "name":"",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":274
-                        }],
-                 "rotation":0,
-                 "type":"Path",
-                 "visible":true,
-                 "width":0,
-                 "x":896,
-                 "y":1088
-                }, 
-                {
-                 "height":0,
                  "id":274,
                  "name":"",
                  "point":true,
@@ -1872,7 +1854,7 @@
                         {
                          "name":"path",
                          "type":"object",
-                         "value":275
+                         "value":262
                         }],
                  "rotation":0,
                  "type":"Path",
@@ -1880,24 +1862,6 @@
                  "width":0,
                  "x":576,
                  "y":1248
-                }, 
-                {
-                 "height":0,
-                 "id":275,
-                 "name":"",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":267
-                        }],
-                 "rotation":0,
-                 "type":"Path",
-                 "visible":true,
-                 "width":0,
-                 "x":768,
-                 "y":1440
                 }, 
                 {
                  "gid":250,
@@ -1908,8 +1872,8 @@
                  "type":"",
                  "visible":true,
                  "width":128,
-                 "x":128,
-                 "y":224
+                 "x":298.535647209075,
+                 "y":146.620389151829
                 }],
          "opacity":1,
          "type":"objectgroup",
