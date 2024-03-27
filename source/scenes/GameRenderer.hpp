@@ -36,6 +36,8 @@ private:
     
     std::shared_ptr<scene2::Button> _pauseButton;
     
+    std::shared_ptr<scene2::Button> _custButton;
+    
     std::shared_ptr<scene2::ProgressBar> _hpBar;
     
     std::shared_ptr<scene2::SceneNode> _joystickRing;
@@ -63,6 +65,9 @@ private:
     std::shared_ptr<LevelModel> _level;
     /** whether the pause button has been clicked */
     bool _paused;
+    
+    /** whether the pause button has been clicked */
+    bool _cust;
     
     void hideJoysticks();
     
@@ -96,6 +101,13 @@ public:
      * @return true if the button has been pressed, false otherwise.
      */
     bool getPaused(){return _paused;}
+    
+    /**
+     * Returns whether cust button as been pressed.
+     *
+     * @return true if the button has been pressed, false otherwise.
+     */
+    bool getCust(){return _cust;}
     
     /**
      * sets the game scene camera and level to be used to render the game

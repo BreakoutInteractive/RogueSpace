@@ -16,6 +16,8 @@ void App::onStartup() {
     Input::activate<Touchscreen>();
 #else
     Input::activate<Mouse>();
+    Input::get<Mouse>()->setPointerAwareness(Mouse::PointerAwareness::DRAG);
+
 #endif
     
     _assets->attach<Font>(FontLoader::alloc()->getHook());
@@ -45,6 +47,7 @@ void App::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
     _pause.dispose();
+    _cust.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -80,6 +83,7 @@ void App::update(float dt){
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
+        _cust.init(_assets);
         _scene = State::GAME;
         setDeterministic(true);
     }
@@ -96,12 +100,20 @@ void App::preUpdate(float dt) {
             _pause.setActive(true);
             updatePauseScene(dt);
             break;
+        case CUST:
+            _cust.setActive(true);
+            updateCustomSettingsScene(dt);
+            break;
         case GAME:
-            if(_gameplay.getRenderer().getPaused()){
+            if (_gameplay.getRenderer().getPaused()) {
                 _scene = State::PAUSE;
                 _gameplay.clearInputs();
                 _gameplay.getRenderer().setActivated(false);
-            }else{
+            } else if (_gameplay.getRenderer().getCust()) {
+                _scene = State::CUST;
+                _gameplay.clearInputs();
+                _gameplay.getRenderer().setActivated(false);
+            } else {
                 _gameplay.preUpdate(dt);
             }
             break;
@@ -151,6 +163,25 @@ void App::updatePauseScene(float timestep) {
     }
 }
 
+void App::updateCustomSettingsScene(float timestep) {
+    _cust.update(timestep);
+    switch (_cust.getChoice()) {
+        case CustomSettingsScene::Choice::RESTART:
+            _cust.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _gameplay.restart();
+            _scene = State::GAME;
+            break;
+        case CustomSettingsScene::Choice::GAME:
+            _cust.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _scene = State::GAME;
+            break;
+        case CustomSettingsScene::Choice::NONE:
+            break;
+    }
+}
+
 
 void App::draw() {
     switch (_scene) {
@@ -164,6 +195,8 @@ void App::draw() {
         case GAME:
             _gameplay.render(_batch);
             break;
+        case CUST:
+            _cust.render(_batch);
         default:
             break;
     }

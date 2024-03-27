@@ -44,6 +44,9 @@
         "stamina": {
             "file":     "textures/stamina.png"
         },
+        "settings": {
+            "file":     "textures/settings.png"
+        },
         "cooldown": {
             "file": "textures/cooldown.png"
         },
@@ -120,6 +123,10 @@
 		"retro": {
 			"file":     "fonts/RetroGame.ttf",
 			"size":     64
-		}
+		},
+        "sans": {
+            "file":     "fonts/Roboto-Bold.ttf",
+            "size":     18
+        }
 	}
 }

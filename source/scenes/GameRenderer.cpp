@@ -36,6 +36,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     // acquire the HUD nodes
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("HUD");
     _paused=false;
+    _cust=false;
 
     _pauseButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HUD_pause"));
     _pauseButton->addListener([this](const std::string name, bool down){
@@ -44,6 +45,14 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
             hideJoysticks();
         }
     });
+    _custButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HUD_settings"));
+    _custButton->addListener([this](const std::string name, bool down){
+        if (down){
+            _cust=true;
+            hideJoysticks();
+        }
+    });
+    
     
     _joystickRing = _assets->get<scene2::SceneNode>("HUD_js-ring");
     _joystickMoveButton = _assets->get<scene2::SceneNode>("HUD_js-button");
@@ -68,6 +77,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     
     // activate UI
     _pauseButton->activate();
+    _custButton->activate();
     hideJoysticks();
     
     addChild(scene);
@@ -135,9 +145,17 @@ void GameRenderer::setActivated(bool value) {
         _pauseButton->setVisible(true);
         _pauseButton->activate();
         _paused = false;
+        
+        _custButton->setDown(false);
+        _custButton->setVisible(true);
+        _custButton->activate();
+        _cust = false;
     } else{
         _pauseButton->setVisible(false);
         _pauseButton->deactivate();
+        
+        _custButton->setVisible(false);
+        _custButton->deactivate();
     }
 }
 
