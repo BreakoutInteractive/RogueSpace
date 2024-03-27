@@ -73,7 +73,8 @@ void CollisionController::beginContact(b2Contact* contact){
             intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
             if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
                 (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
-                (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization());
+                //TODO: give projectiles a modifiable damage value
+                (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), 1);
                 p->setExploding();
                 //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
                 CULog("Shot an enemy!");
