@@ -27,6 +27,8 @@ using namespace cugl;
 #define CLASS_PLAYER    "Player"
 #define CLASS_COLLIDER  "Collider"
 #define CLASS_HITBOX    "Hitbox"
+#define CLASS_LIZARD    "Lizard"
+#define CLASS_CASTER    "Caster"
 
 #pragma mark -
 #pragma mark Loading Dependencies (Assets)
@@ -42,6 +44,23 @@ void LevelParser::loadTilesets(const std::shared_ptr<AssetManager>& assets){
         CUAssertLog(tilesetJsonFile != nullptr, "tileset json file not found");
         _sets[name] = std::make_shared<Tileset>(tilesetJsonFile);
     }
+}
+
+#pragma mark -
+#pragma mark Property Retrieval
+
+/**
+ * given the array of properties (name, type, value) pairs on an object, find the value of the property with the given name
+ */
+std::shared_ptr<JsonValue> getPropertyValueByName(std::shared_ptr<JsonValue> objectProperties, std::string name){
+    
+    for (auto& property : objectProperties->children()){
+        std::string propertyName = property->getString("name");
+        if (propertyName == name){
+            return property->get("value");
+        }
+    }
+    return nullptr;
 }
 
 
@@ -212,9 +231,9 @@ void LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
             data = parseCustomCollision(object);
             _boundaryData->appendChild(data);
         }
-        else if (type == "Lizard" || type == "Caster"){
-            //CULog(type.c_str());
-            //CULog(parsePlayer(object)->toString().c_str());
+        else if (type == CLASS_LIZARD || type == CLASS_CASTER){
+            data = parseEnemy(object, type);
+            _enemyData->appendChild(data);
         }
         
         if (data != nullptr){
@@ -301,11 +320,10 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     // set box2d map and camera attributes
     levelData->appendValue("width", _mapWidth/_tileDimension);
     levelData->appendValue("height", _mapHeight/_tileDimension);
-    levelData->appendValue("view-width", 16.0f);
-    levelData->appendValue("view-height", 9.0f);
     
     // parsing the layers
     parseTilesetDependency(json->get("tilesets"));
+    std::vector<std::shared_ptr<JsonValue>> objectLayers;
     std::vector<std::shared_ptr<JsonValue>> layers = json->get(LAYERS_KEY)->children();
     for (auto it = layers.begin(); it != layers.end(); it++){
         std::shared_ptr<JsonValue> layerJson = *it;
@@ -317,12 +335,24 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
             }
         }
         else if (type == OBJECT_LAYER){
-            parseObjectLayer(layerJson);
+            objectLayers.push_back(layerJson);
+            auto objects = layerJson->get("objects")->children();
+            // save all objects into global object collection (helps parsing paths)
+            for (std::shared_ptr<JsonValue>& object: objects) {
+                _objects[object->getInt("id")] = object;
+            }
         }
     }
+    // parse all object layers now
+    for (std::shared_ptr<JsonValue>& layerJson : objectLayers){
+        parseObjectLayer(layerJson);
+    }
+    // data finalization step
     levelData->appendChild("tiles", tileLayersData);
     levelData->appendChild("walls", _wallData);
+    CUAssertLog(_playerData != nullptr, "player not found");
     levelData->appendChild("player", _playerData);
+    levelData->appendChild("enemies", _enemyData);
     levelData->appendChild("boundaries", _boundaryData);
     return levelData;
 }
@@ -337,6 +367,31 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue> &json){
     _playerData = parsePhysicsObject(json, false, true, true);
     return _playerData;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<JsonValue>& json, std::string enemyType){
+    std::shared_ptr<JsonValue> enemyData = parsePhysicsObject(json, false, true, true);
+    std::shared_ptr<JsonValue> enemyPathData = parsePath(json);
+    if (enemyType == CLASS_LIZARD){
+        std::shared_ptr<JsonValue> enemyTypeProperty = getPropertyValueByName(json->get("properties"), "enemy_type");
+        CUAssertLog(enemyTypeProperty != nullptr, "unable to find lizard type on object id %d", json->getInt("id"));
+        std::string lizardType = enemyTypeProperty->asString();
+        if (lizardType == "MELEE"){
+            enemyData->appendChild("type", JsonValue::alloc(std::string("melee-lizard")));
+        }
+        else {
+            enemyData->appendChild("type", JsonValue::alloc(std::string("ranged-lizard")));
+        }
+    }
+    else if (enemyType == CLASS_CASTER){
+        enemyData->appendChild("type", JsonValue::alloc(std::string("caster")));
+    }
+    enemyData->appendChild("path", enemyPathData);
+    enemyData->appendChild("defaultstate", JsonValue::alloc(std::string(enemyPathData->size() > 2 ? "patrol" : "sentry")));
+    std::shared_ptr<JsonValue> enemyHpProperty = getPropertyValueByName(json->get("properties"), "hp");
+    CUAssertLog(enemyHpProperty != nullptr, "unable to find lizard hp on object id %d", json->getInt("id"));
+    enemyData->appendChild("health", JsonValue::alloc(enemyHpProperty->asLong()));
+    return enemyData;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::shared_ptr<JsonValue> &json){
@@ -436,4 +491,26 @@ const std::shared_ptr<JsonValue> LevelParser::parsePhysicsObject(const std::shar
     }
     
     return data;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parsePath(const std::shared_ptr<JsonValue> & startNode){
+    std::unordered_set<int> seenNodes;
+    int currNode = startNode->getInt("id");
+    std::shared_ptr<JsonValue> pathData = JsonValue::allocArray();
+    while (currNode != 0 && seenNodes.find(currNode) == seenNodes.end()){
+        std::shared_ptr<JsonValue> nodeData = _objects.find(currNode)->second;
+        Vec2 nodePos(nodeData->getFloat("x"), _mapHeight - nodeData->getFloat("y"));
+        nodePos /= _tileDimension;
+        pathData->appendChild(JsonValue::alloc(nodePos.x));
+        pathData->appendChild(JsonValue::alloc(nodePos.y));
+        seenNodes.insert(currNode);
+        std::shared_ptr<JsonValue> nextNodeValue = getPropertyValueByName(nodeData->get("properties"), "path");
+        if (nextNodeValue == nullptr){
+            currNode = 0;
+        }
+        else {
+            currNode = nextNodeValue->asInt();
+        }
+    }
+    return pathData;
 }

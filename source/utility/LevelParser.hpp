@@ -38,6 +38,9 @@ protected:
     /** the tilesets used by the given map, sorted by their firstgid */
     std::vector<std::shared_ptr<JsonValue>> _mapTilesets;
     
+    /** maps from identifier to objects in the map */
+    std::unordered_map<int, std::shared_ptr<JsonValue>> _objects;
+    
 #pragma mark Parsing Output Containers
     
     /** the data associated with walls */
@@ -95,9 +98,21 @@ private:
     const std::shared_ptr<JsonValue> parsePlayer(const std::shared_ptr<JsonValue>& json);
     
     /**
+     * parses an enemy object and produces the corresponding data for Enemy model
+     */
+    const std::shared_ptr<JsonValue> parseEnemy(const std::shared_ptr<JsonValue>& json, std::string enemyType);
+    
+    /**
      * parses a collider detached from any object. These form the customized boundaries of the map.
      */
     const std::shared_ptr<JsonValue> parseCustomCollision(const std::shared_ptr<JsonValue>& json);
+    
+    /**
+     * parses a path (list of nodes) starting with the given node as the first node.
+     *
+     *  nodes are read by ID and points to one another by path attribute
+     */
+    const std::shared_ptr<JsonValue> parsePath(const std::shared_ptr<JsonValue>& startNode);
     
     /**
      * parses an object and its physics components

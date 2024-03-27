@@ -16,8 +16,8 @@ using namespace cugl;
 #pragma mark Constructors
 
 
-bool MageAlien::init(const Vec2 pos, const Size size) {
-    RangedEnemy::init(pos, size);
+bool MageAlien::init(std::shared_ptr<JsonValue> data) {
+    RangedEnemy::init(data);
     
     return true;
 }

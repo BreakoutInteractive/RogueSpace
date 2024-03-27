@@ -149,8 +149,8 @@
                  "type":"",
                  "visible":true,
                  "width":128,
-                 "x":833.826776438523,
-                 "y":676.634187472271
+                 "x":1034.69018933834,
+                 "y":524.442137836692
                 }, 
                 {
                  "gid":49,
@@ -486,8 +486,8 @@
                  "type":"",
                  "visible":true,
                  "width":128,
-                 "x":1359.99985879824,
-                 "y":764.551643406333
+                 "x":1225.29300413242,
+                 "y":675.958061414043
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -503,7 +503,6 @@
          "objects":[
                 {
                  "id":83,
-                 "name":"",
                  "properties":[
                         {
                          "name":"path",
@@ -517,7 +516,6 @@
                 }, 
                 {
                  "id":85,
-                 "name":"",
                  "template":"..\/templates\/path.tx",
                  "type":"Path",
                  "x":887.021475256769,
@@ -723,7 +721,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }],

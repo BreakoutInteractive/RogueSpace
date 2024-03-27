@@ -84,8 +84,15 @@ void CollisionController::beginContact(b2Contact* contact){
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
                 if (player->_parryCD.isZero()) {
-                    physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-                    _audioController->playEnemyFX("attackHit", data1->getName());
+                    if (body1->GetUserData().pointer == aptr) {
+                        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data1->getName());
+                    }
+                    else {
+                        //body1 userdata pointer = pptr
+                        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data2->getName());
+                    }
                     player->hit(dir);
                     CULog("Player took damage!");
                 }

@@ -148,38 +148,23 @@ public:
     void dispose();
     
     /**
-     * Initializes a new player with the given position and size.
-     *
-     * The player size is specified in world coordinates.
-     *
-     * @param  pos      Initial position in world coordinates
-     * @param  size       The dimensions of the box.
+     * Initializes a new enemy with the given data
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
+    virtual bool init(std::shared_ptr<JsonValue> data);
     
     
 #pragma mark Static Constructors
     
     /**
-     * Returns a newly allocated player with the given position and size
-     *
-     * The player size is specified in world coordinates.
-     *
-     * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @param pos   Initial position in world coordinates
-     * @param size  The dimensions of the box.
+     * TODO: document this propertly
      *
      * @return a newly allocated player with the given position
      */
-    static std::shared_ptr<Enemy> alloc(const cugl::Vec2 pos, const cugl::Size size) {
+    static std::shared_ptr<Enemy> alloc(std::shared_ptr<JsonValue> data) {
         auto result = std::make_shared<Enemy>();
-        return (result->init(pos,size) ? result : nullptr);
+        return (result->init(data) ? result : nullptr);
     }
     
 #pragma mark -

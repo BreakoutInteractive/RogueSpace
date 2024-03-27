@@ -16,8 +16,8 @@ using namespace cugl;
 #pragma mark Constructors
 
 
-bool RangedEnemy::init(const Vec2 pos, const Size size) {
-    Enemy::init(pos, size);
+bool RangedEnemy::init(std::shared_ptr<JsonValue> data) {
+    Enemy::init(data);
     _attackRange = GameConstants::ENEMY_RANGED_ATK_RANGE;
     
     return true;

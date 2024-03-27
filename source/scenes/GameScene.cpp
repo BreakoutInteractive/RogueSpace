@@ -176,6 +176,7 @@ void GameScene::restart(){
     _level->setAssets(_assets);
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
+    setDebug(isDebug());
     _AIController.init(_level);
     _collisionController.setLevel(_level);
     _gameRenderer.setGameElements(getCamera(), _level);
@@ -342,7 +343,6 @@ void GameScene::preUpdate(float dt) {
         if (enemy->getHealth() <= 0) {
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
-            enemy->getColliderShadow()->setEnabled(false);
         }
         if (!enemy->_stunCD.isZero()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);

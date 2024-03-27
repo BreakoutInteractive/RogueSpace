@@ -7,6 +7,7 @@
     },
  "margin":0,
  "name":"entities",
+ "objectalignment":"bottom",
  "spacing":0,
  "tilecount":3,
  "tiledversion":"1.10.2",
@@ -49,7 +50,7 @@
                      "visible":true,
                      "width":0,
                      "x":64,
-                     "y":122.596889352013
+                     "y":122.637561963053
                     }, 
                     {
                      "height":70.0539179031052,

@@ -106,92 +106,31 @@ public:
      */
     void dispose();
     
-    /**
-     * Initializes a new player at the origin.
-     *
-     * @return  true if the obstacle is initialized properly, false otherwise.
-     */
-    virtual bool init() { return init(cugl::Vec2::ZERO,cugl::Size::ZERO); }
     
     /**
-     * Initializes a new player with the given position and unit size.
-     *
-     * @param  pos  Initial position in world coordinates
-     *
-     * @return  true if the obstacle is initialized properly, false otherwise.
-     */
-    virtual bool init(const cugl::Vec2 pos) { return init(pos,cugl::Size(1,1)); }
-    
-    /**
-     * Initializes a new player with the given position and size.
+     * Initializes a newly allocated player
      *
      * The player size is specified in world coordinates.
      *
-     * @param  pos      Initial position in world coordinates
-     * @param  size       The dimensions of the box.
+     * @param playerData  the structured json with player collision, hitbox, position data
      *
-     * @return  true if the obstacle is initialized properly, false otherwise.
+     * @return true if the player is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size);
+    virtual bool init(std::shared_ptr<JsonValue> playerData);
     
     
 #pragma mark Static Constructors
-    /**
-     * Returns a newly allocate player at the origin.
-     *
-     * The player is 1 unit by 1 unit in size. The player is scaled so that
-     * 1 pixel = 1 Box2d unit
-     *
-     * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @return a newly allocate player at the origin.
-     */
-    static std::shared_ptr<Player> alloc() {
-        std::shared_ptr<Player> result = std::make_shared<Player>();
-        return (result->init() ? result : nullptr);
-    }
     
     /**
-     * Returns a newly allocated player with the given position
+     * Returns a newly allocated player
      *
-     * The player is 1 unit by 1 unit in size. The player is scaled so that
-     * 1 pixel = 1 Box2d unit
+     * @param playerData the structured json with player collision, hitbox, position data
      *
-     * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @param pos   Initial position in world coordinates
-     *
-     * @return a newly allocated player with the given position
+     * @return a newly allocated player
      */
-    static std::shared_ptr<Player> alloc(const cugl::Vec2& pos) {
+    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData) {
         std::shared_ptr<Player> result = std::make_shared<Player>();
-        return (result->init(pos) ? result : nullptr);
-    }
-    
-    /**
-     * Returns a newly allocated player with the given position and size
-     *
-     * The player size is specified in world coordinates.
-     *
-     * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @param pos   Initial position in world coordinates
-     * @param size  The dimensions of the box.
-     *
-     * @return a newly allocated player with the given position
-     */
-    static std::shared_ptr<Player> alloc(const cugl::Vec2 pos, const cugl::Size size) {
-        std::shared_ptr<Player> result = std::make_shared<Player>();
-        return (result->init(pos,size) ? result : nullptr);
+        return (result->init(playerData) ? result : nullptr);
     }
     
 #pragma mark -
