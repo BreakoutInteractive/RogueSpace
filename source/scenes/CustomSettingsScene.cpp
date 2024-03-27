@@ -63,8 +63,20 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
     });
     
     // TODO: abstract this
-    _varMap.push_back("pms");
-    _varMap.push_back("ems");
+    // TODO: possibly clean up the scene graph JSON
+    _varMap.push_back("player-ms");
+    _varMap.push_back("enemy-ms");
+    _varMap.push_back("player-attack-melee-range");
+    _varMap.push_back("enemy-attack-melee-range");
+    _varMap.push_back("player-attack-cd");
+    _varMap.push_back("enemy-attack-cd");
+    _varMap.push_back("player-dodge-cd");
+    _varMap.push_back("player-dodge-duration");
+    _varMap.push_back("enemy-sightrange");
+    _varMap.push_back("enemy-proxrange");
+    
+    _varMap.push_back("player-parry-cd");
+    _varMap.push_back("enemy-sentry-cd");
     
     for (int i = 0; i < _varMap.size(); i++) {
         std::shared_ptr<cugl::scene2::Slider> si = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("settings_" + _varMap[i] + "-action"));
@@ -86,9 +98,12 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
         });
     }
     
+    std::shared_ptr<cugl::scene2::Label> title  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("settings_title"));
+    _labels.push_back(title);
+    
     addChild(scene);
     setActive(false);
-    Application::get()->setClearColor(Color4f::CORNFLOWER);
+    Application::get()->setClearColor(Color4f::BLACK);
     return true;
 }
 
@@ -102,12 +117,33 @@ void CustomSettingsScene::dispose() {
     }
 }
 
+// evil necessity?
 bool CustomSettingsScene::writeTo(int i) {
     std::string var = _varMap[i];
-    if (var == "pms") {
+    if (var == "player-ms") {
         GameConstants::PLAYER_MOVE_SPEED = _values[i];
-    } else if (var == "ems") {
+    } else if (var == "player-attack-melee-range") {
+        GameConstants::PLAYER_MELEE_ATK_RANGE = _values[i];
+    } else if (var == "player-attack-cd") {
+        GameConstants::PLAYER_ATTACK_COOLDOWN = _values[i];
+    } else if (var == "player-dodge-cd") {
+        GameConstants::PLAYER_DODGE_COOLDOWN = _values[i];
+    } else if (var == "player-dodge-duration") {
+        GameConstants::PLAYER_DODGE_DURATION = _values[i];
+    } else if (var == "player-parry-cd") {
+        GameConstants::PLAYER_PARRY_COOLDOWN = _values[i];
+    } else if (var == "enemy-ms") {
         GameConstants::ENEMY_MOVE_SPEED = _values[i];
+    } else if (var == "enemy-attack-cd") {
+        GameConstants::ENEMY_ATK_COOLDOWN = _values[i];
+    } else if (var == "enemy-attack-melee-range") {
+        GameConstants::ENEMY_MELEE_ATK_RANGE = _values[i];
+    } else if (var == "enemy-sightrange") {
+        GameConstants::ENEMY_SIGHT_RANGE = _values[i];
+    } else if (var == "enemy-proxrange") {
+        GameConstants::ENEMY_PROXIMITY_RANGE = _values[i];
+    } else if (var == "enemy-sentry-cd") {
+        GameConstants::ENEMY_SENTRY_COOLDOWN = _values[i];
     }
     return true;
 }
