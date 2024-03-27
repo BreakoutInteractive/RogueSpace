@@ -71,6 +71,8 @@ private:
         TouchID touchID;
         /** the data associated with this gesture's tap motion */
         TapData tap;
+        /** Whether the current touch ever moved (drastically) from initial position*/
+        bool touchMoved;
     };
     
     /**
@@ -166,7 +168,7 @@ protected:
     };
     
     /** the control set that the controller is offering */
-    ControlOption scheme = ControlOption::DOUBLE_TAP_PARRY;
+    ControlOption scheme = ControlOption::HOLD_PARRY;
     
     /** the current control mode of the controller */
     Mode mode = Mode::MELEE;
@@ -190,13 +192,8 @@ protected:
     bool _attackReleased;
     /** Whether the parry action was chosen */
     bool _parryPressed;
-    /** Whether the swap action was chosen */
+    /** Whether the weapon swap action was chosen */
     bool _swapPressed;
-    
-    bool defenseUpgrade;
-    bool atkUpgrade;
-    bool moveUpgrade;
-    
     /** unit direction of the attack*/
     Vec2 _attackDir;
     /** unit vector direction of movement */
@@ -252,8 +249,8 @@ public:
      *
      * This method is used to to poll the current input state.  This will poll the
      * keyboard and accelerometer.
-     * 
-     * This method also gathers the delta difference in the touches. Depending on 
+     *
+     * This method also gathers the delta difference in the touches. Depending on
      * the OS, we may see multiple updates of the same touch in a single animation
      * frame, so we need to accumulate all of the data together.
      */
@@ -280,12 +277,6 @@ public:
      * Returns true if the dodge input was triggered.
      */
     bool didDodge() const { return _dodgePressed; }
-        
-    bool didUpgradeMove() const { return moveUpgrade; }
-    
-    bool didUpgradeDefense() const { return defenseUpgrade; }
-    
-    bool didUpgradeAtk() const { return atkUpgrade; }
     
     /**
      * Returns the unit vector direction of movement for dodge motion
@@ -348,6 +339,25 @@ public:
     bool didSwap() const { return _swapPressed; }
     
     /**
+     * @return true if the swap button was pressed;
+     */
+    bool didSwap() const { return _swapPressed; }
+    
+    /**
+     * @return whether the ranged attack is initiating
+     */
+    bool isRangeCombatActive() const {
+        #ifndef CU_TOUCH_SCREEN
+        Mouse* mouse = Input::get<Mouse>();
+        return mode == Mode::RANGE && mouse->buttonPressed().hasLeft();
+        #else
+        return mode == Mode::RANGE && _combatGesture.active && !_combatGesture.touchMoved;
+        #endif
+    }
+    
+#pragma mark -
+#pragma mark Input Results (Mobile Only)
+    /**
      * @return whether there is touch event associated with the motion gesture
      */
     bool isMotionActive() const { return _motionGesture.active; }
@@ -356,14 +366,13 @@ public:
      * The returned value can be anything in the event that `isMotionActive` is false.
      * @return the starting location of the touch event associated with the motion gesture
      */
-    Vec2 getInitTouchLocation(){ return _motionGesture.initialPos;}
+    Vec2 getInitTouchLocation() const { return _motionGesture.initialPos;}
     
     /**
      * The returned value can be anything in the event that `isMotionActive` is false.
      * @return the current location of the touch event associated with the motion gesture
      */
-    Vec2 getTouchLocation(){return _motionGesture.curPos; }
-    
+    Vec2 getTouchLocation() const {return _motionGesture.curPos; }
 
 };
 
