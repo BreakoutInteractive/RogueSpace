@@ -51,4 +51,4 @@ float GameConstants::PLAYER_DEFENSE = 1;
 
 float GameConstants::PLAYER_ATK_DAMAGE =1;
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 4.0f;
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 2.0f;

@@ -357,7 +357,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
     b2Filter filter;
     // this is an attack and can collide with a player or an enemy
     filter.categoryBits = CATEGORY_ATTACK;
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_HITBOX;
     _atk->setFilterData(filter);
     return success;
 }
@@ -415,7 +415,7 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> constants, const s
         // this is an attack
         filter.categoryBits = CATEGORY_ATTACK;
         // an attack can collide with a player or an enemy
-        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
+        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_HITBOX;
         attack->setFilterData(filter);
         enemy->setAttack(attack);
     }
