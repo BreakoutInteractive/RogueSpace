@@ -22,6 +22,7 @@
 #include "../controllers/CollisionController.hpp"
 #include "../models/LevelModel.hpp"
 #include "GameRenderer.hpp"
+#include "../utility/LevelParser.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -34,6 +35,9 @@ class GameScene : public cugl::Scene2 {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    /** tiled parser */
+    LevelParser _parser;
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */

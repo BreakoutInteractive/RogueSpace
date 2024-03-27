@@ -21,7 +21,11 @@ int GameConstants::ENEMY_SENTRY_COOLDOWN = 120;
 
 float GameConstants::ENEMY_SIGHT_RANGE = 8;
 
-float GameConstants::ENEMY_MELEE_ATK_RANGE = 4;
+float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
+
+float GameConstants::ENEMY_MELEE_ATK_RANGE = 2;
+
+float GameConstants::ENEMY_RANGED_ATK_RANGE = 6;
 
 float GameConstants::ENEMY_MOVE_SPEED = 2;
 
@@ -47,7 +51,7 @@ float GameConstants::PLAYER_DODGE_DURATION = 10;
 
 int GameConstants::PLAYER_MAX_HP = 3;
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 4.0f;
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 2.0f;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 

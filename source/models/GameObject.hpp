@@ -36,11 +36,17 @@ protected:
     /** the collision object associated with this object */
     std::shared_ptr<cugl::physics2::Obstacle> _collider;
     
+    /** offset between collider and sprite position */
+    Vec2 _colliderOffset;
+    
     /** this component is used to make this gameobject an obstacle to other gameobjects while allowing normal physics simulation */
     std::shared_ptr<cugl::physics2::Obstacle> _colliderShadow;
     
-    /** the sprite outline (a sensor) */
-    std::shared_ptr<cugl::physics2::Obstacle> _outlineSensor;
+    /** collision sensor (can be used for damage detection, opacity adjustments) */
+    std::shared_ptr<cugl::physics2::Obstacle> _sensor;
+    
+    /** offset between collider and sensor position */
+    Vec2 _sensorOffset;
     
     /** the current  animation that is running for this game object */
     std::shared_ptr<Animation> _currAnimation;
@@ -114,14 +120,23 @@ public:
 #pragma mark -
 #pragma mark Physics
     
+    /**
+     * @return reference to the collider which controls movement
+     */
     virtual std::shared_ptr<cugl::physics2::Obstacle> getCollider(){
         return _collider;
     }
     
-    virtual std::shared_ptr<cugl::physics2::Obstacle> getOutline(){
-        return _outlineSensor;
+    /**
+     * @return reference to the collision sensor (can be used for damage detection, opacity adjustments)
+     */
+    virtual std::shared_ptr<cugl::physics2::Obstacle> getSensor(){
+        return _sensor;
     }
     
+    /**
+     * @return reference to the shadowed version of the collider (for dynamic colliders only)
+     */
     virtual std::shared_ptr<cugl::physics2::Obstacle> getColliderShadow(){
         return _colliderShadow;
     }
@@ -137,14 +152,28 @@ public:
     virtual void removeObstaclesFromWorld(std::shared_ptr<physics2::ObstacleWorld> world);
     
     /**
+     * sets the debug node of all physics components
+     */
+    virtual void setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug);
+    
+    /**
      * synchronizes the physics components in a fixed update game loop.
-     * The GameObject matches the positions of all collision elements (by default).
+     * The GameObject adjusts the positions of all collision elements (by default) to the same offsets originally.
      */
     virtual void syncPositions();
     
 #pragma mark -
 #pragma mark Properties
     
+    /**
+     * Many positions may be associated with a given game object due to variations between hitboxes, sprites, animations, etc.
+     * An object may need a separate position for rendering or used as a reference point for components.
+     * 
+     * When a game object is enabled with physics, the returned position by default is the physics location.
+     *
+     * Note: you can retrieve positions of components directly.
+     *
+     */
     virtual Vec2 getPosition() const {
         if (_collider != nullptr){
             return _collider->getPosition();
@@ -170,7 +199,7 @@ public:
     {
         Vec2 p2 = other.getPosition();
         Vec2 p1 = getPosition();
-        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x <= p2.x));
+        return (p1.y > p2.y ? true : (p1.y < p2.y ? false : p1.x < p2.x));
     }
 
 };

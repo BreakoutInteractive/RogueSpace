@@ -25,12 +25,14 @@
 using namespace cugl;
 
 /** Forward references to the various classes used by this level */
-class ExitModel;
-class WallModel;
-class CrateModel;
-class Floor;
+class Wall;
+class TileLayer;
 class Player;
 class Enemy;
+class MeleeEnemy;
+class RangedEnemy;
+class RangedLizard;
+class MageAlien;
 class GameObject;
 class Projectile;
 
@@ -46,7 +48,7 @@ class Projectile;
 * to other assets (sound, images, etc.) this should take place after asset loading, such as 
 * during scene graph initialization.
 */
-class LevelModel : public Asset {
+class LevelModel {
 protected:
 
     /** The bounds of this level in physics coordinates */
@@ -73,19 +75,19 @@ protected:
 
     std::shared_ptr<physics2::WheelObstacle> _atk;
     
-    std::shared_ptr<Floor> _floor;
+    std::vector<std::shared_ptr<TileLayer>> _tileLayers;
     
     /** Reference to all the walls */
-    std::vector<std::shared_ptr<WallModel>> _walls;
+    std::vector<std::shared_ptr<Wall>> _walls;
 
+    /** Reference to all custom boundaries (box2d obstacles) */
+    std::vector<std::shared_ptr<physics2::Obstacle>> _boundaries;
+    
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
-    
-    // TODO: to be deleted with full Tiled integration
-    std::shared_ptr<JsonValue> tempJSON;
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
     std::shared_ptr<Animation> _playerAttack;
@@ -103,7 +105,7 @@ protected:
      * @retain the player
      * @return true if the player was successfully loaded
      */
-    bool loadPlayer(const std::shared_ptr<JsonValue>& json);
+    bool loadPlayer(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json);
     
     /**
      * Loads the enemy object
@@ -114,14 +116,14 @@ protected:
     
     
     /**
-     * Loads the floor layer object
+     * Loads tile layers
      *
-     * @param  json   a JSON reader with cursor ready to read the floor data
+     * @param  json   a JSON reader with cursor ready to read the tile layer data
      *
      * @retain the floor tiles
      * @return true if the floor tiles were successfully loaded
      */
-    bool loadFloor(const std::shared_ptr<JsonValue>& json);
+    bool loadTileLayers(const std::shared_ptr<JsonValue>& json);
     
 
     /**
@@ -136,6 +138,15 @@ protected:
      * @return true if the wall was successfully loaded
      */
     bool loadWall(const std::shared_ptr<JsonValue>& json);
+    
+    /**
+     * Loads a single collision object
+     *
+     * @param  reader   a JSON reader with cursor ready to read the custom boundary
+     *
+     * @return true if the collision object was successfully loaded
+     */
+    bool loadBoundary(const std::shared_ptr<JsonValue>& json);
 
     /**
      * Converts the string to a color
@@ -157,33 +168,6 @@ protected:
     void addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj);
 
 public:
-#pragma mark Static Constructors
-    /**
-     * Creates a new game level with no source file.
-     *
-     * The source file can be set at any time via the setFile() method. This method
-     * does NOT load the asset.  You must call the load() method to do that.
-     *
-     * @return  an autoreleased level file
-     */
-    static std::shared_ptr<LevelModel> alloc() {
-        std::shared_ptr<LevelModel> result = std::make_shared<LevelModel>();
-        return (result->init("") ? result : nullptr);
-    }
-
-    /**
-     * Creates a new game level with the given source file.
-     *
-     * This method does NOT load the level. You must call the load() method to do that.
-     * This method returns false if file does not exist.
-     *
-     * @return  an autoreleased level file
-     */
-    static std::shared_ptr<LevelModel> alloc(std::string file) {
-        std::shared_ptr<LevelModel> result = std::make_shared<LevelModel>();
-        return (result->init(file) ? result : nullptr);
-    }
-
 #pragma mark Model Access
 
     /**
@@ -211,7 +195,7 @@ public:
     /**
      * @return the walls in this game level
      */
-    const std::vector<std::shared_ptr<WallModel>> getWalls() { return _walls; }
+    const std::vector<std::shared_ptr<Wall>> getWalls() { return _walls; }
 
     const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 
@@ -301,46 +285,34 @@ public:
 
 
 #pragma mark -
-#pragma mark Asset Loading
-    /**
-     * Loads this game level from the source file
-     *
-     * This load method should NEVER access the AssetManager.  Assets are loaded in
-     * parallel, not in sequence.  If an asset (like a game level) has references to
-     * other assets, then these should be connected later, during scene initialization.
-     *
-     * @param file the name of the source file to load from
-     *
-     * @return true if successfully loaded the asset from a file
-     */
-    virtual bool preload(const std::string file) override;
-
+#pragma mark Static Constructors
 
     /**
      * Loads this game level from a JsonValue containing all data from a source Json file.
-     *
-     * This load method should NEVER access the AssetManager.  Assets are loaded in
-     * parallel, not in sequence.  If an asset (like a game level) has references to
-     * other assets, then these should be connected later, during scene initialization.
-     *
      * @param json the json loaded from the source file to use when loading this game level
      *
      * @return true if successfully loaded the asset from the input JsonValue
      */
-    virtual bool preload(const std::shared_ptr<cugl::JsonValue>& json) override;
+    bool init(const std::shared_ptr<cugl::JsonValue>& json, std::shared_ptr<JsonValue> parsedJson);
 
     /**
-     * Unloads this game level, releasing all sources
+     * Creates a new game level with the given source json.
      *
-     * This load method should NEVER access the AssetManager.  Assets are loaded and
-     * unloaded in parallel, not in sequence.  If an asset (like a game level) has
-     * references to other assets, then these should be disconnected earlier.
+     * This method does NOT load the level. You must call the load() method to do that.
+     * This method returns false if file does not exist.
+     *
+     * @return  an autoreleased level file
+     */
+    static std::shared_ptr<LevelModel> alloc(std::shared_ptr<JsonValue> json, std::shared_ptr<JsonValue> parsedJson) {
+        std::shared_ptr<LevelModel> result = std::make_shared<LevelModel>();
+        return (result->init(json, parsedJson) ? result : nullptr);
+    }
+    
+    /**
+     * Unloads this game level, releasing all sources
      */
     void unload();
 
-
-    //#pragma mark -
-    //#pragma mark Initializers
     /**
      * Creates a new, empty level.
      */

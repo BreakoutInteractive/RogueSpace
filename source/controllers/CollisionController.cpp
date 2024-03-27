@@ -3,6 +3,10 @@
 #include "CollisionController.hpp"
 #include "../models/LevelConstants.hpp"
 #include "../models/Enemy.hpp"
+#include "../models/MeleeEnemy.hpp"
+#include "../models/RangedEnemy.hpp"
+#include "../models/RangedLizard.hpp"
+#include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
@@ -58,13 +62,13 @@ void CollisionController::beginContact(b2Contact* contact){
                 CULog("Hit an enemy!");
             }
         }
-        //player takes damage if running into enemy while not dodging
-        else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
-            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
-            dir.normalize();
-            if (_level->getPlayer()->_dodgeDuration.isZero()) player->hit(dir);
-        }
+        //update (commenting out the below) : player NO LONGER takes damage if running into enemy while not dodging
+        // else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+        //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+        //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
+        //     dir.normalize();
+        //     if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
+        // }
         //player ranged attack
         for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
             intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
@@ -91,8 +95,15 @@ void CollisionController::beginContact(b2Contact* contact){
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
                 if (player->_parryCD.isZero()) {
-                    physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-                    _audioController->playEnemyFX("attackHit", data1->getName());
+                    if (body1->GetUserData().pointer == aptr) {
+                        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data1->getName());
+                    }
+                    else {
+                        //body1 userdata pointer = pptr
+                        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data2->getName());
+                    }
                     player->hit(dir);
                     CULog("Player took damage!");
                 }

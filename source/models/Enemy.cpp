@@ -38,7 +38,10 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
     
+    _isDefault = true;
+    _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
+    _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
     _moveSpeed = GameConstants::ENEMY_MOVE_SPEED;
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
@@ -91,7 +94,7 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2();
-    transform.scale(0.5);
+    // transform.scale(0.5);
     transform.translate(getPosition() * _drawScale);
     
     spriteSheet->draw(batch, _tint, origin, transform);
@@ -107,47 +110,48 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _enemyTexture = assets->get<Texture>("enemy-idle");
-    auto walkTexture = assets->get<Texture>("enemy-walk");
-    auto attackTexture = assets->get<Texture>("enemy-attack");
-    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
-    
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
-    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
-    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
-    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
-    
-    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
-    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
-    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
-    
-    _currAnimation = _idleAnimation; // set runnning
-    
-    // add callbacks
-    _attackAnimation->onComplete([this](){
-        _attackAnimation->reset();
-        _hitboxAnimation->reset();
-        _atkCD.reset(); // cooldown begins AFTER the attack is done
-        _attack->setEnabled(false);
-    });
-    
-    _attackAnimation->addCallback(0.5f, [this](){
-        if (isEnabled()) {
-            _attack->setEnabled(true);
-            _hitboxAnimation->start();
-            _attack->setAwake(true);
-            _attack->setAngle(getFacingDir().getAngle());
-            // TODO: clean this code
-            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
-        }
-    });
-    
-    setAnimation(_idleAnimation);
-
-    _hitEffect->onComplete([this]() {
-        _hitEffect->reset();
-    });
+    // nothing here: each enemy loads its own assets
+//    _enemyTexture = assets->get<Texture>("enemy-idle");
+//    auto walkTexture = assets->get<Texture>("enemy-walk");
+//    auto attackTexture = assets->get<Texture>("enemy-attack");
+//    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+//    
+//    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
+//    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
+//    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
+//    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+//    
+//    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
+//    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
+//    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
+//    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
+//    
+//    _currAnimation = _idleAnimation; // set runnning
+//    
+//    // add callbacks
+//    _attackAnimation->onComplete([this](){
+//        _attackAnimation->reset();
+//        _hitboxAnimation->reset();
+//        _atkCD.reset(); // cooldown begins AFTER the attack is done
+//        _attack->setEnabled(false);
+//    });
+//    
+//    _attackAnimation->addCallback(0.5f, [this](){
+//        if (isEnabled()) {
+//            _attack->setEnabled(true);
+//            _hitboxAnimation->start();
+//            _attack->setAwake(true);
+//            _attack->setAngle(getFacingDir().getAngle());
+//            // TODO: clean this code
+//            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
+//        }
+//    });
+//    
+//    setAnimation(_idleAnimation);
+//
+//    _hitEffect->onComplete([this]() {
+//        _hitEffect->reset();
+//    });
 }
 
 void Enemy::setIdling() {
@@ -155,6 +159,7 @@ void Enemy::setIdling() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _walkAnimation->reset();
     _attackAnimation->reset();
+    _stunAnimation->reset();
     _state = EnemyState::IDLE;
     
 }
@@ -164,6 +169,7 @@ void Enemy::setMoving() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _idleAnimation->reset();
     _attackAnimation->reset();
+    _stunAnimation->reset();
     _state = EnemyState::MOVING;
 }
 
@@ -172,6 +178,7 @@ void Enemy::setAttacking() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _idleAnimation->reset();
     _walkAnimation->reset();
+    _stunAnimation->reset();
     _state = EnemyState::ATTACKING;
 }
 
@@ -179,6 +186,7 @@ void Enemy::setStunned() {
     if (_state == EnemyState::STUNNED) {
         return;
     }
+    setAnimation(_stunAnimation);
     _stunCD.reset();
     _atkCD.reset(); // stunning should reset attack
     // MAYBE, we don't want to reset ?? (tweening unsure)
@@ -186,9 +194,6 @@ void Enemy::setStunned() {
     _idleAnimation->reset();
     _walkAnimation->reset();
     _state = EnemyState::STUNNED;
-    
-    // use idle animation for now..
-    setAnimation(_idleAnimation);
 }
 
 
@@ -199,6 +204,10 @@ void Enemy::hit(cugl::Vec2 atkDir) {
         _hitEffect->reset();
         _hitEffect->start();
         _collider->setLinearVelocity(atkDir*10); //tune this value (10)
+        // allows for a "revenge" attack if the enemy is attacked from behind
+        if (!_playerInSight) {
+            _facingDirection = -atkDir;
+        }
     }
 }
 
@@ -206,7 +215,7 @@ void Enemy::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() || !_stunCD.isZero()) && _currAnimation != _idleAnimation) {
+        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
             setIdling();
         }
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
@@ -217,13 +226,18 @@ void Enemy::updateAnimation(float dt){
     if (_hitEffect->isActive()){
         _tint = Color4::RED;
     }
+    else if (_state == EnemyState::STUNNED && _stunCD.isZero()) {
+        _tint = Color4::WHITE;
+        setIdling();
+    }
     else if (_state == EnemyState::STUNNED){
         // TODO: could possibly use stunned animation and remove this state altogether
         _tint = Color4::YELLOW;
     }
-    else if (_stunCD.isZero()) {
+    else {
         _tint = Color4::WHITE;
     }
+    
     _hitboxAnimation->update(dt);
 }
 
@@ -235,24 +249,25 @@ void Enemy::updateCounters() {
 }
 
 void Enemy::setFacingDir(cugl::Vec2 dir) {
-    int prevDirection = _directionIndex;
-    Vec2 d = dir.normalize();
-    _directionIndex = -1;
-    float similarity = -INFINITY;
-    for (int i = 0; i < 8; i++){
-        Vec2 cardinal = _directions[i];
-        float dotprod = cardinal.dot(d);
-        if (dotprod > similarity){
-            similarity = dotprod;
-            _directionIndex = i;
-        }
-    }
-    assert(_directionIndex >= 0 && _directionIndex < 8);
-    _facingDirection = dir;
-    
-    if (prevDirection != _directionIndex){
-        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
-        _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
-        _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
-    }
+    // nothing here: each enemy has its own animations
+//    int prevDirection = _directionIndex;
+//    Vec2 d = dir.normalize();
+//    _directionIndex = -1;
+//    float similarity = -INFINITY;
+//    for (int i = 0; i < 8; i++){
+//        Vec2 cardinal = _directions[i];
+//        float dotprod = cardinal.dot(d);
+//        if (dotprod > similarity){
+//            similarity = dotprod;
+//            _directionIndex = i;
+//        }
+//    }
+//    assert(_directionIndex >= 0 && _directionIndex < 8);
+//    _facingDirection = dir;
+//    
+//    if (prevDirection != _directionIndex){
+//        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
+//        _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
+//        _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
+//    }
 }
