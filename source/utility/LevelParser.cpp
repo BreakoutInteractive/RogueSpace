@@ -361,7 +361,15 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
 #pragma mark Parsing Objects
 
 const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<JsonValue>& json){
-    return parsePhysicsObject(json, true, true, false);
+    auto data = parsePhysicsObject(json, true, true, false);
+    std::shared_ptr<JsonValue> passableProperty = getPropertyValueByName(json->get("properties"), "passable");
+    if (passableProperty != nullptr){
+        data->appendChild("passable", JsonValue::alloc(passableProperty->asBool()));
+    }
+    else {
+        data->appendChild("passable", JsonValue::alloc(false));
+    }
+    return data;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue> &json){
