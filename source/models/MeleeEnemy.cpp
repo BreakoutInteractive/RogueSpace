@@ -58,7 +58,7 @@ void MeleeEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
     _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
-    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
+    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     
     _currAnimation = _idleAnimation; // set runnning
     

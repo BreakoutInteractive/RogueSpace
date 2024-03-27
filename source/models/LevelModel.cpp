@@ -5,6 +5,7 @@
 #include "TileLayer.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "Projectile.hpp"
 #include "MeleeEnemy.hpp"
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
@@ -60,6 +61,7 @@ void LevelModel::setDrawScale(Vec2 scale) {
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDrawScale(scale);
     }
+    for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->setDrawScale(scale);
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
@@ -95,7 +97,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
 //                        _enemies[ii]->getFacingDir().getAngle() + M_PI_2, _enemies[ii]->getPosition() * _scale);
 //        }
     }
-    
+
+    for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->draw(batch);
     
     if (_playerAttack->isActive()){
         auto sheet = _playerAttack->getSpriteSheet();
@@ -115,7 +118,9 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
     }
-
+    for (int ii = 0; ii < _projectiles.size(); ii++) {
+        _projectiles[ii]->getCollider()->getDebugNode()->setVisible(_projectiles[ii]->isEnabled());
+    }
 }
 
 void LevelModel::clearDebugNode(){
@@ -160,6 +165,11 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     for (int ii = 0; ii < _boundaries.size(); ii++){
         _boundaries[ii]->setDebugScene(_debugNode);
         _boundaries[ii]->setDebugColor(Color4::WHITE);
+    }
+
+    for (int ii = 0; ii < _projectiles.size(); ii++) {
+        _projectiles[ii]->getCollider()->setDebugScene(_debugNode);
+        _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
     }
 }
 
@@ -514,3 +524,21 @@ void LevelModel::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& ob
 	_world->addObstacle(obj);
 }
 
+void LevelModel::addProjectile(std::shared_ptr<Projectile> p) {
+    _projectiles.push_back(p);
+    p->addObstaclesToWorld(_world);
+    p->getCollider()->setDebugScene(_debugNode);
+    p->getCollider()->setDebugColor(Color4::RED);
+}
+
+void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
+    for (auto it = _projectiles.begin(); it != _projectiles.end(); ++it) {
+        if ((*it) == p) {
+            p->setEnabled(false);
+            p->removeObstaclesFromWorld(_world);
+            _projectiles.erase(it);
+            p->dispose();
+            return;
+        }
+    }
+}

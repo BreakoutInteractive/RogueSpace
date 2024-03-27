@@ -36,7 +36,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     collider->setFilterData(filter);
     _collider = collider;   // attach the collider to the game object
     

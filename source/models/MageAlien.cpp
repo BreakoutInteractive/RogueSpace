@@ -53,7 +53,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
     _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 13);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
-    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
+    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     
     _currAnimation = _idleAnimation; // set runnning
     
