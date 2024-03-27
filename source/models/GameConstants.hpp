@@ -40,8 +40,10 @@ public:
     static float ENEMY_MOVE_SPEED;
     /** the speed of an enemy projectile */
     static float PROJ_SPEED_E;
-    /** half of the size of an enemy projectile */
-    static float PROJ_SIZE_E_HALF;
+    /** the radius of a lizard enemy projectile */
+    static float PROJ_RADIUS_LIZARD;
+    /** the radius of a mage enemy projectile */
+    static float PROJ_RADIUS_MAGE;
     /** how many seconds the enemy projectile lasts, not including the explosion animation */
     static float PROJ_TIME_E;
 

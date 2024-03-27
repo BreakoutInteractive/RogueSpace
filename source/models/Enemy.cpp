@@ -25,7 +25,7 @@ bool Enemy::init(const Vec2 pos, const Size size) {
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     box->setFilterData(filter);
     _collider = box;
     

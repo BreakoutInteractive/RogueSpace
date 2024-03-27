@@ -31,7 +31,9 @@ float GameConstants::ENEMY_MOVE_SPEED = 2;
 
 float GameConstants::PROJ_SPEED_E = 10.0f;
 
-float GameConstants::PROJ_SIZE_E_HALF = 1.5f;
+float GameConstants::PROJ_RADIUS_LIZARD = 1.0f;
+
+float GameConstants::PROJ_RADIUS_MAGE = 0.75f;
 
 float GameConstants::PROJ_TIME_E = 1.0f;
 
@@ -55,6 +57,6 @@ float GameConstants::PLAYER_MELEE_ATK_RANGE = 2.0f;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 
-float GameConstants::PROJ_SIZE_P_HALF = 1.5f;
+float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
 float GameConstants::PROJ_TIME_P = 1.0f;

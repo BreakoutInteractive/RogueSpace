@@ -39,7 +39,6 @@ void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets,
 #pragma mark -
 #pragma mark Collision Handling
 void CollisionController::beginContact(b2Contact* contact){
-
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
     std::shared_ptr<Player> player = _level->getPlayer();
@@ -113,7 +112,7 @@ void CollisionController::beginContact(b2Contact* contact){
             }
         }
     }
-    // enemy ranged attack
+    // enemy ranged attack and projectile-wall collisions
     for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
         intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
         if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
@@ -124,6 +123,15 @@ void CollisionController::beginContact(b2Contact* contact){
             p->setExploding();
             //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
             CULog("Player got shot!");
+        }
+        for (std::shared_ptr<Wall> w : _level->getWalls()) {
+            intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
+            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
+                //destroy projectile when hitting a wall
+                //might need to do some stuff with shadows b/c it's kinda weird as-is
+                p->setExploding();
+            }
         }
     }
 }

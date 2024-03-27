@@ -9,7 +9,8 @@ using namespace cugl;
 class Projectile : public GameObject {
 private:
 	bool playerInit(Vec2 pos, const std::shared_ptr<AssetManager>& assets);
-	bool enemyInit(Vec2 pos, const std::shared_ptr<AssetManager>& assets);
+	bool lizardInit(Vec2 pos, const std::shared_ptr<AssetManager>& assets);
+	bool mageInit(Vec2 pos, const std::shared_ptr<AssetManager>& assets);
 	std::shared_ptr<Animation> _flyingAnimation;
 	std::shared_ptr<Animation> _explodingAnimation;
 	enum state { FLYING, EXPLODING };
@@ -26,14 +27,24 @@ public:
 		return (result->playerInit(pos, assets) ? result : nullptr);
 	}
 	/**
-	 * Creates a new enemy projectile.
+	 * Creates a new lizard enemy projectile.
 	 *
 	 * @param pos The position at which to spawn the projectile. This should be the enemy's position
 	 * @param assets The asset manager containing the enemy projectile assets
 	 */
-	static std::shared_ptr<Projectile> enemyAlloc(Vec2 pos, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> lizardAlloc(Vec2 pos, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
-		return (result->enemyInit(pos, assets) ? result : nullptr);
+		return (result->lizardInit(pos, assets) ? result : nullptr);
+	}
+	/**
+	 * Creates a new mage enemy projectile.
+	 *
+	 * @param pos The position at which to spawn the projectile. This should be the enemy's position
+	 * @param assets The asset manager containing the enemy projectile assets
+	 */
+	static std::shared_ptr<Projectile> mageAlloc(Vec2 pos, const std::shared_ptr<AssetManager>& assets) {
+		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
+		return (result->mageInit(pos, assets) ? result : nullptr);
 	}
 
 	/** Returns whether this projectile has completed its lifespan and should be destroyed 
