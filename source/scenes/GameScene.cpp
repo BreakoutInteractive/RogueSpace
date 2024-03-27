@@ -239,9 +239,18 @@ void GameScene::preUpdate(float dt) {
         
     
 #ifdef CU_TOUCH_SCREEN
-    // TODO: do checks for holding combat mode to switch the active joystick....
+    if (_input.isRangeCombatActive()){
+        _gameRenderer.setAimJoystickMode();
+    }
+    else {
+        _gameRenderer.setJoystickMode();
+    }
     _gameRenderer.updateJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
 #endif
+    
+    if (_input.isRangeCombatActive()){
+        moveForce = Vec2::ZERO; // stay still to shoot range;
+    }
     
     // update the direction the player is facing
     if (moveForce.length() > 0){
