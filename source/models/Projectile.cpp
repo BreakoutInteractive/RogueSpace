@@ -23,7 +23,7 @@ bool Projectile::playerInit(Vec2 pos, const std::shared_ptr<AssetManager>& asset
 	b2Filter filter;
 	//projectiles are attacks. they can hit enemies and are destroyed on contact with a wall.
 	filter.categoryBits = CATEGORY_PROJECTILE;
-	filter.maskBits = CATEGORY_ENEMY | CATEGORY_WALL;
+	filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX | CATEGORY_WALL;
 	obs->setFilterData(filter);
 	obs->setEnabled(true);
 	obs->setAwake(true);
@@ -56,7 +56,7 @@ bool Projectile::lizardInit(Vec2 pos, const std::shared_ptr<AssetManager>& asset
 	b2Filter filter;
 	//projectiles are attacks. they can hit players and are destroyed on contact with a wall.
 	filter.categoryBits = CATEGORY_PROJECTILE;
-	filter.maskBits = CATEGORY_PLAYER | CATEGORY_WALL;
+	filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_WALL;
 	obs->setFilterData(filter);
 	obs->setEnabled(true);
 	obs->setAwake(true);
@@ -89,7 +89,7 @@ bool Projectile::mageInit(Vec2 pos, const std::shared_ptr<AssetManager>& assets)
 	b2Filter filter;
 	//projectiles are attacks. they can hit players and are destroyed on contact with a wall.
 	filter.categoryBits = CATEGORY_PROJECTILE;
-	filter.maskBits = CATEGORY_PLAYER | CATEGORY_WALL;
+	filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_WALL;
 	obs->setFilterData(filter);
 	obs->setEnabled(true);
 	obs->setAwake(true);

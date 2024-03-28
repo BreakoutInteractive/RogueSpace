@@ -8,6 +8,7 @@
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
+#include "../models/Wall.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -131,7 +132,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
                 //destroy projectile when hitting a wall
                 //might need to do some stuff with shadows b/c it's kinda weird as-is
-                p->setExploding();
+                if (!w->getCollider()->isSensor()) p->setExploding();
             }
         }
     }

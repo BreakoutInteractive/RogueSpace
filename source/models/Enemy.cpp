@@ -56,8 +56,8 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     hitbox->setBodyType(b2_kinematicBody);
     hitbox->setSensor(true);
     hitbox->setName(std::string("enemy-hitbox"));
-    filter.categoryBits = CATEGORY_HITBOX;
-    filter.maskBits = CATEGORY_ATTACK;
+    filter.categoryBits = CATEGORY_ENEMY_HITBOX;
+    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     hitbox->setFilterData(filter);
     _sensor = hitbox;
     _sensor->setDebugColor(Color4::RED);

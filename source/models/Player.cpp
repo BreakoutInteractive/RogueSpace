@@ -68,8 +68,8 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     hitbox->setBodyType(b2_kinematicBody);
     hitbox->setSensor(true);
     hitbox->setName(std::string("player-hitbox"));
-    filter.categoryBits = CATEGORY_HITBOX;
-    filter.maskBits = CATEGORY_ATTACK;
+    filter.categoryBits = CATEGORY_PLAYER_HITBOX;
+    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     hitbox->setFilterData(filter);
     _sensor = hitbox;
     _sensor->setDebugColor(Color4::RED);
@@ -276,6 +276,7 @@ void Player::animateCharge() {
 
 void Player::animateShot() {
     setAnimation(_shotAnimation);
+    _shotEffect->start();
     _state = PARRY;
 }
 
