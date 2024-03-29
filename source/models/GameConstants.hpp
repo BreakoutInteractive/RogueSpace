@@ -92,6 +92,8 @@ public:
     static float PROJ_TIME_P;
     /** how many seconds it takes for the player to charge the ranged attack */
     static float CHARGE_TIME;
+
+    static float KNOCKBACK;
 };
 
 

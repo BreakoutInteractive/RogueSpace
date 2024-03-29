@@ -365,9 +365,9 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);
     b2Filter filter;
-    // this is an attack and can collide with a player or an enemy
+    // this is an attack and, since it is the player's, can collide with enemies
     filter.categoryBits = CATEGORY_ATTACK;
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_HITBOX;
+    filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX;
     _atk->setFilterData(filter);
     return success;
 }
@@ -424,8 +424,8 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> constants, const s
         attack->setBodyType(b2_dynamicBody);
         // this is an attack
         filter.categoryBits = CATEGORY_ATTACK;
-        // an attack can collide with a player or an enemy
-        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_HITBOX;
+        // since it is an enemy's attack, it can collide with the player
+        filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
         attack->setFilterData(filter);
         enemy->setAttack(attack);
     }
@@ -526,6 +526,7 @@ void LevelModel::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& ob
 
 void LevelModel::addProjectile(std::shared_ptr<Projectile> p) {
     _projectiles.push_back(p);
+    _dynamicObjects.push_back(p);
     p->addObstaclesToWorld(_world);
     p->getCollider()->setDebugScene(_debugNode);
     p->getCollider()->setDebugColor(Color4::RED);

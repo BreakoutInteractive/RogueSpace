@@ -353,10 +353,10 @@ void GameScene::preUpdate(float dt) {
                 }
             }
             else if (_input.didCharge()) {
-                Vec2 direction = Vec2::ZERO;
-                float ang = 0;
-                if (player->_weapon == Player::weapon::RANGED) {
+                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
+                if (player->_weapon == Player::weapon::RANGED && player->_state == Player::state::CHARGING) {
                     //TODO: face the appropriate direction
+                    player->setFacingDir(direction);
                 }
             }
             else if (_input.didShoot()) {
@@ -372,7 +372,7 @@ void GameScene::preUpdate(float dt) {
                             // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                             ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                         }
-                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), _assets);
+                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, _assets);
                         p->setDrawScale(Vec2(_scale, _scale));
                         _level->addProjectile(p);
                         std::shared_ptr<physics2::Obstacle> obs = p->getCollider();

@@ -112,12 +112,7 @@ int Player::getMaxHP(){
 }
 
 bool Player::isAttacking() {
-    switch (_weapon) {
-    case MELEE:
-        return _attackAnimation->isActive();
-    case RANGED:
-        return _state == CHARGING || _state == CHARGED || _state == SHOT;
-    }
+    return _state == CHARGING || _state == CHARGED || _state == SHOT;
 }
 
 #pragma mark -
@@ -215,7 +210,8 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
     _runAnimation = Animation::alloc(runSheet, 16/24.0, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
-    _chargingAnimation = Animation::alloc(rangedSheet, 0.3f, false, 0, 8);
+    _chargingAnimation = Animation::alloc(rangedSheet, GameConstants::CHARGE_TIME, false, 0, 8);
+    _chargedAnimation = Animation::alloc(rangedSheet, 0.1f, true, 8, 8);
     _shotAnimation = Animation::alloc(rangedSheet, 0.125f, false, 9, 11);
     _recoveryAnimation = Animation::alloc(rangedSheet, 0.167f, false, 12, 15);
     _bowRunAnimation = Animation::alloc(bowRunSheet, 16 / 24.0, true, 0, 15);
@@ -293,7 +289,8 @@ void Player::setAnimation(std::shared_ptr<Animation> animation){
 void Player::updateAnimation(float dt){
     GameObject::updateAnimation(dt); 
     // let all callbacks run (through default update) before custom update
-    if (!_attackAnimation->isActive() && !_parryAnimation->isActive()){
+    //the running/idle animations only apply in idle or dodge states; the other states have their own animations
+    if (_state == IDLE || _state == DODGE){
         //TODO: sync frames when swapping weapons
         if (!_collider->getLinearVelocity().isZero()){
             switch (_weapon) {
@@ -356,6 +353,7 @@ void Player::setFacingDir(cugl::Vec2 dir){
         _bowIdleAnimation->setFrameRange(startIndex, endIndex);
         _bowRunAnimation->setFrameRange(16 * _directionIndex, 16 * _directionIndex + 15);
         _chargingAnimation->setFrameRange(16 * _directionIndex, 16 * _directionIndex + 8);
+        _chargedAnimation->setFrameRange(16 * _directionIndex + 8, 16 * _directionIndex + 8);
         _shotAnimation->setFrameRange(16 * _directionIndex + 9, 16 * _directionIndex + 11);
         _recoveryAnimation->setFrameRange(16 * _directionIndex + 12, 16 * _directionIndex + 15);
         // TODO: when parry animation is done, do the same range update.
@@ -368,7 +366,7 @@ void Player::hit(Vec2 atkDir, int damage) {
         _hitCounter.reset();
         _hp = std::fmax(0, (_hp - damage));
         _tint = Color4::RED;
-        _collider->setLinearVelocity(atkDir * 10); //tune this value (10)
+        _collider->setLinearVelocity(atkDir * GameConstants::KNOCKBACK);
         _state = IDLE; //TODO: hit state
         resetCharge();
     }
@@ -394,7 +392,7 @@ void Player::update(float dt) {
             _state = CHARGED;
             _chargingEffect->reset();
             _chargedEffect->start();
-            _currAnimation->stopAnimation();
+            setAnimation(_chargedAnimation);
             _charge = 0;
         }
         break;

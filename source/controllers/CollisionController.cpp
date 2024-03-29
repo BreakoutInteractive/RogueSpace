@@ -75,10 +75,13 @@ void CollisionController::beginContact(b2Contact* contact){
             if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
                 (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                 //TODO: give projectiles a modifiable damage value
-                (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), 1);
-                p->setExploding();
-                //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
-                CULog("Shot an enemy!");
+                //explosion shouldn't hit enemies (or should it?)
+                if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
+                    (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                    CULog("Shot an enemy!");
+                    p->setExploding();
+                    //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
+                }
             }
         }
     }
@@ -121,10 +124,12 @@ void CollisionController::beginContact(b2Contact* contact){
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
-            player->hit(dir);
-            p->setExploding();
-            //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
-            CULog("Player got shot!");
+            if (!p->isExploding()) {
+                player->hit(dir, p->getDamage());
+                p->setExploding();
+                //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
+                CULog("Player got shot!");
+            }
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
             intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
@@ -132,7 +137,8 @@ void CollisionController::beginContact(b2Contact* contact){
                 (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
                 //destroy projectile when hitting a wall
                 //might need to do some stuff with shadows b/c it's kinda weird as-is
-                if (!w->getCollider()->isSensor()) p->setExploding();
+                std::shared_ptr<cugl::physics2::Obstacle> obs = w->getCollider();
+                if (!(w->getCollider()->isSensor())) p->setExploding();                
             }
         }
     }
@@ -177,6 +183,22 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
                 if (!(*it)->_stunCD.isZero() || !(*iter)->_stunCD.isZero()
                     || (*it)->getCollider()->getLinearVelocity().isZero()
                     || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+            }
+        }
+        for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+            intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+            //need this check because projectiles hit corpses for some reason
+            if(!(*it)->isEnabled()) contact->SetEnabled(false);
+        }
+    }
+    for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+        intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+        for (std::shared_ptr<Wall> w : _level->getWalls()) {
+            intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
+            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
+                //projectiles phase through passable walls
+                if (w->getCollider()->isSensor()) contact->SetEnabled(false);
             }
         }
     }

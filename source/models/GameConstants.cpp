@@ -70,3 +70,5 @@ float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 float GameConstants::PROJ_TIME_P = 1.0f;
 
 float GameConstants::CHARGE_TIME = 0.5f;
+
+float GameConstants::KNOCKBACK = 10.0f;

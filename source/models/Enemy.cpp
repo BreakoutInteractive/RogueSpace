@@ -228,7 +228,7 @@ void Enemy::hit(cugl::Vec2 atkDir, float damage) {
         setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();
-        _collider->setLinearVelocity(atkDir*10); //tune this value (10)
+        _collider->setLinearVelocity(atkDir*GameConstants::KNOCKBACK);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
             _facingDirection = -atkDir;
