@@ -116,17 +116,21 @@ private:
     bool _active;
     /** Whether the dodge  key is down */
     bool  _keyDodge;
-    /** Whether the parry key is down */
+    /** Whether the parry key was pressed */
     bool  _keyParry;
-    /** Whether the attack key is down*/
+    /** Whether the attack key was pressed */
     bool _keyAttack;
-    /** Whether the reset key is down */
+    /** Whether the attack key is held down*/
+    bool _keyAttackDown;
+    /** Whether the attack key was released*/
+    bool _keyAttackReleased;
+    /** Whether the reset key was pressed */
     bool  _keyReset;
-    /** Whether the debug key is down */
+    /** Whether the debug key was pressed */
     bool  _keyDebug;
-    /** Whether the exit key is down */
+    /** Whether the exit key was pressed */
     bool  _keyExit;
-    /** Whether the swap key is down */
+    /** Whether the weapon swap key was pressed */
     bool  _keySwap;
     /** a vector cache representing the intended direction of movement*/
     Vec2 _keyMoveDir;
@@ -182,6 +186,10 @@ protected:
     bool _dodgePressed;
     /** Whether the attack action was chosen*/
     bool _attackPressed;
+    /** Whether the attack action was down*/
+    bool _attackDown;
+    /** Whether the attack action was released*/
+    bool _attackReleased;
     /** Whether the parry action was chosen */
     bool _parryPressed;
     /** Whether the weapon swap action was chosen */
@@ -286,6 +294,14 @@ public:
      * Returns true if the attack input was triggered
      */
     bool didAttack() const { return _attackPressed; }
+    /**
+     * Returns true if the attack input is down
+     */
+    bool didCharge() const { return _attackDown; }
+    /**
+     * Returns true if the attack input was released
+     */
+    bool didShoot() const { return _attackReleased; }
     
     /**
      * Returns the vector direction of attack (i.e. the position of the mouse)
@@ -314,9 +330,11 @@ public:
      * @return true if the exit button was pressed.
      */
     bool didExit() const { return _exitPressed; }
-    
+
     /**
-     * @return true if the swap button was pressed;
+     * Returns true if the swap button was pressed.
+     *
+     * @return true if the swap button was pressed.
      */
     bool didSwap() const { return _swapPressed; }
     

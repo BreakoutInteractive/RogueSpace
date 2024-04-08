@@ -13,7 +13,9 @@
 //
 #include "GameScene.hpp"
 #include "../models/LevelConstants.hpp"
+#include "../models/GameConstants.hpp"
 #include "../models/Enemy.hpp"
+#include "../models/Projectile.hpp"
 #include "../models/MeleeEnemy.hpp"
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
@@ -257,7 +259,7 @@ void GameScene::preUpdate(float dt) {
         player->setFacingDir(moveForce);
     }
     
-    if (player->_dodgeDuration.isZero() && player->getCollider()->isBullet()){
+    if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
     if(player->_dodgeCD.isZero()){
@@ -265,10 +267,19 @@ void GameScene::preUpdate(float dt) {
     }
     
 
-    //only move fast if we're not parrying or dodging
-    if (_parryCD == 0 && player->_dodgeDuration.isZero() && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale()); //TODO: use json data
-    } else if (_dodgeCD == 0 && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+    //only move if we're not parrying or dodging or recovering
+    if (player->_state != Player::state::PARRY && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY 
+        && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+        switch (player->_weapon) {
+        case Player::weapon::MELEE:
+            player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());  //TODO: use json data
+            break;
+        case Player::weapon::RANGED:
+            //with the ranged weapon, dont move while attacking
+            if (!player->isAttacking()) player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());  //TODO: use json data
+            break;
+        }
+    } else if (player->_state != Player::state::DODGE && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
     
@@ -276,7 +287,7 @@ void GameScene::preUpdate(float dt) {
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (player->_parryCD.isZero() && player->_atkCD.isZero()) {
+    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
@@ -293,43 +304,88 @@ void GameScene::preUpdate(float dt) {
             player->getCollider()->setBullet(true);
             //player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
+            player->resetCharge();
+            player->_state = Player::state::DODGE;
         }
-        else if (player->_dodgeDuration.isZero()) { //not dodging
+        else if (player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY) { //not dodging or recovering
             //for now, give middle precedence to attack
             if (_input.didAttack()) {
-                // TODO: keep or remove.
-                /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
-                //Vec2 direction = _input.getAttackDirection();
-                //Vec2 playerPos = player->getPosition() * player->getDrawScale();
-                //convert from screen to drawing coords
-                //direction.y = SCENE_HEIGHT - direction.y;
-                //convert to player coords
-                //direction -= playerPos;
-                //direction.normalize();
-                //compute angle from x-axis
-                //float ang = acos(direction.dot(Vec2::UNIT_X));
-                //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang = 2*M_PI - ang;
-                /////// END COMPUTATION OF ATTACK DIRECTION ///////
-                
-                //Vec2 direction = player->getFacingDir();
-                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
-                float ang = acos(direction.dot(Vec2::UNIT_X));
-                if (direction.y < 0){
-                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-                }
+                Vec2 direction = Vec2::ZERO;
+                float ang = 0;
+                switch(player->_weapon){
+                case Player::weapon::MELEE:
+                    // TODO: keep or remove.
+                    /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
+                    //Vec2 direction = _input.getAttackDirection();
+                    //Vec2 playerPos = player->getPosition() * player->getDrawScale();
+                    //convert from screen to drawing coords
+                    //direction.y = SCENE_HEIGHT - direction.y;
+                    //convert to player coords
+                    //direction -= playerPos;
+                    //direction.normalize();
+                    //compute angle from x-axis
+                    //float ang = acos(direction.dot(Vec2::UNIT_X));
+                    //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang = 2*M_PI - ang;
+                    /////// END COMPUTATION OF ATTACK DIRECTION ///////
 
-                atk->setEnabled(true);
-                atk->setAwake(true);
-                atk->setAngle(ang);
-                atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
-                player->animateAttack();
-                player->_atkCD.reset();
-                _level->getPlayerAtk()->reset();
-                _level->getPlayerAtk()->start();
+                    //Vec2 direction = player->getFacingDir();
+                    direction = _input.getAttackDirection(player->getFacingDir());
+                    ang = acos(direction.dot(Vec2::UNIT_X));
+                    if (direction.y < 0) {
+                        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                    }
+
+                    atk->setEnabled(true);
+                    atk->setAwake(true);
+                    atk->setAngle(ang);
+                    atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
+                    player->animateAttack();
+                    player->_atkCD.reset();
+                    _level->getPlayerAtk()->reset();
+                    _level->getPlayerAtk()->start();
+                    break;
+                case Player::weapon::RANGED:
+                    player->resetCharge();
+                    player->animateCharge();
+                    player->getCollider()->setLinearVelocity(Vec2::ZERO);
+                    break;
+                }
             }
-            //for now, give lowest precendence to parry
-            else if (_input.didParry()) {
+            else if (_input.didCharge()) {
+                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
+                if (player->_weapon == Player::weapon::RANGED && player->_state == Player::state::CHARGING) {
+                    //TODO: face the appropriate direction
+                    player->setFacingDir(direction);
+                }
+            }
+            else if (_input.didShoot()) {
+                Vec2 direction = Vec2::ZERO;
+                float ang = 0;
+                if (player->_weapon == Player::weapon::RANGED) {
+                    //only shoot when fully charged
+                    if (player->_state == Player::state::CHARGED) {
+                        //ranged attack
+                        direction = _input.getAttackDirection(player->getFacingDir());
+                        ang = acos(direction.dot(Vec2::UNIT_X));
+                        if (direction.y < 0) {
+                            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                        }
+                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, _assets);
+                        p->setDrawScale(Vec2(_scale, _scale));
+                        _level->addProjectile(p);
+                        std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
+                        obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
+                        obs->setAngle(ang);
+                        player->animateShot();
+                    }
+                    else player->animateDefault();
+                    player->resetCharge();
+                }
+            }
+            //for now, give lowest precendence to parry. only allow it with the melee weapon
+            else if (_input.didParry() && player->_weapon == Player::weapon::MELEE) {
                 //TODO: handle parry
                 CULog("parried");
                 player->animateParry();
@@ -342,7 +398,8 @@ void GameScene::preUpdate(float dt) {
         atk->setEnabled(false);
     }
 
-    
+    if (_input.didSwap()) player->swapWeapon();
+
 #pragma mark - Enemy movement
     _AIController.update(dt);
     // enemy attacks
@@ -377,12 +434,16 @@ void GameScene::preUpdate(float dt) {
     }
     
 #pragma mark - Component Updates
-    player->updateCounters();
-    player->updateAnimation(dt);
+    player->update(dt);
     _level->getPlayerAtk()->update(dt);
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         (*it)->updateAnimation(dt);
+    }
+    std::vector<std::shared_ptr<Projectile>> projs = _level->getProjectiles();
+    for (auto it = projs.begin(); it != projs.end(); ++it) {
+        (*it)->updateAnimation(dt);
+        if ((*it)->isCompleted()) _level->delProjectile((*it));
     }
 }
 
@@ -404,6 +465,9 @@ void GameScene::fixedUpdate(float step) {
         }
         player->syncPositions();
         _level->getAttack()->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
+
+        auto projs = _level->getProjectiles();
+        for (auto it = projs.begin(); it != projs.end(); ++it) (*it)->syncPositions();
     }
     
 }

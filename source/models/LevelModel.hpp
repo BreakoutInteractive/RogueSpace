@@ -20,6 +20,7 @@
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
 #include "../components/Animation.hpp"
+#include "Projectile.hpp"
 
 using namespace cugl;
 
@@ -33,6 +34,7 @@ class RangedEnemy;
 class RangedLizard;
 class MageAlien;
 class GameObject;
+class Projectile;
 
 #pragma mark -
 #pragma mark Level Model
@@ -65,6 +67,8 @@ protected:
     
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
+
+    std::vector<std::shared_ptr<Projectile>> _projectiles;
     
     /** list of all moving game objects */
     std::vector<std::shared_ptr<GameObject>> _dynamicObjects;
@@ -195,6 +199,11 @@ public:
 
     const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 
+    /** add a projectile to this level */
+    void addProjectile(std::shared_ptr<Projectile> p);
+    /** remove the given projectile from this level and from the physics world (if present) */
+    void delProjectile(std::shared_ptr<Projectile> p);
+    const std::vector<std::shared_ptr<Projectile>> getProjectiles() { return _projectiles; }
 
 #pragma mark Physics Attributes
     /** 
