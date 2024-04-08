@@ -17,8 +17,8 @@ You, the player, must clear all enemies in the given level in order to complete 
 | :---------------- | :------ |
 | Move (omnidirectional)  | Tap and move finger on left half of screen |
 | Attack | Tap and release (quickly) on right half of screen |
-| Parry  | Swipe Downwards on right half of screen |
-| Dodge | Swipe Upwards on right half of screen
+| Parry  | Hold and release on right half of screen |
+| Dodge | Swipe (on right half of screen) in the direction you want to move
 
 ### Desktop Controls
 
