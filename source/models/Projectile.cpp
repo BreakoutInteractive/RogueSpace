@@ -136,6 +136,8 @@ bool Projectile::isCompleted() {
 		else if ((_collider->getFilterData().maskBits & CATEGORY_ENEMY) == CATEGORY_ENEMY)
 			//if this can hit enemies, it belongs to the player
 			return _currAnimation->elapsed() >= GameConstants::PROJ_TIME_P;
+        // impossible path
+        return false;
 	}
     else if (_state == EXPLODING) {return !_currAnimation->isActive();}
     else return false;
