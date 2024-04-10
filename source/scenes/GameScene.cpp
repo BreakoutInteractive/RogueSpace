@@ -184,6 +184,7 @@ void GameScene::restart(){
     _gameRenderer.setGameElements(getCamera(), _level);
     setComplete(false);
     setDefeat(false);
+    _input.activateMeleeControls();
 }
 
 
@@ -234,25 +235,15 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the player
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
-
-    auto _atkCD = player->_atkCD.getCount();
-    auto _parryCD = player->_parryCD.getCount();
-    auto _dodgeCD = player->_dodgeCD.getCount();
         
     
 #ifdef CU_TOUCH_SCREEN
-    if (_input.isRangeCombatActive()){
-        _gameRenderer.setAimJoystickMode();
+    if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING){
+        _gameRenderer.updateAimJoystick(_input.isCombatActive(), _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
-    else {
-        _gameRenderer.setJoystickMode();
-    }
-    _gameRenderer.updateJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
-#endif
+    _gameRenderer.updateMoveJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
     
-    if (_input.isRangeCombatActive()){
-        moveForce = Vec2::ZERO; // stay still to shoot range;
-    }
+#endif
     
     // update the direction the player is facing
     if (moveForce.length() > 0){
@@ -299,10 +290,8 @@ void GameScene::preUpdate(float dt) {
                 // dodge in the direction currently facing. normalize so that the dodge is constant speed
                 force = player->getFacingDir().getNormalization();
             }
-            //player->setLinearDamping(20);
             player->getCollider()->setLinearVelocity(force * 30);
             player->getCollider()->setBullet(true);
-            //player->getShadow()->setLinearVelocity(force * 30);
             player->setFacingDir(force);
             player->resetCharge();
             player->_state = Player::state::DODGE;
@@ -314,28 +303,12 @@ void GameScene::preUpdate(float dt) {
                 float ang = 0;
                 switch(player->_weapon){
                 case Player::weapon::MELEE:
-                    // TODO: keep or remove.
-                    /////// ATTACK POINTS FROM PLAYER TO MOUSE ///////
-                    //Vec2 direction = _input.getAttackDirection();
-                    //Vec2 playerPos = player->getPosition() * player->getDrawScale();
-                    //convert from screen to drawing coords
-                    //direction.y = SCENE_HEIGHT - direction.y;
-                    //convert to player coords
-                    //direction -= playerPos;
-                    //direction.normalize();
-                    //compute angle from x-axis
-                    //float ang = acos(direction.dot(Vec2::UNIT_X));
-                    //if (SCENE_HEIGHT - _input.getAttackDirection().y < playerPos.y) ang = 2*M_PI - ang;
-                    /////// END COMPUTATION OF ATTACK DIRECTION ///////
-
-                    //Vec2 direction = player->getFacingDir();
                     direction = _input.getAttackDirection(player->getFacingDir());
                     ang = acos(direction.dot(Vec2::UNIT_X));
                     if (direction.y < 0) {
                         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                     }
-
                     atk->setEnabled(true);
                     atk->setAwake(true);
                     atk->setAngle(ang);
