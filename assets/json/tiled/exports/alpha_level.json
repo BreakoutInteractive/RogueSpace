@@ -2368,8 +2368,8 @@
                          "name":"enemy_type",
                          "propertytype":"Type",
                          "type":"string",
-                         "value":"MELEE"
-                        }, 
+                         "value":"RANGE"
+                        },
                         {
                          "name":"hp",
                          "type":"int",
@@ -2449,8 +2449,8 @@
                          "name":"enemy_type",
                          "propertytype":"Type",
                          "type":"string",
-                         "value":"MELEE"
-                        }, 
+                         "value":"RANGE"
+                        },
                         {
                          "name":"hp",
                          "type":"int",
@@ -2478,8 +2478,8 @@
                          "name":"enemy_type",
                          "propertytype":"Type",
                          "type":"string",
-                         "value":"MELEE"
-                        }, 
+                         "value":"RANGE"
+                        },
                         {
                          "name":"hp",
                          "type":"int",
