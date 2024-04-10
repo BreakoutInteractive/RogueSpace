@@ -77,6 +77,11 @@ public:
         auto result = std::make_shared<RangedLizard>();
         return (result->init(data) ? result : nullptr);
     }
+
+#pragma mark -
+#pragma mark Accessors
+    
+    std::string getType() override { return "ranged lizard"; }
     
 #pragma mark -
 #pragma mark Animation and State

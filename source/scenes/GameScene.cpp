@@ -425,9 +425,39 @@ void GameScene::preUpdate(float dt) {
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                     ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                 }
-                enemy->getAttack()->setPosition(enemy->getAttack()->getPosition().add(0, 64 / enemy->getDrawScale().y)); //64 is half of the pixel height of the enemy
-                enemy->getAttack()->setAngle(ang);
+                if (enemy->getType() == "melee lizard") {
+                    enemy->getAttack()->setPosition(enemy->getAttack()->getPosition().add(0, 64 / enemy->getDrawScale().y)); //64 is half of the pixel height of the enemy
+                    enemy->getAttack()->setAngle(ang);
+                }
                 enemy->setAttacking();
+            }
+            if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
+                Vec2 direction = player->getPosition() * player->getDrawScale() - enemy->getPosition() * enemy->getDrawScale();
+                direction.normalize();
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (direction.y < 0){
+                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                }
+                if (enemy->getType() == "ranged lizard") {
+                    std::shared_ptr<Projectile> p = Projectile::lizardAlloc(enemy->getPosition().add(0, 64 / enemy->getDrawScale().y), 1, _assets);
+                    p->setDrawScale(Vec2(_scale, _scale));
+                    _level->addProjectile(p);
+                    std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
+                    obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_E, 0).rotate(ang));
+                    obs->setAngle(ang);
+                }
+                else if (enemy->getType() == "mage alien") {
+                    if (enemy->getCharged()) {
+                        enemy->setCharged(false);
+                        std::shared_ptr<Projectile> p = Projectile::mageAlloc(enemy->getPosition().add(0, 64 / enemy->getDrawScale().y), 1, _assets);
+                        p->setDrawScale(Vec2(_scale, _scale));
+                        _level->addProjectile(p);
+                        std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
+                        obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_E, 0).rotate(ang));
+                        obs->setAngle(ang);
+                    }
+                }
             }
         }
         

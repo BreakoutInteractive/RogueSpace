@@ -92,6 +92,9 @@ protected:
     /** Whether the enemy is currently in its default state */
     bool _isDefault;
     
+    /** Whether the enemy's ranged attack is charged */
+    bool _isCharged;
+    
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
     
@@ -315,6 +318,16 @@ public:
     void setDefault(bool value) { _isDefault = value; }
     
     /**
+     * Gets whether this enemy's ranged attack is charged
+     */
+    bool getCharged() const { return _isCharged; }
+    
+    /**
+     * Sets whether this enemy's ranged attack is charged
+     */
+    void setCharged(bool value) { _isCharged = value; }
+    
+    /**
      * Gets this enemy's patrol path.
      */
     std::vector<cugl::Vec2> getPath() const { return _path; }
@@ -363,6 +376,11 @@ public:
      * Sets whether this enemy can currently see the player
      */
     void setPlayerInSight(bool value) { _playerInSight = value; }
+    
+    /**
+     * Returns this enemy's type
+     */
+    virtual std::string getType() { return ""; };
     
     
 #pragma mark -

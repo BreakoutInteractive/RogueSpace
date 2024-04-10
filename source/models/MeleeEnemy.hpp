@@ -82,6 +82,11 @@ public:
     }
     
 #pragma mark -
+#pragma mark Accessors
+    
+    std::string getType() override { return "melee lizard"; }
+    
+#pragma mark -
 #pragma mark Animation and State
     
     /**
