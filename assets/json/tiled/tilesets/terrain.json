@@ -15,36 +15,29 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
-                     "id":1,
+                     "id":2,
                      "name":"collider",
                      "polygon":[
                             {
-                             "x":3.55704908567681,
-                             "y":-5.39202370186126
+                             "x":0,
+                             "y":0
                             }, 
                             {
-                             "x":36.4268642752475,
-                             "y":-10.833841165555
+                             "x":64,
+                             "y":-32
                             }, 
                             {
-                             "x":61.3016067705139,
-                             "y":-35.9249356065252
+                             "x":0,
+                             "y":-64
                             }, 
                             {
-                             "x":2.95945546019533,
-                             "y":-40.5357459941656
-                            }, 
-                            {
-                             "x":-60.8109898196983,
-                             "y":-35.4343186557096
-                            }, 
-                            {
-                             "x":-22.4483852364475,
-                             "y":-6.80882352941177
+                             "x":-64,
+                             "y":-32
                             }],
                      "rotation":0,
                      "type":"Collider",
@@ -106,191 +99,39 @@
         }, 
         {
          "id":6,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":12.2737035900583,
-                             "y":9.88521297665207
-                            }, 
-                            {
-                             "x":29.2895199308209,
-                             "y":-1.83059499567631
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":51.0474490222879,
-                     "y":94.9991631565734
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":7,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":16.7368685318977,
-                             "y":8.36843426594884
-                            }, 
-                            {
-                             "x":29.2895199308209,
-                             "y":1.39473904432481
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":49.3737621690982,
-                     "y":95.6790984406817
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":8,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":3.90526932410946,
-                             "y":4.95907215759931
-                            }, 
-                            {
-                             "x":17.0158163407626,
-                             "y":4.54581614446603
-                            }, 
-                            {
-                             "x":20.3631900471422,
-                             "y":-0.619884019699912
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":53.8369271109375,
-                     "y":93.788452180597
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":9,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":7.25264303048899,
-                             "y":5.30000836843428
-                            }, 
-                            {
-                             "x":17.8526597673575,
-                             "y":5.57895617729923
-                            }, 
-                            {
-                             "x":20.9210856648721,
-                             "y":0.836843426594896
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":53.2790314932076,
-                     "y":94.5633072052219
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":19,
@@ -380,199 +221,39 @@
         }, 
         {
          "id":21,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":8.92632988367876,
-                             "y":7.252643030489
-                            }, 
-                            {
-                             "x":19.5263466205473,
-                             "y":5.57895617729923
-                            }, 
-                            {
-                             "x":24.2684593712516,
-                             "y":1.11579123545985
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":51.8842924488828,
-                     "y":93.726463778627
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":22,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":5.85790398616419,
-                             "y":4.46316494183938
-                            }, 
-                            {
-                             "x":16.4579207230327,
-                             "y":4.46316494183938
-                            }, 
-                            {
-                             "x":22.8737203269268,
-                             "y":0.836843426594882
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":53.0000836843427,
-                     "y":94.2843593963569
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":23,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":1,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":8.64738207481381,
-                             "y":6.41579960389411
-                            }, 
-                            {
-                             "x":17.0158163407626,
-                             "y":6.13685179502914
-                            }, 
-                            {
-                             "x":22.5947725180619,
-                             "y":1.39473904432481
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":55.2316661552623,
-                     "y":86.752768557003
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":24,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":2,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":9.20527769254372,
-                             "y":6.97369522162403
-                            }, 
-                            {
-                             "x":22.3158247091969,
-                             "y":5.02106055956931
-                            }, 
-                            {
-                             "x":23.1526681357918,
-                             "y":0.278947808864956
-                            }],
-                     "rotation":0,
-                     "type":"Collider",
-                     "visible":true,
-                     "width":0,
-                     "x":52.7211358754777,
-                     "y":96.2369940584117
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
                 {
                  "name":"passable",
                  "type":"bool",
                  "value":true
-                }],
-         "type":"Wall"
+                }]
         }, 
         {
          "id":33,

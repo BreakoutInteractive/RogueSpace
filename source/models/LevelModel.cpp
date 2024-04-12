@@ -5,6 +5,7 @@
 #include "TileLayer.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "Projectile.hpp"
 #include "MeleeEnemy.hpp"
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
@@ -60,6 +61,7 @@ void LevelModel::setDrawScale(Vec2 scale) {
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->setDrawScale(scale);
     }
+    for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->setDrawScale(scale);
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
@@ -95,7 +97,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
 //                        _enemies[ii]->getFacingDir().getAngle() + M_PI_2, _enemies[ii]->getPosition() * _scale);
 //        }
     }
-    
+
+    for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->draw(batch);
     
     if (_playerAttack->isActive()){
         auto sheet = _playerAttack->getSpriteSheet();
@@ -115,7 +118,9 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
     }
-
+    for (int ii = 0; ii < _projectiles.size(); ii++) {
+        _projectiles[ii]->getCollider()->getDebugNode()->setVisible(_projectiles[ii]->isEnabled());
+    }
 }
 
 void LevelModel::clearDebugNode(){
@@ -160,6 +165,11 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     for (int ii = 0; ii < _boundaries.size(); ii++){
         _boundaries[ii]->setDebugScene(_debugNode);
         _boundaries[ii]->setDebugColor(Color4::WHITE);
+    }
+
+    for (int ii = 0; ii < _projectiles.size(); ii++) {
+        _projectiles[ii]->getCollider()->setDebugScene(_debugNode);
+        _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
     }
 }
 
@@ -218,6 +228,24 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 	/** Create the physics world */
 	_world = physics2::ObstacleWorld::alloc(getBounds(),Vec2::ZERO);
     
+    /** Create the grid for pathfinding around static obstacles */
+    std::shared_ptr<JsonValue> gridData = parsedJson->get("grid");
+    int gridWidth = gridData->getInt("width");
+    int gridHeight = gridData->getInt("height");
+    auto gridOrigin = gridData->get("origin")->asFloatArray();
+    _grid = std::make_shared<LevelGrid>(gridWidth, gridHeight, Vec2(gridOrigin[0], gridOrigin[1]));
+    
+    // load tile layers, mark walkable tiles on grid
+    auto tileLayers = parsedJson->get("tiles");
+    if (tileLayers != nullptr){
+        loadTileLayers(tileLayers);
+    }
+    else {
+        CUAssertLog(false, "Failed to find any tile layers");
+        return false;
+    }
+    
+    
     auto playerConstants = constants->get(PLAYER_FIELD);
     auto playerJSON = parsedJson->get(PLAYER_FIELD);
     if (playerConstants != nullptr && playerJSON != nullptr){
@@ -239,6 +267,8 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 		return false;
 	}
     
+    _grid->printGrid();
+    
     auto boundaries = parsedJson->get(BOUNDARY_FIELD);
     if (boundaries != nullptr) {
         int size = (int)boundaries->size();
@@ -257,16 +287,6 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
     }
     else {
         CUAssertLog(false, "Failed to load enemies");
-        return false;
-    }
-    
-    // load tile layers
-    auto tileLayers = parsedJson->get("tiles");
-    if (tileLayers != nullptr){
-        loadTileLayers(tileLayers);
-    }
-    else {
-        CUAssertLog(false, "Failed to find any tile layers");
         return false;
     }
 
@@ -355,9 +375,9 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
 	_atk->setSensor(true);
 	_atk->setBodyType(b2_dynamicBody);
     b2Filter filter;
-    // this is an attack and can collide with a player or an enemy
+    // this is an attack and, since it is the player's, can collide with enemies
     filter.categoryBits = CATEGORY_ATTACK;
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_HITBOX;
+    filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX;
     _atk->setFilterData(filter);
     return success;
 }
@@ -414,8 +434,8 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> constants, const s
         attack->setBodyType(b2_dynamicBody);
         // this is an attack
         filter.categoryBits = CATEGORY_ATTACK;
-        // an attack can collide with a player or an enemy
-        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_HITBOX;
+        // since it is an enemy's attack, it can collide with the player
+        filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
         attack->setFilterData(filter);
         enemy->setAttack(attack);
     }
@@ -430,6 +450,7 @@ bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
         for (int idx = 0; idx < tileArray.size(); idx++){
             std::shared_ptr<Tile> tile = Tile::alloc(tileArray[idx]);
             tileLayer->addTile(tile);
+            _grid->setNode(_grid->worldToTile(tile->getPosition()), 1); // 1 means walkable for now
         }
         _tileLayers.push_back(tileLayer);
     }
@@ -456,6 +477,7 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	// Get the object, which is automatically retained
     if (success){
         std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
+        _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
         _walls.push_back(wallobj);
     }
 	return success;
@@ -514,3 +536,22 @@ void LevelModel::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& ob
 	_world->addObstacle(obj);
 }
 
+void LevelModel::addProjectile(std::shared_ptr<Projectile> p) {
+    _projectiles.push_back(p);
+    _dynamicObjects.push_back(p);
+    p->addObstaclesToWorld(_world);
+    p->getCollider()->setDebugScene(_debugNode);
+    p->getCollider()->setDebugColor(Color4::RED);
+}
+
+void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
+    for (auto it = _projectiles.begin(); it != _projectiles.end(); ++it) {
+        if ((*it) == p) {
+            p->setEnabled(false);
+            p->removeObstaclesFromWorld(_world);
+            _projectiles.erase(it);
+            p->dispose();
+            return;
+        }
+    }
+}

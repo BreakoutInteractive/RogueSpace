@@ -15,6 +15,9 @@
         "lizard-stun": {
             "file":     "textures/lizard_stun.png"
         },
+        "lizard-projectile": {
+            "file":     "textures/boomerang_spritesheet.png"
+        },
         "mage-walk": {
             "file":     "textures/mage_walk.png"
         },
@@ -23,6 +26,9 @@
         },
         "mage-attack": {
             "file":     "textures/mage_atk.png"
+        },
+        "mage-projectile": {
+            "file":     "textures/spelleffect_spritesheet.png"
         },
         "enemy-hit-effect": {
             "file":     "textures/hit_01.png"

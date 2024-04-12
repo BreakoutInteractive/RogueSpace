@@ -38,6 +38,14 @@ public:
     static float ENEMY_RANGED_ATK_RANGE;
     /**the default movement speed for an enemy**/
     static float ENEMY_MOVE_SPEED;
+    /** the speed of an enemy projectile */
+    static float PROJ_SPEED_E;
+    /** the radius of a lizard enemy projectile */
+    static float PROJ_RADIUS_LIZARD;
+    /** the radius of a mage enemy projectile */
+    static float PROJ_RADIUS_MAGE;
+    /** how many seconds the enemy projectile lasts, not including the explosion animation */
+    static float PROJ_TIME_E;
 
 #pragma mark -
 #pragma mark Player Constants
@@ -53,10 +61,14 @@ public:
     static int PLAYER_ATTACK_COOLDOWN;
     /**the number of frames we wait before allowing another parry, also currently the length of the parry*/
     static int PLAYER_PARRY_COOLDOWN;
+    /**the number of seconds we wait before allowing another parry, also currently the length of the parry*/
+    static float PLAYER_PARRY_TIME;
     /**the number of frames we wait before allowing another dodge*/
     static int PLAYER_DODGE_COOLDOWN;
     /** the number of frames for the dodge effect to last*/
     static float PLAYER_DODGE_DURATION;
+    /** the number of seconds for the dodge effect to last*/
+    static float PLAYER_DODGE_TIME;
     /** player initial HP */
     static int PLAYER_MAX_HP;
     /** player initial movement speed */
@@ -72,6 +84,16 @@ public:
      this is how sweeping melee attacks work in Hades
      */
     static float PLAYER_MELEE_ATK_RANGE;
+    /** the speed of a player projectile */
+    static float PROJ_SPEED_P;
+    /** half of the size of a player projectile */
+    static float PROJ_SIZE_P_HALF;
+    /** how many seconds the player projectile lasts, not including the explosion animation */
+    static float PROJ_TIME_P;
+    /** how many seconds it takes for the player to charge the ranged attack */
+    static float CHARGE_TIME;
+
+    static float KNOCKBACK;
 };
 
 

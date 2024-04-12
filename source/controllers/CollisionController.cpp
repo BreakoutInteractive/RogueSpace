@@ -8,6 +8,7 @@
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
+#include "../models/Wall.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -39,11 +40,11 @@ void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets,
 #pragma mark -
 #pragma mark Collision Handling
 void CollisionController::beginContact(b2Contact* contact){
-
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
+    std::shared_ptr<Player> player = _level->getPlayer();
     intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
-    intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
+    intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
@@ -51,10 +52,10 @@ void CollisionController::beginContact(b2Contact* contact){
         if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
             //attack hitbox is a circle, but we only want it to hit in a semicircle
-            Vec2 dir = (*it)->getPosition() * (*it)->getDrawScale() - _level->getPlayer()->getPosition() * _level->getPlayer()->getDrawScale();
+            Vec2 dir = (*it)->getPosition() * (*it)->getDrawScale() - player->getPosition() * player->getDrawScale();
             dir.normalize();
             float ang = acos(dir.dot(Vec2::UNIT_X));
-            if ((*it)->getPosition().y * (*it)->getDrawScale().y < _level->getPlayer()->getPosition().y * _level->getPlayer()->getDrawScale().y) ang = 2 * M_PI - ang;
+            if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
                 (*it)->hit(dir, _level->getPlayer()->getAtkDamage());
                 _audioController->playPlayerFX("attackHit");
@@ -66,11 +67,25 @@ void CollisionController::beginContact(b2Contact* contact){
         //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
         //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
         //     dir.normalize();
-        //     if (_level->getPlayer()->_dodgeDuration.isZero()) _level->getPlayer()->hit(dir);
+        //     if (_level->getPlayer()->_state!=Player::state::DODGE) _level->getPlayer()->hit(dir);
         // }
+        //player ranged attack
+        for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+            intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
+                (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
+                //TODO: give projectiles a modifiable damage value
+                //explosion shouldn't hit enemies (or should it?)
+                if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
+                    (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                    CULog("Shot an enemy!");
+                    p->setExploding();
+                    //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
+                }
+            }
+        }
     }
     // enemy attack
-    std::shared_ptr<Player> player = _level->getPlayer();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         intptr_t aptr = reinterpret_cast<intptr_t>((*it)->getAttack().get());
         if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
@@ -99,6 +114,31 @@ void CollisionController::beginContact(b2Contact* contact){
                 else {
                     (*it)->setStunned();
                 }
+            }
+        }
+    }
+    // enemy ranged attack and projectile-wall collisions
+    for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+        intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+        if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
+            (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
+            Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
+            dir.normalize();
+            if (!p->isExploding()) {
+                player->hit(dir, p->getDamage());
+                p->setExploding();
+                //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
+                CULog("Player got shot!");
+            }
+        }
+        for (std::shared_ptr<Wall> w : _level->getWalls()) {
+            intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
+            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
+                //destroy projectile when hitting a wall
+                //might need to do some stuff with shadows b/c it's kinda weird as-is
+                std::shared_ptr<cugl::physics2::Obstacle> obs = w->getCollider();
+                if (!(w->getCollider()->isSensor())) p->setExploding();                
             }
         }
     }
@@ -133,7 +173,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
             //phase through enemies while dodging
-            if (!_level->getPlayer()->_dodgeDuration.isZero()) contact->SetEnabled(false);
+            if (_level->getPlayer()->_state == Player::state::DODGE) contact->SetEnabled(false);
         }
         for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
             intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());
@@ -141,8 +181,24 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
                 (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
                 //enemies phase through each other if one is idle/stunned
                 if (!(*it)->_stunCD.isZero() || !(*iter)->_stunCD.isZero()
-                    ||
-                    (*it)->getCollider()->getLinearVelocity().isZero() || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+                    || (*it)->getCollider()->getLinearVelocity().isZero()
+                    || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+            }
+        }
+        for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+            intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+            //need this check because projectiles hit corpses for some reason
+            if(!(*it)->isEnabled()) contact->SetEnabled(false);
+        }
+    }
+    for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+        intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+        for (std::shared_ptr<Wall> w : _level->getWalls()) {
+            intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
+            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
+                //projectiles phase through passable walls
+                if (w->getCollider()->isSensor()) contact->SetEnabled(false);
             }
         }
     }
