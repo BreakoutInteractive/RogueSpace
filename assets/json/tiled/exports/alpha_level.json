@@ -329,6 +329,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":64,
          "id":14,
+         "locked":true,
          "name":"floor-tiles-2",
          "opacity":1,
          "type":"tilelayer",
@@ -340,6 +341,7 @@
         {
          "draworder":"topdown",
          "id":6,
+         "locked":true,
          "name":"walls",
          "objects":[
                 {
@@ -347,12 +349,6 @@
                  "height":256,
                  "id":99,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -365,12 +361,6 @@
                  "height":256,
                  "id":100,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -383,12 +373,6 @@
                  "height":256,
                  "id":101,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -401,12 +385,6 @@
                  "height":256,
                  "id":102,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -419,12 +397,6 @@
                  "height":256,
                  "id":103,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -437,12 +409,6 @@
                  "height":256,
                  "id":104,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -455,12 +421,6 @@
                  "height":256,
                  "id":105,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -473,12 +433,6 @@
                  "height":256,
                  "id":106,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -491,12 +445,6 @@
                  "height":256,
                  "id":107,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -509,12 +457,6 @@
                  "height":256,
                  "id":108,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -527,12 +469,6 @@
                  "height":256,
                  "id":110,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -545,12 +481,6 @@
                  "height":256,
                  "id":112,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -563,12 +493,6 @@
                  "height":256,
                  "id":113,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -581,12 +505,6 @@
                  "height":256,
                  "id":114,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -599,12 +517,6 @@
                  "height":256,
                  "id":115,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -617,12 +529,6 @@
                  "height":256,
                  "id":117,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -635,12 +541,6 @@
                  "height":256,
                  "id":118,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -653,12 +553,6 @@
                  "height":256,
                  "id":119,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -671,12 +565,6 @@
                  "height":256,
                  "id":120,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -690,12 +578,6 @@
                  "height":256,
                  "id":121,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -708,12 +590,6 @@
                  "height":256,
                  "id":122,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -726,12 +602,6 @@
                  "height":256,
                  "id":123,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -744,12 +614,6 @@
                  "height":256,
                  "id":127,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -762,12 +626,6 @@
                  "height":256,
                  "id":128,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -780,12 +638,6 @@
                  "height":256,
                  "id":130,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -798,12 +650,6 @@
                  "height":256,
                  "id":131,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -816,12 +662,6 @@
                  "height":256,
                  "id":132,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -834,12 +674,6 @@
                  "height":256,
                  "id":133,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -852,12 +686,6 @@
                  "height":256,
                  "id":134,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -870,12 +698,6 @@
                  "height":256,
                  "id":135,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -888,12 +710,6 @@
                  "height":256,
                  "id":143,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -906,12 +722,6 @@
                  "height":256,
                  "id":144,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -924,12 +734,6 @@
                  "height":256,
                  "id":145,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -942,12 +746,6 @@
                  "height":256,
                  "id":146,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -960,12 +758,6 @@
                  "height":256,
                  "id":147,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -978,12 +770,6 @@
                  "height":256,
                  "id":148,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -996,12 +782,6 @@
                  "height":256,
                  "id":150,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1014,12 +794,6 @@
                  "height":256,
                  "id":151,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1033,12 +807,6 @@
                  "height":128,
                  "id":158,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1051,12 +819,6 @@
                  "height":128,
                  "id":160,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1069,12 +831,6 @@
                  "height":128,
                  "id":161,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1087,12 +843,6 @@
                  "height":128,
                  "id":162,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1105,12 +855,6 @@
                  "height":128,
                  "id":165,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1123,12 +867,6 @@
                  "height":128,
                  "id":167,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1141,12 +879,6 @@
                  "height":128,
                  "id":168,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1159,12 +891,6 @@
                  "height":128,
                  "id":170,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1177,12 +903,6 @@
                  "height":128,
                  "id":171,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1195,12 +915,6 @@
                  "height":128,
                  "id":172,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1213,12 +927,6 @@
                  "height":128,
                  "id":173,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1231,12 +939,6 @@
                  "height":128,
                  "id":176,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1249,12 +951,6 @@
                  "height":128,
                  "id":180,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1267,12 +963,6 @@
                  "height":128,
                  "id":181,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1285,12 +975,6 @@
                  "height":128,
                  "id":183,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1303,12 +987,6 @@
                  "height":128,
                  "id":184,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1321,12 +999,6 @@
                  "height":128,
                  "id":185,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1339,12 +1011,6 @@
                  "height":128,
                  "id":187,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1357,12 +1023,6 @@
                  "height":128,
                  "id":189,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1376,12 +1036,6 @@
                  "height":128,
                  "id":190,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1394,12 +1048,6 @@
                  "height":128,
                  "id":191,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1412,12 +1060,6 @@
                  "height":128,
                  "id":192,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1430,12 +1072,6 @@
                  "height":128,
                  "id":193,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1448,12 +1084,6 @@
                  "height":128,
                  "id":196,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1484,12 +1114,6 @@
                  "height":128,
                  "id":199,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1502,12 +1126,6 @@
                  "height":128,
                  "id":200,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1520,12 +1138,6 @@
                  "height":128,
                  "id":201,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1538,12 +1150,6 @@
                  "height":128,
                  "id":202,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1556,12 +1162,6 @@
                  "height":128,
                  "id":203,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1574,12 +1174,6 @@
                  "height":128,
                  "id":204,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1592,12 +1186,6 @@
                  "height":128,
                  "id":206,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1610,12 +1198,6 @@
                  "height":128,
                  "id":207,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1628,12 +1210,6 @@
                  "height":128,
                  "id":208,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1646,12 +1222,6 @@
                  "height":128,
                  "id":209,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -1660,666 +1230,10 @@
                  "y":1248
                 }, 
                 {
-                 "gid":22,
-                 "height":128,
-                 "id":210,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":960,
-                 "y":1280
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":211,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1152,
-                 "y":1216
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":212,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":960,
-                 "y":1024
-                },
-            
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":213,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1152,
-                 "y":896
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":214,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1408,
-                 "y":832
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":215,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":896,
-                 "y":544
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":216,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1472,
-                 "y":416
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":217,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1856,
-                 "y":320
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":218,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":2112,
-                 "y":480
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":219,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1984,
-                 "y":800
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":220,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1920,
-                 "y":1056
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":221,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":2112,
-                 "y":1312
-                }, 
-                {
-                 "gid":22,
-                 "height":128,
-                 "id":222,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1920,
-                 "y":1504
-                }, 
-                {
-                 "gid":23,
-                 "height":128,
-                 "id":223,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1472,
-                 "y":1600
-                }, 
-                {
-                 "gid":23,
-                 "height":128,
-                 "id":224,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1664,
-                 "y":1728
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":225,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1344,
-                 "y":1792
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":226,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1472,
-                 "y":1536
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":227,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1088,
-                 "y":1248
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":228,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1664,
-                 "y":1216
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":229,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1536,
-                 "y":992
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":230,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1856,
-                 "y":1056
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":231,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1024,
-                 "y":640
-                },
-            
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":232,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1344,
-                 "y":544
-                }, 
-                {
-                 "gid":25,
-                 "height":128,
-                 "id":233,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":960,
-                 "y":448
-                }, 
-                {
-                 "gid":25,
-                 "height":128,
-                 "id":234,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":576,
-                 "y":384
-                }, 
-                {
-                 "gid":25,
-                 "height":128,
-                 "id":235,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":320,
-                 "y":288
-                }, 
-                {
-                 "gid":10,
-                 "height":128,
-                 "id":236,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":704,
-                 "y":1248
-                }, 
-                {
-                 "gid":10,
-                 "height":128,
-                 "id":237,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":384,
-                 "y":1184
-                }, 
-                {
-                 "gid":10,
-                 "height":128,
-                 "id":239,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":576,
-                 "y":1696
-                }, 
-                {
-                 "gid":10,
-                 "height":128,
-                 "id":240,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":960,
-                 "y":1568
-                }, 
-                {
-                 "gid":23,
-                 "height":128,
-                 "id":242,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1024,
-                 "y":1792
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":243,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1152,
-                 "y":1696
-                }, 
-                {
-                 "gid":23,
-                 "height":128,
-                 "id":244,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":640,
-                 "y":992
-                }, 
-                {
-                 "gid":25,
-                 "height":128,
-                 "id":247,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":832,
-                 "y":1088
-                }, 
-                {
-                 "gid":25,
-                 "height":128,
-                 "id":249,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1856,
-                 "y":480
-                }, 
-                {
-                 "gid":24,
-                 "height":128,
-                 "id":250,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1536,
-                 "y":320
-                }, 
-                {
                  "gid":242,
                  "height":256,
                  "id":252,
                  "name":"",
-                 "properties":[
-                        {
-                         "name":"passable",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,

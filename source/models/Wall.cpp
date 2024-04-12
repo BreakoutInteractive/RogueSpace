@@ -29,9 +29,6 @@ Wall::Wall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin
     // a wall can collide with a player or an enemy
     filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_PROJECTILE;
     p->setFilterData(filter);
-    if (data->getBool("passable")){
-        p->setSensor(true);
-    }
 }
 
 
