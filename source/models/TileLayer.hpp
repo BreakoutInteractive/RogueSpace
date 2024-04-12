@@ -62,6 +62,13 @@ public:
         return std::make_shared<Tile>(data);
     }
     
+    /**
+     * @return the world position of the bottom center of this tile
+     */
+    Vec2 getPosition(){
+        return _pos;
+    }
+    
 #pragma mark Assets and Animation
     
     void loadAssets(const std::shared_ptr<cugl::AssetManager> &assets);

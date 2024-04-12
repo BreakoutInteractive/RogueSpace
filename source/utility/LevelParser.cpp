@@ -304,8 +304,10 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     // retrieve map attributes
     _tileWidth = json->getInt("tilewidth");
     _tileHeight = json->getInt("tileheight");
-    _mapWidth = (json->getInt("width") + 0.5f) * _tileWidth;
-    _mapHeight = (json->getInt("height")/2.0f + 0.5f) * _tileHeight;
+    int gridWidth = json->getInt("width");
+    int gridHeight = json->getInt("height");
+    _mapWidth = ( gridWidth + 0.5f) * _tileWidth;
+    _mapHeight = (gridHeight/2.0f + 0.5f) * _tileHeight;
     _tileDimension = std::min(_tileWidth, _tileHeight);
     
     // create the data containers
@@ -317,9 +319,21 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     _enemyData = JsonValue::allocArray();
     _boundaryData = JsonValue::allocArray();
     
-    // set box2d map and camera attributes
+    // set box2d map attributes
     levelData->appendValue("width", _mapWidth/_tileDimension);
     levelData->appendValue("height", _mapHeight/_tileDimension);
+    
+    // set layout properties, eg tile-grid attributes
+    std::shared_ptr<JsonValue> gridData = JsonValue::allocObject();
+    long mapGridWidth = gridWidth + 1;
+    long mapGridHeight = gridHeight % 2 == 1 ? gridHeight + 1 : gridHeight;
+    gridData->appendChild("width", JsonValue::alloc(mapGridWidth));
+    gridData->appendChild("height", JsonValue::alloc(mapGridHeight));
+    auto gridOrigin = JsonValue::allocArray();
+    gridOrigin->appendChild(JsonValue::alloc(0.0));
+    gridOrigin->appendChild(JsonValue::alloc(gridHeight % 2 == 1 ? -0.5 : 0.0));
+    gridData->appendChild("origin", gridOrigin);
+    levelData->appendChild("grid", gridData);
     
     // parsing the layers
     parseTilesetDependency(json->get("tilesets"));

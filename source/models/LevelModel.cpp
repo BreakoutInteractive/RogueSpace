@@ -228,6 +228,24 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 	/** Create the physics world */
 	_world = physics2::ObstacleWorld::alloc(getBounds(),Vec2::ZERO);
     
+    /** Create the grid for pathfinding around static obstacles */
+    std::shared_ptr<JsonValue> gridData = parsedJson->get("grid");
+    int gridWidth = gridData->getInt("width");
+    int gridHeight = gridData->getInt("height");
+    auto gridOrigin = gridData->get("origin")->asFloatArray();
+    _grid = std::make_shared<LevelGrid>(gridWidth, gridHeight, Vec2(gridOrigin[0], gridOrigin[1]));
+    
+    // load tile layers, mark walkable tiles on grid
+    auto tileLayers = parsedJson->get("tiles");
+    if (tileLayers != nullptr){
+        loadTileLayers(tileLayers);
+    }
+    else {
+        CUAssertLog(false, "Failed to find any tile layers");
+        return false;
+    }
+    
+    
     auto playerConstants = constants->get(PLAYER_FIELD);
     auto playerJSON = parsedJson->get(PLAYER_FIELD);
     if (playerConstants != nullptr && playerJSON != nullptr){
@@ -249,6 +267,8 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 		return false;
 	}
     
+    _grid->printGrid();
+    
     auto boundaries = parsedJson->get(BOUNDARY_FIELD);
     if (boundaries != nullptr) {
         int size = (int)boundaries->size();
@@ -267,16 +287,6 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
     }
     else {
         CUAssertLog(false, "Failed to load enemies");
-        return false;
-    }
-    
-    // load tile layers
-    auto tileLayers = parsedJson->get("tiles");
-    if (tileLayers != nullptr){
-        loadTileLayers(tileLayers);
-    }
-    else {
-        CUAssertLog(false, "Failed to find any tile layers");
         return false;
     }
 
@@ -440,6 +450,7 @@ bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
         for (int idx = 0; idx < tileArray.size(); idx++){
             std::shared_ptr<Tile> tile = Tile::alloc(tileArray[idx]);
             tileLayer->addTile(tile);
+            _grid->setNode(_grid->worldToTile(tile->getPosition()), 1); // 1 means walkable for now
         }
         _tileLayers.push_back(tileLayer);
     }
@@ -466,6 +477,7 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	// Get the object, which is automatically retained
     if (success){
         std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
+        _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
         _walls.push_back(wallobj);
     }
 	return success;
