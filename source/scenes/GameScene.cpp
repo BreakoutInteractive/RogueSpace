@@ -259,7 +259,8 @@ void GameScene::preUpdate(float dt) {
     
 
     //only move if we're not parrying or dodging or recovering
-    if (player->_state != Player::state::PARRY && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY 
+    if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
+        && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
         && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         switch (player->_weapon) {
         case Player::weapon::MELEE:
@@ -278,7 +279,8 @@ void GameScene::preUpdate(float dt) {
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED) {
+    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED
+        || player->_state == Player::state::PARRYSTART || player->_state == Player::state::PARRYSTANCE) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
@@ -293,7 +295,6 @@ void GameScene::preUpdate(float dt) {
             player->getCollider()->setLinearVelocity(force * 30);
             player->getCollider()->setBullet(true);
             player->setFacingDir(force);
-            player->resetCharge();
             player->_state = Player::state::DODGE;
         }
         else if (player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY) { //not dodging or recovering
@@ -319,7 +320,6 @@ void GameScene::preUpdate(float dt) {
                     _level->getPlayerAtk()->start();
                     break;
                 case Player::weapon::RANGED:
-                    player->resetCharge();
                     player->animateCharge();
                     player->getCollider()->setLinearVelocity(Vec2::ZERO);
                     break;
@@ -354,24 +354,29 @@ void GameScene::preUpdate(float dt) {
                         player->animateShot();
                     }
                     else player->animateDefault();
-                    player->resetCharge();
                 }
             }
             //for now, give lowest precendence to parry. only allow it with the melee weapon
             else if (_input.didParry() && player->_weapon == Player::weapon::MELEE) {
-                //TODO: handle parry
-                CULog("parried");
-                player->animateParry();
-                player->_parryCD.reset();
+                player->animateParryStart();
+            }
+            else if (_input.didParryRelease() && player->_weapon == Player::weapon::MELEE) {
+                if (player->_state == Player::state::PARRYSTANCE) { //maybe allow parry during PARRYSTART state?
+                    CULog("parried");
+                    player->animateParry();
+                }
+                else player->animateDefault();
             }
         }
     }
 
-    if (_level->getPlayerAtk()->isCompleted()) {
+    if (player->_state != Player::state::ATTACK) {
         atk->setEnabled(false);
     }
 
-    if (_input.didSwap()) player->swapWeapon();
+    if (_input.didSwap() && (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE)) 
+        //other states are weapon-dependent, so don't allow swapping while in them
+        player->swapWeapon();
 
 #pragma mark - Enemy movement
     _AIController.update(dt);
