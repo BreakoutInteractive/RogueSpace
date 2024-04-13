@@ -32,94 +32,181 @@
         "parry": {
             "file":     "textures/player_parry.png"
         },
+        "statusbar": {
+            "file": "textures/statusbar.png"
+        },
         "js_ring": {
             "file":     "textures/js_ring.png"
         },
         "js_button": {
             "file":     "textures/js_button.png"
         },
-        "aim_button": {
-            "file": "textures/aim_button.png"
+        "js_aim": {
+            "file": "textures/js_aim.png"
         },
-        "stamina": {
-            "file":     "textures/stamina.png"
+        "menuboard": {
+            "file": "textures/menuboard.png"
+        },
+        "setting": {
+            "file": "textures/setting.png"
         },
         "cooldown": {
-            "file": "textures/cooldown.png"
+            "file": "textures/cooldown.png",
+            "atlas": {
+                "foreground" : [14,   0, 150, 15],
+                "leftcap"    : [0,    0,  14, 15],
+                "rightcap"   : [151,  0, 165, 15]
+            }
+        },
+        "cd_back": {
+            "file": "textures/cd_back.png",
+            "atlas": {
+                "background" : [0, 0, 165, 15]
+                }
         },
         "pause": {
-            "file":     "textures/pause.png"
+            "file": "textures/pause.png"
         },
-        "back": {
-            "file":     "textures/back.png"
+        "resume": {
+            "file": "textures/resume.png"
         },
         "restart": {
-            "file":     "textures/restart.png"
+            "file": "textures/restart.png"
         },
-        "outline": {
-            "file": "textures/outline.png"
-        },
-        "bar": {
-            "file": "textures/bar.png",
+        "hp_back": {
+            "file": "textures/hp_back.png",
             "atlas": {
-                "background" : [6, 2, 354, 26]
+                "background" : [0, 0, 350, 25]
             }
         },
         "hp": {
-            "file":     "textures/hp.png",
+            "file": "textures/hp.png",
             "atlas":     {
                 "foreground" : [25,   0, 325, 25],
                 "leftcap"    : [0,    0,  25, 25],
-                "rightcap"   : [326,  0, 350, 25]
+                "rightcap"   : [325,  0, 350, 25]
             }
         }
 	},
+    
     "sounds": {
         "airSlash": {
             "type":     "sample",
-            "file":     "sounds/Impact/slash_01.WAV",
+            "file":     "sounds/impact/slash_01.WAV",
             "volume":   0.4
         },
-        "bumpWall": {
+        "enemyMelee": {
             "type":     "sample",
-            "file":     "sounds/Impact/impact_01.WAV",
-            "volume":   0.4
-        },
-        "enemyAttack": {
-            "type":     "sample",
-            "file":     "sounds/Weapons/sword_02.WAV",
+            "file":     "sounds/weapons/sword_03.WAV",
             "volume":   0.5
         },
         "playerAttack": {
             "type":     "sample",
-            "file":     "sounds/Weapons/sword_01.WAV",
+            "file":     "sounds/weapons/sword_01.WAV",
             "volume":   0.5
         },
-        "wallAttack": {
+        "wallMelee": {
             "type":     "sample",
-            "file":     "sounds/Impact/impact_04.WAV",
+            "file":     "sounds/impact/impact_01.WAV",
             "volume":   0.5
         },
-        "burn": {
+        "bowDraw": {
             "type":     "sample",
-            "file":     "sounds/StarterSounds/afterburner.wav",
+            "file":     "sounds/weapons/bow_pull.wav",
             "volume":   0.5
         },
-        "right-burn": {
+        "bowCharge": {
             "type":     "sample",
-            "file":     "sounds/StarterSounds/sideburner-right.wav",
+            "file":     "sounds/weapons/bow_chargeloop.wav",
             "volume":   0.5
         },
-        "left-burn": {
+        "bowFire": {
             "type":     "sample",
-            "file":     "sounds/StarterSounds/sideburner-left.wav",
+            "file":     "sounds/weapons/bow_fire.wav",
+            "volume":   0.5
+        },
+        "parryMelee": {
+            "type":     "sample",
+            "file":     "sounds/weapons/steel_04.WAV",
+            "volume":   0.5
+        },
+        "envWinds": {
+            "type":     "sample",
+            "file":     "sounds/env/env_wind_01.WAV",
+            "volume":   0.5
+        },
+        "p-AlienGrowl1": {
+            "type":     "sample",
+            "file":     "sounds/alien/passive/alien_quiet_00.WAV",
+            "volume":   0.5
+        },
+        "p-AlienGrowl2": {
+            "type":     "sample",
+            "file":     "sounds/alien/passive/alien_quiet_01.WAV",
+            "volume":   0.5
+        },
+        "p-AlienGrowl3": {
+            "type":     "sample",
+            "file":     "sounds/alien/passive/alien_quiet_02.WAV",
+            "volume":   0.5
+        },
+        "a-AlienGrowl1": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_00.WAV",
+            "volume":   0.5
+        },
+        "a-AlienGrowl2": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_02.WAV",
+            "volume":   0.5
+        },
+        "a-AlienGrowl3": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_03.WAV",
+            "volume":   0.5
+        },
+        "lizardHitLanded": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_08.WAV",
+            "volume":   0.5
+        },
+        "meleeHitLanded1": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_01.WAV",
+            "volume":   0.5
+        },
+        "meleeHitLanded2": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_06.WAV",
+            "volume":   0.5
+        },
+        "lizardDeath": {
+            "type":     "sample",
+            "file":     "sounds/alien/death/alien_death_00.WAV",
+            "volume":   0.5
+        },
+        "meleeDeath1": {
+            "type":     "sample",
+            "file":     "sounds/alien/death/alien_death_01.WAV",
+            "volume":   0.5
+        },
+        "meleeDeath2": {
+            "type":     "sample",
+            "file":     "sounds/alien/death/alien_death_02.WAV",
             "volume":   0.5
         }
+        
     },
 	"fonts": {
 		"retro": {
 			"file":     "fonts/RetroGame.ttf",
 			"size":     64
-		}
+		},
+        "geometosRegular48": {
+            "file": "fonts/Geometos.ttf",
+            "size": 48
+        }
 	}
 }
+
+

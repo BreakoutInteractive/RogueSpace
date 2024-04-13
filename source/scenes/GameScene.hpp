@@ -76,7 +76,7 @@ protected:
 
     /** Whether we have completed this "game" */
     bool _complete;
-    /** Whetehr we got defeated */
+    /** Whether we got defeated */
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;

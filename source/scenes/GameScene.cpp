@@ -253,11 +253,7 @@ void GameScene::preUpdate(float dt) {
     if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
-    if(player->_dodgeCD.isZero()){
-        _gameRenderer.setCooldownVisible(true);
-    }
-    
-
+        
     //only move if we're not parrying or dodging or recovering
     if (player->_state != Player::state::PARRY && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY 
         && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
@@ -282,7 +278,6 @@ void GameScene::preUpdate(float dt) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
-            _gameRenderer.setCooldownVisible(false);
             player->_dodgeDuration.reset(); // set dodge frames
             //dodge
             auto force = _input.getDodgeDirection(player->getFacingDir());

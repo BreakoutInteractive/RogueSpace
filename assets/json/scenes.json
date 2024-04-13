@@ -1,31 +1,31 @@
 {
-   "scene2s": {
+    "scene2s": {
      "HUD": {
-             "type": "Node",
-             "format": {
-                 "type": "Anchored"
-             },
-             "data": {
-                 "anchor": [
-                     0,
-                     0
-                 ],
-                 "size": [
-                     1280,
-                     720
-                 ],
-                 "angle": 0,
-                 "position": [
-                     0,
-                     0
-                 ],
-                 "visible": true
-             },
+         "type": "Node",
+         "format": {
+             "type": "Anchored"
+         },
+         "data": {
+             "anchor": [
+                 0,
+                 0
+             ],
+             "size": [
+                 1280,
+                 720
+             ],
+             "angle": 0,
+             "position": [
+                 0,
+                 0
+             ],
+             "visible": true
+            },
              "children": {
-                 "aim-button": {
+                "aim-button": {
                      "type": "Image",
                      "data": {
-                         "texture": "aim_button",
+                         "texture": "js_aim",
                          "anchor": [
                              0.5,
                              0.5
@@ -63,8 +63,8 @@
                          ],
                          "angle": 0,
                          "position": [
-                             70,
-                             70
+                             122,
+                             87
                          ],
                          "visible": true
                      },
@@ -72,8 +72,8 @@
                          "x_anchor": "center",
                          "y_anchor": "middle",
                          "absolute": false,
-                         "x_offset": -0.35,
-                         "y_offset": -0.23
+                         "x_offset": -0.31,
+                         "y_offset": -0.21
                      }
                  },
                  "js-button": {
@@ -85,13 +85,13 @@
                              0.5
                          ],
                          "size": [
-                             60,
-                             60
+                             116,
+                             116
                          ],
                          "angle": 0,
                          "position": [
-                             165,
-                             165
+                             189,
+                             154
                          ],
                          "visible": true
                      },
@@ -99,8 +99,8 @@
                          "x_anchor": "center",
                          "y_anchor": "middle",
                          "absolute": false,
-                         "x_offset": -0.35,
-                         "y_offset": -0.23
+                         "x_offset": -0.31,
+                         "y_offset": -0.21
                      }
                  },
                  "js-ring": {
@@ -117,8 +117,8 @@
                          ],
                          "angle": 0,
                          "position": [
-                             70,
-                             70
+                             122,
+                             87
                          ],
                          "visible": true
                      },
@@ -126,8 +126,8 @@
                          "x_anchor": "center",
                          "y_anchor": "middle",
                          "absolute": false,
-                         "x_offset": -0.35,
-                         "y_offset": -0.23
+                         "x_offset": -0.31,
+                         "y_offset": -0.21
                      }
                  },
                  "pause": {
@@ -141,44 +141,44 @@
                              1
                          ],
                          "size": [
-                             72,
-                             72
+                             76,
+                             76
                          ],
                          "angle": 0,
                          "position": [
-                             1168,
-                             608
+                             1164,
+                             604
                          ],
                          "visible": true,
                          "upnode": "pause"
                      },
                      "children": {
                          "pause": {
-                             "type": "Image",
-                             "data": {
-                                 "texture": "pause",
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "size": [
-                                     72,
-                                     72
-                                 ],
-                                 "angle": 0,
-                                 "position": [
-                                     0,
-                                     0
-                                 ],
-                                 "visible": true
-                             },
-                             "layout": {
-                                 "x_anchor": "center",
-                                 "y_anchor": "middle",
-                                 "absolute": false,
-                                 "x_offset": 0,
-                                 "y_offset": 0
-                             }
+                         "type": "Image",
+                         "data": {
+                             "texture": "pause",
+                             "anchor": [
+                                 0,
+                                 1
+                             ],
+                             "size": [
+                                 76,
+                                 76
+                             ],
+                             "angle": 0,
+                             "position": [
+                                 0,
+                                 0
+                             ],
+                             "visible": true
+                         },
+                         "layout": {
+                             "x_anchor": "left",
+                             "y_anchor": "top",
+                             "absolute": false,
+                             "x_offset": 0,
+                             "y_offset": 0
+                            }
                          }
                      },
                      "layout": {
@@ -206,139 +206,72 @@
                          "angle": 0,
                          "position": [
                              40,
-                             599
+                             604
                          ],
                          "visible": true
                      },
                      "children": {
-                         "bar": {
-                             "type": "Image",
-                             "data": {
-                                 "texture": "bar",
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "size": [
-                                     359,
-                                     29
-                                 ],
-                                 "angle": 0,
-                                 "position": [
-                                     74,
-                                     39
-                                 ],
-                                 "visible": true
-                             },
-                             "layout": {
-                                 "x_anchor": "center",
-                                 "y_anchor": "middle",
-                                 "absolute": false,
-                                 "x_offset": 0.06,
-                                 "y_offset": 0.16
-                             }
-                         },
                          "hp": {
                              "type": "Progress",
                              "data": {
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "background": "bar_background",
-                                 "foreground": "hp_foreground",
-                                 "left_cap": "hp_leftcap",
-                                 "right_cap": "hp_rightcap"
+                                 "anchor"     : [0.5,0.5],
+                                 "background" : "hp_back_background",
+                                 "foreground" : "hp_foreground",
+                                 "left_cap"   : "hp_leftcap",
+                                 "right_cap"  : "hp_rightcap"
                              },
                              "layout": {
                                  "x_anchor": "center",
                                  "y_anchor": "middle",
                                  "absolute": false,
                                  "x_offset": 0.06,
-                                 "y_offset": 0.16
+                                 "y_offset": 0.19
                              }
                          },
-                         "outline": {
-                             "type": "Image",
+                         "cooldown": {
+                             "type": "Progress",
                              "data": {
-                                 "texture": "outline",
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "size": [
-                                     456,
-                                     80
-                                 ],
-                                 "angle": 0,
-                                 "position": [
-                                     0,
-                                     1
-                                 ],
-                                 "visible": true
+                                 "anchor"     : [0.5,0.5],
+                                 "background" : "cd_back_background",
+                                 "foreground" : "cooldown_foreground",
+                                 "left_cap"   : "cooldown_leftcap",
+                                 "right_cap"  : "cooldown_rightcap"
                              },
                              "layout": {
                                  "x_anchor": "center",
                                  "y_anchor": "middle",
                                  "absolute": false,
-                                 "x_offset": 0,
-                                 "y_offset": 0.01
+                                 "x_offset": -0.04,
+                                 "y_offset": -0.23
                              }
                          },
-                         "cooldown-1": {
-                             "type": "Image",
-                             "data": {
-                                 "texture": "cooldown",
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "size": [
-                                     83,
-                                     15
-                                 ],
-                                 "angle": 0,
-                                 "position": [
-                                     200,
-                                     16
-                                 ],
-                                 "visible": true
-                             },
-                             "layout": {
-                                 "x_anchor": "center",
-                                 "y_anchor": "middle",
-                                 "absolute": false,
-                                 "x_offset": 0.03,
-                                 "y_offset": -0.21
-                             }
-                         },
-                         "cooldown-2": {
-                             "type": "Image",
-                             "data": {
-                                 "texture": "cooldown",
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "size": [
-                                     83,
-                                     15
-                                 ],
-                                 "angle": 0,
-                                 "position": [
-                                     126,
-                                     16
-                                 ],
-                                 "visible": true
-                             },
-                             "layout": {
-                                 "x_anchor": "center",
-                                 "y_anchor": "middle",
-                                 "absolute": false,
-                                 "x_offset": -0.13,
-                                 "y_offset": -0.21
-                             }
-                         }
+                         "statusbar": {
+                              "type": "Image",
+                              "data": {
+                                  "texture": "statusbar",
+                                  "anchor": [
+                                      0,
+                                      1
+                                  ],
+                                  "size": [
+                                      454,
+                                      80
+                                  ],
+                                  "angle": 0,
+                                  "position": [
+                                      1,
+                                      1
+                                  ],
+                                  "visible": true
+                              },
+                              "layout": {
+                                  "x_anchor": "left",
+                                  "y_anchor": "top",
+                                  "absolute": false,
+                                  "x_offset": 0,
+                                  "y_offset": 0
+                              }
+                          }
                      },
                      "layout": {
                          "x_anchor": "left",
@@ -351,15 +284,7 @@
              }
          },
      
-     
-     
-     
-     
-     
-     
-     
-     
-     "pause": {
+     "pausemenu": {
              "type": "Node",
              "format": {
                  "type": "Anchored"
@@ -381,107 +306,39 @@
                  "visible": true
              },
              "children": {
-                 "bg": {
-                     "type": "Polygon",
-                     "data": {
-                         "size":[1280,720],
-                         "color":[0,0,0,200],
-                         "visible": true
-                     }
-                 },
-                 "restart": {
-                     "type": "Button",
-                     "format": {
-                         "type": "Anchored"
-                     },
-                     "data": {
-                         "anchor": [
-                             1,
-                             0.5
-                         ],
-                         "size": [
-                             100,
-                             100
-                         ],
-                         "angle": 0,
-                         "position": [
-                             680,
-                             310
-                         ],
-                         "visible": true,
-                         "upnode": "restart"
-                     },
-                     "children": {
-                         "restart": {
-                             "type": "Image",
-                             "data": {
-                                 "texture": "restart",
-                                 "anchor": [
-                                     0.5,
-                                     0.5
-                                 ],
-                                 "size": [
-                                     100,
-                                     100
-                                 ],
-                                 "angle": 0,
-                                 "position": [
-                                     0,
-                                     0
-                                 ],
-                                 "visible": true
-                             },
-                             "layout": {
-                                 "x_anchor": "center",
-                                 "y_anchor": "middle",
-                                 "absolute": false,
-                                 "x_offset": 0,
-                                 "y_offset": 0
-                             }
-                         }
-                     },
-                     "layout": {
-                         "x_anchor": "right",
-                         "y_anchor": "middle",
-                         "absolute": false,
-                         "x_offset": -0.39,
-                         "y_offset": 0
-                     }
-                 },
-                 "back": {
-                     "type": "Button",
+                 "pausemenu": {
+                     "type": "Node",
                      "format": {
                          "type": "Anchored"
                      },
                      "data": {
                          "anchor": [
                              0,
-                             0.5
+                             1
                          ],
                          "size": [
-                             100,
-                             100
+                             686,
+                             390
                          ],
                          "angle": 0,
                          "position": [
-                             500,
-                             310
+                             297,
+                             165
                          ],
-                         "visible": true,
-                         "upnode": "back"
+                         "visible": true
                      },
                      "children": {
-                         "back": {
+                         "menuboard": {
                              "type": "Image",
                              "data": {
-                                 "texture": "back",
+                                 "texture": "menuboard",
                                  "anchor": [
-                                     0.5,
-                                     0.5
+                                     0,
+                                     1
                                  ],
                                  "size": [
-                                     100,
-                                     100
+                                     686,
+                                     390
                                  ],
                                  "angle": 0,
                                  "position": [
@@ -491,20 +348,276 @@
                                  "visible": true
                              },
                              "layout": {
-                                 "x_anchor": "center",
-                                 "y_anchor": "middle",
+                                 "x_anchor": "left",
+                                 "y_anchor": "top",
                                  "absolute": false,
                                  "x_offset": 0,
                                  "y_offset": 0
+                             }
+                         },
+                         "menu": {
+                             "type": "Node",
+                             "format": {
+                                 "type": "Float",
+                                 "x_alignment": "left",
+                                 "y_alignment": "top",
+                                 "orientation": "horizontal"
+                             },
+                             "data": {
+                                 "anchor": [
+                                     0,
+                                     1
+                                 ],
+                                 "size": [
+                                     414,
+                                     90
+                                 ],
+                                 "angle": 0,
+                                 "position": [
+                                     136,
+                                     136
+                                 ],
+                                 "visible": true
+                             },
+                             "children": {
+                                 "restart": {
+                                     "type": "Button",
+                                     "format": {
+                                         "type": "Anchored"
+                                     },
+                                     "data": {
+                                         "anchor": [
+                                             0.5,
+                                             0.5
+                                         ],
+                                         "size": [
+                                             90,
+                                             90
+                                         ],
+                                         "angle": 0,
+                                         "position": [
+                                             45,
+                                             45
+                                         ],
+                                         "visible": true,
+                                         "upnode": "restart"
+                                     },
+                                     "children": {
+                                         "restart": {
+                                             "type": "Image",
+                                             "data": {
+                                                 "texture": "restart",
+                                                 "anchor": [
+                                                     0,
+                                                     1
+                                                 ],
+                                                 "size": [
+                                                     90,
+                                                     90
+                                                 ],
+                                                 "angle": 0,
+                                                 "position": [
+                                                     0,
+                                                     0
+                                                 ],
+                                                 "visible": true
+                                             },
+                                             "layout": {
+                                                 "x_anchor": "left",
+                                                 "y_anchor": "top",
+                                                 "absolute": false,
+                                                 "x_offset": 0,
+                                                 "y_offset": 0
+                                             }
+                                         }
+                                     },
+                                     "layout": {
+                                         "priority": 0,
+                                         "padding": [
+                                             0,
+                                             0,
+                                             72,
+                                             0
+                                         ]
+                                     }
+                                 },
+                                 "resume": {
+                                     "type": "Button",
+                                     "format": {
+                                         "type": "Anchored"
+                                     },
+                                     "data": {
+                                         "anchor": [
+                                             0.5,
+                                             0.5
+                                         ],
+                                         "size": [
+                                             90,
+                                             90
+                                         ],
+                                         "angle": 0,
+                                         "position": [
+                                             207,
+                                             45
+                                         ],
+                                         "visible": true,
+                                         "upnode": "resume"
+                                     },
+                                     "children": {
+                                         "resume": {
+                                             "type": "Image",
+                                             "data": {
+                                                 "texture": "resume",
+                                                 "anchor": [
+                                                     0,
+                                                     1
+                                                 ],
+                                                 "size": [
+                                                     90,
+                                                     90
+                                                 ],
+                                                 "angle": 0,
+                                                 "position": [
+                                                     0,
+                                                     0
+                                                 ],
+                                                 "visible": true
+                                             },
+                                             "layout": {
+                                                 "x_anchor": "left",
+                                                 "y_anchor": "top",
+                                                 "absolute": false,
+                                                 "x_offset": 0,
+                                                 "y_offset": 0
+                                             }
+                                         }
+                                     },
+                                     "layout": {
+                                         "priority": 1,
+                                         "padding": [
+                                             0,
+                                             0,
+                                             72,
+                                             0
+                                         ]
+                                     }
+                                 },
+                                 "setting": {
+                                     "type": "Button",
+                                     "format": {
+                                         "type": "Anchored"
+                                     },
+                                     "data": {
+                                         "anchor": [
+                                             0.5,
+                                             0.5
+                                         ],
+                                         "size": [
+                                             90,
+                                             90
+                                         ],
+                                         "angle": 0,
+                                         "position": [
+                                             369,
+                                             45
+                                         ],
+                                         "visible": true,
+                                         "upnode": "setting"
+                                     },
+                                     "children": {
+                                         "setting": {
+                                             "type": "Image",
+                                             "data": {
+                                                 "texture": "setting",
+                                                 "anchor": [
+                                                     0,
+                                                     1
+                                                 ],
+                                                 "size": [
+                                                     90,
+                                                     90
+                                                 ],
+                                                 "angle": 0,
+                                                 "position": [
+                                                     0,
+                                                     0
+                                                 ],
+                                                 "visible": true
+                                             },
+                                             "layout": {
+                                                 "x_anchor": "left",
+                                                 "y_anchor": "top",
+                                                 "absolute": false,
+                                                 "x_offset": 0,
+                                                 "y_offset": 0
+                                             }
+                                         }
+                                     },
+                                     "layout": {
+                                         "priority": 2,
+                                         "padding": [
+                                             0,
+                                             0,
+                                             0,
+                                             0
+                                         ]
+                                     }
+                                 }
+                             },
+                             "layout": {
+                                 "x_anchor": "left",
+                                 "y_anchor": "top",
+                                 "absolute": false,
+                                 "x_offset": 0.2,
+                                 "y_offset": -0.42
+                             }
+                         },
+                         "pause_text": {
+                             "type": "Label",
+                             "data": {
+                                 "anchor": [
+                                     0.5,
+                                     1
+                                 ],
+                                 "size": [
+                                     370,
+                                     48
+                                 ],
+                                 "position": [
+                                     158,
+                                     258
+                                 ],
+                                 "angle": 0,
+                                 "visible": true,
+                                 "font": "geometosRegular48",
+                                 "text": "Game Paused",
+                                 "foreground": "#ffffffff",
+                                 "background": "#00000000",
+                                 "padding": [
+                                     0,
+                                     0,
+                                     0,
+                                     0
+                                 ],
+                                 "valign": "middle",
+                                 "halign": "center"
+                             },
+                             "children": {},
+                             "layout": {
+                                 "x_anchor": "center",
+                                 "y_anchor": "top",
+                                 "absolute": false,
+                                 "x_offset": 0,
+                                 "y_offset": -0.22
                              }
                          }
                      },
                      "layout": {
                          "x_anchor": "left",
-                         "y_anchor": "middle",
+                         "y_anchor": "top",
                          "absolute": false,
-                         "x_offset": 0.39,
-                         "y_offset": 0
+                         "x_offset": 0.23,
+                         "y_offset": -0.23
                      }
                  }
              }

@@ -49,19 +49,13 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _assets = assets;
     
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("pause");
-    
-    std::shared_ptr<scene2::PolygonNode> overlay = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("pause_bg"));
-    
-    // remove the overlay from scene graph and make it scale to parent container size (the screen)
-    overlay->removeFromParent();
-    overlay->setContentSize(dimen);
-    
+    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("pausemenu");
     scene->setContentSize(dimen);
     scene->doLayout();
+
     _choice = Choice::NONE;
-    _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pause_restart"));
-    _back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pause_back"));
+    _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_restart"));
+    _resume = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_resume"));
     
     // Program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
@@ -70,13 +64,12 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             CULog("resetting (pause screen)");
         }
     });
-    _back->addListener([this](const std::string& name, bool down) {
+    _resume->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::GAME;
         }
     });
 
-    addChild(overlay);
     addChild(scene);
     setActive(false);
     return true;
@@ -105,16 +98,17 @@ void PauseScene::dispose() {
 void PauseScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
+
         if (value) {
             _choice = NONE;
             _restart->activate();
-            _back->activate();
+            _resume->activate();
         } else {
             _restart->deactivate();
-            _back->deactivate();
+            _resume->deactivate();
             // If any were pressed, reset them
             _restart->setDown(false);
-            _back->setDown(false);
+            _resume->setDown(false);
         }
     }
 }

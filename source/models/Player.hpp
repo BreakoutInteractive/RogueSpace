@@ -103,7 +103,7 @@ public:
     Counter _atkCD;
     /** parry cooldown counter */
     Counter _parryCD;
-    /** dodge ooldown counter*/
+    /** dodge cooldown counter*/
     Counter _dodgeCD;
     /** counter that is active during the dodge motion*/
     Counter _dodgeDuration;
@@ -166,6 +166,13 @@ public:
     
 #pragma mark -
 #pragma mark Accessors
+    
+    /**
+    * Gets the movement boost accumulated by this player.
+    *
+    */
+    const int getMoveScale() const {return _moveScale;}
+    
     /**
      * Returns the force applied to this player.
      *
