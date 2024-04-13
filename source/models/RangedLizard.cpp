@@ -53,10 +53,10 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 19);
+    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 19);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
-    _chargingAnimation = Animation::alloc(projectileSheet, 0.1875f, false, 0, 4);
+    _chargingAnimation = Animation::alloc(projectileSheet, 0.28125f, false, 0, 4);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -68,7 +68,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
-    _attackAnimation->addCallback(0.3f, [this](){
+    _attackAnimation->addCallback(0.45f, [this](){
         _chargingAnimation->start();
     });
     

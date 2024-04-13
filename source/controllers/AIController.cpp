@@ -78,8 +78,15 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
 
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
-        //enemies shouldn't move when stunned or while attacking
+        // enemies shouldn't move when stunned or while attacking
         if ((*it)->isAttacking()) {
+            // ranged enemies can change their facing direction while attacking,
+            // melee enemies cannot
+            if ((*it)->getType() != "melee lizard") {
+                Vec2 dir = _player->getPosition() - (*it)->getPosition();
+                dir.normalize();
+                (*it)->setFacingDir(dir);
+            }
             (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
         }
         if (!(*it)->isStunned() && !(*it)->isAttacking()) {

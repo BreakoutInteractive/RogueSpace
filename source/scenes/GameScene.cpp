@@ -405,7 +405,7 @@ void GameScene::preUpdate(float dt) {
                 enemy->setAttacking();
             }
             if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
-                Vec2 direction = player->getPosition() * player->getDrawScale() - enemy->getPosition() * enemy->getDrawScale();
+                Vec2 direction = enemy->getFacingDir();
                 direction.normalize();
                 float ang = acos(direction.dot(Vec2::UNIT_X));
                 if (direction.y < 0){

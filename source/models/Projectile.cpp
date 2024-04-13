@@ -106,7 +106,7 @@ bool Projectile::mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManag
 	_collider = obs;
 	std::shared_ptr<Texture> t = assets->get<Texture>("mage-projectile");
 	//TODO: modify this to use the right frames
-	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 7.0f / 24.0f, true, 14, 20); //24fps
+	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 7.0f / 24.0f, true, 14, 14); //24fps
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
 	return true;

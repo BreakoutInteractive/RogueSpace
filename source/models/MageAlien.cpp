@@ -53,10 +53,10 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
-    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 13);
+    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
-    _chargingAnimation = Animation::alloc(projectileSheet, 0.375f, false, 0, 13);
+    _chargingAnimation = Animation::alloc(projectileSheet, 0.5625f, false, 0, 13);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -68,7 +68,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
-    _attackAnimation->addCallback(0.01f, [this](){
+    _attackAnimation->addCallback(0.0f, [this](){
         if (isEnabled()) {
             _chargingAnimation->start();
         }
