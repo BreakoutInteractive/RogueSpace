@@ -21,6 +21,7 @@
 #include <cugl/io/CUJsonReader.h>
 #include "../components/Animation.hpp"
 #include "Projectile.hpp"
+#include "LevelGrid.hpp"
 
 using namespace cugl;
 
@@ -91,6 +92,8 @@ protected:
 
     std::shared_ptr<cugl::Texture> _attackAnimation;
     std::shared_ptr<Animation> _playerAttack;
+    
+    std::shared_ptr<LevelGrid> _grid;
 
 #pragma mark Internal Helper Methods
     
@@ -169,6 +172,11 @@ protected:
 
 public:
 #pragma mark Model Access
+    
+    /**
+     * @return the static obstacle grid for this level
+     */
+    const std::shared_ptr<LevelGrid> getGrid() { return _grid; }
 
     /**
      * Returns the Obstacle world in this game level 

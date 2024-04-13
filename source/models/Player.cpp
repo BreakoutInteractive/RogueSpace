@@ -414,5 +414,8 @@ void Player::update(float dt) {
         _chargingAnimation->reset();
         _chargedEffect->reset();
         break;
+    case IDLE: case ATTACK: case RECOVERY:
+        // no additional updates
+        break;
     }
 }
