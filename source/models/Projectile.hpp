@@ -17,6 +17,8 @@ private:
 	state _state;
 	int _damage;
 public:
+	//this object exists so that there is a different pointer in the user data of the shadow
+	char* collisionString;
 	/**
 	 * Creates a new player projectile.
 	 *
@@ -70,7 +72,16 @@ public:
 
 	void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
 
+	void addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) override;
+	void syncPositions() override;
+
 	const int getDamage() { return _damage; }
+
+	void setAngle(float ang) { 
+		_collider->setAngle(ang);
+		_colliderShadow->setAngle(ang); 
+	}
+	void setVelocity(Vec2 vel) { _collider->setLinearVelocity(vel); }
 
 	/**
 	 * Destroys this projectile, releasing all resources.

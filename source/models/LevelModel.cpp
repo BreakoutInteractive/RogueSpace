@@ -168,8 +168,9 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     }
 
     for (int ii = 0; ii < _projectiles.size(); ii++) {
-        _projectiles[ii]->getCollider()->setDebugScene(_debugNode);
+        _projectiles[ii]->setDebugNode(_debugNode);
         _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
+        _projectiles[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
     }
 }
 
@@ -540,17 +541,17 @@ void LevelModel::addProjectile(std::shared_ptr<Projectile> p) {
     _projectiles.push_back(p);
     _dynamicObjects.push_back(p);
     p->addObstaclesToWorld(_world);
-    p->getCollider()->setDebugScene(_debugNode);
+    p->setDebugNode(_debugNode);
     p->getCollider()->setDebugColor(Color4::RED);
+    p->getColliderShadow()->setDebugColor(Color4::BLUE);
 }
 
 void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
     for (auto it = _projectiles.begin(); it != _projectiles.end(); ++it) {
         if ((*it) == p) {
-            p->setEnabled(false);
             p->removeObstaclesFromWorld(_world);
-            _projectiles.erase(it);
             p->dispose();
+            _projectiles.erase(it);
             return;
         }
     }

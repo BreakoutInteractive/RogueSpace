@@ -178,6 +178,8 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
         if (_shotEffect->isActive()) sheet->draw(batch, o, t);
         break;
+    default:
+        break;
     }
 }
 

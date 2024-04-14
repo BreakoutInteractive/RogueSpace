@@ -343,9 +343,8 @@ void GameScene::preUpdate(float dt) {
                         std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, _assets);
                         p->setDrawScale(Vec2(_scale, _scale));
                         _level->addProjectile(p);
-                        std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
-                        obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
-                        obs->setAngle(ang);
+                        p->setAngle(ang);
+                        p->setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
                         player->animateShot();
                     }
                     else player->animateDefault();

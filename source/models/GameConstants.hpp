@@ -94,6 +94,9 @@ public:
     static float CHARGE_TIME;
 
     static float KNOCKBACK;
+
+    /**the scale of a projectile's shadow relative to its size*/
+    static float PROJ_SHADOW_SCALE;
 };
 
 
