@@ -200,8 +200,11 @@ void InputController::clear() {
     _exitPressed  = false;
     _dodgePressed = false;
     _attackPressed = false;
+    _attackDown = false;
     _attackReleased = false;
     _parryPressed = false;
+    _parryDown = false;
+    _parryReleased = false;
     _swapPressed = false;
     _moveDir.setZero();
     _dodgeDir.setZero();
@@ -210,6 +213,8 @@ void InputController::clear() {
     // clear internal data
     _keyDodge = false;
     _keyParry = false;
+    _keyParryDown = false;
+    _keyParryReleased = false;
     _keyAttack = false;
     _keyAttackDown = false;
     _keyAttackReleased = false;
