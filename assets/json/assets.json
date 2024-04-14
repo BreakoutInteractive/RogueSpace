@@ -106,12 +106,12 @@
         },
         "enemyMelee": {
             "type":     "sample",
-            "file":     "sounds/weapons/sword_03.WAV",
+            "file":     "sounds/weapons/sword_03.wav",
             "volume":   0.5
         },
         "playerAttack": {
             "type":     "sample",
-            "file":     "sounds/weapons/sword_01.WAV",
+            "file":     "sounds/weapons/sword_01.wav",
             "volume":   0.5
         },
         "wallMelee": {
