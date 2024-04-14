@@ -194,12 +194,6 @@ public:
     void setForce(const cugl::Vec2 value) { _force.set(value); }
     
     /**
-     * Gets the movement boost accumulated by this player.
-     *
-     */
-    const int getMoveScale() const {return _moveScale;}
-    
-    /**
      * Increments the movement boost by a fixed amount.
      *
      */

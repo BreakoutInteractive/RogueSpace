@@ -61,7 +61,7 @@ void AudioController::playPlayerFX(const std::string action){
 void AudioController::playEnemyFX(const std::string action, const std::string key){
     if (!AudioEngine::get()->isActive(action+key)) {
         if(action == "attackHit"){
-            auto source = _assets->get<Sound>("enemyAttack");
+            auto source = _assets->get<Sound>("enemyMelee");
             AudioEngine::get()->play(action+key, source, false, source->getVolume());
         }
     }
