@@ -98,7 +98,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                if (player->_parryCD.isZero()) {
+                if (player->_state != Player::state::PARRY) {
                     if (body1->GetUserData().pointer == aptr) {
                         physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
                         _audioController->playEnemyFX("attackHit", data1->getName());

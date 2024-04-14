@@ -106,6 +106,8 @@ void InputController::update(float dt) {
     _keyAttackDown = mouse->buttonDown().hasLeft();
     _keyAttackReleased = mouse->buttonReleased().hasLeft();
     _keyParry = mouse->buttonPressed().hasRight();
+    _keyParryDown = mouse->buttonDown().hasRight();
+    _keyParryReleased = mouse->buttonReleased().hasRight();
     _keyDodge = keys->keyDown(KeyCode::SPACE);
     _keySwap = keys->keyPressed(KeyCode::LEFT_SHIFT);
     
@@ -168,6 +170,8 @@ void InputController::update(float dt) {
     _attackReleased = _keyAttackReleased;
     _dodgePressed = _keyDodge;
     _parryPressed = _keyParry;
+    _parryDown = _keyParryDown;
+    _parryReleased = _keyParryReleased;
     _swapPressed = _keySwap;
     
     _moveDir.set(_keyMoveDir).normalize();

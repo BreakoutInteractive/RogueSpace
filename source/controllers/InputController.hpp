@@ -116,6 +116,10 @@ private:
     bool  _keyDodge;
     /** Whether the parry key was pressed */
     bool  _keyParry;
+    /** Whether the parry key is held down */
+    bool _keyParryDown;
+    /** Whether the parry key was released*/
+    bool _keyParryReleased;
     /** Whether the attack key was pressed */
     bool _keyAttack;
     /** Whether the attack key is held down*/
@@ -176,6 +180,10 @@ protected:
     bool _attackReleased;
     /** Whether the parry action was chosen */
     bool _parryPressed;
+    /** Whether the parry action was down*/
+    bool _parryDown;
+    /** Whether the parry action was released*/
+    bool _parryReleased;
     /** Whether the weapon swap action was chosen */
     bool _swapPressed;
     /** unit direction of the attack*/
@@ -273,20 +281,28 @@ public:
     Vec2 getDodgeDirection(Vec2 facingDir);
     
     /**
-     * Returns true if the parry input was triggered.
+     * Returns true if the parry input was triggered (the player started a parry).
      */
     bool didParry() const { return _parryPressed; }
+    /**
+     * Returns true if the parry input is down (the player held the stance).
+     */
+    bool didStance() const { return _parryDown; }
+    /**
+     * Returns true if the parry input was released (the player parried).
+     */
+    bool didParryRelease() const { return _parryReleased; }
     
     /**
      * Returns true if the attack input was triggered
      */
     bool didAttack() const { return _attackPressed; }
     /**
-     * Returns true if the attack input is down
+     * Returns true if the attack input is down (the player charged a ranged attack)
      */
     bool didCharge() const { return _attackDown; }
     /**
-     * Returns true if the attack input was released
+     * Returns true if the attack input was released (the player shot a ranged attack)
      */
     bool didShoot() const { return _attackReleased; }
     

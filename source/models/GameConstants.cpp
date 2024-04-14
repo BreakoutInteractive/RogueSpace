@@ -46,7 +46,7 @@ int GameConstants::PLAYER_IFRAME = 16;
 int GameConstants::PLAYER_ATTACK_COOLDOWN =  16;
 
 int GameConstants::PLAYER_PARRY_COOLDOWN = 6;
-float GameConstants::PLAYER_PARRY_TIME = 0.2f;
+float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
 int GameConstants::PLAYER_DODGE_COOLDOWN = 60;
 
