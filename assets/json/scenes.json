@@ -284,6 +284,7 @@
              }
          },
      
+     
      "pausemenu": {
              "type": "Node",
              "format": {
@@ -572,7 +573,7 @@
                                  "y_offset": -0.42
                              }
                          },
-                         "pause_text": {
+                         "pause-text": {
                              "type": "Label",
                              "data": {
                                  "anchor": [
@@ -621,6 +622,636 @@
                      }
                  }
              }
-         }
+         },
+         
+         
+         "upgrades": {
+           "type": "Node",
+           "format": {
+               "type": "Anchored"
+           },
+           "data": {
+               "anchor": [
+                   0,
+                   0
+               ],
+               "size": [
+                   1280,
+                   720
+               ],
+               "angle": 0,
+               "position": [
+                   0,
+                   0
+               ],
+               "visible": true
+           },
+           "children": {
+               "upgrade-item": {
+                   "type": "Button",
+                   "format": {
+                       "type": "Anchored"
+                   },
+                   "data": {
+                       "anchor": [
+                           0.5,
+                           0.5
+                       ],
+                       "size": [
+                           490,
+                           246
+                       ],
+                       "angle": 0,
+                       "position": [
+                           632,
+                           358
+                       ],
+                       "visible": true,
+                       "upnode": "up",
+                       "downnode": "down"
+                   },
+                   "children": {
+                       "up": {
+                           "type": "Image",
+                           "data": {
+                               "texture": "up",
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   448,
+                                   204
+                               ],
+                               "angle": 0,
+                               "position": [
+                                   11,
+                                   25
+                               ],
+                               "visible": true
+                           },
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": -0.02,
+                               "y_offset": 0.02
+                           }
+                       },
+                       "down": {
+                           "type": "Image",
+                           "data": {
+                               "texture": "down",
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   490,
+                                   246
+                               ],
+                               "angle": 0,
+                               "position": [
+                                   0,
+                                   0
+                               ],
+                               "visible": true
+                           },
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0,
+                               "y_offset": 0
+                           }
+                       },
+                       "name": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   1
+                               ],
+                               "size": [
+                                   217,
+                                   36
+                               ],
+                               "position": [
+                                   160,
+                                   150
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "geometosRegular36",
+                               "text": "UPGRADE 1",
+                               "foreground": "#ffffffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "center"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "top",
+                               "absolute": false,
+                               "x_offset": 0.05,
+                               "y_offset": -0.24
+                           }
+                       },
+                       "description": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   0
+                               ],
+                               "size": [
+                                   200,
+                                   38
+                               ],
+                               "position": [
+                                   169,
+                                   57
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "robotoMedium16",
+                               "text": "Every three slash will cause\na higher damage",
+                               "foreground": "#ffffffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "top",
+                               "halign": "left"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "bottom",
+                               "absolute": false,
+                               "x_offset": 0.05,
+                               "y_offset": 0.23
+                           }
+                       },
+                       "tier": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   50,
+                                   19
+                               ],
+                               "position": [
+                                   244,
+                                   113
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "robotoMedium16",
+                               "text": "RARE",
+                               "foreground": "#438effff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "center"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0.05,
+                               "y_offset": 0
+                           }
+                       }
+                   },
+                   "layout": {
+                       "x_anchor": "center",
+                       "y_anchor": "middle",
+                       "absolute": false,
+                       "x_offset": 0.19,
+                       "y_offset": 0.17
+                   }
+               },
+               "upgrade-item-1": {
+                   "type": "Button",
+                   "format": {
+                       "type": "Anchored"
+                   },
+                   "data": {
+                       "anchor": [
+                           0.5,
+                           0.5
+                       ],
+                       "size": [
+                           490,
+                           246
+                       ],
+                       "angle": 0,
+                       "position": [
+                           632,
+                           87
+                       ],
+                       "visible": true,
+                       "upnode": "up",
+                       "downnode": "down"
+                   },
+                   "children": {
+                       "up": {
+                           "type": "Image",
+                           "data": {
+                               "texture": "up",
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   448,
+                                   204
+                               ],
+                               "angle": 0,
+                               "position": [
+                                   11,
+                                   25
+                               ],
+                               "visible": true
+                           },
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": -0.02,
+                               "y_offset": 0.02
+                           }
+                       },
+                       "down": {
+                           "type": "Image",
+                           "data": {
+                               "texture": "down",
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   490,
+                                   246
+                               ],
+                               "angle": 0,
+                               "position": [
+                                   0,
+                                   0
+                               ],
+                               "visible": true
+                           },
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0,
+                               "y_offset": 0
+                           }
+                       },
+                       "name": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   1
+                               ],
+                               "size": [
+                                   224,
+                                   36
+                               ],
+                               "position": [
+                                   158,
+                                   146
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "geometosRegular36",
+                               "text": "UPGRADE 2",
+                               "foreground": "#ffffffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "center"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "top",
+                               "absolute": false,
+                               "x_offset": 0.05,
+                               "y_offset": -0.26
+                           }
+                       },
+                       "description": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   0
+                               ],
+                               "size": [
+                                   210,
+                                   19
+                               ],
+                               "position": [
+                                   161,
+                                   71
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "robotoMedium16",
+                               "text": "Increase bow charging speed",
+                               "foreground": "#ffffffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "left"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "bottom",
+                               "absolute": false,
+                               "x_offset": 0.04,
+                               "y_offset": 0.29
+                           }
+                       },
+                       "tier": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   44,
+                                   19
+                               ],
+                               "position": [
+                                   248,
+                                   109
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "robotoMedium16",
+                               "text": "EPIC",
+                               "foreground": "#ac43ffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "center"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0.05,
+                               "y_offset": -0.02
+                           }
+                       }
+                   },
+                   "layout": {
+                       "x_anchor": "center",
+                       "y_anchor": "middle",
+                       "absolute": false,
+                       "x_offset": 0.19,
+                       "y_offset": -0.21
+                   }
+               },
+               "confirm": {
+                   "type": "Button",
+                   "format": {
+                       "type": "Anchored"
+                   },
+                   "data": {
+                       "anchor": [
+                           0.5,
+                           0.5
+                       ],
+                       "size": [
+                           182,
+                           62
+                       ],
+                       "angle": 0,
+                       "position": [
+                           444,
+                           445
+                       ],
+                       "visible": true,
+                       "upnode": "confirm"
+                   },
+                   "children": {
+                       "confirm": {
+                           "type": "Image",
+                           "data": {
+                               "texture": "confirm",
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   182,
+                                   62
+                               ],
+                               "angle": 0,
+                               "position": [
+                                   0,
+                                   0
+                               ],
+                               "visible": true
+                           },
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0,
+                               "y_offset": 0
+                           }
+                       },
+                       "Confirm": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   96,
+                                   29
+                               ],
+                               "position": [
+                                   43,
+                                   17
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "robotoBold24",
+                               "text": "Confirm",
+                               "foreground": "#ffffffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "left"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0,
+                               "y_offset": 0.01
+                           }
+                       }
+                   },
+                   "layout": {
+                       "x_anchor": "center",
+                       "y_anchor": "middle",
+                       "absolute": false,
+                       "x_offset": -0.08,
+                       "y_offset": 0.16
+                   }
+               },
+               "confirm-1": {
+                   "type": "Button",
+                   "format": {
+                       "type": "Anchored"
+                   },
+                   "data": {
+                       "anchor": [
+                           0.5,
+                           0.5
+                       ],
+                       "size": [
+                           182,
+                           62
+                       ],
+                       "angle": 0,
+                       "position": [
+                           444,
+                           174
+                       ],
+                       "visible": true,
+                       "upnode": "confirm"
+                   },
+                   "children": {
+                       "confirm": {
+                           "type": "Image",
+                           "data": {
+                               "texture": "confirm",
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   182,
+                                   62
+                               ],
+                               "angle": 0,
+                               "position": [
+                                   0,
+                                   0
+                               ],
+                               "visible": true
+                           },
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": 0,
+                               "y_offset": 0
+                           }
+                       },
+                       "Confirm": {
+                           "type": "Label",
+                           "data": {
+                               "anchor": [
+                                   0.5,
+                                   0.5
+                               ],
+                               "size": [
+                                   87,
+                                   28
+                               ],
+                               "position": [
+                                   43,
+                                   18
+                               ],
+                               "angle": 0,
+                               "visible": true,
+                               "font": "robotoBold24",
+                               "text": "Confirm",
+                               "foreground": "#ffffffff",
+                               "background": "#00000000",
+                               "padding": [
+                                   0,
+                                   0,
+                                   0,
+                                   0
+                               ],
+                               "valign": "middle",
+                               "halign": "left"
+                           },
+                           "children": {},
+                           "layout": {
+                               "x_anchor": "center",
+                               "y_anchor": "middle",
+                               "absolute": false,
+                               "x_offset": -0.02,
+                               "y_offset": 0.02
+                           }
+                       }
+                   },
+                   "layout": {
+                       "x_anchor": "center",
+                       "y_anchor": "middle",
+                       "absolute": false,
+                       "x_offset": -0.08,
+                       "y_offset": -0.22
+                   }
+               }
+           }
+       }
     }
 }

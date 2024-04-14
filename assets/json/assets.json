@@ -73,6 +73,15 @@
         "restart": {
             "file": "textures/restart.png"
         },
+        "up": {
+            "file": "textures/up.png"
+        },
+        "down": {
+            "file": "textures/down.png"
+        },
+        "confirm": {
+            "file": "textures/confirm.png"
+        },
         "hp_back": {
             "file": "textures/hp_back.png",
             "atlas": {
@@ -205,6 +214,18 @@
         "geometosRegular48": {
             "file": "fonts/Geometos.ttf",
             "size": 48
+        },
+        "geometosRegular36": {
+            "file": "fonts/Geometos.ttf",
+            "size": 36
+        },
+        "robotoMedium16": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 16
+        },
+        "robotoBold24": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 24
         }
 	}
 }

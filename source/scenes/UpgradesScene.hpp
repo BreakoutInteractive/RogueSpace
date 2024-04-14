@@ -1,21 +1,23 @@
 //
-//  PauseScene.hpp
+//  UpgradesScene.hpp
 //  RS
+//
+//  Created by Dasha Griffiths on 4/13/24.
+//
 
-#ifndef PauseScene_hpp
-#define PauseScene_hpp
+#ifndef UpgradesScene_hpp
+#define UpgradesScene_hpp
 
 #include <stdio.h>
 #include <cugl/cugl.h>
 
-
 /**
  *
  */
-class PauseScene : public cugl::Scene2 {
+class UpgradesScene : public cugl::Scene2 {
 public:
     /**
-     * The menu choice.
+     * The upgrade choice.
      *
      * This state allows the top level application to know what the user
      * chose.
@@ -23,21 +25,22 @@ public:
     enum Choice {
         /** User has not yet made a choice */
         NONE,
-        /** User wants to restart game */
-        RESTART,
-        /** User wants to go back to a game */
-        RESUME
+        /** User wants upgrade option 1 */
+        UPGRADE_1,
+        /** User wants upgrade option 2 */
+        UPGRADE_2
     };
-
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    /** The button for restarting  game */
-    std::shared_ptr<cugl::scene2::Button> _restart;
-    /** The button for going back to game */
-    std::shared_ptr<cugl::scene2::Button> _resume;
-    /** The button for in-game settings */
-    std::shared_ptr<cugl::scene2::Button> _settings;
+    /** The button for upgrade option 1 */
+    std::shared_ptr<cugl::scene2::Button> _option1;
+    /** The button for upgrade option 2 */
+    std::shared_ptr<cugl::scene2::Button> _option2;
+    /** The button to confirm upgrade option 1*/
+    std::shared_ptr<cugl::scene2::Button> _confirm1;
+    /** The button to confirm upgrade option 2*/
+    std::shared_ptr<cugl::scene2::Button> _confirm2;
     /** The player choice */
     Choice _choice;
     bool _active;
@@ -51,7 +54,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    PauseScene() : cugl::Scene2() {}
+    UpgradesScene() : cugl::Scene2() {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -59,7 +62,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~PauseScene() { dispose(); }
+    ~UpgradesScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -104,5 +107,5 @@ public:
 
 };
 
-
-#endif /* PauseScene_hpp */
+#endif /* UpgradesScene_hpp */
+    

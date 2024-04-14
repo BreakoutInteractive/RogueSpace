@@ -45,6 +45,7 @@ void App::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
     _pause.dispose();
+    _upgrades.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -80,6 +81,7 @@ void App::update(float dt){
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
+        _upgrades.init(_assets);
         _scene = State::GAME;
         setDeterministic(true);
     }
@@ -92,6 +94,9 @@ void App::preUpdate(float dt) {
             break;
         case MENU:
             break;
+        case UPGRADE:
+            _upgrades.setActive(true);
+            updateUpgradesScene(dt);
         case PAUSE:
             _pause.setActive(true);
             updatePauseScene(dt);
@@ -132,8 +137,8 @@ void App::postUpdate(float dt) {
     }
 }
 
-void App::updatePauseScene(float timestep) {
-    _pause.update(timestep);
+void App::updatePauseScene(float dt) {
+    _pause.update(dt);
     switch (_pause.getChoice()) {
         case PauseScene::Choice::RESTART:
             _pause.setActive(false);
@@ -141,13 +146,29 @@ void App::updatePauseScene(float timestep) {
             _gameplay.restart();
             _scene = State::GAME;
             break;
-        case PauseScene::Choice::GAME:
+        case PauseScene::Choice::RESUME:
             _pause.setActive(false);
             _gameplay.getRenderer().setActivated(true);
             _scene = State::GAME;
             break;
         case PauseScene::Choice::NONE:
             break;
+    }
+}
+
+void App::updateUpgradesScene(float dt){
+    _upgrades.update(dt);
+    switch (_upgrades.getChoice()) {
+        case UpgradesScene::NONE:
+            break;
+        case UpgradesScene::Choice::UPGRADE_1:
+            _upgrades.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _scene = State::GAME;
+        case UpgradesScene::Choice::UPGRADE_2:
+            _upgrades.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _scene = State::GAME;
     }
 }
 
@@ -163,6 +184,10 @@ void App::draw() {
             break;
         case GAME:
             _gameplay.render(_batch);
+            break;
+        case UPGRADE:
+            _gameplay.render(_batch);
+            _upgrades.render(_batch);
             break;
         default:
             break;
