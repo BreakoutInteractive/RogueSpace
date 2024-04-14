@@ -36,7 +36,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     collider->setFilterData(filter);
     _collider = collider;   // attach the collider to the game object
     
@@ -56,8 +56,8 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     hitbox->setBodyType(b2_kinematicBody);
     hitbox->setSensor(true);
     hitbox->setName(std::string("enemy-hitbox"));
-    filter.categoryBits = CATEGORY_HITBOX;
-    filter.maskBits = CATEGORY_ATTACK;
+    filter.categoryBits = CATEGORY_ENEMY_HITBOX;
+    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     hitbox->setFilterData(filter);
     _sensor = hitbox;
     _sensor->setDebugColor(Color4::RED);
@@ -228,7 +228,7 @@ void Enemy::hit(cugl::Vec2 atkDir, float damage) {
         setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();
-        _collider->setLinearVelocity(atkDir*10); //tune this value (10)
+        _collider->setLinearVelocity(atkDir*GameConstants::KNOCKBACK);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
             _facingDirection = -atkDir;

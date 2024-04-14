@@ -71,8 +71,6 @@ private:
         TouchID touchID;
         /** the data associated with this gesture's tap motion */
         TapData tap;
-        /** Whether the current touch ever moved (drastically) from initial position*/
-        bool touchMoved;
     };
     
     /**
@@ -116,17 +114,21 @@ private:
     bool _active;
     /** Whether the dodge  key is down */
     bool  _keyDodge;
-    /** Whether the parry key is down */
+    /** Whether the parry key was pressed */
     bool  _keyParry;
-    /** Whether the attack key is down*/
+    /** Whether the attack key was pressed */
     bool _keyAttack;
-    /** Whether the reset key is down */
+    /** Whether the attack key is held down*/
+    bool _keyAttackDown;
+    /** Whether the attack key was released*/
+    bool _keyAttackReleased;
+    /** Whether the reset key was pressed */
     bool  _keyReset;
-    /** Whether the debug key is down */
+    /** Whether the debug key was pressed */
     bool  _keyDebug;
-    /** Whether the exit key is down */
+    /** Whether the exit key was pressed */
     bool  _keyExit;
-    /** Whether the swap key is down */
+    /** Whether the weapon swap key was pressed */
     bool  _keySwap;
     /** a vector cache representing the intended direction of movement*/
     Vec2 _keyMoveDir;
@@ -144,30 +146,16 @@ private:
     GestureData _motionGesture;
     /** gesture data for controlling combat */
     GestureData _combatGesture;
-    
+    /** the time (seconds) in which combat gesture is active */
+    float _combatGestureActiveTime;
+    /** whether the combat gesture has been on hold */
+    bool _combatGestureHeld;
     /** whether the gestures have positions swapped. */
     bool reversedGestures;
+    /** whether the range controls are active */
+    bool rangedMode;
 
 protected:
-    
-#pragma mark -
-#pragma mark Input Scheme
-    
-    enum class ControlOption : int {
-        HOLD_PARRY = 0,
-        DOUBLE_TAP_PARRY = 1
-    };
-    
-    enum class Mode : int {
-        MELEE = 0,
-        RANGE = 1
-    };
-    
-    /** the control set that the controller is offering */
-    ControlOption scheme = ControlOption::HOLD_PARRY;
-    
-    /** the current control mode of the controller */
-    Mode mode = Mode::MELEE;
     
 #pragma mark -
 #pragma mark Input Results (Abstraction Layer)
@@ -182,6 +170,10 @@ protected:
     bool _dodgePressed;
     /** Whether the attack action was chosen*/
     bool _attackPressed;
+    /** Whether the attack action was down*/
+    bool _attackDown;
+    /** Whether the attack action was released*/
+    bool _attackReleased;
     /** Whether the parry action was chosen */
     bool _parryPressed;
     /** Whether the weapon swap action was chosen */
@@ -253,6 +245,9 @@ public:
      */
     void clear();
     
+    void activateRangeControls(){ rangedMode = true; }
+    void activateMeleeControls(){ rangedMode = false; }
+    
 #pragma mark -
 #pragma mark Input Results
     
@@ -286,6 +281,14 @@ public:
      * Returns true if the attack input was triggered
      */
     bool didAttack() const { return _attackPressed; }
+    /**
+     * Returns true if the attack input is down
+     */
+    bool didCharge() const { return _attackDown; }
+    /**
+     * Returns true if the attack input was released
+     */
+    bool didShoot() const { return _attackReleased; }
     
     /**
      * Returns the vector direction of attack (i.e. the position of the mouse)
@@ -314,23 +317,13 @@ public:
      * @return true if the exit button was pressed.
      */
     bool didExit() const { return _exitPressed; }
-    
+
     /**
-     * @return true if the swap button was pressed;
+     * Returns true if the swap button was pressed.
+     *
+     * @return true if the swap button was pressed.
      */
     bool didSwap() const { return _swapPressed; }
-    
-    /**
-     * @return whether the ranged attack is initiating
-     */
-    bool isRangeCombatActive() const {
-        #ifndef CU_TOUCH_SCREEN
-        Mouse* mouse = Input::get<Mouse>();
-        return mode == Mode::RANGE && mouse->buttonPressed().hasLeft();
-        #else
-        return mode == Mode::RANGE && _combatGesture.active && !_combatGesture.touchMoved;
-        #endif
-    }
     
 #pragma mark -
 #pragma mark Input Results (Mobile Only)
@@ -350,6 +343,23 @@ public:
      * @return the current location of the touch event associated with the motion gesture
      */
     Vec2 getTouchLocation() const {return _motionGesture.curPos; }
+    
+    /**
+     * @return whether there is touch event associated with the motion gesture
+     */
+    bool isCombatActive() const { return _combatGesture.active; }
+    
+    /**
+     * The returned value can be anything in the event that `isMotionActive` is false.
+     * @return the starting location of the touch event associated with the motion gesture
+     */
+    Vec2 getInitCombatLocation() const { return _combatGesture.initialPos;}
+    
+    /**
+     * The returned value can be anything in the event that `isMotionActive` is false.
+     * @return the current location of the touch event associated with the motion gesture
+     */
+    Vec2 getCombatTouchLocation() const {return _combatGesture.curPos; }
 
 };
 

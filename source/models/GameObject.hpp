@@ -110,6 +110,11 @@ public:
     virtual void setAnimation(std::shared_ptr<Animation> animation) { 
         _currAnimation = animation;
     }
+
+    /**
+     * Calls Animation::setFrameRange() with the given inputs on the current animation of this GameObject
+     */
+    void setAnimationFrameRange(int startIndex, int endIndex) { _currAnimation->setFrameRange(startIndex, endIndex); }
     
 public:
 #pragma mark -

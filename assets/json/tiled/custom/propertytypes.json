@@ -24,45 +24,26 @@
         ]
     },
     {
-        "color": "#ffff2600",
-        "drawFill": true,
-        "id": 2,
-        "members": [
-        ],
-        "name": "Hitbox",
-        "type": "class",
-        "useAs": [
-            "object",
-            "tile",
-            "project"
-        ]
-    },
-    {
-        "color": "#fff4c183",
-        "drawFill": false,
-        "id": 3,
-        "members": [
-            {
-                "name": "passable",
-                "type": "bool",
-                "value": false
-            }
-        ],
-        "name": "Wall",
-        "type": "class",
-        "useAs": [
-            "object",
-            "tile",
-            "project"
-        ]
-    },
-    {
         "color": "#ffffffff",
         "drawFill": true,
         "id": 4,
         "members": [
         ],
         "name": "Collider",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffff2600",
+        "drawFill": true,
+        "id": 2,
+        "members": [
+        ],
+        "name": "Hitbox",
         "type": "class",
         "useAs": [
             "object",
@@ -143,5 +124,19 @@
             "MELEE"
         ],
         "valuesAsFlags": false
+    },
+    {
+        "color": "#fff4c183",
+        "drawFill": false,
+        "id": 3,
+        "members": [
+        ],
+        "name": "Wall",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
     }
 ]

@@ -71,12 +71,15 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
     _varMap.push_back("player-attack-cd");
     _varMap.push_back("enemy-attack-cd");
     _varMap.push_back("player-dodge-cd");
-    _varMap.push_back("player-dodge-duration");
+    _varMap.push_back("kb");
     _varMap.push_back("enemy-sightrange");
     _varMap.push_back("enemy-proxrange");
-    
     _varMap.push_back("player-parry-cd");
-    _varMap.push_back("enemy-sentry-cd");
+    _varMap.push_back("charge");
+    _varMap.push_back("player-projs");
+    _varMap.push_back("enemy-projs");
+    _varMap.push_back("player-projt");
+    _varMap.push_back("enemy-projt");
     
     for (int i = 0; i < _varMap.size(); i++) {
         std::shared_ptr<cugl::scene2::Slider> si = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("settings_" + _varMap[i] + "-action"));
@@ -144,6 +147,18 @@ bool CustomSettingsScene::writeTo(int i) {
         GameConstants::ENEMY_PROXIMITY_RANGE = _values[i];
     } else if (var == "enemy-sentry-cd") {
         GameConstants::ENEMY_SENTRY_COOLDOWN = _values[i];
+    } else if (var == "player-projs") {
+        GameConstants::PROJ_SPEED_P = _values[i];
+    } else if (var == "enemy-projs") {
+        GameConstants::PROJ_SPEED_E = _values[i];
+    } else if (var == "player-projt") {
+        GameConstants::PROJ_TIME_P = _values[i];
+    } else if (var == "enemy-projt") {
+        GameConstants::PROJ_TIME_E = _values[i];
+    } else if (var == "kb") {
+        GameConstants::KNOCKBACK = _values[i];
+    } else if (var == "charge") {
+        GameConstants::CHARGE_TIME = _values[i];
     }
     return true;
 }

@@ -44,12 +44,15 @@ private:
     
     std::shared_ptr<scene2::SceneNode> _joystickMoveButton;
     
+    std::shared_ptr<scene2::SceneNode> _joystickAimRing;
+    
     std::shared_ptr<scene2::SceneNode> _joystickAimButton;
     
-    /** the currently active joystick button node */
-    std::shared_ptr<scene2::SceneNode> _activeJoystick;
+    /** frames of holding the move stick */
+    int _moveHoldCounter;
     
-    int _holdCounter;
+    /** frames of holding the aim stick */
+    int _aimHoldCounter;
     
     std::vector<std::shared_ptr<scene2::SceneNode>> _stamina;
 
@@ -65,13 +68,17 @@ private:
     std::shared_ptr<LevelModel> _level;
     /** whether the pause button has been clicked */
     bool _paused;
-    
     /** whether the pause button has been clicked */
     bool _cust;
     
+#pragma mark -
+#pragma mark Internal Helper
+    
+    /** hides all joysticks on screen */
     void hideJoysticks();
     
-    void setJoystickPosition(Vec2 screenPos);
+    /** adjust the joystick to the position (if possible) or in the direction of the position */
+    void setJoystickPosition(std::shared_ptr<scene2::SceneNode> ring, std::shared_ptr<scene2::SceneNode> button, Vec2 screenPos);
 
 public:
 #pragma mark -
@@ -126,12 +133,14 @@ public:
     /**
      * adjusts the active joystick position given an anchor screen position and the actual touch screen position
      */
-    void updateJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos);
+    void updateMoveJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos);
     
-
-    void setJoystickMode();
-
-    void setAimJoystickMode();
+    /**
+     * adjusts the active aim joystick position given an anchor screen position and the actual touch screen position
+     *
+     * @param touched whether the aim joystick is touched
+     */
+    void updateAimJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos);
     
     /**
      * sets whether the cooldown should be visible

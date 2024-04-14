@@ -13,7 +13,8 @@
 
 GameRenderer::GameRenderer(){
     Scene2();
-    _holdCounter = 0;
+    _moveHoldCounter = 0;
+    _aimHoldCounter = 0;
 }
 
 GameRenderer::~GameRenderer(){
@@ -56,8 +57,8 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     
     _joystickRing = _assets->get<scene2::SceneNode>("HUD_js-ring");
     _joystickMoveButton = _assets->get<scene2::SceneNode>("HUD_js-button");
+    _joystickAimRing =  _assets->get<scene2::SceneNode>("HUD_aim-ring");;
     _joystickAimButton = _assets->get<scene2::SceneNode>("HUD_aim-button");
-    _activeJoystick = _joystickMoveButton;
     
     int count = 2; // possibility that this is retrievable from scene graph?
         for (int i = 1; i <= count; i++){
@@ -87,20 +88,11 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
 void GameRenderer::hideJoysticks(){
     _joystickRing->setVisible(false);
     _joystickMoveButton->setVisible(false);
+    _joystickAimRing->setVisible(false);
     _joystickAimButton->setVisible(false);
 }
 
-void GameRenderer::setJoystickMode(){
-    _activeJoystick = _joystickMoveButton;
-    _joystickAimButton->setVisible(false);
-}
-
-void GameRenderer::setAimJoystickMode(){
-    _activeJoystick = _joystickAimButton;
-    _joystickMoveButton->setVisible(false);
-}
-
-void GameRenderer::updateJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos){
+void GameRenderer::updateMoveJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos){
     if (touched){
         if (!_joystickRing->isVisible()){
             if (anchorScreenPos != screenPos){
@@ -108,34 +100,55 @@ void GameRenderer::updateJoystick(bool touched, Vec2 anchorScreenPos, Vec2 scree
                 _joystickRing->setVisible(true);
             }
         }
-        setJoystickPosition(screenPos);
-        _holdCounter = std::min(_holdCounter + 1, HOLD_TIME);
-        Color4 tint(Vec4(1,1,1, _holdCounter/(float)HOLD_TIME));
+        setJoystickPosition(_joystickRing, _joystickMoveButton, screenPos);
+        _moveHoldCounter = std::min(_moveHoldCounter + 1, HOLD_TIME);
+        Color4 tint(Vec4(1,1,1, _moveHoldCounter/(float)HOLD_TIME));
         _joystickRing->setColor(tint);
-        _activeJoystick->setColor(tint);
+        _joystickMoveButton->setColor(tint);
     }
     else {
-        hideJoysticks();
-        _holdCounter = 0;
+        _joystickRing->setVisible(false);
+        _joystickMoveButton->setVisible(false);
+        _moveHoldCounter = 0;
     }
-    
 }
 
-void GameRenderer::setJoystickPosition(Vec2 screenPos){
+void GameRenderer::updateAimJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos){
+    if (touched){
+        if (!_joystickAimRing->isVisible()){
+            if (anchorScreenPos != screenPos){
+                _joystickAimRing->setPosition(screenToWorldCoords(anchorScreenPos));
+                _joystickAimRing->setVisible(true);
+            }
+        }
+        setJoystickPosition(_joystickAimRing, _joystickAimButton, screenPos);
+        _aimHoldCounter = std::min(_aimHoldCounter + 1, HOLD_TIME);
+        Color4 tint(Vec4(1,1,1, _aimHoldCounter/(float)HOLD_TIME));
+        _joystickAimRing->setColor(tint);
+        _joystickAimButton->setColor(tint);
+    }
+    else {
+        _joystickAimRing->setVisible(false);
+        _joystickAimButton->setVisible(false);
+        _aimHoldCounter = 0;
+    }
+}
+
+void GameRenderer::setJoystickPosition(std::shared_ptr<scene2::SceneNode> ring, std::shared_ptr<scene2::SceneNode> button, Vec2 screenPos){
     Vec2 buttonPosition = screenToWorldCoords(screenPos);
-    float radius = _joystickRing->getSize().width/2 - _activeJoystick->getSize().width/2;
-    if (buttonPosition.distance(_joystickRing->getPosition()) < radius){
-        _activeJoystick->setPosition(buttonPosition);
+    float radius = ring->getSize().width/2 - button->getSize().width/2;
+    if (buttonPosition.distance(ring->getPosition()) < radius){
+        button->setPosition(buttonPosition);
     }else{
-        cugl::Vec2 touch2base(buttonPosition - _joystickRing->getPosition());
+        cugl::Vec2 touch2base(buttonPosition - ring->getPosition());
         float angle = atan2(touch2base.y, touch2base.x);
         float xDist = sin(angle-1.5708)*radius;
         float yDist = cos(angle-1.5708)*radius;
-        Vec2 basePos = _joystickRing->getPosition();
-        _activeJoystick->setPosition(Vec2(basePos.x-xDist, basePos.y+yDist));
+        Vec2 basePos = ring->getPosition();
+        button->setPosition(Vec2(basePos.x-xDist, basePos.y+yDist));
     }
-    if (_joystickRing->isVisible()){
-        _activeJoystick->setVisible(true);
+    if (ring->isVisible()){
+        button->setVisible(true);
     }
 }
 
