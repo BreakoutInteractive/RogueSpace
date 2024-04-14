@@ -51,16 +51,10 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     _joystickAimRing =  _assets->get<scene2::SceneNode>("HUD_aim-ring");;
     _joystickAimButton = _assets->get<scene2::SceneNode>("HUD_aim-button");
     
-    int count = 2; // possibility that this is retrievable from scene graph?
-        for (int i = 1; i <= count; i++){
-            _stamina.push_back(_assets->get<scene2::SceneNode>("HUD_status_cooldown-" + std::to_string(i)));
-        }
-        
-        // testing disable
-        for (auto it = _stamina.begin(); it != _stamina.end(); it++){
-            (*it)->setVisible(true);
-        }
     
+    _stamina = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_cooldown"));
+    _stamina->setVisible(true);
+            
     _hpBar = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_hp"));
     
     // readjust scene to screen
@@ -158,6 +152,7 @@ void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
     
     auto player = _level->getPlayer();
     _hpBar->setProgress(player->_hp / (float) player->getMaxHP());
+    _stamina->setProgress(1-(player->_dodgeCD.getCount()/(float) player->_dodgeCD.getMaxCount()));
     
     // using game camera, render the game
     if (_gameCam != nullptr){
