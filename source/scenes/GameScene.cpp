@@ -340,11 +340,9 @@ void GameScene::preUpdate(float dt) {
                             // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                             ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                         }
-                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, _assets);
+                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, ang, _assets);
                         p->setDrawScale(Vec2(_scale, _scale));
                         _level->addProjectile(p);
-                        p->setAngle(ang);
-                        p->setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
                         player->animateShot();
                     }
                     else player->animateDefault();

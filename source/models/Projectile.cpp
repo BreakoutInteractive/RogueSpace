@@ -1,6 +1,6 @@
 #include "Projectile.hpp"
 
-bool Projectile::playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 	//init fields
 	_enabled = true;
 	_position = pos;
@@ -60,10 +60,12 @@ bool Projectile::playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,4,4), 0.125f, true, 9, 11); //0.125 because 3 frames/24 fps = 1/8 seconds
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.25f, false);
 	setFlying();
+	setAngle(ang);
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
 	return true;
 }
 
-bool Projectile::lizardInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 	//TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
 
 	//init fields
@@ -107,10 +109,12 @@ bool Projectile::lizardInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 0.5f, true, 5, 14); 
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
+	setAngle(ang);
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
 	return true;
 }
 
-bool Projectile::mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 	//TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
 
 	//init fields
@@ -154,6 +158,8 @@ bool Projectile::mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManag
 	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 7.0f / 24.0f, true, 14, 20); //24fps
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
+	setAngle(ang);
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
 	return true;
 }
 
