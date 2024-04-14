@@ -1,7 +1,7 @@
 {
-    "jsons":{
+    "jsons": {
         "level1": "json/level.json",
-        "example": "json/tiled/exports/alpha_level.json",
+        "example": "json/tiled/exports/cb_lvl_02.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
