@@ -1,0 +1,11 @@
+bow_pull.wav
+Player draws bow
+
+bow_chargeloop.wav
+Starts halfway through draw, loops until fire
+
+Ideally, the "next" sound in the loop should start halfway through the current sound
+causing a cool wubwubwub effect.
+
+bow_fire.wav
+Player releases energy arrow
