@@ -147,9 +147,9 @@ public:
     GameRenderer& getRenderer(){return _gameRenderer;}
     
     /**
-     * Clears all previous inputs.
+     * toggle input devices
      */
-    void clearInputs(){ _input.clear();}
+    void activateInputs(bool value){ _input.setActive(value); }
     
     /**
      * Returns true if the level is completed.

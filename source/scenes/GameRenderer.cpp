@@ -159,7 +159,8 @@ void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
         batch->begin(_gameCam->getCombined());
         Size s = Application::get()->getDisplaySize();
         Vec3 camPos = _gameCam->getPosition();
-        batch->draw(_backgroundTexture, Rect(camPos.x - s.width/2, camPos.y - s.height/2, s.width, s.height));
+        // this draws the space background, can be removed.
+//        batch->draw(_backgroundTexture, Rect(camPos.x - s.width/2, camPos.y - s.height/2, s.width, s.height));
         if (_level != nullptr){
             _level->render(batch);
         }

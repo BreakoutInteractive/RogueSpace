@@ -98,6 +98,9 @@ public:
      */
     bool init(const std::shared_ptr<AssetManager>& assets);
     
+#pragma mark -
+#pragma mark Properties
+
     /**
      * Returns whether pause button as been pressed.
      *

@@ -25,8 +25,6 @@ const int HOLD_POS_DELTA = 50;
 const u_long TAP_TIME = 150;
 /** the maximum amount of milliseconds between the end of the first tap and the start of the second tap*/
 const u_long DOUBLE_TAP_TIME_GAP = 200;
-/** the distance needed to pull the joystick backwards to fire the projectile */
-const float DRAG_DISTANCE = 100;
 
 
 #pragma mark -
@@ -362,7 +360,7 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         }
         
         // PARRY (hold -> release)
-        if (!rangedMode && changeInPosition < HOLD_POS_DELTA && _combatGestureHeld){
+        if (!rangedMode && _combatGestureHeld){
             _keyParryReleased = true;
         }
         

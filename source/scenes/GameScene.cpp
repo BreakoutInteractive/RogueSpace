@@ -151,7 +151,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _defeat = false;
     setDebug(false);
     
-    Application::get()->setClearColor(Color4f::WHITE);
+    Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
 }
 
@@ -185,6 +185,7 @@ void GameScene::restart(){
     setComplete(false);
     setDefeat(false);
     _input.activateMeleeControls();
+    _input.setActive(true);
 }
 
 
