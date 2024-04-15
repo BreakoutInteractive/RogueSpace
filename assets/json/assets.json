@@ -1,7 +1,7 @@
 {
-    "jsons":{
+    "jsons": {
         "level1": "json/level.json",
-        "example": "json/tiled/exports/alpha_level.json",
+        "example": "json/tiled/exports/cb_lvl_02.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
@@ -101,7 +101,7 @@
     "sounds": {
         "airSlash": {
             "type":     "sample",
-            "file":     "sounds/impact/slash_01.WAV",
+            "file":     "sounds/impact/slash_01.wav",
             "volume":   0.4
         },
         "enemyMelee": {
@@ -116,7 +116,7 @@
         },
         "wallMelee": {
             "type":     "sample",
-            "file":     "sounds/impact/impact_01.WAV",
+            "file":     "sounds/impact/impact_01.wav",
             "volume":   0.5
         },
         "bowDraw": {
@@ -136,72 +136,72 @@
         },
         "parryMelee": {
             "type":     "sample",
-            "file":     "sounds/weapons/steel_04.WAV",
+            "file":     "sounds/weapons/steel_04.wav",
             "volume":   0.5
         },
         "envWinds": {
             "type":     "sample",
-            "file":     "sounds/env/env_wind_01.WAV",
+            "file":     "sounds/env/env_wind_01.wav",
             "volume":   0.5
         },
         "p-AlienGrowl1": {
             "type":     "sample",
-            "file":     "sounds/alien/passive/alien_quiet_00.WAV",
+            "file":     "sounds/alien/passive/alien_quiet_00.wav",
             "volume":   0.5
         },
         "p-AlienGrowl2": {
             "type":     "sample",
-            "file":     "sounds/alien/passive/alien_quiet_01.WAV",
+            "file":     "sounds/alien/passive/alien_quiet_01.wav",
             "volume":   0.5
         },
         "p-AlienGrowl3": {
             "type":     "sample",
-            "file":     "sounds/alien/passive/alien_quiet_02.WAV",
+            "file":     "sounds/alien/passive/alien_quiet_02.wav",
             "volume":   0.5
         },
         "a-AlienGrowl1": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_aggro_00.WAV",
+            "file":     "sounds/alien/aggressive/alien_aggro_00.wav",
             "volume":   0.5
         },
         "a-AlienGrowl2": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_aggro_02.WAV",
+            "file":     "sounds/alien/aggressive/alien_aggro_02.wav",
             "volume":   0.5
         },
         "a-AlienGrowl3": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_aggro_03.WAV",
+            "file":     "sounds/alien/aggressive/alien_aggro_03.wav",
             "volume":   0.5
         },
         "lizardHitLanded": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_08.WAV",
+            "file":     "sounds/alien/aggressive/alien_growl_08.wav",
             "volume":   0.5
         },
         "meleeHitLanded1": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_01.WAV",
+            "file":     "sounds/alien/aggressive/alien_growl_01.wav",
             "volume":   0.5
         },
         "meleeHitLanded2": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_06.WAV",
+            "file":     "sounds/alien/aggressive/alien_growl_06.wav",
             "volume":   0.5
         },
         "lizardDeath": {
             "type":     "sample",
-            "file":     "sounds/alien/death/alien_death_00.WAV",
+            "file":     "sounds/alien/death/alien_death_00.wav",
             "volume":   0.5
         },
         "meleeDeath1": {
             "type":     "sample",
-            "file":     "sounds/alien/death/alien_death_01.WAV",
+            "file":     "sounds/alien/death/alien_death_01.wav",
             "volume":   0.5
         },
         "meleeDeath2": {
             "type":     "sample",
-            "file":     "sounds/alien/death/alien_death_02.WAV",
+            "file":     "sounds/alien/death/alien_death_02.wav",
             "volume":   0.5
         }
         
