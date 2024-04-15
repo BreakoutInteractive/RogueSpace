@@ -270,7 +270,6 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
         setAnimation(_chargedAnimation);
         _chargedAnimation->start();
         _chargingAnimation->reset();
-        _state = CHARGED;
         });
     _chargingEffect->onComplete([this]() {
         _chargingEffect->reset();
@@ -317,6 +316,7 @@ void Player::animateCharge() {
 
 void Player::animateShot() {
     setAnimation(_shotAnimation);
+    _chargedEffect->reset();
     _shotEffect->start();
     _state = SHOT;
 }
@@ -447,8 +447,6 @@ void Player::update(float dt) {
         }
         break;
     case SHOT:
-        _chargedAnimation->reset();
-        _chargedEffect->reset();
         _shotEffect->update(dt);
         break;
     case IDLE: case ATTACK: case RECOVERY: case PARRYSTART: case PARRYSTANCE: case PARRY:
