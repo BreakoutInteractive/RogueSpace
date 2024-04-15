@@ -235,7 +235,14 @@ public:
      * @return true if the input handler is currently active
      */
     bool isActive( ) const { return _active; }
-
+    
+    /**
+     * sets whether this input controller is actively reading inputs.
+     */
+    void setActive(bool value) {
+        _active = value;
+    }
+    
     /**
      * Processes the currently cached inputs.
      *
@@ -343,6 +350,7 @@ public:
     
 #pragma mark -
 #pragma mark Input Results (Mobile Only)
+    
     /**
      * @return whether there is touch event associated with the motion gesture
      */
@@ -361,21 +369,31 @@ public:
     Vec2 getTouchLocation() const {return _motionGesture.curPos; }
     
     /**
-     * @return whether there is touch event associated with the motion gesture
+     * @return whether there is touch event associated with the combat gesture
      */
     bool isCombatActive() const { return _combatGesture.active; }
     
     /**
-     * The returned value can be anything in the event that `isMotionActive` is false.
-     * @return the starting location of the touch event associated with the motion gesture
+     * The returned value can be anything in the event that `isCombatActive` is false.
+     * @return the starting location of the touch event associated with the combat gesture
      */
     Vec2 getInitCombatLocation() const { return _combatGesture.initialPos;}
     
     /**
-     * The returned value can be anything in the event that `isMotionActive` is false.
-     * @return the current location of the touch event associated with the motion gesture
+     * The returned value can be anything in the event that `isCombatActive` is false.
+     * @return the current location of the touch event associated with the combat gesture
      */
     Vec2 getCombatTouchLocation() const {return _combatGesture.curPos; }
+    
+    /**
+     * Inactivates the combat gesture if it has been on hold.
+     */
+    void clearHeldGesture() {
+        if (_combatGestureHeld){
+            _combatGesture.active = false;
+            _combatGestureHeld = false;
+        }
+    }
 
 };
 

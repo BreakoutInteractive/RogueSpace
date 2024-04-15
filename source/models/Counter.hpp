@@ -80,6 +80,11 @@ public:
     bool isZero(){ return _count == 0;}
     
     /**
+     * @return whether the counter is at maximum value
+     */
+    bool isMaximum(){ return _count == _maxCount; }
+    
+    /**
      * Sets the interal counter initial value (maximum count).
      *
      * @param value counter maximum value

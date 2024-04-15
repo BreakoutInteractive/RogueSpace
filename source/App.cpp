@@ -104,7 +104,7 @@ void App::preUpdate(float dt) {
         case GAME:
             if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
-                _gameplay.clearInputs();
+                //_gameplay.clearInputs(); // NO, DO NOT CLEAR INPUTS
                 _gameplay.getRenderer().setActivated(false);
             }else{
                 _gameplay.preUpdate(dt);

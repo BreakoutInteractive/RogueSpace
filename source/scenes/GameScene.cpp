@@ -238,17 +238,19 @@ void GameScene::preUpdate(float dt) {
         
     
 #ifdef CU_TOUCH_SCREEN
+    
+    // if player just got hit, cancel any combat requiring hold-times
+    if (player->_hitCounter.isMaximum()){
+        _input.clearHeldGesture();
+        _gameRenderer.updateAimJoystick(false, _input.getInitCombatLocation(), _input.getCombatTouchLocation());
+    }
+    
     if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING){
         _gameRenderer.updateAimJoystick(_input.isCombatActive(), _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
     _gameRenderer.updateMoveJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
     
 #endif
-    
-    // update the direction the player is facing
-    if (moveForce.length() > 0){
-        player->setFacingDir(moveForce);
-    }
     
     if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
@@ -260,13 +262,24 @@ void GameScene::preUpdate(float dt) {
         && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         switch (player->_weapon) {
         case Player::weapon::MELEE:
-            player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());  //TODO: use json data
+                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
+                // update the direction the player is facing in the direction of movement
+                if (moveForce.length() > 0){
+                    player->setFacingDir(moveForce);
+                }
             break;
         case Player::weapon::RANGED:
             //with the ranged weapon, dont move while attacking
-            if (!player->isAttacking()) player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());  //TODO: use json data
+            if (!player->isAttacking()){
+                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
+                // update the direction the player is facing in the direction of movement
+                if (moveForce.length() > 0){
+                    player->setFacingDir(moveForce);
+                }
+            }
             break;
         }
+        
     } else if (player->_state != Player::state::DODGE && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
@@ -322,8 +335,8 @@ void GameScene::preUpdate(float dt) {
             }
             else if (_input.didCharge()) {
                 Vec2 direction = _input.getAttackDirection(player->getFacingDir());
-                if (player->_weapon == Player::weapon::RANGED && player->_state == Player::state::CHARGING) {
-                    //TODO: face the appropriate direction
+                if (player->_weapon == Player::weapon::RANGED && (player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED)) {
+                    // this lets you rotate the player while holding the bow in charge mode
                     player->setFacingDir(direction);
                 }
             }
