@@ -12,6 +12,7 @@
 #include "Counter.hpp"
 #include "GameObject.hpp"
 #include "Upgradeable.hpp"
+#include "GameConstants.hpp"
 
 class Animation;
 
@@ -45,10 +46,18 @@ protected:
     //TODO: there are a lot of these, maybe put them in a hash table with key = animation name
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
+    /** The animation to use during parry startup */
+    std::shared_ptr<Animation> _parryStartAnimation;
+    /** The animation to use while holding the parry stance */
+    std::shared_ptr<Animation> _parryStanceAnimation;
     /** The animation to use while parrying */
     std::shared_ptr<Animation> _parryAnimation;
-    /** The animation to use while attacking */
-    std::shared_ptr<Animation> _attackAnimation;
+    /** The animation to use for combo hit 1 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation1;
+    /** The animation to use for combo hit 2 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation2;
+    /** The animation to use for combo hit 3 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation3;
     /** The animation to use while running */
     std::shared_ptr<Animation> _runAnimation;
     /** The animaton to use while idle and using the bow */
@@ -81,18 +90,20 @@ protected:
     
     std::shared_ptr<Animation> _prevAnimation;
 
-    /** how long we have been charging for */
-    float _charge;
     /** how long we have been dodging for */
     float _dodge;
-    /** how long we have been parrying for */
-    float _parry;
+
+    /**time since the last attack*/
+    float _comboTimer;
+
+    /** which step in the melee combo we are in */
+    int _combo;
     
 public:
 #pragma mark -
     enum weapon { MELEE, RANGED };
     //TODO: modify more stuff (in particular, animation) to use states. Add hit and knockback states
-    enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRY, DODGE};
+    enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE};
     weapon _weapon;
     state _state;
 #pragma mark Counters
@@ -259,15 +270,18 @@ public:
     void setFacingDir(cugl::Vec2 dir);
     
     /**
-     * @return the maximum HP of the player;
+     * @return the maximum HP of the player
      */
     int getMaxHP();
+
+    /**
+     * @return which hit of the combo the player is on
+     */
+    int getCombo() const { return _combo; }
 
     bool isAttacking();
 
     void swapWeapon() { _weapon = static_cast<weapon>((_weapon + 1) % 2); }
-    
-    void resetCharge() { _charge = 0; }
 
 #pragma mark -
 #pragma mark Animation
@@ -336,6 +350,8 @@ public:
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
 
+    /** Change to using the parry start animation and change state to PARRYSTART */
+    void animateParryStart();
     /** Change to using the parry animation and change state to PARRY */
     void animateParry();
     /** Change to using the default (idle) animation and change state to IDLE */
@@ -350,8 +366,10 @@ public:
     /**
     * Method to call when player is hit by an attack
     * @param atkDir the normal vector of the direction of the attack that hit the player
+    * @param damage how much damage the player takes
+    * @param knockback_scl the factor to multiply the direction by for applying knockback
     */
-    void hit(cugl::Vec2 atkDir, int damage = 1);
+    void hit(cugl::Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
     
     // INHERITED
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;

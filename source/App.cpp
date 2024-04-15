@@ -106,10 +106,10 @@ void App::preUpdate(float dt) {
         case GAME:
             if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
-//                AudioEngine::get()->pauseEffects();
-                _gameplay.clearInputs();
+                _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
                 _gameplay.getRenderer().setActivated(false);
             }else{
+                _gameplay.activateInputs(true);
                 _gameplay.preUpdate(dt);
             }
             break;
@@ -152,6 +152,7 @@ void App::updatePauseScene(float dt) {
         case PauseScene::Choice::RESUME:
             _pause.setActive(false);
             _gameplay.getRenderer().setActivated(true);
+            _gameplay.activateInputs(true);
             _scene = State::GAME;
             break;
         case PauseScene::Choice::SETTINGS:

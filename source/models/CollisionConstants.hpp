@@ -17,5 +17,6 @@
 #define CATEGORY_PLAYER_HITBOX       0x0040
 #define CATEGORY_ENEMY_HITBOX        0x0080
 #define CATEGORY_PROJECTILE          0x0100
+#define CATEGORY_PROJECTILE_SHADOW   0x0200
 
 #endif /* CollisionConstants_h */

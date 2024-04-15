@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "GameConstants.hpp"
 
 class Animation;
 
@@ -431,9 +432,10 @@ public:
     /**
      * Method to call when an enemy is hit by an attack
      * @param atkDir the normal vector of the direction of the attack that hit this enemy
-     * @param damage the amount of hp to lose
+     * @param damage how much damage this enemy takes
+     * @param knockback_scl the factor to multiply the direction by for applying knockback
      */
-    void hit(cugl::Vec2 atkDir, float damage);
+    void hit(cugl::Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
 
     /**
      * Method to call when an enemy is stunned, e.g. when parried

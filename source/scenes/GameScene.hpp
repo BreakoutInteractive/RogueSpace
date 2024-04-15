@@ -151,9 +151,9 @@ public:
     std::vector<std::shared_ptr<Upgradeable>> getAttributes() {return _level->getPlayer()->getPlayerAttributes();}
     
     /**
-     * Clears all previous inputs.
+     * toggle input devices
      */
-    void clearInputs(){ _input.clear();}
+    void activateInputs(bool value){ _input.setActive(value); }
     
     /**
      * Returns true if the level is completed.

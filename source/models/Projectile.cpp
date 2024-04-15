@@ -1,6 +1,6 @@
 #include "Projectile.hpp"
 
-bool Projectile::playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 	//init fields
 	_enabled = true;
 	_position = pos;
@@ -8,6 +8,7 @@ bool Projectile::playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	_drawScale.set(1.0f, 1.0f);
 	_damage = damage;
 	_state = FLYING;
+	collisionString = "shadow";
 
 	//init hitbox
 	std::vector<Vec2> v;
@@ -24,9 +25,9 @@ bool Projectile::playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	obs->setName("player-projectile-collider");
 	obs->setPosition(pos);
 	b2Filter filter;
-	//projectiles are attacks. they can hit enemies and are destroyed on contact with a wall.
+	//projectiles are attacks. they can hit enemies.
 	filter.categoryBits = CATEGORY_PROJECTILE;
-	filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX | CATEGORY_WALL;
+	filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX;
 	obs->setFilterData(filter);
 	obs->setEnabled(true);
 	obs->setAwake(true);
@@ -34,15 +35,37 @@ bool Projectile::playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	//might need this depending on projectile speed
 	// obs->setBullet(true);
 	_collider = obs;
+
+	v.clear();
+	v.push_back(pos + Vec2(0, GameConstants::PROJ_SIZE_P_HALF / 2 * GameConstants::PROJ_SHADOW_SCALE));
+	v.push_back(pos + Vec2(-GameConstants::PROJ_SIZE_P_HALF * GameConstants::PROJ_SHADOW_SCALE, 0));
+	v.push_back(pos + Vec2(0, -GameConstants::PROJ_SIZE_P_HALF / 2 * GameConstants::PROJ_SHADOW_SCALE));
+	v.push_back(pos + Vec2(GameConstants::PROJ_SIZE_P_HALF * GameConstants::PROJ_SHADOW_SCALE, 0));
+	et.clear();
+	et.set(v);
+	et.calculate();
+	poly = et.getPolygon();
+	std::shared_ptr<physics2::PolygonObstacle> shadow = physics2::PolygonObstacle::allocWithAnchor(poly, Vec2(0.5f, 0.5f));
+	shadow->setBodyType(b2_kinematicBody);
+	shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
+		+ 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
+	//the projectile shadow hits walls
+	filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
+	filter.maskBits = CATEGORY_WALL;
+	shadow->setFilterData(filter);
+	_colliderShadow = shadow;
+
 	std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile");
 	//TODO: modify this to use the right frames
 	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,4,4), 0.125f, true, 9, 11); //0.125 because 3 frames/24 fps = 1/8 seconds
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.25f, false);
 	setFlying();
+	setAngle(ang);
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
 	return true;
 }
 
-bool Projectile::lizardInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 	//TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
 
 	//init fields
@@ -52,6 +75,7 @@ bool Projectile::lizardInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	_drawScale.set(1.0f, 1.0f);
 	_damage = damage;
 	_state = FLYING;
+	collisionString = "shadow";
 
 	//init hitbox
 	//TODO: modify shape and size
@@ -69,15 +93,28 @@ bool Projectile::lizardInit(Vec2 pos, int damage, const std::shared_ptr<AssetMan
 	//might need this depending on projectile speed
 	// obs->setBullet(true);
 	_collider = obs;
+
+	std::shared_ptr<physics2::WheelObstacle> shadow = physics2::WheelObstacle::alloc(pos, GameConstants::PROJ_RADIUS_LIZARD*GameConstants::PROJ_SHADOW_SCALE);
+	shadow->setBodyType(b2_kinematicBody);
+	shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
+		+ 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
+	//the projectile shadow hits walls
+	filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
+	filter.maskBits = CATEGORY_WALL;
+	shadow->setFilterData(filter);
+	_colliderShadow = shadow;
+
 	std::shared_ptr<Texture> t = assets->get<Texture>("lizard-projectile");
 	//TODO: modify this to use the right frames
 	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 0.5f, true, 5, 14); 
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
+	setAngle(ang);
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
 	return true;
 }
 
-bool Projectile::mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 	//TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
 
 	//init fields
@@ -87,6 +124,7 @@ bool Projectile::mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManag
 	_drawScale.set(1.0f, 1.0f);
 	_damage = damage;
 	_state = FLYING;
+	collisionString = "shadow";
 
 	//init hitbox
 	//TODO: modify shape and size
@@ -104,11 +142,24 @@ bool Projectile::mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManag
 	//might need this depending on projectile speed
 	// obs->setBullet(true);
 	_collider = obs;
+
+	std::shared_ptr<physics2::WheelObstacle> shadow = physics2::WheelObstacle::alloc(pos, GameConstants::PROJ_RADIUS_LIZARD * GameConstants::PROJ_SHADOW_SCALE);
+	shadow->setBodyType(b2_kinematicBody);
+	shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
+		+ 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
+	//the projectile shadow hits walls
+	filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
+	filter.maskBits = CATEGORY_WALL;
+	shadow->setFilterData(filter);
+	_colliderShadow = shadow;
+
 	std::shared_ptr<Texture> t = assets->get<Texture>("mage-projectile");
 	//TODO: modify this to use the right frames
 	_flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 7.0f / 24.0f, true, 14, 20); //24fps
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
+	setAngle(ang);
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
 	return true;
 }
 
@@ -126,6 +177,17 @@ void Projectile::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
 		transform.translate(getPosition() * _drawScale);
 		spriteSheet->draw(batch, _tint, origin, transform);
 	}
+}
+
+void Projectile::addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) {
+	GameObject::addObstaclesToWorld(world);
+	_colliderShadow->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(collisionString);
+}
+
+void Projectile::syncPositions() {
+	GameObject::syncPositions();
+	_colliderShadow->setPosition(_collider->getPosition().x, _collider->getPosition().y - GameConstants::PROJ_SIZE_P_HALF 
+		+ 0.5f*GameConstants::PROJ_SHADOW_SCALE* GameConstants::PROJ_SIZE_P_HALF);
 }
 
 bool Projectile::isCompleted() {
@@ -147,5 +209,6 @@ bool Projectile::isCompleted() {
 void Projectile::dispose() { 
 	_currAnimation = nullptr; 
 	_collider = nullptr; 
+	_colliderShadow = nullptr;
 	setEnabled(false);
 }
