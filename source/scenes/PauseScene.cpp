@@ -56,6 +56,7 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _choice = Choice::NONE;
     _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_restart"));
     _resume = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_resume"));
+    _settings = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_setting"));
     
     // Program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
@@ -67,6 +68,12 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _resume->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::RESUME;
+            CULog("resuming (pause screen)");
+        }
+    });
+    _settings->addListener([this](const std::string& name, bool down) {
+        if (down) {
+            _choice = Choice::SETTINGS;
         }
     });
 
@@ -103,12 +110,15 @@ void PauseScene::setActive(bool value) {
             _choice = NONE;
             _restart->activate();
             _resume->activate();
+            _settings->activate();
         } else {
             _restart->deactivate();
             _resume->deactivate();
+            _settings->deactivate();
             // If any were pressed, reset them
             _restart->setDown(false);
             _resume->setDown(false);
+            _settings->setDown(false);
         }
     }
 }

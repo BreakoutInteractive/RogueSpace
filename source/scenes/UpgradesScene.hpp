@@ -8,9 +8,14 @@
 #ifndef UpgradesScene_hpp
 #define UpgradesScene_hpp
 
-#include <stdio.h>
 #include <cugl/cugl.h>
+#include <iostream>
+#include <sstream>
+#include "Upgradeable.hpp"
 
+
+using namespace cugl;
+using namespace std;
 /**
  *
  */
@@ -33,20 +38,35 @@ public:
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    
     /** The button for upgrade option 1 */
     std::shared_ptr<cugl::scene2::Button> _option1;
-    /** The button for upgrade option 2 */
-    std::shared_ptr<cugl::scene2::Button> _option2;
     /** The button to confirm upgrade option 1*/
     std::shared_ptr<cugl::scene2::Button> _confirm1;
+    shared_ptr<scene2::Label> _option1Lvl;
+    shared_ptr<scene2::Label> _option1Change;
+    shared_ptr<scene2::Label> _option1Att;
+    
+    
+    /** The button for upgrade option 2 */
+    std::shared_ptr<cugl::scene2::Button> _option2;
     /** The button to confirm upgrade option 2*/
     std::shared_ptr<cugl::scene2::Button> _confirm2;
+    shared_ptr<scene2::Label> _option2Lvl;
+    shared_ptr<scene2::Label> _option2Change;
+    shared_ptr<scene2::Label> _option2Att;
+    
+    std::vector<std::shared_ptr<Upgradeable>> _playerAttributes;
     /** The player choice */
     Choice _choice;
     bool _active;
     
 public:
 #pragma mark -
+    
+    /** description of selcted upgrade */
+    std::string _selectedUpgrade;
 #pragma mark Constructors
     /**
      * Creates a new  menu scene with the default values.
@@ -83,7 +103,9 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::vector<std::shared_ptr<Upgradeable>> attributes);
+    
+    void updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes);
 
     /**
      * Sets whether the scene is currently active

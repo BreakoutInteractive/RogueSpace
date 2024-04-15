@@ -73,6 +73,8 @@ protected:
 
     /** The level model */
     std::shared_ptr<LevelModel> _level;
+    
+    std::vector<std::shared_ptr<Upgradeable>> playerAttributes;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -145,6 +147,8 @@ public:
      * Returns a reference to the game renderer
      */
     GameRenderer& getRenderer(){return _gameRenderer;}
+    
+    std::vector<std::shared_ptr<Upgradeable>> getAttributes() {return _level->getPlayer()->getPlayerAttributes();}
     
     /**
      * Clears all previous inputs.
@@ -268,6 +272,8 @@ public:
      * Restarts game scene to initial state.
      */
     void restart();
+    
+    void applyUpgrade(std::string selectedAttribute);
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

@@ -12,6 +12,7 @@
 #include "GameObject.hpp"
 #include "GameConstants.hpp"
 #include "../components/Animation.hpp"
+#include "Upgradeable.hpp"
 
 using namespace cugl;
 
@@ -81,8 +82,10 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
     _dodgeDuration.setMaxCount(GameConstants::PLAYER_DODGE_DURATION);
     _hp = GameConstants::PLAYER_MAX_HP;
-    _defenseUpgrade =GameConstants::PLAYER_DEFENSE;
-    _atkDamage =GameConstants::PLAYER_ATK_DAMAGE;
+    defense =  std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_DEFENSE);
+    attack = std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_ATK_DAMAGE);
+    attributes.push_back(attack);
+    attributes.push_back(defense);
     _moveScale = GameConstants::PLAYER_MOVE_SPEED;
 
     
@@ -109,6 +112,10 @@ void Player::dispose() {
 
 int Player::getMaxHP(){
     return GameConstants::PLAYER_MAX_HP;
+}
+
+int Player::getMoveScale(){
+    return GameConstants::PLAYER_MOVE_SPEED;
 }
 
 bool Player::isAttacking() {
@@ -364,7 +371,7 @@ void Player::hit(Vec2 atkDir, int damage) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _state != DODGE) {
         _hitCounter.reset();
-        _hp = std::fmax(0, (_hp - damage));
+        _hp = std::fmax(0, (_hp - damage*(1-defense->getCurrentPercentage())));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * GameConstants::KNOCKBACK);
         _state = IDLE; //TODO: hit state

@@ -81,7 +81,7 @@ void App::update(float dt){
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
-        _upgrades.init(_assets);
+        _upgrades.init(_assets,_gameplay.getAttributes());
         _scene = State::GAME;
         setDeterministic(true);
     }
@@ -97,13 +97,16 @@ void App::preUpdate(float dt) {
         case UPGRADE:
             _upgrades.setActive(true);
             updateUpgradesScene(dt);
+            break;
         case PAUSE:
             _pause.setActive(true);
+//            AudioEngine::get()->getMusicQueue()->advance();
             updatePauseScene(dt);
             break;
         case GAME:
             if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
+//                AudioEngine::get()->pauseEffects();
                 _gameplay.clearInputs();
                 _gameplay.getRenderer().setActivated(false);
             }else{
@@ -151,6 +154,11 @@ void App::updatePauseScene(float dt) {
             _gameplay.getRenderer().setActivated(true);
             _scene = State::GAME;
             break;
+        case PauseScene::Choice::SETTINGS:
+            _pause.setActive(false);
+            _upgrades.updateScene(_gameplay.getAttributes());
+            _scene = State::UPGRADE;
+            break;
         case PauseScene::Choice::NONE:
             break;
     }
@@ -164,11 +172,16 @@ void App::updateUpgradesScene(float dt){
         case UpgradesScene::Choice::UPGRADE_1:
             _upgrades.setActive(false);
             _gameplay.getRenderer().setActivated(true);
+            _gameplay.applyUpgrade(_upgrades._selectedUpgrade);
+            //give/set instance of upgrade object to gameplay
             _scene = State::GAME;
+            break;
         case UpgradesScene::Choice::UPGRADE_2:
             _upgrades.setActive(false);
             _gameplay.getRenderer().setActivated(true);
+            _gameplay.applyUpgrade(_upgrades._selectedUpgrade);
             _scene = State::GAME;
+            break;
     }
 }
 

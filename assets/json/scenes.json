@@ -792,7 +792,7 @@
                                    0
                                ],
                                "valign": "top",
-                               "halign": "left"
+                               "halign": "center"
                            },
                            "children": {},
                            "layout": {
@@ -811,7 +811,7 @@
                                    0.5
                                ],
                                "size": [
-                                   50,
+                                   60,
                                    19
                                ],
                                "position": [
@@ -996,7 +996,7 @@
                                    0
                                ],
                                "valign": "middle",
-                               "halign": "left"
+                               "halign": "center"
                            },
                            "children": {},
                            "layout": {
@@ -1015,7 +1015,7 @@
                                    0.5
                                ],
                                "size": [
-                                   44,
+                                   75,
                                    19
                                ],
                                "position": [
@@ -1026,7 +1026,7 @@
                                "visible": true,
                                "font": "robotoMedium16",
                                "text": "EPIC",
-                               "foreground": "#ac43ffff",
+                               "foreground": "#800080",
                                "background": "#00000000",
                                "padding": [
                                    0,
