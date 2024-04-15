@@ -268,7 +268,7 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 		return false;
 	}
     
-    _grid->printGrid();
+    //_grid->printGrid(); //if you want to see grid staggered layout
     
     auto boundaries = parsedJson->get(BOUNDARY_FIELD);
     if (boundaries != nullptr) {

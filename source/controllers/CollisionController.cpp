@@ -30,10 +30,6 @@ void CollisionController::setLevel(std::shared_ptr<LevelModel> level){
 void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets, const std::shared_ptr<AudioController>& audio) {
     _assets = assets;
     _audioController = audio;
-    
-    // Create the world and attach the listeners.
-    std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
-
 }
 
 
