@@ -54,8 +54,12 @@ protected:
     std::shared_ptr<Animation> _parryStanceAnimation;
     /** The animation to use while parrying */
     std::shared_ptr<Animation> _parryAnimation;
-    /** The animation to use while attacking */
-    std::shared_ptr<Animation> _attackAnimation;
+    /** The animation to use for combo hit 1 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation1;
+    /** The animation to use for combo hit 2 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation2;
+    /** The animation to use for combo hit 3 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation3;
     /** The animation to use while running */
     std::shared_ptr<Animation> _runAnimation;
     /** The animaton to use while idle and using the bow */
@@ -90,6 +94,9 @@ protected:
 
     /** how long we have been dodging for */
     float _dodge;
+
+    /**time since the last attack*/
+    float _comboTimer;
 
     /** which step in the melee combo we are in */
     int _combo;
@@ -270,9 +277,14 @@ public:
     void setFacingDir(cugl::Vec2 dir);
     
     /**
-     * @return the maximum HP of the player;
+     * @return the maximum HP of the player
      */
     int getMaxHP();
+
+    /**
+     * @return which hit of the combo the player is on
+     */
+    int getCombo() const { return _combo; }
 
     bool isAttacking();
 
@@ -361,8 +373,10 @@ public:
     /**
     * Method to call when player is hit by an attack
     * @param atkDir the normal vector of the direction of the attack that hit the player
+    * @param damage how much damage the player takes
+    * @param knockback_scl the factor to multiply the direction by for applying knockback
     */
-    void hit(cugl::Vec2 atkDir, int damage = 1);
+    void hit(cugl::Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
     
     // INHERITED
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;

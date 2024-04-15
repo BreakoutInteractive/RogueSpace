@@ -92,8 +92,17 @@ public:
     static float PROJ_TIME_P;
     /** how many seconds it takes for the player to charge the ranged attack */
     static float CHARGE_TIME;
+    /** the maximum time before restting the combo */
+    static float COMBO_TIME;
 
+#pragma mark -
+#pragma mark Universal Constants
+    /** default knockback multiplier of an attack - applies to player attacks, enemy attacks, and projectiles */
     static float KNOCKBACK;
+    /** knockback multiplier of a power attack (combo hit 3) */
+    static float KNOCKBACK_PWR_ATK;
+    /**the scale of a projectile's shadow relative to its size*/
+    static float PROJ_SHADOW_SCALE;
 };
 
 
