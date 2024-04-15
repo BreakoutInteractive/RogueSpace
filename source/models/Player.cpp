@@ -23,6 +23,8 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _weapon = MELEE;
     _state = IDLE;
     _dodge = 0;
+    _combo = 1;
+    _comboTimer = 0;
     bool success = true;
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
@@ -197,7 +199,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     // make sheets
     auto parrySheet = SpriteSheet::alloc(parryTexture, 8, 16);
-    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 8);
+    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 24);
     auto idleSheet = SpriteSheet::alloc(_playerTexture, 8, 8);
     auto runSheet = SpriteSheet::alloc(runTexture, 8, 16);
     auto rangedSheet = SpriteSheet::alloc(rangedTexture, 8, 16);
@@ -209,7 +211,9 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _parryStartAnimation = Animation::alloc(parrySheet, 0.1f, false, 0, 1);
     _parryStanceAnimation = Animation::alloc(parrySheet, 0.5f, true, 2, 9);
     _parryAnimation = Animation::alloc(parrySheet, GameConstants::PLAYER_PARRY_TIME, false, 10, 15);
-    _attackAnimation = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
+    _attackAnimation1 = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
+    _attackAnimation2 = Animation::alloc(attackSheet, 0.3f, false, 8, 13);
+    _attackAnimation3 = Animation::alloc(attackSheet, 0.5f, false, 14, 23);
     _runAnimation = Animation::alloc(runSheet, 16/24.0, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
     _chargingAnimation = Animation::alloc(rangedSheet, GameConstants::CHARGE_TIME, false, 0, 8);
@@ -223,9 +227,23 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _shotEffect = Animation::alloc(projEffectSheet, 1/24.0f, false, 8, 8);
     
     // add callbacks
-    _attackAnimation->onComplete([this](){
-        _attackAnimation->reset();
+    _attackAnimation1->onComplete([this](){
+        _attackAnimation1->reset();
         _state = IDLE;
+        _combo = 2;
+        _comboTimer = 0;
+        });
+    _attackAnimation2->onComplete([this]() {
+        _attackAnimation2->reset();
+        _state = IDLE;
+        _combo = 3;
+        _comboTimer = 0;
+        });
+    _attackAnimation3->onComplete([this]() {
+        _attackAnimation3->reset();
+        _state = IDLE;
+        _combo = 1;
+        _comboTimer = 0;
         });
     _parryStartAnimation->onComplete([this]() {
         _parryStartAnimation->reset();
@@ -286,7 +304,10 @@ void Player::animateDefault() {
 void Player::animateAttack() {
     _state = ATTACK;
     _prevAnimation = _currAnimation;
-    setAnimation(_attackAnimation);
+    if (_combo==1) setAnimation(_attackAnimation1);
+    else if (_combo == 2) setAnimation(_attackAnimation2);
+    else if (_combo == 3) setAnimation(_attackAnimation3);
+    else setAnimation(_attackAnimation1); //should never reach this line
 }
 void Player::animateCharge() {
     setAnimation(_chargingAnimation);
@@ -371,9 +392,12 @@ void Player::setFacingDir(cugl::Vec2 dir){
     if (prevDirection != _directionIndex){
         int startIndex = 8 * _directionIndex;
         int startIdx16 = 16 * _directionIndex;
+        int startIdx24 = 24 * _directionIndex;
         int endIndex = startIndex + 8 - 1;
         _idleAnimation->setFrameRange(startIndex, endIndex);
-        _attackAnimation->setFrameRange(startIndex, endIndex);
+        _attackAnimation1->setFrameRange(startIdx24, startIdx24+7);
+        _attackAnimation2->setFrameRange(startIdx24+8, startIdx24+13);
+        _attackAnimation3->setFrameRange(startIdx24+14, startIdx24+23);
         _runAnimation->setFrameRange(startIdx16, startIdx16 + 15);
         _parryStartAnimation->setFrameRange(startIdx16, startIdx16 + 1);
         _parryStanceAnimation->setFrameRange(startIdx16 + 2, startIdx16 + 9);
@@ -387,13 +411,13 @@ void Player::setFacingDir(cugl::Vec2 dir){
     }
 }
 
-void Player::hit(Vec2 atkDir, int damage) {
+void Player::hit(Vec2 atkDir, int damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _state != DODGE) {
         _hitCounter.reset();
         _hp = std::fmax(0, (_hp - damage));
         _tint = Color4::RED;
-        _collider->setLinearVelocity(atkDir * GameConstants::KNOCKBACK);
+        _collider->setLinearVelocity(atkDir * knockback_scl);
         _state = IDLE; //TODO: hit state ???
     }
 }
@@ -401,6 +425,8 @@ void Player::hit(Vec2 atkDir, int damage) {
 void Player::update(float dt) {
     updateCounters();
     updateAnimation(dt);
+    _comboTimer += dt;
+    if (_comboTimer > GameConstants::COMBO_TIME) _combo = 1; //reset combo if too much time has passed
     switch (_state) {
     case CHARGED:
         _chargedEffect->update(dt);

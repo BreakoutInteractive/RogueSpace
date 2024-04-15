@@ -7,7 +7,7 @@
             "file":     "textures/player_idle.png"
         },
         "player-attack": {
-            "file":     "textures/player_slash.png"
+            "file":     "textures/player_sword_attack.png"
         },
         "player-parry": {
             "file":     "textures/player_parry.png"

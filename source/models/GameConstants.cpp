@@ -71,6 +71,10 @@ float GameConstants::PROJ_TIME_P = 1.0f;
 
 float GameConstants::CHARGE_TIME = 0.5f;
 
+float GameConstants::COMBO_TIME = 1.0f;
+
 float GameConstants::KNOCKBACK = 10.0f;
+
+float GameConstants::KNOCKBACK_PWR_ATK = 20.0f;
 
 float GameConstants::PROJ_SHADOW_SCALE = 0.25f;

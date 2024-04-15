@@ -222,13 +222,13 @@ void Enemy::setStunned() {
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir, float damage) {
+void Enemy::hit(cugl::Vec2 atkDir, int damage, float knockback_scl) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
         setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();
-        _collider->setLinearVelocity(atkDir*GameConstants::KNOCKBACK);
+        _collider->setLinearVelocity(atkDir * knockback_scl);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
             _facingDirection = -atkDir;
