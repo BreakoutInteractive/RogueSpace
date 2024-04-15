@@ -42,38 +42,39 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto projectileTexture = assets->get<Texture>("lizard-projectile");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 20);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 5);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 19);
+    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 19);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _chargingAnimation = Animation::alloc(projectileSheet, 0.28125f, false, 0, 4);
     
     _currAnimation = _idleAnimation; // set runnning
     
     // add callbacks
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
-        _hitboxAnimation->reset();
+        //_hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
         _attack->setEnabled(false);
     });
     
-    _attackAnimation->addCallback(0.5f, [this](){
-        if (isEnabled()) {
-            _attack->setEnabled(true);
-            _hitboxAnimation->start();
-            _attack->setAwake(true);
-            _attack->setAngle(getFacingDir().getAngle());
-            // TODO: clean this code
-            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
-        }
+    _attackAnimation->addCallback(0.45f, [this](){
+        _chargingAnimation->start();
+    });
+    
+    _chargingAnimation->onComplete([this](){
+        _chargingAnimation->reset();
+        setCharged(true);
     });
     
     setAnimation(_idleAnimation);
@@ -81,6 +82,72 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _hitEffect->onComplete([this]() {
         _hitEffect->reset();
     });
+}
+
+void RangedLizard::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+    // TODO: render enemy with appropriate scales
+    // batch draw(texture, color, origin, scale, angle, offset)
+    auto spriteSheet = _currAnimation->getSpriteSheet();
+    
+    Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
+    Affine2 transform = Affine2();
+    // transform.scale(0.5);
+    transform.translate(getPosition() * _drawScale);
+    
+    spriteSheet->draw(batch, _tint, origin, transform);
+
+    if (_hitEffect->isActive()) {
+        auto effSheet = _hitEffect->getSpriteSheet();
+        Affine2 effTrans = Affine2();
+        effTrans.scale(2);
+        effTrans.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        Vec2 effOrigin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, effOrigin, effTrans);
+    }
+    std::shared_ptr<SpriteSheet>sheet = _chargingAnimation->getSpriteSheet();
+    Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
+    Vec2 dir = getFacingDir();
+    float ang = acos(dir.dot(Vec2::UNIT_X));
+    if (dir.y < 0) {
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(dir.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    Affine2 t = Affine2::createRotation(ang);
+    t.scale(_drawScale/32);
+    t.translate(_position.add(0, 64 / getDrawScale().y) * _drawScale);
+    if (_chargingAnimation->isActive()) sheet->draw(batch, o, t);
+}
+
+void RangedLizard::updateAnimation(float dt){
+    GameObject::updateAnimation(dt);
+    // attack animation must play to completion, as long as enemy is alive.
+    if (!_attackAnimation->isActive()) {
+        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
+            setIdling();
+        }
+        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
+            setMoving();
+        }
+    }
+    _hitEffect->update(dt);
+    if (_hitEffect->isActive()){
+        _tint = Color4::RED;
+    }
+    else if (getState() == EnemyState::STUNNED && _stunCD.isZero()) {
+        _tint = Color4::WHITE;
+        setIdling();
+    }
+    else if (getState() == EnemyState::STUNNED){
+        // TODO: could possibly use stunned animation and remove this state altogether
+        _tint = Color4::YELLOW;
+    }
+    else {
+        _tint = Color4::WHITE;
+    }
+    
+    _hitboxAnimation->update(dt);
+    
+    _chargingAnimation->update(dt);
 }
 
 void RangedLizard::setFacingDir(cugl::Vec2 dir) {

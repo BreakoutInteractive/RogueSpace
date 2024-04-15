@@ -194,7 +194,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
-        _enemies[ii]->setHitboxAnimation(Animation::alloc(s2, 0.25f, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
+        _enemies[ii]->setHitboxAnimation(Animation::alloc(s2, 0.375f, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
     }
 }
 
