@@ -22,6 +22,7 @@ class RangedEnemy;
 class RangedLizard;
 class MageAlien;
 class LevelModel;
+class LevelGrid;
 
 class AIController {
 private:
@@ -35,6 +36,9 @@ private:
     
     /** the player */
     std::shared_ptr<Player> _player;
+    
+    /** the level grid */
+    std::shared_ptr<LevelGrid> _grid;
 
 public:
 #pragma mark -
@@ -65,6 +69,11 @@ public:
      *
      */
     cugl::Vec2 lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p);
+    
+    /**
+     * Returns the first node along the path toward the goal
+     */
+    cugl::Vec2 moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal);
     
     /**
      * TODO: document this function

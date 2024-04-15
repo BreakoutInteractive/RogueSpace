@@ -23,6 +23,9 @@ private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(RangedLizard);
     
+    /** The animation to use while charging attack */
+    std::shared_ptr<Animation> _chargingAnimation;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -77,6 +80,11 @@ public:
         auto result = std::make_shared<RangedLizard>();
         return (result->init(data) ? result : nullptr);
     }
+
+#pragma mark -
+#pragma mark Accessors
+    
+    std::string getType() override { return "ranged lizard"; }
     
 #pragma mark -
 #pragma mark Animation and State
@@ -85,6 +93,10 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    
+    void updateAnimation(float dt) override;
     
     /**
      * Sets the direction that the enemy is currently facing
