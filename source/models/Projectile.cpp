@@ -110,7 +110,7 @@ bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_p
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
 	setAngle(ang);
-	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_E, 0).rotate(ang));
 	return true;
 }
 
@@ -159,7 +159,7 @@ bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr
 	_explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 0.000001f, false); //make time really small because there is no explosion effect
 	setFlying();
 	setAngle(ang);
-	setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
+	setVelocity(Vec2(GameConstants::PROJ_SPEED_E, 0).rotate(ang));
 	return true;
 }
 
