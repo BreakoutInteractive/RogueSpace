@@ -180,7 +180,10 @@ public:
      *
      * @param value whether the level is completed.
      */
-    void setComplete(bool value) { _complete = value; _winNode->setVisible(value); }
+    void setComplete(bool value) {
+        _complete = value;
+        //_winNode->setVisible(value);
+    }
 
     /**
      * Sets whether the player was defeated

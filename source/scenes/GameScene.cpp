@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/Wall.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -131,6 +132,7 @@ void GameScene::dispose() {
 }
 
 void GameScene::restart(){
+    _winNode->setVisible(false);
     setLevel(_levelNumber); // reload the current level
 }
 
@@ -197,7 +199,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
-    if (!_winNode->isVisible() && !_loseNode->isVisible()){
+    if (!isComplete() && !isDefeat()){
         // game not won, check if any enemies active
         int activeCount = 0;
         auto enemies = _level->getEnemies();
@@ -208,13 +210,28 @@ void GameScene::preUpdate(float dt) {
         }
         if (activeCount == 0){
             setComplete(true);
+            auto energyWalls = _level->getEnergyWalls();
+            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
+                (*it)->deactivate();
+            }
         }
 
         if (_level->getPlayer()->_hp==0) setDefeat(true);
     }
+    
+    int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
+    if (_level->isCompleted()){
+        if (_levelNumber < MAX_LEVEL){
+            setLevel(_levelNumber + 1);
+            return;
+        }
+        else {
+            _winNode->setVisible(true); // for now
+        }
+    }
 
 #pragma mark - handle player input
-    // Apply the force to the player
+
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
         

@@ -25,7 +25,8 @@ using namespace cugl;
 */
 LevelModel::LevelModel(void):
 _world(nullptr),
-_debugNode(nullptr)
+_debugNode(nullptr),
+_exiting(false)
 {
 	_bounds.size.set(1.0f, 1.0f);
 }
@@ -158,7 +159,7 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
-        _walls[ii]->getCollider()->setDebugScene(_debugNode);
+        _walls[ii]->setDebugNode(_debugNode);
         _walls[ii]->getCollider()->setDebugColor(Color4::WHITE);
     }
     
@@ -322,7 +323,6 @@ void LevelModel::unload() {
         for(auto it = _enemies.begin(); it != _enemies.end(); ++it) {
             (*it)->removeObstaclesFromWorld(_world);
         }
-        
         for(auto it = _walls.begin(); it != _walls.end(); ++it) {
             (*it)->removeObstaclesFromWorld(_world);
         }
@@ -332,6 +332,7 @@ void LevelModel::unload() {
     }
 	_enemies.clear();
 	_walls.clear();
+    _energyWalls.clear();
     
     _player->removeObstaclesFromWorld(_world);
     _player = nullptr;
@@ -477,9 +478,17 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	
 	// Get the object, which is automatically retained
     if (success){
-        std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
-        _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
-        _walls.push_back(wallobj);
+        if (json->getString("type") == "Energy"){
+            std::shared_ptr<EnergyWall> wallobj = std::make_shared<EnergyWall>(json, polygon, obstaclePosition);
+            _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
+            _energyWalls.push_back(wallobj);
+            _walls.push_back(wallobj);
+        }
+        else {
+            std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
+            _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
+            _walls.push_back(wallobj);
+        }
     }
 	return success;
 }

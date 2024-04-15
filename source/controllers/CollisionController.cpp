@@ -134,9 +134,20 @@ void CollisionController::beginContact(b2Contact* contact){
                 (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == keyptr)) {
                 //destroy projectile when hitting a wall
                 //might need to do some stuff with shadows b/c it's kinda weird as-is
-                std::shared_ptr<cugl::physics2::Obstacle> obs = w->getCollider();
-                Vec2 v = _level->getGrid()->worldToTile(w->getPosition());
-                if (_level->getGrid()->getNode(v.x, v.y)==0) p->setExploding(); 
+                if (!w->getCollider()->isSensor()) p->setExploding();
+            }
+        }
+    }
+    
+    // player and end-of-level energy sensor collision
+    for (std::shared_ptr<EnergyWall> ewall : _level->getEnergyWalls()) {
+        intptr_t wallptr = reinterpret_cast<intptr_t>(ewall.get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == wallptr) ||
+            (body1->GetUserData().pointer == wallptr && body2->GetUserData().pointer == pptr)) {
+            // make sure it is a sensor that the player walks into
+            if (ewall->getCollider()->isSensor()){
+                // set the level to be cleared
+                _level->setCompleted(true);
             }
         }
     }
@@ -193,8 +204,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             if ((body1->GetUserData().pointer == keyptr && body2->GetUserData().pointer == wptr) ||
                 (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == keyptr)) {
                 //projectiles phase through passable walls
-                Vec2 v = _level->getGrid()->worldToTile(w->getPosition());
-                if (_level->getGrid()->getNode(v.x, v.y)) contact->SetEnabled(false);
+                if (w->getCollider()->isSensor()) contact->SetEnabled(false);
             }
         }
     }

@@ -600,92 +600,104 @@
                 {
                  "gid":20,
                  "height":128,
-                 "id":791,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":320,
-                 "y":320
-                }, 
-                {
-                 "gid":20,
-                 "height":128,
-                 "id":792,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":384,
-                 "y":224
-                },
-            
-                {
-                 "gid":20,
-                 "height":128,
-                 "id":793,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":192,
-                 "y":256
-                }, 
-                {
-                 "gid":21,
-                 "height":128,
-                 "id":794,
+                 "id":806,
                  "name":"",
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":256,
-                 "y":288
+                 "y":736
                 }, 
                 {
                  "gid":21,
                  "height":128,
-                 "id":795,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":384,
-                 "y":288
-                }, 
-                {
-                 "gid":6,
-                 "height":128,
-                 "id":796,
+                 "id":809,
                  "name":"",
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":320,
-                 "y":256
+                 "y":704
+                },
+            
+                {
+                 "gid":6,
+                 "height":128,
+                 "id":811,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Wall",
+                 "visible":true,
+                 "width":128,
+                 "x":256,
+                 "y":672
                 }, 
                 {
-                 "gid":20,
-                 "height":128,
-                 "id":800,
+                 "gid":243,
+                 "height":256,
+                 "id":826,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Wall",
+                 "visible":true,
+                 "width":128,
+                 "x":1152,
+                 "y":288
+                }, 
+                {
+                 "gid":235,
+                 "height":256,
+                 "id":827,
                  "name":"",
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
                  "width":128,
                  "x":1280,
-                 "y":224
+                 "y":352
                 }, 
                 {
-                 "gid":21,
-                 "height":128,
-                 "id":801,
+                 "gid":230,
+                 "height":256,
+                 "id":828,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Wall",
+                 "visible":true,
+                 "width":128,
+                 "x":1088,
+                 "y":256
+                }, 
+                {
+                 "gid":228,
+                 "height":256,
+                 "id":829,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Wall",
+                 "visible":true,
+                 "width":128,
+                 "x":1344,
+                 "y":384
+                }, 
+                {
+                 "gid":234,
+                 "height":256,
+                 "id":830,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Wall",
+                 "visible":true,
+                 "width":128,
+                 "x":1408,
+                 "y":352
+                }, 
+                {
+                 "gid":234,
+                 "height":256,
+                 "id":831,
                  "name":"",
                  "rotation":0,
                  "type":"Wall",
@@ -693,42 +705,6 @@
                  "width":128,
                  "x":1152,
                  "y":224
-                }, 
-                {
-                 "gid":6,
-                 "height":128,
-                 "id":802,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1216,
-                 "y":256
-                }, 
-                {
-                 "gid":20,
-                 "height":128,
-                 "id":803,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1280,
-                 "y":672
-                }, 
-                {
-                 "gid":6,
-                 "height":128,
-                 "id":805,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1344,
-                 "y":640
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -793,7 +769,7 @@
                          "name":"enemy_type",
                          "propertytype":"Type",
                          "type":"string",
-                         "value":"MELEE"
+                         "value":"RANGE"
                         }, 
                         {
                          "name":"hp",
@@ -855,7 +831,7 @@
          "y":0
         }],
  "nextlayerid":21,
- "nextobjectid":806,
+ "nextobjectid":832,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",
