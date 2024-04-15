@@ -26,7 +26,9 @@ public:
         /** User wants to restart game */
         RESTART,
         /** User wants to go back to a game */
-        RESUME
+        RESUME,
+        /** User wants to go to settings */
+        SETTINGS
     };
 
 protected:

@@ -456,7 +456,24 @@ void GameScene::fixedUpdate(float step) {
     
 }
 
+void GameScene::applyUpgrade(std::string selectedAttribute){
+    auto player = _level->getPlayer();
+    if (selectedAttribute=="attack"){
+        player->attack->levelUp();
+        CULog("attack lvl: %d", player->attack->getCurrentLevel());
+        CULog("attack percentage: %f", player->attack->getCurrentPercentage());
+        CULog("attack val: %f", player->attack->getCurrentValue());
 
+//        CULog("curr atk level: %d",player->attack.getCurrentLevel());
+    } else{
+        player->defense->levelUp();
+        CULog("defense lvl: %d", player->defense->getCurrentLevel());
+        CULog("defense percentage: %f", player->defense->getCurrentPercentage());
+        CULog("defense val: %f", player->defense->getCurrentValue());
+
+//        CULog("curr atk level: %d",player->defense.getCurrentLevel());
+    }
+}
 void GameScene::postUpdate(float remain) {
     // TODO: possibly apply interpolation.
     // We will need more data structures for this

@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "Upgradeable.hpp"
 #include "GameConstants.hpp"
 
 class Animation;
@@ -27,11 +28,7 @@ protected:
 
     /** The force applied to the player for general movement purposes */
     cugl::Vec2 _force;
-    
-    /** accumulated defense buff*/
-    double _defenseUpgrade;
-    /** accumulated attack buff*/
-    double _atkDamage;
+
     /** accumulated move buff*/
     double _moveScale;
 
@@ -120,6 +117,12 @@ public:
     Counter _dodgeDuration;
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
+    /** defense upgrade*/
+    std::shared_ptr<Upgradeable> defense;
+    /** attack upgrade*/
+    std::shared_ptr<Upgradeable> attack;
+        
+    std::vector<std::shared_ptr<Upgradeable>> attributes;
 
     float _hp;
     
@@ -182,7 +185,7 @@ public:
     * Gets the movement boost accumulated by this player.
     *
     */
-    const int getMoveScale() const {return _moveScale;}
+    int getMoveScale();
     
     /**
      * Returns the force applied to this player.
@@ -204,29 +207,18 @@ public:
      */
     void setForce(const cugl::Vec2 value) { _force.set(value); }
     
-    /**
-     * Increments the movement boost by a fixed amount.
-     *
-     */
-    void upgradeMoveSpeed() {_moveScale+=(float)1/15;}
+    std::vector<std::shared_ptr<Upgradeable>> getPlayerAttributes() {return attributes;}
     
     /**
      * Gets the attack strength accumulated by this player.
-     *
      */
-    const int getAtkDamage() const {return _atkDamage;}
+    const int getAtkDamage() {return attack->getCurrentValue();}
     
     /**
-     * Increments the attack damage  by a fixed amount.
+     * Gets the attack strength accumulated by this player.
      */
-    void upgradeAtkDamage() {_atkDamage+=(float)1/20;}
+    const int getDefense() {return defense->getCurrentValue();}
     
-    /**
-     * Increments the defense boost by a fixed amount.
-     *
-     */
-    void upgradeDefense(){_defenseUpgrade-=(float)1/16;}
-
     /**
      * Returns the x-component of the force applied to this player.
      *
