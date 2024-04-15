@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "GameConstants.hpp"
 
 class Animation;
 
