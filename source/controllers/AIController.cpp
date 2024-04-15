@@ -84,13 +84,12 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
     Vec2 startTile =_grid->worldToTile(e->getPosition());
     frontier.push(startTile);
     if (startTile == goalTile) {
-        return e->getPosition();
+        return (_grid->tileToWorld(startTile));
     }
     std::set<Vec2> visited = std::set<Vec2>();
     std::map<Vec2, Vec2> parents = std::map<Vec2, Vec2>();
     
     // BFS loop
-    int loopCounter = 0;
     while (!frontier.empty()) {
         Vec2 tile = frontier.front();
         frontier.pop();
@@ -106,39 +105,14 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
             }
             return (_grid->tileToWorld(newGoal));
         }
-        Vec2 left = Vec2(tile.x - 1, tile.y);
-        val = visited.find(left);
-        // add left tile to frontier if it is in bounds, walkable, and not yet visited
-        if (_grid->getNode(left) != 0 && val == visited.end()) {
-            frontier.push(left);
-            parents[left] = tile;
-            visited.insert(left);
-        }
-        Vec2 down = Vec2(tile.x, tile.y - 1);
-        val = visited.find(down);
-        // add down tile to frontier if it is in bounds, walkable, and not yet visited
-        if (_grid->getNode(down) != 0 && val == visited.end()) {
-            frontier.push(down);
-            parents[down] = tile;
-            visited.insert(down);
-        }
-        Vec2 right = Vec2(tile.x + 1, tile.y);
-        val = visited.find(right);
-        // add right tile to frontier if it is in bounds, walkable, and not yet visited
-        if (_grid->getNode(right) != 0 && val == visited.end()) {
-            frontier.push(right);
-            parents[right] = tile;
-            visited.insert(right);
-        }
-        Vec2 up = Vec2(tile.x, tile.y + 1);
-        val = visited.find(up);
-        // add up tile to frontier if it is in bounds, walkable, and not yet visited
-        if (_grid->getNode(up) != 0 && val == visited.end()) {
-            frontier.push(up);
-            parents[up] = tile;
-            visited.insert(up);
-        }
         Vec2 bottomLeft = Vec2(tile.x - 1, tile.y - 1);
+        Vec2 bottomRight = Vec2(tile.x + 1, tile.y - 1);
+        Vec2 topRight = Vec2(tile.x + 1, tile.y + 1);
+        Vec2 topLeft = Vec2(tile.x - 1, tile.y + 1);
+        Vec2 left = Vec2(tile.x - 1, tile.y);
+        Vec2 down = Vec2(tile.x, tile.y - 1);
+        Vec2 right = Vec2(tile.x + 1, tile.y);
+        Vec2 up = Vec2(tile.x, tile.y + 1);
         val = visited.find(bottomLeft);
         // add bottom left tile to frontier if it is in bounds, walkable, and not yet visited
         if (_grid->getNode(bottomLeft) != 0 && val == visited.end()) {
@@ -146,7 +120,6 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
             parents[bottomLeft] = tile;
             visited.insert(bottomLeft);
         }
-        Vec2 bottomRight = Vec2(tile.x + 1, tile.y - 1);
         val = visited.find(bottomRight);
         // add bottom right tile to frontier if it is in bounds, walkable, and not yet visited
         if (_grid->getNode(bottomRight) != 0 && val == visited.end()) {
@@ -154,7 +127,6 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
             parents[bottomRight] = tile;
             visited.insert(bottomRight);
         }
-        Vec2 topRight = Vec2(tile.x + 1, tile.y + 1);
         val = visited.find(topRight);
         // add top right tile to frontier if it is in bounds, walkable, and not yet visited
         if (_grid->getNode(topRight) != 0 && val == visited.end()) {
@@ -162,7 +134,6 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
             parents[topRight] = tile;
             visited.insert(topRight);
         }
-        Vec2 topLeft = Vec2(tile.x - 1, tile.y + 1);
         val = visited.find(topLeft);
         // add top left tile to frontier if it is in bounds, walkable, and not yet visited
         if (_grid->getNode(topLeft) != 0 && val == visited.end()) {
@@ -170,10 +141,36 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
             parents[topLeft] = tile;
             visited.insert(topLeft);
         }
-        loopCounter++;
+        val = visited.find(left);
+        // add left tile to frontier if it is in bounds, walkable, and not yet visited
+        if (_grid->getNode(left) != 0 && _grid->getNode(topLeft) != 0 && _grid->getNode(bottomLeft) != 0 && val == visited.end()) {
+            frontier.push(left);
+            parents[left] = tile;
+            visited.insert(left);
+        }
+        val = visited.find(down);
+        // add down tile to frontier if it is in bounds, walkable, and not yet visited
+        if (_grid->getNode(down) != 0 && _grid->getNode(bottomLeft) != 0 && _grid->getNode(bottomRight) != 0 && val == visited.end()) {
+            frontier.push(down);
+            parents[down] = tile;
+            visited.insert(down);
+        }
+        val = visited.find(right);
+        // add right tile to frontier if it is in bounds, walkable, and not yet visited
+        if (_grid->getNode(right) != 0 && _grid->getNode(topRight) != 0 && _grid->getNode(bottomRight) != 0 && val == visited.end()) {
+            frontier.push(right);
+            parents[right] = tile;
+            visited.insert(right);
+        }
+        val = visited.find(up);
+        // add up tile to frontier if it is in bounds, walkable, and not yet visited
+        if (_grid->getNode(up) != 0 && _grid->getNode(topLeft) != 0 && _grid->getNode(topRight) != 0 && val == visited.end()) {
+            frontier.push(up);
+            parents[up] = tile;
+            visited.insert(up);
+        }
     }
-    CULog("%d", loopCounter);
-    return e->getPosition();
+    return (_grid->tileToWorld(startTile));
 }
 
 void AIController::update(float dt) {
@@ -195,19 +192,35 @@ void AIController::update(float dt) {
             if (!intersection.isZero()) {
                 // CULog("Player spotted!");
                 Vec2 goal;
-                if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                if ((*it)->getPosition() == (*it)->getGoal()) {
                     goal = moveToGoal((*it), _player->getPosition());
                     (*it)->setGoal(goal);
+                    Vec2 dir = goal - (*it)->getPosition();
+                    dir.normalize();
+                    (*it)->setFacingDir(dir);
+                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                }
+                if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                    (*it)->getCollider()->setPosition((*it)->getGoal());
+                    (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
                 }
                 else {
-                    goal = (*it)->getGoal();
+                    int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
+                    if (newGoalChance == 1) {
+                        goal = moveToGoal((*it), _player->getPosition());
+                        (*it)->setGoal(goal);
+                    }
+                    else {
+                        goal = (*it)->getGoal();
+                    }
+                    Vec2 dir = goal - (*it)->getPosition();
+                    dir.normalize();
+                    (*it)->setFacingDir(dir);
+                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
                 }
 //                Vec2 goal = moveToGoal((*it), _player->getPosition());
 //                (*it)->setGoal(goal);
-                Vec2 dir = goal - (*it)->getPosition();
-                dir.normalize();
-                (*it)->setFacingDir(dir);
-                (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                
             }
             else {
                 // CULog("Line of sight: %s", lineOfSight((*it), _player).toString().c_str());
@@ -219,18 +232,46 @@ void AIController::update(float dt) {
 //                    (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
 //                    Vec2 goal;
 //                    if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+//                        (*it)->getCollider()->setPosition((*it)->getGoal());
 //                        goal = moveToGoal((*it), _player->getPosition());
 //                        (*it)->setGoal(goal);
 //                    }
 //                    else {
 //                        goal = (*it)->getGoal();
 //                    }
-                    Vec2 goal = moveToGoal((*it), _player->getPosition());
-                    (*it)->setGoal(goal);
-                    Vec2 dir = goal - (*it)->getPosition();
-                    dir.normalize();
-                    (*it)->setFacingDir(dir);
-                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+//                    Vec2 goal = moveToGoal((*it), _player->getPosition());
+//                    (*it)->setGoal(goal);
+//                    Vec2 dir = goal - (*it)->getPosition();
+//                    dir.normalize();
+//                    (*it)->setFacingDir(dir);
+//                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                    Vec2 goal;
+                    if ((*it)->getPosition() == (*it)->getGoal()) {
+                        goal = moveToGoal((*it), _player->getPosition());
+                        (*it)->setGoal(goal);
+                        Vec2 dir = goal - (*it)->getPosition();
+                        dir.normalize();
+                        (*it)->setFacingDir(dir);
+                        (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                    }
+                    if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                        (*it)->getCollider()->setPosition((*it)->getGoal());
+                        (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                    }
+                    else {
+                        int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
+                        if (newGoalChance == 1) {
+                            goal = moveToGoal((*it), _player->getPosition());
+                            (*it)->setGoal(goal);
+                        }
+                        else {
+                            goal = (*it)->getGoal();
+                        }
+                        Vec2 dir = goal - (*it)->getPosition();
+                        dir.normalize();
+                        (*it)->setFacingDir(dir);
+                        (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                    }
                 }
                 else {
                     // enemies without any LOS/proximity should track the player's last known position (if it exists) and go there (unless already there)
@@ -246,12 +287,39 @@ void AIController::update(float dt) {
 //                        else {
 //                            goal = (*it)->getGoal();
 //                        }
-                        Vec2 goal = moveToGoal((*it), (*it)->getPlayerLoc());
-                        (*it)->setGoal(goal);
-                        Vec2 dir = goal - (*it)->getPosition();
-                        dir.normalize();
-                        (*it)->setFacingDir(dir);
-                        (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+//                        Vec2 goal = moveToGoal((*it), (*it)->getPlayerLoc());
+//                        (*it)->setGoal(goal);
+//                        Vec2 dir = goal - (*it)->getPosition();
+//                        dir.normalize();
+//                        (*it)->setFacingDir(dir);
+//                        (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                        Vec2 goal;
+                        if ((*it)->getPosition() == (*it)->getGoal()) {
+                            goal = moveToGoal((*it), (*it)->getPlayerLoc());
+                            (*it)->setGoal(goal);
+                            Vec2 dir = goal - (*it)->getPosition();
+                            dir.normalize();
+                            (*it)->setFacingDir(dir);
+                            (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                        }
+                        if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                            (*it)->getCollider()->setPosition((*it)->getGoal());
+                            (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                        }
+                        else {
+                            int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
+                            if (newGoalChance == 1) {
+                                goal = moveToGoal((*it), (*it)->getPlayerLoc());
+                                (*it)->setGoal(goal);
+                            }
+                            else {
+                                goal = (*it)->getGoal();
+                            }
+                            Vec2 dir = goal - (*it)->getPosition();
+                            dir.normalize();
+                            (*it)->setFacingDir(dir);
+                            (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                        }
                     }
                     // otherwise, enemies resume default behavior
                     else {
@@ -267,27 +335,59 @@ void AIController::update(float dt) {
                         }
                         // make patrolling enemies go to the next location on their patrol route
                         if ((*it)->getDefaultState() == "patrol") {
-                            if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
-                                (*it)->setPathIndex(((*it)->getPathIndex() + 1) % (*it)->getPath().size());
-                                Vec2 goal = moveToGoal((*it), (*it)->getPath()[(*it)->getPathIndex()]);
-                                (*it)->setGoal(goal);
-                                Vec2 dir = (*it)->getGoal() - (*it)->getPosition();
-                                dir.normalize();
-                                (*it)->setFacingDir(dir);
-                                (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                            if ((*it)->getAligned()) {
+                                if ((*it)->getPosition() == (*it)->getGoal()) {
+                                    (*it)->setPathIndex(((*it)->getPathIndex() + 1) % (*it)->getPath().size());
+                                    Vec2 goal = moveToGoal((*it), (*it)->getPath()[(*it)->getPathIndex()]);
+                                    (*it)->setGoal(goal);
+                                    Vec2 dir = (*it)->getGoal() - (*it)->getPosition();
+                                    dir.normalize();
+                                    (*it)->setFacingDir(dir);
+                                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                                }
+                                else if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
+                                    (*it)->getCollider()->setPosition((*it)->getGoal());
+                                    (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                                }
+                                // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
+                                else if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) {
+                                    // int prevIdx = (*it)->getPathIndex() - 1;
+                                    // if (prevIdx < 0) prevIdx = (*it)->getPath().size() - 1;
+                                    // Vec2 prev = (*it)->getPath().at(prevIdx);
+                                    // Vec2 dest = (*it)->getGoal();
+                                    // float scl = prev.distance(dest);
+                                    Vec2 goal;
+                                    int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
+                                    if (newGoalChance == 1) {
+                                        goal = moveToGoal((*it), (*it)->getPath()[(*it)->getPathIndex()]);
+                                        (*it)->setGoal(goal);
+                                    }
+                                    else {
+                                        goal = (*it)->getGoal();
+                                    }
+                                    Vec2 dir = goal - (*it)->getPosition();
+                                    dir.normalize();
+                                    (*it)->setFacingDir(dir);
+                                    // dir *= scl;
+                                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                                }
                             }
-                            // CULog("Patrol position: %f, %f", (*it)->getPosition().x, (*it)->getPosition().y);
-                            else if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) {
-                                int prevIdx = (*it)->getPathIndex() - 1;
-                                if (prevIdx < 0) prevIdx = (*it)->getPath().size() - 1;
-                                // Vec2 prev = (*it)->getPath().at(prevIdx);
-                                // Vec2 dest = (*it)->getGoal();
-                                // float scl = prev.distance(dest);
-                                Vec2 dir = (*it)->getGoal() - (*it)->getPosition();
-                                dir.normalize();
-                                (*it)->setFacingDir(dir);
-                                // dir *= scl;
-                                (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                            else {
+                                Vec2 goal = moveToGoal((*it), (*it)->getPosition());
+                                (*it)->setGoal(goal);
+                                if ((*it)->getPosition().distance(goal) <= 0.1) {
+                                    (*it)->setAligned(true);
+                                    // CULog("Now aligned!");
+                                    (*it)->getCollider()->setPosition(goal);
+                                    (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                                    (*it)->setGoal((*it)->getPath()[0]);
+                                }
+                                else {
+                                    Vec2 dir = goal - (*it)->getPosition();
+                                    dir.normalize();
+                                    (*it)->setFacingDir(dir);
+                                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                                }
                             }
                         }
                     }

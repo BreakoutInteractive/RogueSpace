@@ -66,6 +66,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _isDefault = true;
     _isCharged = false; // will always be false for melee enemies
     _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
+    _isAligned = false;
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
     _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;

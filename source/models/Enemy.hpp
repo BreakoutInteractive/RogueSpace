@@ -101,6 +101,9 @@ protected:
     /** The enemy's goal position */
     cugl::Vec2 _goal;
     
+    /** Whether the enemy is aligned with the level grid */
+    bool _isAligned;
+    
     /** The enemy's goal path index */
     int _pathIndex;
     
@@ -346,6 +349,16 @@ public:
      * Sets this enemy's goal position.
      */
     void setGoal(cugl::Vec2 value) { _goal = value; }
+    
+    /**
+     * Returns whether this enemy is aligned with the level grid
+     */
+    bool getAligned() const { return _isAligned; }
+    
+    /**
+     * Sets whether this enemy is aligned with the level grid
+     */
+    void setAligned(bool value) { _isAligned = value; }
     
     /**
      * Gets this enemy's goal path index.
