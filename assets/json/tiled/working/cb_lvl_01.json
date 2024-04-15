@@ -192,6 +192,7 @@
         {
          "draworder":"topdown",
          "id":6,
+         "locked":true,
          "name":"walls",
          "objects":[
                 {
@@ -746,6 +747,7 @@
         {
          "draworder":"topdown",
          "id":9,
+         "locked":true,
          "name":"entities",
          "objects":[
                 {

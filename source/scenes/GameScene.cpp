@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/Wall.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -67,44 +68,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
-    _parser.loadTilesets(assets);
-    
-    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-    
-    auto parsed = _parser.parseTiled(assets->get<JsonValue>("example"));
-    _level = LevelModel::alloc(assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
-    if (_level == nullptr) {
-        CULog("Fail!");
-        return false;
-    }
-
+    // initalize controllers with the assets
     _assets = assets;
-    
+    _parser.loadTilesets(assets);
+    _levelNumber = 1;
     _gameRenderer.init(_assets);
-    _gameRenderer.setGameElements(getCamera(), _level);
-    
     _input.init();
-    _level->setAssets(_assets);
-    
-    // Create the world and attach the listeners.
-    std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
-    
-    // IMPORTANT: SCALING MUST BE UNIFORM
-    // This means that we cannot change the aspect ratio of the physics world
-    // Shift to center if a bad fit
-    _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
-                                          dimen.height/_level->getViewBounds().height;
-    Vec2 drawScale(_scale, _scale);
-    _level->setDrawScale(drawScale);
-    
     _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
-    auto p = _level->getPlayer();
-    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
-    
-    _AIController.init(_level);
-    
-    _collisionController.setLevel(_level);
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
     
@@ -130,27 +101,18 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _loseNode->setPosition(dimen / 2.0f);
     _loseNode->setForeground(Color4::RED);
     _loseNode->setVisible(false);
-
-    _resetNode = scene2::Label::allocWithText(RESET_MESSAGE,_assets->get<Font>(PRIMARY_FONT));
-    _resetNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _resetNode->setPosition(dimen/2.0f);
-    _resetNode->setForeground(STATIC_COLOR);
-    _resetNode->setVisible(false);
       
     addChild(_debugNode); //this we keep
     addChild(_winNode); //TODO: remove
     addChild(_loseNode); //TODO: remove
-    addChild(_resetNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
-    _level->setDebugNode(_debugNode); // Obtains ownership of root.
   
 #pragma mark - Game State Initialization
     _active = true;
     _complete = false;
     _defeat = false;
-    setDebug(false);
-    
+    setLevel(_levelNumber);         // load initial level/hub
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
 }
@@ -161,7 +123,6 @@ void GameScene::dispose() {
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
         _loseNode = nullptr; //TODO: remove
-        _resetNode = nullptr; // TODO: remove
         _level = nullptr;
         _complete = false;
         _defeat = false;
@@ -171,11 +132,26 @@ void GameScene::dispose() {
 }
 
 void GameScene::restart(){
-    // reload the current level
+    _winNode->setVisible(false);
+    setLevel(_levelNumber); // reload the current level
+}
+
+void GameScene::setLevel(int level){
     _debugNode->removeAllChildren();
-    auto parsed = _parser.parseTiled(_assets->get<JsonValue>("example"));
-    _level = LevelModel::alloc(_assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
+    
+    _levelNumber = level;
+    Size dimen = computeActiveSize();
+    
+    auto parsed = _parser.parseTiled(_assets->get<JsonValue>(getLevelKey(_levelNumber)));
+    _level = LevelModel::alloc(_assets->get<JsonValue>("constants"), parsed);
     _level->setAssets(_assets);
+    
+    
+    // IMPORTANT: SCALING MUST BE UNIFORM
+    // This means that we cannot change the aspect ratio of the physics world
+    // Shift to center if a bad fit
+    _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
+                                          dimen.height/_level->getViewBounds().height;
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
     setDebug(isDebug());
@@ -186,6 +162,13 @@ void GameScene::restart(){
     setDefeat(false);
     _input.activateMeleeControls();
     _input.setActive(true);
+    
+    auto p = _level->getPlayer();
+    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
+}
+
+std::string GameScene::getLevelKey(int level){
+    return LEVEL_KEY+std::to_string(level);
 }
 
 
@@ -216,7 +199,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
-    if (!_winNode->isVisible() && !_loseNode->isVisible()){
+    if (!isComplete() && !isDefeat()){
         // game not won, check if any enemies active
         int activeCount = 0;
         auto enemies = _level->getEnemies();
@@ -227,13 +210,28 @@ void GameScene::preUpdate(float dt) {
         }
         if (activeCount == 0){
             setComplete(true);
+            auto energyWalls = _level->getEnergyWalls();
+            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
+                (*it)->deactivate();
+            }
         }
 
         if (_level->getPlayer()->_hp==0) setDefeat(true);
     }
+    
+    int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
+    if (_level->isCompleted()){
+        if (_levelNumber < MAX_LEVEL){
+            setLevel(_levelNumber + 1);
+            return;
+        }
+        else {
+            _winNode->setVisible(true); // for now
+        }
+    }
 
 #pragma mark - handle player input
-    // Apply the force to the player
+
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
         

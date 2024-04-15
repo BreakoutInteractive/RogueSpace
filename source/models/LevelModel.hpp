@@ -22,11 +22,11 @@
 #include "../components/Animation.hpp"
 #include "Projectile.hpp"
 #include "LevelGrid.hpp"
+#include "Wall.hpp"
 
 using namespace cugl;
 
 /** Forward references to the various classes used by this level */
-class Wall;
 class TileLayer;
 class Player;
 class Enemy;
@@ -80,6 +80,9 @@ protected:
     
     /** Reference to all the walls */
     std::vector<std::shared_ptr<Wall>> _walls;
+    
+    /** Reference to all energy walls*/
+    std::vector<std::shared_ptr<EnergyWall>> _energyWalls;
 
     /** Reference to all custom boundaries (box2d obstacles) */
     std::vector<std::shared_ptr<physics2::Obstacle>> _boundaries;
@@ -94,6 +97,9 @@ protected:
     std::shared_ptr<Animation> _playerAttack;
     
     std::shared_ptr<LevelGrid> _grid;
+    
+    /** whether the player is exiting the level*/
+    bool _exiting;
 
 #pragma mark Internal Helper Methods
     
@@ -174,6 +180,16 @@ public:
 #pragma mark Model Access
     
     /**
+     * @return whether player has completed the level and is exiting the barriers
+     */
+    const bool isCompleted(){ return _exiting; }
+    
+    /**
+     * set whether the level has been completed by the player.
+     */
+    const void setCompleted(bool value){ _exiting = value; }
+    
+    /**
      * @return the static obstacle grid for this level
      */
     const std::shared_ptr<LevelGrid> getGrid() { return _grid; }
@@ -204,6 +220,11 @@ public:
      * @return the walls in this game level
      */
     const std::vector<std::shared_ptr<Wall>> getWalls() { return _walls; }
+    
+    /**
+     * @return the energy walls in this game level
+     */
+    const std::vector<std::shared_ptr<EnergyWall>> getEnergyWalls() { return _energyWalls; }
 
     const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 

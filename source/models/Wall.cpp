@@ -50,3 +50,15 @@ void Wall::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
         batch->draw(_texture, origin, _size * _drawScale / _texture->getSize(), 0, _position * _drawScale);
     }
 }
+
+#pragma mark -
+
+EnergyWall::EnergyWall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin) : Wall(data, poly, origin){
+}
+
+void EnergyWall::deactivate(){
+    if (_enabled){
+        _enabled = false;
+        getCollider()->setSensor(true);
+    }
+}

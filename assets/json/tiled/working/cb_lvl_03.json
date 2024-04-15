@@ -37,6 +37,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":24,
          "id":1,
+         "locked":true,
          "name":"ground",
          "opacity":1,
          "type":"tilelayer",
@@ -192,6 +193,7 @@
         {
          "draworder":"topdown",
          "id":6,
+         "locked":true,
          "name":"walls",
          "objects":[
                 {
@@ -819,6 +821,7 @@
         {
          "draworder":"topdown",
          "id":9,
+         "locked":true,
          "name":"entities",
          "objects":[
                 {
