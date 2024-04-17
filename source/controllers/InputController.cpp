@@ -397,7 +397,6 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
                 // CULog("DTAP data: %llu, %f", timeDiff, posDiff);
                 if (timeDiff <= DOUBLE_TAP_TIME_GAP && posDiff <= HOLD_POS_DELTA){
                     _keySwap = true;
-                    rangedMode = !rangedMode; // swap
                 }
                 tap.count = 0; // clear the tap data (it is now processed)
             }

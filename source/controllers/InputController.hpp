@@ -262,6 +262,10 @@ public:
     
     void activateRangeControls(){ rangedMode = true; }
     void activateMeleeControls(){ rangedMode = false; }
+    /**
+     * swaps the active control mode
+     */
+    void swapControlMode() { rangedMode = !rangedMode;}
     
 #pragma mark -
 #pragma mark Input Results

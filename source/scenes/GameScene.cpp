@@ -378,9 +378,13 @@ void GameScene::preUpdate(float dt) {
         atk->setEnabled(false);
     }
 
-    if (_input.didSwap() && (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE)) 
-        //other states are weapon-dependent, so don't allow swapping while in them
-        player->swapWeapon();
+    if (_input.didSwap()){
+        if (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE){
+            //other states are weapon-dependent, so don't allow swapping while in them
+            player->swapWeapon();
+            _input.swapControlMode(); // must do for mobile controls
+        }
+    }
 
 #pragma mark - Enemy movement
     _AIController.update(dt);
