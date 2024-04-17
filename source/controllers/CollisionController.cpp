@@ -121,7 +121,7 @@ void CollisionController::beginContact(b2Contact* contact){
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
-            if (!p->isExploding()) {
+            if (!p->isExploding() && player->_state != Player::state::DODGE) {
                 player->hit(dir, p->getDamage());
                 p->setExploding();
                 //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
@@ -198,7 +198,14 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             if (!(*it)->isEnabled()) contact->SetEnabled(false);
     }
     for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+        intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
         intptr_t keyptr = reinterpret_cast<intptr_t>(p->collisionString);
+        if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
+            (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
+            if (_level->getPlayer()->_state == Player::state::DODGE) {
+                contact->SetEnabled(false);
+            }
+        }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
             intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
             if ((body1->GetUserData().pointer == keyptr && body2->GetUserData().pointer == wptr) ||
