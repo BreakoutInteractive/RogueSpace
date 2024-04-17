@@ -306,6 +306,9 @@ void Player::animateDefault() {
         setAnimation(_bowIdleAnimation);
         break;
     }
+    _chargingEffect->reset();
+    _chargedEffect->reset();
+    _shotEffect->reset();
 }
 void Player::animateAttack() {
     _state = ATTACK;

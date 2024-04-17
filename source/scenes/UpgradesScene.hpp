@@ -11,7 +11,7 @@
 #include <cugl/cugl.h>
 #include <iostream>
 #include <sstream>
-#include "Upgradeable.hpp"
+#include "../models/Upgradeable.hpp"
 
 
 using namespace cugl;
