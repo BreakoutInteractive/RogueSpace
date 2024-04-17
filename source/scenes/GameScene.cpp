@@ -133,7 +133,7 @@ void GameScene::dispose() {
 
 void GameScene::restart(){
     _winNode->setVisible(false);
-    setLevel(_levelNumber); // reload the current level
+    setLevel(1); // reload the first level
 }
 
 void GameScene::setLevel(int level){
