@@ -39,6 +39,8 @@ protected:
     /** tiled parser */
     LevelParser _parser;
     
+    int _levelNumber;
+    
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
@@ -58,11 +60,9 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _winNode;
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _loseNode;
-    /** Reference to the reset message label */
-    std::shared_ptr<cugl::scene2::Label> _resetNode;
 
     /** content offset to prevent displays on notch/adjusting aspect ratios*/
-    cugl::Vec2 _offset;
+    //cugl::Vec2 _offset;
     /** custom renderer for this scene */
     GameRenderer _gameRenderer;
 
@@ -73,10 +73,12 @@ protected:
 
     /** The level model */
     std::shared_ptr<LevelModel> _level;
+    
+    std::vector<std::shared_ptr<Upgradeable>> playerAttributes;
 
     /** Whether we have completed this "game" */
     bool _complete;
-    /** Whetehr we got defeated */
+    /** Whether we got defeated */
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
@@ -146,10 +148,12 @@ public:
      */
     GameRenderer& getRenderer(){return _gameRenderer;}
     
+    std::vector<std::shared_ptr<Upgradeable>> getAttributes() {return _level->getPlayer()->getPlayerAttributes();}
+    
     /**
-     * Clears all previous inputs.
+     * toggle input devices
      */
-    void clearInputs(){ _input.clear();}
+    void activateInputs(bool value){ _input.setActive(value); }
     
     /**
      * Returns true if the level is completed.
@@ -176,7 +180,10 @@ public:
      *
      * @param value whether the level is completed.
      */
-    void setComplete(bool value) { _complete = value; _winNode->setVisible(value); }
+    void setComplete(bool value) {
+        _complete = value;
+        //_winNode->setVisible(value);
+    }
 
     /**
      * Sets whether the player was defeated
@@ -268,6 +275,18 @@ public:
      * Restarts game scene to initial state.
      */
     void restart();
+    
+    /**
+     * sets the active level to load
+     */
+    void setLevel(int level);
+    
+    /**
+     * returns the asset key for the given level
+     */
+    std::string getLevelKey(int level);
+    
+    void applyUpgrade(std::string selectedAttribute);
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

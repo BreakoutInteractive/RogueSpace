@@ -30,10 +30,6 @@ void CollisionController::setLevel(std::shared_ptr<LevelModel> level){
 void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets, const std::shared_ptr<AudioController>& audio) {
     _assets = assets;
     _audioController = audio;
-    
-    // Create the world and attach the listeners.
-    std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
-
 }
 
 
@@ -57,7 +53,7 @@ void CollisionController::beginContact(b2Contact* contact){
             float ang = acos(dir.dot(Vec2::UNIT_X));
             if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                (*it)->hit(dir, _level->getPlayer()->getAtkDamage());
+                (*it)->hit(dir, _level->getPlayer()->getAtkDamage(), player->getCombo() != 3 ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
                 _audioController->playPlayerFX("attackHit");
                 CULog("Hit an enemy!");
             }
@@ -98,7 +94,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                if (player->_parryCD.isZero()) {
+                if (player->_state != Player::state::PARRY) {
                     if (body1->GetUserData().pointer == aptr) {
                         physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
                         _audioController->playEnemyFX("attackHit", data1->getName());
@@ -120,11 +116,12 @@ void CollisionController::beginContact(b2Contact* contact){
     // enemy ranged attack and projectile-wall collisions
     for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
         intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+        intptr_t keyptr = reinterpret_cast<intptr_t>(p->collisionString);
         if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
-            if (!p->isExploding()) {
+            if (!p->isExploding() && player->_state != Player::state::DODGE) {
                 player->hit(dir, p->getDamage());
                 p->setExploding();
                 //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
@@ -133,12 +130,24 @@ void CollisionController::beginContact(b2Contact* contact){
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
             intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
-            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
-                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
+            if ((body1->GetUserData().pointer == keyptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == keyptr)) {
                 //destroy projectile when hitting a wall
                 //might need to do some stuff with shadows b/c it's kinda weird as-is
-                std::shared_ptr<cugl::physics2::Obstacle> obs = w->getCollider();
-                if (!(w->getCollider()->isSensor())) p->setExploding();                
+                if (!w->getCollider()->isSensor()) p->setExploding();
+            }
+        }
+    }
+    
+    // player and end-of-level energy sensor collision
+    for (std::shared_ptr<EnergyWall> ewall : _level->getEnergyWalls()) {
+        intptr_t wallptr = reinterpret_cast<intptr_t>(ewall.get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == wallptr) ||
+            (body1->GetUserData().pointer == wallptr && body2->GetUserData().pointer == pptr)) {
+            // make sure it is a sensor that the player walks into
+            if (ewall->getCollider()->isSensor()){
+                // set the level to be cleared
+                _level->setCompleted(true);
             }
         }
     }
@@ -185,18 +194,22 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
                     || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
             }
         }
-        for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
-            intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
-            //need this check because projectiles hit corpses for some reason
-            if(!(*it)->isEnabled()) contact->SetEnabled(false);
-        }
+        if (body1->GetUserData().pointer == eptr ||body2->GetUserData().pointer == eptr)
+            if (!(*it)->isEnabled()) contact->SetEnabled(false);
     }
     for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
         intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+        intptr_t keyptr = reinterpret_cast<intptr_t>(p->collisionString);
+        if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
+            (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
+            if (_level->getPlayer()->_state == Player::state::DODGE) {
+                contact->SetEnabled(false);
+            }
+        }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
             intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
-            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
-                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
+            if ((body1->GetUserData().pointer == keyptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == keyptr)) {
                 //projectiles phase through passable walls
                 if (w->getCollider()->isSensor()) contact->SetEnabled(false);
             }

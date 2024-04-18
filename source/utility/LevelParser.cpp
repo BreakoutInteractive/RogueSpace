@@ -219,8 +219,9 @@ void LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
     for (std::shared_ptr<JsonValue>& object: objects) {
         std::string type = object->getString(TYPE);
         std::shared_ptr<JsonValue> data;
-        if (type == CLASS_WALL){
+        if (type == CLASS_WALL || type == "EnergyWall"){
             data = parseWall(object);
+            data->appendChild("type", JsonValue::alloc(std::string(type == CLASS_WALL ? "Wall" : "Energy")));
             _wallData->appendChild(data);
         }
         else if (type == CLASS_PLAYER){

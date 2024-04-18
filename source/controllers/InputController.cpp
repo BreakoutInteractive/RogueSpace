@@ -25,8 +25,6 @@ const int HOLD_POS_DELTA = 50;
 const u_long TAP_TIME = 150;
 /** the maximum amount of milliseconds between the end of the first tap and the start of the second tap*/
 const u_long DOUBLE_TAP_TIME_GAP = 200;
-/** the distance needed to pull the joystick backwards to fire the projectile */
-const float DRAG_DISTANCE = 100;
 
 
 #pragma mark -
@@ -90,6 +88,10 @@ bool InputController::init() {
 
 void InputController::update(float dt) {
 
+    if (!_active){
+        return;
+    }
+    
 #ifndef CU_TOUCH_SCREEN
     // DESKTOP CONTROLS
     Keyboard* keys = Input::get<Keyboard>();
@@ -100,12 +102,16 @@ void InputController::update(float dt) {
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
 
+    // reset attack direction
+    _keyAttackDir.setZero(); // useful for changing direction of a charging attack
+    
     //attack on left click, parry on right click
     _keyAttack = mouse->buttonPressed().hasLeft();
-    if (_keyAttack) _keyAttackDir = (mouse->pointerPosition());
     _keyAttackDown = mouse->buttonDown().hasLeft();
     _keyAttackReleased = mouse->buttonReleased().hasLeft();
     _keyParry = mouse->buttonPressed().hasRight();
+    _keyParryDown = mouse->buttonDown().hasRight();
+    _keyParryReleased = mouse->buttonReleased().hasRight();
     _keyDodge = keys->keyDown(KeyCode::SPACE);
     _keySwap = keys->keyPressed(KeyCode::LEFT_SHIFT);
     
@@ -132,6 +138,10 @@ void InputController::update(float dt) {
     else {
         _keyMoveDir.set(_horizontal, _vertical);
     }
+    
+    if (_keyAttackDown){
+        _keyAttackDir.set(_keyMoveDir); // set to WASD directional input
+    }
 
 #else
     // MOBILE CONTROLS
@@ -151,11 +161,13 @@ void InputController::update(float dt) {
         _combatGestureHeld = false;
     }
     
-    _keyAttackDown = _combatGestureHeld;
+    _keyAttackDown = rangedMode && _combatGestureHeld;
+    _keyParryDown = !rangedMode && _combatGestureHeld;
     
-    if (rangedMode && !_combatGestureHeld && _combatGestureActiveTime >= HOLD_TIME){
-        _keyAttack = true;
-        _combatGestureHeld = true; // hold completed, activates the first frame of range attack.
+    if (!_combatGestureHeld && _combatGestureActiveTime >= HOLD_TIME){
+        _keyAttack = rangedMode ? true : false;
+        _keyParry = rangedMode ? false : true;
+        _combatGestureHeld = true; // hold completed, activates the first frame of range attack/parry.
     }
     
 #endif
@@ -168,17 +180,20 @@ void InputController::update(float dt) {
     _attackReleased = _keyAttackReleased;
     _dodgePressed = _keyDodge;
     _parryPressed = _keyParry;
+    _parryDown = _keyParryDown;
+    _parryReleased = _keyParryReleased;
     _swapPressed = _keySwap;
     
     _moveDir.set(_keyMoveDir).normalize();
-    _dodgeDir.set(_keyDodgeDir).normalize();
-    _attackDir.set(_keyAttackDir).normalize();
+    // attackdir and dodgedir are functions of the current facing direction so they are not set directly here
 
 
 // If it does not support keyboard, we must reset "virtual" keyboard
 #ifdef CU_TOUCH_SCREEN
     _keyDodge = false;
     _keyParry = false;
+    _keyParryDown = false;
+    _keyParryReleased = false;
     _keyAttack = false;
     _keyAttackDown = false;
     _keyAttackReleased = false;
@@ -196,8 +211,11 @@ void InputController::clear() {
     _exitPressed  = false;
     _dodgePressed = false;
     _attackPressed = false;
+    _attackDown = false;
     _attackReleased = false;
     _parryPressed = false;
+    _parryDown = false;
+    _parryReleased = false;
     _swapPressed = false;
     _moveDir.setZero();
     _dodgeDir.setZero();
@@ -206,6 +224,8 @@ void InputController::clear() {
     // clear internal data
     _keyDodge = false;
     _keyParry = false;
+    _keyParryDown = false;
+    _keyParryReleased = false;
     _keyAttack = false;
     _keyAttackDown = false;
     _keyAttackReleased = false;
@@ -238,8 +258,13 @@ Vec2 InputController::getDodgeDirection(cugl::Vec2 facingDir){
 }
 
 Vec2 InputController::getAttackDirection(cugl::Vec2 facingDir){
-    // player always faces their direction of attack
-    _attackDir.set(facingDir).normalize();
+    // player always faces their direction of attack if attack direction unknown
+    if (_keyAttackDir.length() == 0){
+        _attackDir.set(facingDir).normalize();
+    }
+    else {
+        _attackDir.set(_keyAttackDir).normalize();
+    }
     return _attackDir;
 }
 
@@ -295,6 +320,7 @@ void InputController::initGestureDataFromEvent(GestureData& data, const cugl::To
 }
 
 void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
+    // prevent new finger inputs if not active
     if (!_active){
         return;;
     }
@@ -310,10 +336,6 @@ void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
  
 
 void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
-    if (!_active){
-        return;;
-    }
-    
     Vec2 touchPos = event.position;
     
     if (_combatGesture.active && _combatGesture.touchID == event.touch){
@@ -322,27 +344,31 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         auto elapsed = event.timestamp.ellapsedMillis(_combatGesture.timestamp);
         //CULog("%llu, %f", elapsed, changeInPosition);
         
-        // DODGE: swipe in any direction
-        if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME){
-            _keyDodgeDir.set(swipeDir.x, -swipeDir.y);
-            _keyDodge = true;
-        }
-        
-        // MELEE ATTACK: quick tap
-        if (!rangedMode && elapsed <= TAP_TIME && changeInPosition <= HOLD_POS_DELTA){
-            _keyAttack = true;
+        // read the gesture input only if game is active
+        // the only exceptions are stateful releases which is needed to transition the player back to non-combat states
+        if (_active){
+            // DODGE: swipe in any direction
+            if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME){
+                _keyDodgeDir.set(swipeDir.x, -swipeDir.y);
+                _keyDodge = true;
+            }
+            
+            // MELEE ATTACK: quick tap
+            if (!rangedMode && elapsed <= TAP_TIME && changeInPosition <= HOLD_POS_DELTA){
+                _keyAttack = true;
+            }
         }
         
         // PARRY (hold -> release)
-        if (!rangedMode && changeInPosition < HOLD_POS_DELTA && elapsed >= HOLD_TIME){
-            _keyParry = true;
+        if (!rangedMode && _combatGestureHeld){
+            _keyParryReleased = true;
         }
         
         // SHOOT
         if (rangedMode && _combatGestureHeld){
             _keyAttackReleased = true;
-            _keyMoveDir.set(0,0); //clear the movement so we stop turning
         }
+        _keyAttackDir.setZero();
         _combatGesture.active = false;
     }
     
@@ -378,15 +404,13 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         }
         
         // letting go of the joystick always implies no movement
-        _keyMoveDir = Vec2::ZERO;
+        _keyMoveDir.setZero();
         _motionGesture.active = false;
     }
 }
 
 void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 previous, bool focus) {
-    if (!_active){
-        return;;
-    }
+    
     Vec2 touchPos = event.position;
     
     if (_combatGesture.active && _combatGesture.touchID == event.touch){
@@ -396,7 +420,7 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         if (rangedMode && _combatGestureHeld){
             float changeInPosition = swipeDir.length();
             if (changeInPosition > HOLD_POS_DELTA){
-                _keyMoveDir.set(-swipeDir.x, swipeDir.y);
+                _keyAttackDir.set(-swipeDir.x, swipeDir.y);
             }
         }
     }
@@ -405,17 +429,15 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         _motionGesture.prevPos = previous;
         _motionGesture.curPos = event.position;
         Vec2 swipeDir = touchPos - _motionGesture.initialPos;
-        if (!rangedMode || !_combatGestureHeld){
-            // check if finger dragged enough to initiate movement
-            float swipeLength = swipeDir.length();
-            if (swipeLength >= MOVE_SWIPE_LENGTH){
-                // update movement based on the direction vector
-                //negate y because screen origin is different from game origin.
-                _keyMoveDir.set(swipeDir.x, -swipeDir.y);
-            }
-            else {
-                _keyMoveDir.setZero();  // stop moving
-            }
+        float swipeLength = swipeDir.length();
+        // check if finger dragged enough to initiate movement
+        if (swipeLength >= MOVE_SWIPE_LENGTH){
+            // update movement based on the direction vector
+            //negate y because screen origin is different from game origin.
+            _keyMoveDir.set(swipeDir.x, -swipeDir.y);
+        }
+        else {
+            _keyMoveDir.setZero();  // stop moving
         }
     }
 }

@@ -1,7 +1,6 @@
 //
 //  PauseScene.hpp
 //  RS
-////
 
 #ifndef PauseScene_hpp
 #define PauseScene_hpp
@@ -27,7 +26,9 @@ public:
         /** User wants to restart game */
         RESTART,
         /** User wants to go back to a game */
-        GAME
+        RESUME,
+        /** User wants to go to settings */
+        SETTINGS
     };
 
 protected:
@@ -36,7 +37,9 @@ protected:
     /** The button for restarting  game */
     std::shared_ptr<cugl::scene2::Button> _restart;
     /** The button for going back to game */
-    std::shared_ptr<cugl::scene2::Button> _back;
+    std::shared_ptr<cugl::scene2::Button> _resume;
+    /** The button for in-game settings */
+    std::shared_ptr<cugl::scene2::Button> _settings;
     /** The player choice */
     Choice _choice;
     bool _active;

@@ -11,6 +11,8 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "Upgradeable.hpp"
+#include "GameConstants.hpp"
 
 class Animation;
 
@@ -26,11 +28,7 @@ protected:
 
     /** The force applied to the player for general movement purposes */
     cugl::Vec2 _force;
-    
-    /** accumulated defense buff*/
-    double _defenseUpgrade;
-    /** accumulated attack buff*/
-    double _atkDamage;
+
     /** accumulated move buff*/
     double _moveScale;
 
@@ -48,10 +46,18 @@ protected:
     //TODO: there are a lot of these, maybe put them in a hash table with key = animation name
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
+    /** The animation to use during parry startup */
+    std::shared_ptr<Animation> _parryStartAnimation;
+    /** The animation to use while holding the parry stance */
+    std::shared_ptr<Animation> _parryStanceAnimation;
     /** The animation to use while parrying */
     std::shared_ptr<Animation> _parryAnimation;
-    /** The animation to use while attacking */
-    std::shared_ptr<Animation> _attackAnimation;
+    /** The animation to use for combo hit 1 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation1;
+    /** The animation to use for combo hit 2 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation2;
+    /** The animation to use for combo hit 3 of the melee attack */
+    std::shared_ptr<Animation> _attackAnimation3;
     /** The animation to use while running */
     std::shared_ptr<Animation> _runAnimation;
     /** The animaton to use while idle and using the bow */
@@ -84,18 +90,20 @@ protected:
     
     std::shared_ptr<Animation> _prevAnimation;
 
-    /** how long we have been charging for */
-    float _charge;
     /** how long we have been dodging for */
     float _dodge;
-    /** how long we have been parrying for */
-    float _parry;
+
+    /**time since the last attack*/
+    float _comboTimer;
+
+    /** which step in the melee combo we are in */
+    int _combo;
     
 public:
 #pragma mark -
     enum weapon { MELEE, RANGED };
     //TODO: modify more stuff (in particular, animation) to use states. Add hit and knockback states
-    enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRY, DODGE};
+    enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE};
     weapon _weapon;
     state _state;
 #pragma mark Counters
@@ -103,12 +111,18 @@ public:
     Counter _atkCD;
     /** parry cooldown counter */
     Counter _parryCD;
-    /** dodge ooldown counter*/
+    /** dodge cooldown counter*/
     Counter _dodgeCD;
     /** counter that is active during the dodge motion*/
     Counter _dodgeDuration;
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
+    /** defense upgrade*/
+    std::shared_ptr<Upgradeable> defense;
+    /** attack upgrade*/
+    std::shared_ptr<Upgradeable> attack;
+        
+    std::vector<std::shared_ptr<Upgradeable>> attributes;
 
     float _hp;
     
@@ -166,6 +180,13 @@ public:
     
 #pragma mark -
 #pragma mark Accessors
+    
+    /**
+    * Gets the movement boost accumulated by this player.
+    *
+    */
+    int getMoveScale();
+    
     /**
      * Returns the force applied to this player.
      *
@@ -186,35 +207,18 @@ public:
      */
     void setForce(const cugl::Vec2 value) { _force.set(value); }
     
-    /**
-     * Gets the movement boost accumulated by this player.
-     *
-     */
-    const int getMoveScale() const {return _moveScale;}
-    
-    /**
-     * Increments the movement boost by a fixed amount.
-     *
-     */
-    void upgradeMoveSpeed() {_moveScale+=(float)1/15;}
+    std::vector<std::shared_ptr<Upgradeable>> getPlayerAttributes() {return attributes;}
     
     /**
      * Gets the attack strength accumulated by this player.
-     *
      */
-    const int getAtkDamage() const {return _atkDamage;}
+    const int getAtkDamage() {return attack->getCurrentValue();}
     
     /**
-     * Increments the attack damage  by a fixed amount.
+     * Gets the attack strength accumulated by this player.
      */
-    void upgradeAtkDamage() {_atkDamage+=(float)1/20;}
+    const int getDefense() {return defense->getCurrentValue();}
     
-    /**
-     * Increments the defense boost by a fixed amount.
-     *
-     */
-    void upgradeDefense(){_defenseUpgrade-=(float)1/16;}
-
     /**
      * Returns the x-component of the force applied to this player.
      *
@@ -266,15 +270,18 @@ public:
     void setFacingDir(cugl::Vec2 dir);
     
     /**
-     * @return the maximum HP of the player;
+     * @return the maximum HP of the player
      */
     int getMaxHP();
+
+    /**
+     * @return which hit of the combo the player is on
+     */
+    int getCombo() const { return _combo; }
 
     bool isAttacking();
 
     void swapWeapon() { _weapon = static_cast<weapon>((_weapon + 1) % 2); }
-    
-    void resetCharge() { _charge = 0; }
 
 #pragma mark -
 #pragma mark Animation
@@ -343,6 +350,8 @@ public:
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
 
+    /** Change to using the parry start animation and change state to PARRYSTART */
+    void animateParryStart();
     /** Change to using the parry animation and change state to PARRY */
     void animateParry();
     /** Change to using the default (idle) animation and change state to IDLE */
@@ -357,8 +366,10 @@ public:
     /**
     * Method to call when player is hit by an attack
     * @param atkDir the normal vector of the direction of the attack that hit the player
+    * @param damage how much damage the player takes
+    * @param knockback_scl the factor to multiply the direction by for applying knockback
     */
-    void hit(cugl::Vec2 atkDir, int damage = 1);
+    void hit(cugl::Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
     
     // INHERITED
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;

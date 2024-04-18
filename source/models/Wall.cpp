@@ -27,7 +27,7 @@ Wall::Wall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin
     // this is a wall
     filter.categoryBits = CATEGORY_WALL;
     // a wall can collide with a player or an enemy
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_PROJECTILE_SHADOW;
     p->setFilterData(filter);
 }
 
@@ -48,5 +48,17 @@ void Wall::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
     if (_texture != nullptr){
         Vec2 origin(_texture->getWidth()/2, 0);
         batch->draw(_texture, origin, _size * _drawScale / _texture->getSize(), 0, _position * _drawScale);
+    }
+}
+
+#pragma mark -
+
+EnergyWall::EnergyWall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin) : Wall(data, poly, origin){
+}
+
+void EnergyWall::deactivate(){
+    if (_enabled){
+        _enabled = false;
+        getCollider()->setSensor(true);
     }
 }

@@ -116,6 +116,10 @@ private:
     bool  _keyDodge;
     /** Whether the parry key was pressed */
     bool  _keyParry;
+    /** Whether the parry key is held down */
+    bool _keyParryDown;
+    /** Whether the parry key was released*/
+    bool _keyParryReleased;
     /** Whether the attack key was pressed */
     bool _keyAttack;
     /** Whether the attack key is held down*/
@@ -176,6 +180,10 @@ protected:
     bool _attackReleased;
     /** Whether the parry action was chosen */
     bool _parryPressed;
+    /** Whether the parry action was down*/
+    bool _parryDown;
+    /** Whether the parry action was released*/
+    bool _parryReleased;
     /** Whether the weapon swap action was chosen */
     bool _swapPressed;
     /** unit direction of the attack*/
@@ -227,7 +235,14 @@ public:
      * @return true if the input handler is currently active
      */
     bool isActive( ) const { return _active; }
-
+    
+    /**
+     * sets whether this input controller is actively reading inputs.
+     */
+    void setActive(bool value) {
+        _active = value;
+    }
+    
     /**
      * Processes the currently cached inputs.
      *
@@ -273,20 +288,28 @@ public:
     Vec2 getDodgeDirection(Vec2 facingDir);
     
     /**
-     * Returns true if the parry input was triggered.
+     * Returns true if the parry input was triggered (the player started a parry).
      */
     bool didParry() const { return _parryPressed; }
+    /**
+     * Returns true if the parry input is down (the player held the stance).
+     */
+    bool didStance() const { return _parryDown; }
+    /**
+     * Returns true if the parry input was released (the player parried).
+     */
+    bool didParryRelease() const { return _parryReleased; }
     
     /**
      * Returns true if the attack input was triggered
      */
     bool didAttack() const { return _attackPressed; }
     /**
-     * Returns true if the attack input is down
+     * Returns true if the attack input is down (the player charged a ranged attack)
      */
     bool didCharge() const { return _attackDown; }
     /**
-     * Returns true if the attack input was released
+     * Returns true if the attack input was released (the player shot a ranged attack)
      */
     bool didShoot() const { return _attackReleased; }
     
@@ -327,6 +350,7 @@ public:
     
 #pragma mark -
 #pragma mark Input Results (Mobile Only)
+    
     /**
      * @return whether there is touch event associated with the motion gesture
      */
@@ -345,21 +369,31 @@ public:
     Vec2 getTouchLocation() const {return _motionGesture.curPos; }
     
     /**
-     * @return whether there is touch event associated with the motion gesture
+     * @return whether there is touch event associated with the combat gesture
      */
     bool isCombatActive() const { return _combatGesture.active; }
     
     /**
-     * The returned value can be anything in the event that `isMotionActive` is false.
-     * @return the starting location of the touch event associated with the motion gesture
+     * The returned value can be anything in the event that `isCombatActive` is false.
+     * @return the starting location of the touch event associated with the combat gesture
      */
     Vec2 getInitCombatLocation() const { return _combatGesture.initialPos;}
     
     /**
-     * The returned value can be anything in the event that `isMotionActive` is false.
-     * @return the current location of the touch event associated with the motion gesture
+     * The returned value can be anything in the event that `isCombatActive` is false.
+     * @return the current location of the touch event associated with the combat gesture
      */
     Vec2 getCombatTouchLocation() const {return _combatGesture.curPos; }
+    
+    /**
+     * Inactivates the combat gesture if it has been on hold.
+     */
+    void clearHeldGesture() {
+        if (_combatGestureHeld){
+            _combatGesture.active = false;
+            _combatGestureHeld = false;
+        }
+    }
 
 };
 

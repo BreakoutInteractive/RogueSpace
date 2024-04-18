@@ -52,7 +52,7 @@
 #define BOUNDARY_FIELD      "boundaries"
 
 /** The key for our loaded level */
-#define LEVEL_ONE_KEY       "level1"
+#define LEVEL_KEY           "level"
 
 
 #endif /* defined(__JS_LEVEL_CONSTANTS_H__) */

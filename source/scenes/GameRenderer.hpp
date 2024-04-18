@@ -54,7 +54,7 @@ private:
     /** frames of holding the aim stick */
     int _aimHoldCounter;
     
-    std::vector<std::shared_ptr<scene2::SceneNode>> _stamina;
+    std::shared_ptr<scene2::ProgressBar> _stamina;
 
     /** the background behind the game*/
     std::shared_ptr<Texture> _backgroundTexture;
@@ -102,6 +102,9 @@ public:
      */
     bool init(const std::shared_ptr<AssetManager>& assets);
     
+#pragma mark -
+#pragma mark Properties
+
     /**
      * Returns whether pause button as been pressed.
      *
@@ -141,16 +144,7 @@ public:
      * @param touched whether the aim joystick is touched
      */
     void updateAimJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos);
-    
-    /**
-     * sets whether the cooldown should be visible
-     */
-    void setCooldownVisible (bool value) {
-        for (auto it = _stamina.begin(); it != _stamina.end(); it++){
-            (*it)->setVisible(value);
-        }
-    }
-    
+        
     /**
      * sets whether or not this HUD scene is activated.
      */

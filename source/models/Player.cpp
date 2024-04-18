@@ -12,6 +12,7 @@
 #include "GameObject.hpp"
 #include "GameConstants.hpp"
 #include "../components/Animation.hpp"
+#include "Upgradeable.hpp"
 
 using namespace cugl;
 
@@ -23,8 +24,8 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _weapon = MELEE;
     _state = IDLE;
     _dodge = 0;
-    _parry = 0;
-    _charge = 0;
+    _combo = 1;
+    _comboTimer = 0;
     bool success = true;
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
@@ -81,8 +82,10 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
     _dodgeDuration.setMaxCount(GameConstants::PLAYER_DODGE_DURATION);
     _hp = GameConstants::PLAYER_MAX_HP;
-    _defenseUpgrade =GameConstants::PLAYER_DEFENSE;
-    _atkDamage =GameConstants::PLAYER_ATK_DAMAGE;
+    defense =  std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_DEFENSE);
+    attack = std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_ATK_DAMAGE);
+    attributes.push_back(attack);
+    attributes.push_back(defense);
     _moveScale = GameConstants::PLAYER_MOVE_SPEED;
 
     
@@ -109,6 +112,10 @@ void Player::dispose() {
 
 int Player::getMaxHP(){
     return GameConstants::PLAYER_MAX_HP;
+}
+
+int Player::getMoveScale(){
+    return GameConstants::PLAYER_MOVE_SPEED;
 }
 
 bool Player::isAttacking() {
@@ -142,18 +149,18 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         }
         break;
     case CHARGED:
-        //sheet = _chargedEffect->getSpriteSheet();
-        //o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        //direction = getFacingDir();
-        //ang = acos(direction.dot(Vec2::UNIT_X));
-        //if (direction.y < 0) {
-        //    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-        //    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        //}
-        //t = Affine2::createRotation(ang);
-        //t.translate(_position.add(0, 64 / getDrawScale().y) * _drawScale);
-        //sheet->draw(batch, o, t);
-        //break;
+        sheet = _chargedEffect->getSpriteSheet();
+        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
+        direction = getFacingDir();
+        ang = acos(direction.dot(Vec2::UNIT_X));
+        if (direction.y < 0) {
+            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+        }
+        t = Affine2::createRotation(ang);
+        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
+        sheet->draw(batch, o, t);
+        break;
     case CHARGING:
         sheet = _chargingEffect->getSpriteSheet();
         o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
@@ -177,8 +184,10 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
             ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
         }
         t = Affine2::createRotation(ang);
-        t.translate(_position.add(0, 64 / getDrawScale().y) * _drawScale);
+        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
         if (_shotEffect->isActive()) sheet->draw(batch, o, t);
+        break;
+    default:
         break;
     }
 }
@@ -196,8 +205,8 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto projEffectTexture = assets->get<Texture>("player-projectile");
     
     // make sheets
-    auto parrySheet = SpriteSheet::alloc(parryTexture, 1, 1); // 1 by 1 texture into animation
-    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 8);
+    auto parrySheet = SpriteSheet::alloc(parryTexture, 8, 16);
+    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 24);
     auto idleSheet = SpriteSheet::alloc(_playerTexture, 8, 8);
     auto runSheet = SpriteSheet::alloc(runTexture, 8, 16);
     auto rangedSheet = SpriteSheet::alloc(rangedTexture, 8, 16);
@@ -206,43 +215,82 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto projEffectSheet = SpriteSheet::alloc(projEffectTexture, 4, 4);
 
     // pass to animations
-    _parryAnimation = Animation::alloc(parrySheet, 0.5f, false);
-    _attackAnimation = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
+    _parryStartAnimation = Animation::alloc(parrySheet, 0.1f, false, 0, 1);
+    _parryStanceAnimation = Animation::alloc(parrySheet, 0.5f, true, 2, 9);
+    _parryAnimation = Animation::alloc(parrySheet, GameConstants::PLAYER_PARRY_TIME, false, 10, 15);
+    _attackAnimation1 = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
+    _attackAnimation2 = Animation::alloc(attackSheet, 0.3f, false, 8, 13);
+    _attackAnimation3 = Animation::alloc(attackSheet, 0.5f, false, 14, 23);
     _runAnimation = Animation::alloc(runSheet, 16/24.0, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
     _chargingAnimation = Animation::alloc(rangedSheet, GameConstants::CHARGE_TIME, false, 0, 8);
     _chargedAnimation = Animation::alloc(rangedSheet, 0.1f, true, 8, 8);
     _shotAnimation = Animation::alloc(rangedSheet, 0.125f, false, 9, 11);
     _recoveryAnimation = Animation::alloc(rangedSheet, 0.167f, false, 12, 15);
-    _bowRunAnimation = Animation::alloc(bowRunSheet, 16 / 24.0, true, 0, 15);
+    _bowRunAnimation = Animation::alloc(bowRunSheet, 16 / 24.0f, true, 0, 15);
     _bowIdleAnimation = Animation::alloc(bowIdleSheet, 1.2f, true, 0, 7);
-    _chargingEffect = Animation::alloc(projEffectSheet, 8/24.0f, true, 0, 3);
+    _chargingEffect = Animation::alloc(projEffectSheet, GameConstants::CHARGE_TIME, false, 0, 3);
     _chargedEffect = Animation::alloc(projEffectSheet, 8 / 24.0f, true, 4, 7);
     _shotEffect = Animation::alloc(projEffectSheet, 1/24.0f, false, 8, 8);
     
     // add callbacks
-    _attackAnimation->onComplete([this](){
-        _attackAnimation->reset();
+    _attackAnimation1->onComplete([this](){
+        _attackAnimation1->reset();
         _state = IDLE;
-    });
+        _combo = 2;
+        _comboTimer = 0;
+        });
+    _attackAnimation2->onComplete([this]() {
+        _attackAnimation2->reset();
+        _state = IDLE;
+        _combo = 3;
+        _comboTimer = 0;
+        });
+    _attackAnimation3->onComplete([this]() {
+        _attackAnimation3->reset();
+        _state = IDLE;
+        _combo = 1;
+        _comboTimer = 0;
+        });
+    _parryStartAnimation->onComplete([this]() {
+        _parryStartAnimation->reset();
+        setAnimation(_parryStanceAnimation);
+        _parryStanceAnimation->start();
+        _state = PARRYSTANCE;
+        });
     _parryAnimation->onComplete([this](){
         _parryAnimation->reset();
         _state = IDLE;
-    });
+        });
     _shotAnimation->onComplete([this]() {
         _shotAnimation->reset();
         _shotEffect->reset();
         setAnimation(_recoveryAnimation);
+        _recoveryAnimation->start();
         _state = RECOVERY;
         });
     _recoveryAnimation->onComplete([this]() {
         _recoveryAnimation->reset();
         _state = IDLE;
         });
+    _chargingAnimation->onComplete([this]() {
+        setAnimation(_chargedAnimation);
+        _chargedAnimation->start();
+        _chargingAnimation->reset();
+        });
+    _chargingEffect->onComplete([this]() {
+        _chargingEffect->reset();
+        _chargedEffect->start();
+        _state = CHARGED;
+        });
     
     setAnimation(_idleAnimation);
 }
 
+void Player::animateParryStart() {
+    setAnimation(_parryStartAnimation);
+    _state = PARRYSTART;
+}
 void Player::animateParry() {
     setAnimation(_parryAnimation);
     _state = PARRY;
@@ -262,7 +310,10 @@ void Player::animateDefault() {
 void Player::animateAttack() {
     _state = ATTACK;
     _prevAnimation = _currAnimation;
-    setAnimation(_attackAnimation);
+    if (_combo==1) setAnimation(_attackAnimation1);
+    else if (_combo == 2) setAnimation(_attackAnimation2);
+    else if (_combo == 3) setAnimation(_attackAnimation3);
+    else setAnimation(_attackAnimation1); //should never reach this line
 }
 void Player::animateCharge() {
     setAnimation(_chargingAnimation);
@@ -272,8 +323,9 @@ void Player::animateCharge() {
 
 void Player::animateShot() {
     setAnimation(_shotAnimation);
+    _chargedEffect->reset();
     _shotEffect->start();
-    _state = PARRY;
+    _state = SHOT;
 }
 
 void Player::setAnimation(std::shared_ptr<Animation> animation){
@@ -346,54 +398,52 @@ void Player::setFacingDir(cugl::Vec2 dir){
     // sync animation
     if (prevDirection != _directionIndex){
         int startIndex = 8 * _directionIndex;
+        int startIdx16 = 16 * _directionIndex;
+        int startIdx24 = 24 * _directionIndex;
         int endIndex = startIndex + 8 - 1;
         _idleAnimation->setFrameRange(startIndex, endIndex);
-        _attackAnimation->setFrameRange(startIndex, endIndex);
-        _runAnimation->setFrameRange(16 * _directionIndex, 16 * _directionIndex + 15);
+        _attackAnimation1->setFrameRange(startIdx24, startIdx24+7);
+        _attackAnimation2->setFrameRange(startIdx24+8, startIdx24+13);
+        _attackAnimation3->setFrameRange(startIdx24+14, startIdx24+23);
+        _runAnimation->setFrameRange(startIdx16, startIdx16 + 15);
+        _parryStartAnimation->setFrameRange(startIdx16, startIdx16 + 1);
+        _parryStanceAnimation->setFrameRange(startIdx16 + 2, startIdx16 + 9);
+        _parryAnimation->setFrameRange(startIdx16 + 10, startIdx16 + 15);
         _bowIdleAnimation->setFrameRange(startIndex, endIndex);
-        _bowRunAnimation->setFrameRange(16 * _directionIndex, 16 * _directionIndex + 15);
-        _chargingAnimation->setFrameRange(16 * _directionIndex, 16 * _directionIndex + 8);
-        _chargedAnimation->setFrameRange(16 * _directionIndex + 8, 16 * _directionIndex + 8);
-        _shotAnimation->setFrameRange(16 * _directionIndex + 9, 16 * _directionIndex + 11);
-        _recoveryAnimation->setFrameRange(16 * _directionIndex + 12, 16 * _directionIndex + 15);
-        // TODO: when parry animation is done, do the same range update.
+        _bowRunAnimation->setFrameRange(startIdx16, startIdx16 + 15);
+        _chargingAnimation->setFrameRange(startIdx16, startIdx16 + 8);
+        _chargedAnimation->setFrameRange(startIdx16 + 8, startIdx16 + 8);
+        _shotAnimation->setFrameRange(startIdx16 + 9, startIdx16 + 11);
+        _recoveryAnimation->setFrameRange(startIdx16 + 12, startIdx16 + 15);
     }
 }
 
-void Player::hit(Vec2 atkDir, int damage) {
+void Player::hit(Vec2 atkDir, int damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _state != DODGE) {
         _hitCounter.reset();
-        _hp = std::fmax(0, (_hp - damage));
+        _hp = std::fmax(0, (_hp - damage*(1-defense->getCurrentPercentage())));
         _tint = Color4::RED;
-        _collider->setLinearVelocity(atkDir * GameConstants::KNOCKBACK);
-        _state = IDLE; //TODO: hit state
-        resetCharge();
+        _collider->setLinearVelocity(atkDir * knockback_scl);
+        _state = IDLE; //TODO: hit state ???
     }
 }
 
 void Player::update(float dt) {
     updateCounters();
     updateAnimation(dt);
+    _comboTimer += dt;
+    if (_comboTimer > GameConstants::COMBO_TIME) _combo = 1; //reset combo if too much time has passed
     switch (_state) {
     case CHARGED:
         _chargedEffect->update(dt);
         break;
     case CHARGING:
-        if (_charge == 0) {
-            _chargingEffect->start();
-            _charge = 0.000001f;
-        }
-        else {
-            _charge += dt;
+        if (_chargingEffect->isActive()) {
             _chargingEffect->update(dt);
         }
-        if (_charge >= GameConstants::CHARGE_TIME) {
-            _state = CHARGED;
-            _chargingEffect->reset();
-            _chargedEffect->start();
-            setAnimation(_chargedAnimation);
-            _charge = 0;
+        else {
+            _chargingEffect->start();
         }
         break;
     case DODGE:
@@ -403,18 +453,10 @@ void Player::update(float dt) {
             _dodge = 0;
         }
         break;
-    case PARRY:
-        _parry += dt;
-        if (_parry >= GameConstants::PLAYER_PARRY_TIME) {
-            _state = IDLE;
-            _parry = 0;
-        }
-        break;
     case SHOT:
-        _chargingAnimation->reset();
-        _chargedEffect->reset();
+        _shotEffect->update(dt);
         break;
-    case IDLE: case ATTACK: case RECOVERY:
+    case IDLE: case ATTACK: case RECOVERY: case PARRYSTART: case PARRYSTANCE: case PARRY:
         // no additional updates
         break;
     }

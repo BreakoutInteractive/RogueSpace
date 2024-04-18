@@ -8,44 +8,52 @@
 using namespace cugl;
 class Projectile : public GameObject {
 private:
-	bool playerInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets);
-	bool lizardInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets);
-	bool mageInit(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets);
+	bool playerInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets);
+	bool lizardInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets);
+	bool mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets);
 	std::shared_ptr<Animation> _flyingAnimation;
 	std::shared_ptr<Animation> _explodingAnimation;
 	enum state { FLYING, EXPLODING };
 	state _state;
 	int _damage;
 public:
+	//this object exists so that there is a different pointer in the user data of the shadow
+	char* collisionString;
 	/**
 	 * Creates a new player projectile.
 	 *
 	 * @param pos The position at which to spawn the projectile. This should be the player's position
+	 * @param damage The damage this projectile deals to enemies
+	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the player projectile assets
 	 */
-	static std::shared_ptr<Projectile> playerAlloc(Vec2 pos, int damage,  const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> playerAlloc(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
-		return (result->playerInit(pos, damage, assets) ? result : nullptr);
+		return (result->playerInit(pos, damage, ang, assets) ? result : nullptr);
 	}
 	/**
 	 * Creates a new lizard enemy projectile.
 	 *
 	 * @param pos The position at which to spawn the projectile. This should be the enemy's position
+	 * @param damage The damage this projectile deals to the player
+	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the enemy projectile assets
 	 */
-	static std::shared_ptr<Projectile> lizardAlloc(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> lizardAlloc(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
-		return (result->lizardInit(pos, damage, assets) ? result : nullptr);
+		return (result->lizardInit(pos, damage, ang, assets) ? result : nullptr);
 	}
 	/**
 	 * Creates a new mage enemy projectile.
 	 *
 	 * @param pos The position at which to spawn the projectile. This should be the enemy's position
+	 * @param damage The damage this projectile deals to the player
+	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the enemy projectile assets
 	 */
-	static std::shared_ptr<Projectile> mageAlloc(Vec2 pos, int damage, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> mageAlloc(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
-		return (result->mageInit(pos, damage, assets) ? result : nullptr);
+		return (result->mageInit(pos, damage, ang, assets) ? result : nullptr);
 	}
 
 	/** Returns whether this projectile has completed its lifespan and should be destroyed 
@@ -70,7 +78,16 @@ public:
 
 	void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
 
+	void addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) override;
+	void syncPositions() override;
+
 	const int getDamage() { return _damage; }
+
+	void setAngle(float ang) { 
+		_collider->setAngle(ang);
+		_colliderShadow->setAngle(ang); 
+	}
+	void setVelocity(Vec2 vel) { _collider->setLinearVelocity(vel); }
 
 	/**
 	 * Destroys this projectile, releasing all resources.

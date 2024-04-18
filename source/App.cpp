@@ -48,6 +48,7 @@ void App::onShutdown() {
     _gameplay.dispose();
     _pause.dispose();
     _cust.dispose();
+    _upgrades.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -84,6 +85,7 @@ void App::update(float dt){
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
         _cust.init(_assets);
+        _upgrades.init(_assets,_gameplay.getAttributes());
         _scene = State::GAME;
         setDeterministic(true);
     }
@@ -96,8 +98,13 @@ void App::preUpdate(float dt) {
             break;
         case MENU:
             break;
+        case UPGRADE:
+            _upgrades.setActive(true);
+            updateUpgradesScene(dt);
+            break;
         case PAUSE:
             _pause.setActive(true);
+//            AudioEngine::get()->getMusicQueue()->advance();
             updatePauseScene(dt);
             break;
         case CUST:
@@ -107,13 +114,14 @@ void App::preUpdate(float dt) {
         case GAME:
             if (_gameplay.getRenderer().getPaused()) {
                 _scene = State::PAUSE;
-                _gameplay.clearInputs();
+                _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
                 _gameplay.getRenderer().setActivated(false);
             } else if (_gameplay.getRenderer().getCust()) {
                 _scene = State::CUST;
-                _gameplay.clearInputs();
+                _gameplay.activateInputs(false);
                 _gameplay.getRenderer().setActivated(false);
             } else {
+                _gameplay.activateInputs(true);
                 _gameplay.preUpdate(dt);
             }
             break;
@@ -144,8 +152,8 @@ void App::postUpdate(float dt) {
     }
 }
 
-void App::updatePauseScene(float timestep) {
-    _pause.update(timestep);
+void App::updatePauseScene(float dt) {
+    _pause.update(dt);
     switch (_pause.getChoice()) {
         case PauseScene::Choice::RESTART:
             _pause.setActive(false);
@@ -153,10 +161,16 @@ void App::updatePauseScene(float timestep) {
             _gameplay.restart();
             _scene = State::GAME;
             break;
-        case PauseScene::Choice::GAME:
+        case PauseScene::Choice::RESUME:
             _pause.setActive(false);
             _gameplay.getRenderer().setActivated(true);
+            _gameplay.activateInputs(true);
             _scene = State::GAME;
+            break;
+        case PauseScene::Choice::SETTINGS:
+            _pause.setActive(false);
+            _upgrades.updateScene(_gameplay.getAttributes());
+            _scene = State::UPGRADE;
             break;
         case PauseScene::Choice::NONE:
             break;
@@ -182,6 +196,27 @@ void App::updateCustomSettingsScene(float timestep) {
     }
 }
 
+void App::updateUpgradesScene(float dt) {
+    _upgrades.update(dt);
+    switch (_upgrades.getChoice()) {
+        case UpgradesScene::NONE:
+            break;
+        case UpgradesScene::Choice::UPGRADE_1:
+            _upgrades.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _gameplay.applyUpgrade(_upgrades._selectedUpgrade);
+            //give/set instance of upgrade object to gameplay
+            _scene = State::GAME;
+            break;
+        case UpgradesScene::Choice::UPGRADE_2:
+            _upgrades.setActive(false);
+            _gameplay.getRenderer().setActivated(true);
+            _gameplay.applyUpgrade(_upgrades._selectedUpgrade);
+            _scene = State::GAME;
+            break;
+    }
+}
+
 
 void App::draw() {
     switch (_scene) {
@@ -197,6 +232,11 @@ void App::draw() {
             break;
         case CUST:
             _cust.render(_batch);
+            break;
+        case UPGRADE:
+            _gameplay.render(_batch);
+            _upgrades.render(_batch);
+            break;
         default:
             break;
     }

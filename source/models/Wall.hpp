@@ -25,7 +25,6 @@ protected:
 
 
 public:
-#pragma mark -
 #pragma mark Constructors
     /**
      * Creates a new wall with the given data, of which the polygon is represented by a set of vertices
@@ -43,7 +42,6 @@ public:
     }
 
 
-#pragma mark -
 #pragma mark Animation and Assets
 
     /**
@@ -54,5 +52,30 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
 };
+
+#pragma mark -
+
+class EnergyWall : public Wall {
+
+public:
+#pragma mark Constructors
+    /**
+     * Creates a new energy wall with the given data, of which the polygon is represented by a set of vertices
+     *
+     * The polygon is constructed at the given origin (physics position)
+     */
+    EnergyWall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin);
+
+
+#pragma mark Physics
+
+    /**
+     * turns off the energy barrier (disables the rendering but keeps the collisions in-tact).
+     * The wall becomes a sensor.
+     */
+    void deactivate();
+    
+};
+
 
 #endif /* Wall_hpp */

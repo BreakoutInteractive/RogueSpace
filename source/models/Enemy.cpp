@@ -64,7 +64,9 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     
     // initialize enemy properties
     _isDefault = true;
+    _isCharged = false; // will always be false for melee enemies
     _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
+    _isAligned = false;
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
     _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
@@ -222,13 +224,13 @@ void Enemy::setStunned() {
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir, float damage) {
+void Enemy::hit(cugl::Vec2 atkDir, int damage, float knockback_scl) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
         setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();
-        _collider->setLinearVelocity(atkDir*GameConstants::KNOCKBACK);
+        _collider->setLinearVelocity(atkDir * knockback_scl);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
             _facingDirection = -atkDir;

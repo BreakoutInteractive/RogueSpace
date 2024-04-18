@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/Wall.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -67,44 +68,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
-    _parser.loadTilesets(assets);
-    
-    _offset = Vec2((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-    
-    auto parsed = _parser.parseTiled(assets->get<JsonValue>("example"));
-    _level = LevelModel::alloc(assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
-    if (_level == nullptr) {
-        CULog("Fail!");
-        return false;
-    }
-
+    // initalize controllers with the assets
     _assets = assets;
-    
+    _parser.loadTilesets(assets);
+    _levelNumber = 1;
     _gameRenderer.init(_assets);
-    _gameRenderer.setGameElements(getCamera(), _level);
-    
     _input.init();
-    _level->setAssets(_assets);
-    
-    // Create the world and attach the listeners.
-    std::shared_ptr<physics2::ObstacleWorld> world = _level->getWorld();
-    
-    // IMPORTANT: SCALING MUST BE UNIFORM
-    // This means that we cannot change the aspect ratio of the physics world
-    // Shift to center if a bad fit
-    _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
-                                          dimen.height/_level->getViewBounds().height;
-    Vec2 drawScale(_scale, _scale);
-    _level->setDrawScale(drawScale);
-    
     _audioController = std::make_shared<AudioController>();
     _camController.init(getCamera(), 2.5f);
-    auto p = _level->getPlayer();
-    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
-    
-    _AIController.init(_level);
-    
-    _collisionController.setLevel(_level);
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
     
@@ -130,28 +101,19 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _loseNode->setPosition(dimen / 2.0f);
     _loseNode->setForeground(Color4::RED);
     _loseNode->setVisible(false);
-
-    _resetNode = scene2::Label::allocWithText(RESET_MESSAGE,_assets->get<Font>(PRIMARY_FONT));
-    _resetNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _resetNode->setPosition(dimen/2.0f);
-    _resetNode->setForeground(STATIC_COLOR);
-    _resetNode->setVisible(false);
       
     addChild(_debugNode); //this we keep
     addChild(_winNode); //TODO: remove
     addChild(_loseNode); //TODO: remove
-    addChild(_resetNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
-    _level->setDebugNode(_debugNode); // Obtains ownership of root.
   
 #pragma mark - Game State Initialization
     _active = true;
     _complete = false;
     _defeat = false;
-    setDebug(false);
-    
-    Application::get()->setClearColor(Color4f::WHITE);
+    setLevel(_levelNumber);         // load initial level/hub
+    Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
 }
 
@@ -161,7 +123,6 @@ void GameScene::dispose() {
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
         _loseNode = nullptr; //TODO: remove
-        _resetNode = nullptr; // TODO: remove
         _level = nullptr;
         _complete = false;
         _defeat = false;
@@ -171,11 +132,26 @@ void GameScene::dispose() {
 }
 
 void GameScene::restart(){
-    // reload the current level
+    _winNode->setVisible(false);
+    setLevel(1); // reload the first level
+}
+
+void GameScene::setLevel(int level){
     _debugNode->removeAllChildren();
-    auto parsed = _parser.parseTiled(_assets->get<JsonValue>("example"));
-    _level = LevelModel::alloc(_assets->get<JsonValue>(LEVEL_ONE_KEY), parsed);
+    
+    _levelNumber = level;
+    Size dimen = computeActiveSize();
+    
+    auto parsed = _parser.parseTiled(_assets->get<JsonValue>(getLevelKey(_levelNumber)));
+    _level = LevelModel::alloc(_assets->get<JsonValue>("constants"), parsed);
     _level->setAssets(_assets);
+    
+    
+    // IMPORTANT: SCALING MUST BE UNIFORM
+    // This means that we cannot change the aspect ratio of the physics world
+    // Shift to center if a bad fit
+    _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
+                                          dimen.height/_level->getViewBounds().height;
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
     setDebug(isDebug());
@@ -185,6 +161,14 @@ void GameScene::restart(){
     setComplete(false);
     setDefeat(false);
     _input.activateMeleeControls();
+    _input.setActive(true);
+    
+    auto p = _level->getPlayer();
+    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
+}
+
+std::string GameScene::getLevelKey(int level){
+    return LEVEL_KEY+std::to_string(level);
 }
 
 
@@ -215,7 +199,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // TODO: this is only a temporary win condition, revisit after Gameplay Release
-    if (!_winNode->isVisible() && !_loseNode->isVisible()){
+    if (!isComplete() && !isDefeat()){
         // game not won, check if any enemies active
         int activeCount = 0;
         auto enemies = _level->getEnemies();
@@ -226,18 +210,40 @@ void GameScene::preUpdate(float dt) {
         }
         if (activeCount == 0){
             setComplete(true);
+            auto energyWalls = _level->getEnergyWalls();
+            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
+                (*it)->deactivate();
+            }
         }
 
         if (_level->getPlayer()->_hp==0) setDefeat(true);
     }
+    
+    int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
+    if (_level->isCompleted()){
+        if (_levelNumber < MAX_LEVEL){
+            setLevel(_levelNumber + 1);
+            return;
+        }
+        else {
+            _winNode->setVisible(true); // for now
+        }
+    }
 
 #pragma mark - handle player input
-    // Apply the force to the player
+
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
         
     
 #ifdef CU_TOUCH_SCREEN
+    
+    // if player just got hit, cancel any combat requiring hold-times
+    if (player->_hitCounter.isMaximum()){
+        _input.clearHeldGesture();
+        _gameRenderer.updateAimJoystick(false, _input.getInitCombatLocation(), _input.getCombatTouchLocation());
+    }
+    
     if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING){
         _gameRenderer.updateAimJoystick(_input.isCombatActive(), _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
@@ -245,31 +251,34 @@ void GameScene::preUpdate(float dt) {
     
 #endif
     
-    // update the direction the player is facing
-    if (moveForce.length() > 0){
-        player->setFacingDir(moveForce);
-    }
-    
     if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
-    if(player->_dodgeCD.isZero()){
-        _gameRenderer.setCooldownVisible(true);
-    }
-    
-
+        
     //only move if we're not parrying or dodging or recovering
-    if (player->_state != Player::state::PARRY && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY 
+    if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
+        && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
         && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         switch (player->_weapon) {
         case Player::weapon::MELEE:
-            player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());  //TODO: use json data
+                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
+                // update the direction the player is facing in the direction of movement
+                if (moveForce.length() > 0){
+                    player->setFacingDir(moveForce);
+                }
             break;
         case Player::weapon::RANGED:
             //with the ranged weapon, dont move while attacking
-            if (!player->isAttacking()) player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());  //TODO: use json data
+            if (!player->isAttacking()){
+                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
+                // update the direction the player is facing in the direction of movement
+                if (moveForce.length() > 0){
+                    player->setFacingDir(moveForce);
+                }
+            }
             break;
         }
+        
     } else if (player->_state != Player::state::DODGE && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
@@ -278,11 +287,11 @@ void GameScene::preUpdate(float dt) {
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
     //Not sure if this will be possible on mobile, but it's definitely possible on the computer
-    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED) {
+    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED
+        || player->_state == Player::state::PARRYSTART || player->_state == Player::state::PARRYSTANCE) {
         //for now, give highest precedence to dodge
         if (_input.didDodge() && player->_dodgeCD.isZero()) {
             player->_dodgeCD.reset();
-            _gameRenderer.setCooldownVisible(false);
             player->_dodgeDuration.reset(); // set dodge frames
             //dodge
             auto force = _input.getDodgeDirection(player->getFacingDir());
@@ -293,7 +302,6 @@ void GameScene::preUpdate(float dt) {
             player->getCollider()->setLinearVelocity(force * 30);
             player->getCollider()->setBullet(true);
             player->setFacingDir(force);
-            player->resetCharge();
             player->_state = Player::state::DODGE;
         }
         else if (player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY) { //not dodging or recovering
@@ -319,7 +327,6 @@ void GameScene::preUpdate(float dt) {
                     _level->getPlayerAtk()->start();
                     break;
                 case Player::weapon::RANGED:
-                    player->resetCharge();
                     player->animateCharge();
                     player->getCollider()->setLinearVelocity(Vec2::ZERO);
                     break;
@@ -327,8 +334,8 @@ void GameScene::preUpdate(float dt) {
             }
             else if (_input.didCharge()) {
                 Vec2 direction = _input.getAttackDirection(player->getFacingDir());
-                if (player->_weapon == Player::weapon::RANGED && player->_state == Player::state::CHARGING) {
-                    //TODO: face the appropriate direction
+                if (player->_weapon == Player::weapon::RANGED && (player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED)) {
+                    // this lets you rotate the player while holding the bow in charge mode
                     player->setFacingDir(direction);
                 }
             }
@@ -345,33 +352,35 @@ void GameScene::preUpdate(float dt) {
                             // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                             ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                         }
-                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, _assets);
+                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), 1, ang, _assets);
                         p->setDrawScale(Vec2(_scale, _scale));
                         _level->addProjectile(p);
-                        std::shared_ptr<physics2::Obstacle> obs = p->getCollider();
-                        obs->setLinearVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
-                        obs->setAngle(ang);
                         player->animateShot();
                     }
                     else player->animateDefault();
-                    player->resetCharge();
                 }
             }
             //for now, give lowest precendence to parry. only allow it with the melee weapon
             else if (_input.didParry() && player->_weapon == Player::weapon::MELEE) {
-                //TODO: handle parry
-                CULog("parried");
-                player->animateParry();
-                player->_parryCD.reset();
+                player->animateParryStart();
+            }
+            else if (_input.didParryRelease() && player->_weapon == Player::weapon::MELEE) {
+                if (player->_state == Player::state::PARRYSTANCE) { //maybe allow parry during PARRYSTART state?
+                    CULog("parried");
+                    player->animateParry();
+                }
+                else player->animateDefault();
             }
         }
     }
 
-    if (_level->getPlayerAtk()->isCompleted()) {
+    if (player->_state != Player::state::ATTACK) {
         atk->setEnabled(false);
     }
 
-    if (_input.didSwap()) player->swapWeapon();
+    if (_input.didSwap() && (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE)) 
+        //other states are weapon-dependent, so don't allow swapping while in them
+        player->swapWeapon();
 
 #pragma mark - Enemy movement
     _AIController.update(dt);
@@ -398,9 +407,36 @@ void GameScene::preUpdate(float dt) {
                     // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                     ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                 }
-                enemy->getAttack()->setPosition(enemy->getAttack()->getPosition().add(0, 64 / enemy->getDrawScale().y)); //64 is half of the pixel height of the enemy
-                enemy->getAttack()->setAngle(ang);
+                if (enemy->getType() == "melee lizard") {
+                    enemy->getAttack()->setPosition(enemy->getAttack()->getPosition().add(0, 64 / enemy->getDrawScale().y)); //64 is half of the pixel height of the enemy
+                    enemy->getAttack()->setAngle(ang);
+                }
                 enemy->setAttacking();
+            }
+            if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
+                Vec2 direction = enemy->getFacingDir();
+                direction.normalize();
+                float ang = acos(direction.dot(Vec2::UNIT_X));
+                if (direction.y < 0){
+                    // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                    ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                }
+                if (enemy->getType() == "ranged lizard") {
+                    if (enemy->getCharged()) {
+                        enemy->setCharged(false);
+                        std::shared_ptr<Projectile> p = Projectile::lizardAlloc(enemy->getPosition().add(0, 64 / enemy->getDrawScale().y), 1, ang, _assets);
+                        p->setDrawScale(Vec2(_scale, _scale));
+                        _level->addProjectile(p);
+                    }
+                }
+                else if (enemy->getType() == "mage alien") {
+                    if (enemy->getCharged()) {
+                        enemy->setCharged(false);
+                        std::shared_ptr<Projectile> p = Projectile::mageAlloc(enemy->getPosition().add(0, 64 / enemy->getDrawScale().y), 1, ang, _assets);
+                        p->setDrawScale(Vec2(_scale, _scale));
+                        _level->addProjectile(p);
+                    }
+                }
             }
         }
         
@@ -445,7 +481,24 @@ void GameScene::fixedUpdate(float step) {
     
 }
 
+void GameScene::applyUpgrade(std::string selectedAttribute){
+    auto player = _level->getPlayer();
+    if (selectedAttribute=="attack"){
+        player->attack->levelUp();
+        CULog("attack lvl: %d", player->attack->getCurrentLevel());
+        CULog("attack percentage: %f", player->attack->getCurrentPercentage());
+        CULog("attack val: %f", player->attack->getCurrentValue());
 
+//        CULog("curr atk level: %d",player->attack.getCurrentLevel());
+    } else{
+        player->defense->levelUp();
+        CULog("defense lvl: %d", player->defense->getCurrentLevel());
+        CULog("defense percentage: %f", player->defense->getCurrentPercentage());
+        CULog("defense val: %f", player->defense->getCurrentValue());
+
+//        CULog("curr atk level: %d",player->defense.getCurrentLevel());
+    }
+}
 void GameScene::postUpdate(float remain) {
     // TODO: possibly apply interpolation.
     // We will need more data structures for this

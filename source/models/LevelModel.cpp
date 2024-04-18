@@ -25,7 +25,8 @@ using namespace cugl;
 */
 LevelModel::LevelModel(void):
 _world(nullptr),
-_debugNode(nullptr)
+_debugNode(nullptr),
+_exiting(false)
 {
 	_bounds.size.set(1.0f, 1.0f);
 }
@@ -158,7 +159,7 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     }
     
     for (int ii = 0; ii < _walls.size(); ii++){
-        _walls[ii]->getCollider()->setDebugScene(_debugNode);
+        _walls[ii]->setDebugNode(_debugNode);
         _walls[ii]->getCollider()->setDebugColor(Color4::WHITE);
     }
     
@@ -168,8 +169,9 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     }
 
     for (int ii = 0; ii < _projectiles.size(); ii++) {
-        _projectiles[ii]->getCollider()->setDebugScene(_debugNode);
+        _projectiles[ii]->setDebugNode(_debugNode);
         _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
+        _projectiles[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
     }
 }
 
@@ -193,7 +195,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
-        _enemies[ii]->setHitboxAnimation(Animation::alloc(s2, 0.25f, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
+        _enemies[ii]->setHitboxAnimation(Animation::alloc(s2, 0.375f, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
     }
 }
 
@@ -267,7 +269,7 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 		return false;
 	}
     
-    _grid->printGrid();
+    //_grid->printGrid(); //if you want to see grid staggered layout
     
     auto boundaries = parsedJson->get(BOUNDARY_FIELD);
     if (boundaries != nullptr) {
@@ -321,7 +323,6 @@ void LevelModel::unload() {
         for(auto it = _enemies.begin(); it != _enemies.end(); ++it) {
             (*it)->removeObstaclesFromWorld(_world);
         }
-        
         for(auto it = _walls.begin(); it != _walls.end(); ++it) {
             (*it)->removeObstaclesFromWorld(_world);
         }
@@ -331,6 +332,7 @@ void LevelModel::unload() {
     }
 	_enemies.clear();
 	_walls.clear();
+    _energyWalls.clear();
     
     _player->removeObstaclesFromWorld(_world);
     _player = nullptr;
@@ -476,9 +478,17 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
 	
 	// Get the object, which is automatically retained
     if (success){
-        std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
-        _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
-        _walls.push_back(wallobj);
+        if (json->getString("type") == "Energy"){
+            std::shared_ptr<EnergyWall> wallobj = std::make_shared<EnergyWall>(json, polygon, obstaclePosition);
+            _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
+            _energyWalls.push_back(wallobj);
+            _walls.push_back(wallobj);
+        }
+        else {
+            std::shared_ptr<Wall> wallobj = std::make_shared<Wall>(json, polygon, obstaclePosition);
+            _grid->setNode(_grid->worldToTile(wallobj->getPosition()), 0); // 0 means non-walkable for now
+            _walls.push_back(wallobj);
+        }
     }
 	return success;
 }
@@ -540,17 +550,17 @@ void LevelModel::addProjectile(std::shared_ptr<Projectile> p) {
     _projectiles.push_back(p);
     _dynamicObjects.push_back(p);
     p->addObstaclesToWorld(_world);
-    p->getCollider()->setDebugScene(_debugNode);
+    p->setDebugNode(_debugNode);
     p->getCollider()->setDebugColor(Color4::RED);
+    p->getColliderShadow()->setDebugColor(Color4::BLUE);
 }
 
 void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
     for (auto it = _projectiles.begin(); it != _projectiles.end(); ++it) {
         if ((*it) == p) {
-            p->setEnabled(false);
             p->removeObstaclesFromWorld(_world);
-            _projectiles.erase(it);
             p->dispose();
+            _projectiles.erase(it);
             return;
         }
     }

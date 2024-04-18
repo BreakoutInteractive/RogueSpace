@@ -173,7 +173,7 @@
              "x":0,
              "y":0
             },
-         "type":"Wall"
+         "type":"EnergyWall"
         }, 
         {
          "id":19,
@@ -338,7 +338,7 @@
              "x":0,
              "y":0
             },
-         "type":"Wall"
+         "type":"EnergyWall"
         }, 
         {
          "id":33,
@@ -510,7 +510,7 @@
              "x":0,
              "y":0
             },
-         "type":"Wall"
+         "type":"EnergyWall"
         }, 
         {
          "id":48,
@@ -646,7 +646,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -683,7 +682,7 @@
              "x":0,
              "y":0
             },
-         "type":"Wall"
+         "type":"EnergyWall"
         }, 
         {
          "id":63,
