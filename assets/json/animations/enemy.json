@@ -32,6 +32,9 @@
         },
         "enemy-hit-effect": {
             "file":     "textures/hit_01.png"
+        },
+        "stun-effect": {
+            "file":     "textures/effect_stunned.png"
         }
     }
 }

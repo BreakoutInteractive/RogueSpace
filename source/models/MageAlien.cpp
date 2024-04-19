@@ -42,6 +42,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture = assets->get<Texture>("mage-attack");
     auto stunTexture = assets->get<Texture>("mage-idle"); // use idle animation for now
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("mage-projectile");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 9);
@@ -49,6 +50,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 14);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 7);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
@@ -56,6 +58,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     _chargingAnimation = Animation::alloc(projectileSheet, 0.5625f, false, 0, 13);
     
     _currAnimation = _idleAnimation; // set runnning

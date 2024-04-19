@@ -23,6 +23,9 @@
         },
         "player-bow-run": {
             "file":     "textures/player_bow_run.png"
+        },
+        "parry-effect":{
+            "file":     "textures/effect_parry.png"
         }
     }
 }

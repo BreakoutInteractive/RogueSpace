@@ -190,6 +190,12 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     default:
         break;
     }
+    if (_parryEffect->isActive()) { 
+        std::shared_ptr<SpriteSheet> effSheet = _parryEffect->getSpriteSheet();
+        transform.translate(0, spriteSheet->getFrameSize().height/2);
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform); 
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -203,6 +209,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto rangedTexture = assets->get<Texture>("player-ranged");
     auto bowRunTexture = assets->get<Texture>("player-bow-run");
     auto projEffectTexture = assets->get<Texture>("player-projectile");
+    auto parryEffectTexture = assets->get<Texture>("parry-effect");
     
     // make sheets
     auto parrySheet = SpriteSheet::alloc(parryTexture, 8, 16);
@@ -213,6 +220,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto bowIdleSheet = SpriteSheet::alloc(bowIdleTexture, 8, 8);
     auto bowRunSheet = SpriteSheet::alloc(bowRunTexture, 8, 16);
     auto projEffectSheet = SpriteSheet::alloc(projEffectTexture, 4, 4);
+    auto parryEffectSheet = SpriteSheet::alloc(parryEffectTexture, 2, 4);
 
     // pass to animations
     _parryStartAnimation = Animation::alloc(parrySheet, 0.1f, false, 0, 1);
@@ -221,17 +229,18 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation1 = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
     _attackAnimation2 = Animation::alloc(attackSheet, 0.3f, false, 8, 13);
     _attackAnimation3 = Animation::alloc(attackSheet, 0.5f, false, 14, 23);
-    _runAnimation = Animation::alloc(runSheet, 16/24.0, true, 0, 15);
+    _runAnimation = Animation::alloc(runSheet, 0.667f, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
     _chargingAnimation = Animation::alloc(rangedSheet, GameConstants::CHARGE_TIME, false, 0, 8);
     _chargedAnimation = Animation::alloc(rangedSheet, 0.1f, true, 8, 8);
     _shotAnimation = Animation::alloc(rangedSheet, 0.125f, false, 9, 11);
     _recoveryAnimation = Animation::alloc(rangedSheet, 0.167f, false, 12, 15);
-    _bowRunAnimation = Animation::alloc(bowRunSheet, 16 / 24.0f, true, 0, 15);
+    _bowRunAnimation = Animation::alloc(bowRunSheet, 0.667f, true, 0, 15);
     _bowIdleAnimation = Animation::alloc(bowIdleSheet, 1.2f, true, 0, 7);
     _chargingEffect = Animation::alloc(projEffectSheet, GameConstants::CHARGE_TIME, false, 0, 3);
-    _chargedEffect = Animation::alloc(projEffectSheet, 8 / 24.0f, true, 4, 7);
+    _chargedEffect = Animation::alloc(projEffectSheet, 0.333f, true, 4, 7);
     _shotEffect = Animation::alloc(projEffectSheet, 1/24.0f, false, 8, 8);
+    _parryEffect = Animation::alloc(parryEffectSheet, 0.667f, false);
     
     // add callbacks
     _attackAnimation1->onComplete([this](){
@@ -283,7 +292,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _chargedEffect->start();
         _state = CHARGED;
         });
-    
+
     setAnimation(_idleAnimation);
 }
 
@@ -294,6 +303,11 @@ void Player::animateParryStart() {
 void Player::animateParry() {
     setAnimation(_parryAnimation);
     _state = PARRY;
+}
+
+void Player::playParryEffect() {
+    _parryEffect->reset();
+    _parryEffect->start();
 }
 
 void Player::animateDefault() {
@@ -368,6 +382,7 @@ void Player::updateAnimation(float dt){
             }
         }
     }
+    _parryEffect->update(dt);
 }
 
 #pragma mark -

@@ -53,7 +53,8 @@ protected:
 
     /** The hit effect animation */
     std::shared_ptr<Animation> _hitEffect;
-    
+    /** The stun effect animation */
+    std::shared_ptr<Animation> _stunEffect;
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
