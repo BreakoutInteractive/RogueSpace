@@ -43,7 +43,6 @@ void CollisionController::beginContact(b2Contact* contact){
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        CULog("%s", (*it)->getPosition().toString().c_str());
         if ((*it)->isEnabled()) {
             intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
             //attack
