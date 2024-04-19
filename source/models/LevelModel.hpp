@@ -100,8 +100,19 @@ protected:
     
     /** whether the player is exiting the level*/
     bool _exiting;
+    
+    /** the random number generator */
+    std::mt19937 generator;
+    /** the random number distribution (uniform distribution) */
+    std::uniform_real_distribution<double> distribution;
 
 #pragma mark Internal Helper Methods
+    
+    /**
+     * depending on the component `class`property, calls the approriate loader function.
+     * If the component is a list of components (`Random` and `Collection` classes), the loading will be called on each subcomponent.
+     */
+    bool loadGameComponent(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
     
     /**
      * Loads the player object
@@ -119,20 +130,23 @@ protected:
     /**
      * Loads the enemy object
      *
-     * The enemies will be stored in the  `_enemies` field and retained.
+     * The enemy will be stored in the  `_enemies` field and retained.
+     *
+     * @param constants : the constants associated with enemies
+     * @param json the dynamic data from the map editor for this enemy
      */
-    bool loadEnemies(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
+    bool loadEnemy(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
     
     
     /**
-     * Loads tile layers
+     * Loads a tile layer
      *
      * @param  json   a JSON reader with cursor ready to read the tile layer data
      *
      * @retain the floor tiles
-     * @return true if the floor tiles were successfully loaded
+     * @return true if the  tiles were successfully loaded
      */
-    bool loadTileLayers(const std::shared_ptr<JsonValue>& json);
+    bool loadTileLayer(const std::shared_ptr<JsonValue>& json);
     
 
     /**

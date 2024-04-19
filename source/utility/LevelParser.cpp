@@ -14,21 +14,20 @@
 #include "Helper.hpp"
 #include <string>
 #include <sstream>
+#include "../models/LevelConstants.hpp" // import data classes from LevelConstants
 
 using namespace cugl;
 
 #define TILE_LAYER      "tilelayer"
+#define GROUP_LAYER     "group"
 #define OBJECT_LAYER    "objectgroup"
 #define LAYERS_KEY      "layers"
 #define TYPE            "type"
 #define VISIBLE         "visible"
 #define FIRSTGID        "firstgid"
-#define CLASS_WALL      "Wall"
-#define CLASS_PLAYER    "Player"
+
 #define CLASS_COLLIDER  "Collider"
 #define CLASS_HITBOX    "Hitbox"
-#define CLASS_LIZARD    "Lizard"
-#define CLASS_CASTER    "Caster"
 
 #pragma mark -
 #pragma mark Loading Dependencies (Assets)
@@ -52,9 +51,11 @@ void LevelParser::loadTilesets(const std::shared_ptr<AssetManager>& assets){
 /**
  * given the array of properties (name, type, value) pairs on an object, find the value of the property with the given name
  */
-std::shared_ptr<JsonValue> getPropertyValueByName(std::shared_ptr<JsonValue> objectProperties, std::string name){
-    
-    for (auto& property : objectProperties->children()){
+std::shared_ptr<JsonValue> getPropertyValueByName(std::shared_ptr<JsonValue> propertiesJson, std::string name){
+    if (propertiesJson == nullptr){
+        return nullptr;
+    }
+    for (auto& property : propertiesJson->children()){
         std::string propertyName = property->getString("name");
         if (propertyName == name){
             return property->get("value");
@@ -172,10 +173,12 @@ std::shared_ptr<JsonValue> convertVerticesToJSON(std::vector<Vec2>& vertices){
 std::shared_ptr<JsonValue> convertTextureDataToJSON(Tileset::TextureRegionData& textureData){
     std::shared_ptr<JsonValue> textureJson = JsonValue::allocObject();
     textureJson->appendChild("texture", JsonValue::alloc(textureData.source));
-    textureJson->appendChild("minx", JsonValue::alloc((long)textureData.startX));
-    textureJson->appendChild("miny", JsonValue::alloc((long)textureData.startY));
-    textureJson->appendChild("maxx", JsonValue::alloc((long)(textureData.startX + textureData.lengthX)));
-    textureJson->appendChild("maxy", JsonValue::alloc((long)(textureData.startY + textureData.lengthY)));
+    std::shared_ptr<JsonValue> region = JsonValue::allocArray();
+    region->appendChild(JsonValue::alloc((long)textureData.startX));
+    region->appendChild(JsonValue::alloc((long)textureData.startY));
+    region->appendChild(JsonValue::alloc((long)(textureData.startX + textureData.lengthX)));
+    region->appendChild(JsonValue::alloc((long)(textureData.startY + textureData.lengthY)));
+    textureJson->appendChild("region", region);
     return textureJson;
 }
 
@@ -213,38 +216,104 @@ const std::pair<std::string, int> LevelParser::getTilesetNameFromID(int id){
 #pragma mark -
 #pragma mark Parsing Layers
 
-void LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
+void LevelParser::cacheAllObjects(std::shared_ptr<JsonValue> layersJson){
+    std::vector<std::shared_ptr<JsonValue>> layers = layersJson->children();
+    for (auto it = layers.begin(); it != layers.end(); it++){
+        std::shared_ptr<JsonValue> layerJson = *it;
+        std::string type = layerJson->getString(TYPE);
+        if (type == OBJECT_LAYER){
+            auto objects = layerJson->get("objects")->children();
+            // save all objects into global object collection (helps parsing paths)
+            for (std::shared_ptr<JsonValue>& object: objects) {
+                _objects[object->getInt("id")] = object;
+            }
+        }
+        else if (type == GROUP_LAYER){
+            auto childrenLayers = layerJson->get(LAYERS_KEY);
+            cacheAllObjects(childrenLayers); // recursively go through the folder to find object layers
+        }
+    }
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseGroupLayer(const std::shared_ptr<JsonValue> layer){
+    std::shared_ptr<JsonValue> groupLayerData = JsonValue::allocObject();
+    std::shared_ptr<JsonValue> groupLayerContent = JsonValue::allocArray();
+    auto layers = layer->get(LAYERS_KEY)->children();
+    std::vector<int> weights;
+    for (std::shared_ptr<JsonValue>& childLayer: layers) {
+        std::shared_ptr<JsonValue> childLayerData; //output per child
+        std::string type = childLayer->getString(TYPE);
+        std::shared_ptr<JsonValue> weightProperty = getPropertyValueByName(childLayer->get("properties"), "weight");
+        weights.push_back(weightProperty == nullptr ? 1 : std::min(1, weightProperty->asInt()));
+        
+        if (type == OBJECT_LAYER){
+            childLayerData = parseObjectLayer(childLayer);
+        }
+        else if (type == TILE_LAYER){
+            childLayerData = parseTiledLayer(childLayer);
+        }
+        else if (type == GROUP_LAYER){
+            childLayerData = parseGroupLayer(childLayer);
+        }
+        
+        if (childLayerData != nullptr){
+            groupLayerContent->appendChild(childLayerData);
+        }
+    }
+    std::string layerClass = layer->getString(CLASS, CLASS_COLLECTION);
+    if (layerClass == CLASS_RANDOM){
+        // convert weights to CDF if this group layer is a randomized set of layers
+        int prev = 0;
+        double sum = 0;
+        for (int i = 0; i < weights.size(); i++){
+            sum += weights[i];
+            weights[i] += prev;
+            prev = weights[i];
+        }
+        std::shared_ptr<JsonValue> weightsData = JsonValue::allocArray();
+        for (int i = 0; i < weights.size(); i++){
+            weightsData->appendChild(JsonValue::alloc(weights[i]/sum));
+        }
+        groupLayerData->appendChild("cdf", weightsData);
+    }
+    groupLayerData->appendChild("contents", groupLayerContent);
+    groupLayerData->appendChild(CLASS, JsonValue::alloc(layerClass));
+    return groupLayerData;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared_ptr<JsonValue> layer){
     long id = layer->getInt("id");
     auto objects = layer->get("objects")->children();
+    std::shared_ptr<JsonValue> objectLayerData = JsonValue::allocObject();
+    std::shared_ptr<JsonValue> objectLayerContents = JsonValue::allocArray();
     for (std::shared_ptr<JsonValue>& object: objects) {
         std::string type = object->getString(TYPE);
         std::shared_ptr<JsonValue> data;
         if (type == CLASS_WALL || type == "EnergyWall"){
             data = parseWall(object);
             data->appendChild("type", JsonValue::alloc(std::string(type == CLASS_WALL ? "Wall" : "Energy")));
-            _wallData->appendChild(data);
         }
         else if (type == CLASS_PLAYER){
-            CUAssertLog(_playerData == nullptr, "uh oh!, multiple players found");
             data = parsePlayer(object);
         }
         else if (type == CLASS_COLLIDER){
             data = parseCustomCollision(object);
-            _boundaryData->appendChild(data);
         }
         else if (type == CLASS_LIZARD || type == CLASS_CASTER){
             data = parseEnemy(object, type);
-            _enemyData->appendChild(data);
         }
-        
         if (data != nullptr){
             data->appendChild("layer-id", JsonValue::alloc(id));
+            objectLayerContents->appendChild(data);
         }
     }
+    objectLayerData->appendChild("contents", objectLayerContents);
+    objectLayerData->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_COLLECTION)));
+    return objectLayerData;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseTiledLayer(const std::shared_ptr<JsonValue> layer){
-    
+    std::shared_ptr<JsonValue> tiledLayerObject = JsonValue::allocObject();
     std::shared_ptr<JsonValue> tiledLayerData = JsonValue::allocArray();
     
     // staggered maps arrange in even - odd row patterns
@@ -289,8 +358,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiledLayer(const std::shared_
             }
         }
     }
-    // CULog("%s", tiledLayerData->toString().c_str());
-    return tiledLayerData;
+    tiledLayerObject->appendChild("tiles", tiledLayerData);
+    tiledLayerObject->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_TILELAYER)));
+    return tiledLayerObject;
     
 }
 
@@ -311,19 +381,10 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     _mapHeight = (gridHeight/2.0f + 0.5f) * _tileHeight;
     _tileDimension = std::min(_tileWidth, _tileHeight);
     
-    // create the data containers
+    // create the data container and set box2d map attributes
     std::shared_ptr<JsonValue> levelData = JsonValue::allocObject();
-    /** the data associated with each layer of tiles (pairs of layer name followed by */
-    std::shared_ptr<JsonValue> tileLayersData = JsonValue::allocObject();
-    _wallData =  JsonValue::allocArray();
-    _playerData = nullptr;
-    _enemyData = JsonValue::allocArray();
-    _boundaryData = JsonValue::allocArray();
-    
-    // set box2d map attributes
     levelData->appendValue("width", _mapWidth/_tileDimension);
     levelData->appendValue("height", _mapHeight/_tileDimension);
-    
     // set layout properties, eg tile-grid attributes
     std::shared_ptr<JsonValue> gridData = JsonValue::allocObject();
     long mapGridWidth = gridWidth + 1;
@@ -336,39 +397,15 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     gridData->appendChild("origin", gridOrigin);
     levelData->appendChild("grid", gridData);
     
-    // parsing the layers
+    // parsing the layers (needs 2 pass)
     parseTilesetDependency(json->get("tilesets"));
-    std::vector<std::shared_ptr<JsonValue>> objectLayers;
-    std::vector<std::shared_ptr<JsonValue>> layers = json->get(LAYERS_KEY)->children();
-    for (auto it = layers.begin(); it != layers.end(); it++){
-        std::shared_ptr<JsonValue> layerJson = *it;
-        std::string type = layerJson->getString(TYPE);
-        if (type == TILE_LAYER){
-            std::string uniqueID = "layer-" + std::to_string(layerJson->getInt("id")) + "-";
-            if (layerJson->getBool(VISIBLE)){
-                tileLayersData->appendChild(uniqueID + layerJson->getString("name"), parseTiledLayer(layerJson));
-            }
-        }
-        else if (type == OBJECT_LAYER){
-            objectLayers.push_back(layerJson);
-            auto objects = layerJson->get("objects")->children();
-            // save all objects into global object collection (helps parsing paths)
-            for (std::shared_ptr<JsonValue>& object: objects) {
-                _objects[object->getInt("id")] = object;
-            }
-        }
-    }
-    // parse all object layers now
-    for (std::shared_ptr<JsonValue>& layerJson : objectLayers){
-        parseObjectLayer(layerJson);
-    }
-    // data finalization step
-    levelData->appendChild("tiles", tileLayersData);
-    levelData->appendChild("walls", _wallData);
-    CUAssertLog(_playerData != nullptr, "player not found");
-    levelData->appendChild("player", _playerData);
-    levelData->appendChild("enemies", _enemyData);
-    levelData->appendChild("boundaries", _boundaryData);
+    std::shared_ptr<JsonValue> layersJson = json->get(LAYERS_KEY);
+    cacheAllObjects(layersJson); // first pass
+    
+    // parse all group layers (this is done recursively)
+    auto contents = parseGroupLayer(json); // entire map is a group
+    auto mapData = contents->removeChild("contents");
+    levelData->appendChild(MAP_FIELD, mapData);
     return levelData;
 }
 
@@ -377,7 +414,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
 
 const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<JsonValue>& json){
     auto data = parsePhysicsObject(json, true, true, false);
+    data->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_WALL)));
     // TODO: change to add properties like height
+    // This is an example of getting a custom property:
 //    std::shared_ptr<JsonValue> passableProperty = getPropertyValueByName(json->get("properties"), "passable");
 //    if (passableProperty != nullptr){
 //        data->appendChild("passable", JsonValue::alloc(passableProperty->asBool()));
@@ -389,8 +428,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<JsonValue> &json){
-    _playerData = parsePhysicsObject(json, false, true, true);
-    return _playerData;
+    auto playerData = parsePhysicsObject(json, false, true, true);
+    playerData->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_PLAYER)));
+    return playerData;
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<JsonValue>& json, std::string enemyType){
@@ -415,6 +455,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<J
     std::shared_ptr<JsonValue> enemyHpProperty = getPropertyValueByName(json->get("properties"), "hp");
     CUAssertLog(enemyHpProperty != nullptr, "unable to find lizard hp on object id %d", json->getInt("id"));
     enemyData->appendChild("health", JsonValue::alloc(enemyHpProperty->asLong()));
+    enemyData->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_ENEMY)));
     return enemyData;
 }
 
@@ -440,6 +481,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::sh
     data->appendChild("vertices", convertVerticesToJSON(vertices));
     data->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
     data->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
+    // TODO: assign class to custom collisions (if still needed)
     return data;
 }
 

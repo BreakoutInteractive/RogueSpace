@@ -18,7 +18,7 @@ using namespace cugl;
 class LevelParser {
 protected:
     
-    // INTERNAL INTERMEDIATE DATA (this can be modified during the parsing phase)
+    // INTERNAL INTERMEDIATE DATA (this can be modified during the parsing phase of a single map)
     
     /** pixel width of tile */
     int _tileWidth;
@@ -41,41 +41,29 @@ protected:
     /** maps from identifier to objects in the map */
     std::unordered_map<int, std::shared_ptr<JsonValue>> _objects;
     
-#pragma mark Parsing Output Containers
-    
-    /** the data associated with walls */
-    std::shared_ptr<JsonValue> _wallData;
-    /** the data associated with the player */
-    std::shared_ptr<JsonValue> _playerData;
-    /** the data associated with the enemies */
-    std::shared_ptr<JsonValue> _enemyData;
-    /** the data associated with custom boundaries */
-    std::shared_ptr<JsonValue> _boundaryData;
-    
 private:
     
     /** the set of tilesets (mapped from json name to tileset data structure */
     std::unordered_map<std::string, std::shared_ptr<Tileset>> _sets;
     
 #pragma mark -
-#pragma mark Internal Parsing Helpers
+#pragma mark Internal Parsing Helpers (Parsing)
     
     /**
-     * load the dependencies of the current tiled map to resolve references
+     * The first pass of parsing the map (run through all layers and see which objects are present, adding them to `_objects` hashmap.
+     *
+     * This is primarily needed to resolve object references (if one object has a parameter value dependent on the existence of another object, eg. enemies pointing to a path node).
      */
-    void parseTilesetDependency(std::shared_ptr<JsonValue> tilesets);
+    void cacheAllObjects(std::shared_ptr<JsonValue> layersJson);
     
     /**
-     * find the tileset name for the given global identifier (with flags removed)
-     * constructs the corresponding id in the tileset
-     * @return the pair containing the name of the tileset (eg. example.json) and the index of the tile in the tileset
+     * parses a group layer and produces the data needed to initialize a random or collection layer.
+     *
+     *  A general group layer or `Collection` will have a list of game data (some of which could be group layers)
+     *
+     *  A `Random` layer has an associated distribution parameter `cdf` that correspond to the number of elements in the group in addition to carrying the same data as any other group layer.
      */
-    const std::pair<std::string, int> getTilesetNameFromID(int id);
-    
-    /**
-     * find the texture region to draw given the global identifier
-     */
-    const Tileset::TextureRegionData getRegionFromID(int id);
+    const std::shared_ptr<JsonValue> parseGroupLayer(const std::shared_ptr<JsonValue> layer);
     
     /**
      * parses a tiled layer and produces the data needed to initialize a tiled layer (for rendering)
@@ -85,7 +73,7 @@ private:
     /**
      * parses an object layer and loads the data needed to initialize various object classes
      */
-    void parseObjectLayer(const std::shared_ptr<JsonValue> layer);
+    const std::shared_ptr<JsonValue> parseObjectLayer(const std::shared_ptr<JsonValue> layer);
     
     /**
      * parses a wall object and produces the corresponding data for Wall model
@@ -119,6 +107,23 @@ private:
      */
     const std::shared_ptr<JsonValue> parsePhysicsObject(const std::shared_ptr<JsonValue>& objectJson, bool parseAsset, bool parseCollider, bool parseHitbox);
     
+#pragma mark Internal Parsing Helpers (Asset References)
+    /**
+     * load the dependencies of the current tiled map to resolve references
+     */
+    void parseTilesetDependency(std::shared_ptr<JsonValue> tilesets);
+    
+    /**
+     * find the tileset name for the given global identifier (with flags removed)
+     * constructs the corresponding id in the tileset
+     * @return the pair containing the name of the tileset (eg. example.json) and the index of the tile in the tileset
+     */
+    const std::pair<std::string, int> getTilesetNameFromID(int id);
+    
+    /**
+     * find the texture region to draw given the global identifier
+     */
+    const Tileset::TextureRegionData getRegionFromID(int id);
     
 public:
 #pragma mark -

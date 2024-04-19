@@ -14,6 +14,7 @@
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
 #include "GameConstants.hpp"
+#include <random>
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -29,6 +30,8 @@ _debugNode(nullptr),
 _exiting(false)
 {
 	_bounds.size.set(1.0f, 1.0f);
+    generator = std::mt19937(std::random_device()());
+    distribution = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
 /**
@@ -237,60 +240,15 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
     auto gridOrigin = gridData->get("origin")->asFloatArray();
     _grid = std::make_shared<LevelGrid>(gridWidth, gridHeight, Vec2(gridOrigin[0], gridOrigin[1]));
     
-    // load tile layers, mark walkable tiles on grid
-    auto tileLayers = parsedJson->get("tiles");
-    if (tileLayers != nullptr){
-        loadTileLayers(tileLayers);
-    }
-    else {
-        CUAssertLog(false, "Failed to find any tile layers");
-        return false;
-    }
     
-    
-    auto playerConstants = constants->get(PLAYER_FIELD);
-    auto playerJSON = parsedJson->get(PLAYER_FIELD);
-    if (playerConstants != nullptr && playerJSON != nullptr){
-        loadPlayer(playerConstants, playerJSON);
+    // load the map
+    std::vector<std::shared_ptr<JsonValue>> layers = parsedJson->get(MAP_FIELD)->children();
+    for (std::shared_ptr<JsonValue>& layer : layers){
+        loadGameComponent(constants, layer);
     }
-    else {
-        CUAssertLog(false, "Failed to load player");
-        return false;
-    }
-
-	auto walls = parsedJson->get(WALL_FIELD);
-	if (walls != nullptr) {
-		int wsize = (int)walls->size();
-		for(int ii = 0; ii < wsize; ii++) {
-			loadWall(walls->get(ii));
-		}
-	} else {
-		CUAssertLog(false, "Failed to load walls");
-		return false;
-	}
-    
-    //_grid->printGrid(); //if you want to see grid staggered layout
-    
-    auto boundaries = parsedJson->get(BOUNDARY_FIELD);
-    if (boundaries != nullptr) {
-        int size = (int)boundaries->size();
-        for(int ii = 0; ii < size; ii++) {
-            loadBoundary(boundaries->get(ii));
-        }
-    } else {
-        CUAssertLog(false, "Failed to load walls");
-        return false;
-    }
-    
-    auto enemiesJson = parsedJson->get("enemies");
-    auto enemyConstant = constants->get("enemy");
-    if (enemiesJson != nullptr && enemyConstant != nullptr){
-        loadEnemies(enemyConstant, enemiesJson);
-    }
-    else {
-        CUAssertLog(false, "Failed to load enemies");
-        return false;
-    }
+    CUAssertLog(_player != nullptr, "No player could be generated for the given map, either no player is added to the map or player is being randomized!");
+    CUAssertLog(_enemies.size() > 0, "No enemies could be found/generated!");
+    CUAssertLog(_tileLayers.size() > 0, "no tile layers found!");
 
     // Add objects to world
     _player->addObstaclesToWorld(_world);
@@ -350,6 +308,48 @@ void LevelModel::unload() {
 #pragma mark -
 #pragma mark Individual Loaders
 
+bool LevelModel::loadGameComponent(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json){
+    bool success = true;
+    std::string objectClass = json->getString(CLASS);
+    if (objectClass == CLASS_COLLECTION){
+        auto contents = json->get(CONTENTS_FIELD)->children();
+        for (std::shared_ptr<JsonValue>& childJson : contents){
+            if (!loadGameComponent(constants, childJson)){
+                return false;
+            }
+        }
+    }
+    else if (objectClass == CLASS_RANDOM){
+        auto cdf = json->get(CDF_FIELD)->asFloatArray();
+        if (cdf.size() > 0){
+            float probability = distribution(generator);
+            for (int i = 0; i < cdf.size(); i++){
+                if (cdf[i] >= probability){
+                    // get i-th component, load it
+                    loadGameComponent(constants, json->get(CONTENTS_FIELD)->get(i));
+                    break;
+                }
+            }
+        }
+    }
+    else if (objectClass == CLASS_WALL){
+        loadWall(json);
+    }
+    else if (objectClass == CLASS_ENEMY){
+        loadEnemy(constants->get(ENEMY_FIELD), json);
+    }
+    else if (objectClass == CLASS_PLAYER){
+        loadPlayer(constants->get(PLAYER_FIELD), json);
+    }
+    else if (objectClass == CLASS_TILELAYER){
+        loadTileLayer(json); // this changes the grid data structure by marking walkable tiles
+    }
+    else {
+        CUAssertLog(false, "unrecognized data type to load");
+    }
+    return success;
+}
+
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json){
     bool success = true;
 
@@ -384,78 +384,71 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
     return success;
 }
 
-bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &data){
-    int count = (int) data->size();
-    for (int ii = 0; ii < count; ii++){
-        auto json = data->get(ii);
-        std::shared_ptr<Enemy> enemy;
-        std::string enemyType = json->getString("type");
-        if (enemyType == "melee-lizard") {
-            enemy = MeleeEnemy::alloc(json);
-        }
-        else if (enemyType == "ranged-lizard") {
-            enemy = RangedLizard::alloc(json);
-        }
-        else if (enemyType == "caster") {
-            enemy = MageAlien::alloc(json);
-        }
-        CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());
-        auto enemyCollider = enemy->getCollider();
-        enemyCollider->setName("enemy-" + std::to_string(ii));
-        enemyCollider->setDensity(constants->getDouble(DENSITY_FIELD));
-        enemyCollider->setFriction(constants->getDouble(FRICTION_FIELD));
-        enemyCollider->setRestitution(constants->getDouble(RESTITUTION_FIELD));
-        enemyCollider->setFixedRotation(!constants->getBool(ROTATION_FIELD));
-        enemyCollider->setDebugColor(parseColor(constants->getString(DEBUG_COLOR_FIELD)));
-        
-        enemy->setHealth(json->getInt("health"));
-        enemy->setDefaultState(json->getString("defaultstate"));
-        std::vector<Vec2> path;
-        std::vector<float> vertices = json->get("path")->asFloatArray();
-        Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
-        auto numPoints = json->get("path")->size() / 2;
-        for (int j = 0; j < numPoints ; j++) {
-            path.push_back(verts[j]);
-        }
-        enemy->setPath(path);
-        if (enemy->getDefaultState() == "patrol") {
-            enemy->setGoal(enemy->getPath()[0]);
-            enemy->setPathIndex(0);
-        }
-        std::string btype = constants->getString(BODYTYPE_FIELD);
-        if (btype == STATIC_VALUE) {
-            enemyCollider->setBodyType(b2_staticBody);
-        }
-        _enemies.push_back(enemy);
-        
-        // attack setup
-        b2Filter filter;
-        auto attack = physics2::WheelObstacle::alloc(enemyCollider->getPosition(), GameConstants::ENEMY_MELEE_ATK_RANGE);
-        attack->setSensor(true);
-        attack->setName("enemy-attack");
-        attack->setBodyType(b2_dynamicBody);
-        // this is an attack
-        filter.categoryBits = CATEGORY_ATTACK;
-        // since it is an enemy's attack, it can collide with the player
-        filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
-        attack->setFilterData(filter);
-        enemy->setAttack(attack);
+bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json){
+    std::shared_ptr<Enemy> enemy;
+    std::string enemyType = json->getString("type");
+    if (enemyType == "melee-lizard") {
+        enemy = MeleeEnemy::alloc(json);
     }
+    else if (enemyType == "ranged-lizard") {
+        enemy = RangedLizard::alloc(json);
+    }
+    else if (enemyType == "caster") {
+        enemy = MageAlien::alloc(json);
+    }
+    CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());
+    auto enemyCollider = enemy->getCollider();
+    enemyCollider->setName("enemy-" + std::to_string(_enemies.size()));
+    enemyCollider->setDensity(constants->getDouble(DENSITY_FIELD));
+    enemyCollider->setFriction(constants->getDouble(FRICTION_FIELD));
+    enemyCollider->setRestitution(constants->getDouble(RESTITUTION_FIELD));
+    enemyCollider->setFixedRotation(!constants->getBool(ROTATION_FIELD));
+    enemyCollider->setDebugColor(parseColor(constants->getString(DEBUG_COLOR_FIELD)));
+    
+    enemy->setHealth(json->getInt("health"));
+    enemy->setDefaultState(json->getString("defaultstate"));
+    std::vector<Vec2> path;
+    std::vector<float> vertices = json->get("path")->asFloatArray();
+    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
+    auto numPoints = json->get("path")->size() / 2;
+    for (int j = 0; j < numPoints ; j++) {
+        path.push_back(verts[j]);
+    }
+    enemy->setPath(path);
+    if (enemy->getDefaultState() == "patrol") {
+        enemy->setGoal(enemy->getPath()[0]);
+        enemy->setPathIndex(0);
+    }
+    std::string btype = constants->getString(BODYTYPE_FIELD);
+    if (btype == STATIC_VALUE) {
+        enemyCollider->setBodyType(b2_staticBody);
+    }
+    _enemies.push_back(enemy);
+    
+    // attack setup
+    b2Filter filter;
+    auto attack = physics2::WheelObstacle::alloc(enemyCollider->getPosition(), GameConstants::ENEMY_MELEE_ATK_RANGE);
+    attack->setSensor(true);
+    attack->setName("enemy-attack");
+    attack->setBodyType(b2_dynamicBody);
+    // this is an attack
+    filter.categoryBits = CATEGORY_ATTACK;
+    // since it is an enemy's attack, it can collide with the player
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
+    attack->setFilterData(filter);
+    enemy->setAttack(attack);
     return true;
 }
 
-bool LevelModel::loadTileLayers(const std::shared_ptr<JsonValue> &json){
-    std::vector<std::shared_ptr<JsonValue>> layers = json->children();
-    for (int ii = 0; ii < layers.size(); ii++){
-        auto tileArray = layers[ii]->children();
-        std::shared_ptr<TileLayer> tileLayer = TileLayer::alloc();
-        for (int idx = 0; idx < tileArray.size(); idx++){
-            std::shared_ptr<Tile> tile = Tile::alloc(tileArray[idx]);
-            tileLayer->addTile(tile);
-            _grid->setNode(_grid->worldToTile(tile->getPosition()), 1); // 1 means walkable for now
-        }
-        _tileLayers.push_back(tileLayer);
+bool LevelModel::loadTileLayer(const std::shared_ptr<JsonValue> &json){
+    auto tileArray = json->get("tiles")->children();
+    std::shared_ptr<TileLayer> tileLayer = TileLayer::alloc();
+    for (int idx = 0; idx < tileArray.size(); idx++){
+        std::shared_ptr<Tile> tile = Tile::alloc(tileArray[idx]);
+        tileLayer->addTile(tile);
+        _grid->setNode(_grid->worldToTile(tile->getPosition()), 1); // 1 means walkable for now
     }
+    _tileLayers.push_back(tileLayer);
     return true;
 }
 
