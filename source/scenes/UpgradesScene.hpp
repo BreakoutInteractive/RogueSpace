@@ -46,7 +46,7 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _confirm1;
     shared_ptr<scene2::Label> _option1Lvl;
     shared_ptr<scene2::Label> _option1Change;
-    shared_ptr<scene2::Label> _option1Att;
+    shared_ptr<scene2::Label> _option1Type;
     
     
     /** The button for upgrade option 2 */
@@ -55,12 +55,22 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _confirm2;
     shared_ptr<scene2::Label> _option2Lvl;
     shared_ptr<scene2::Label> _option2Change;
-    shared_ptr<scene2::Label> _option2Att;
+    shared_ptr<scene2::Label> _option2Type;
     
-    std::vector<std::shared_ptr<Upgradeable>> _playerAttributes;
+    int _displayedAttribute1;
+    int _displayedAttribute2;
     /** The player choice */
     Choice _choice;
     bool _active;
+    
+private:
+    /**
+     * Chooses random upgrades
+     *
+     *
+     * @param size length of attribute array
+     */
+    void getRandomUpgrade(unsigned long size);
     
 public:
 #pragma mark -
@@ -103,8 +113,13 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::vector<std::shared_ptr<Upgradeable>> attributes);
-    
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    /**
+     * Updates button infomartionon on scene
+     *
+     *
+     * @param attributes available payer upgrades
+     */
     void updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes);
 
     /**
@@ -119,13 +134,14 @@ public:
     virtual void setActive(bool value) override;
     
     /**
-     * Returns the user's menu choice.
+     * Returns a random Upgrade
      *
-     * This will return NONE if the user had no yet made a choice.
+     * This will make sure upgrades returned are .
      *
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+        
 
 };
 
