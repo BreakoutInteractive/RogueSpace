@@ -108,7 +108,9 @@ void CollisionController::beginContact(b2Contact* contact){
                     CULog("Player took damage!");
                 }
                 else {
+                    //successful parry
                     (*it)->setStunned();
+                    player->playParryEffect();
                 }
             }
         }

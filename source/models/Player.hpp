@@ -78,6 +78,8 @@ protected:
     std::shared_ptr<Animation> _chargedEffect;
     /** The effect to use when the bow is shot */
     std::shared_ptr<Animation> _shotEffect;
+    /** The effect to use upon successfully parrying */
+    std::shared_ptr<Animation> _parryEffect;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -362,6 +364,8 @@ public:
     void animateCharge();
     /** Change to using the shooting animation and change state to SHOT */
     void animateShot();
+    /** Start playing the parry effect. Should only be called when the player successfully parries */
+    void playParryEffect();
 
     /**
     * Method to call when player is hit by an attack

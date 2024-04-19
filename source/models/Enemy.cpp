@@ -128,11 +128,16 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 
     if (_hitEffect->isActive()) {
         auto effSheet = _hitEffect->getSpriteSheet();
-        Affine2 effTrans = Affine2();
-        effTrans.scale(2);
-        effTrans.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        Vec2 effOrigin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, effOrigin, effTrans);
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
+    }
+    if (_state == EnemyState::STUNNED) {
+        auto effSheet = _stunEffect->getSpriteSheet();
+        transform = Affine2::createTranslation(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
     }
 }
 
@@ -221,6 +226,7 @@ void Enemy::setStunned() {
     _idleAnimation->reset();
     _walkAnimation->reset();
     _state = EnemyState::STUNNED;
+    _stunEffect->start();
 }
 
 
@@ -259,12 +265,12 @@ void Enemy::updateAnimation(float dt){
     }
     else if (_state == EnemyState::STUNNED){
         // TODO: could possibly use stunned animation and remove this state altogether
-        _tint = Color4::YELLOW;
+        //_tint = Color4::YELLOW;
     }
     else {
         _tint = Color4::WHITE;
     }
-    
+    _stunEffect->update(dt);
     _hitboxAnimation->update(dt);
 }
 
