@@ -43,40 +43,43 @@ void CollisionController::beginContact(b2Contact* contact){
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
-        //attack
-        if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
-            (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
-            //attack hitbox is a circle, but we only want it to hit in a semicircle
-            Vec2 dir = (*it)->getPosition() * (*it)->getDrawScale() - player->getPosition() * player->getDrawScale();
-            dir.normalize();
-            float ang = acos(dir.dot(Vec2::UNIT_X));
-            if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
-            if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                (*it)->hit(dir, _level->getPlayer()->getAtkDamage(), player->getCombo() != 3 ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
-                _audioController->playPlayerFX("attackHit");
-                CULog("Hit an enemy!");
+        CULog("%s", (*it)->getPosition().toString().c_str());
+        if ((*it)->isEnabled()) {
+            intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
+            //attack
+            if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
+                (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
+                //attack hitbox is a circle, but we only want it to hit in a semicircle
+                Vec2 dir = (*it)->getPosition() * (*it)->getDrawScale() - player->getPosition() * player->getDrawScale();
+                dir.normalize();
+                float ang = acos(dir.dot(Vec2::UNIT_X));
+                if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
+                if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
+                    (*it)->hit(dir, _level->getPlayer()->getAtkDamage(), player->getCombo() != 3 ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    _audioController->playPlayerFX("attackHit");
+                    CULog("Hit an enemy!");
+                }
             }
-        }
-        //update (commenting out the below) : player NO LONGER takes damage if running into enemy while not dodging
-        // else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
-        //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-        //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
-        //     dir.normalize();
-        //     if (_level->getPlayer()->_state!=Player::state::DODGE) _level->getPlayer()->hit(dir);
-        // }
-        //player ranged attack
-        for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
-            intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
-            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
-                (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
-                //TODO: give projectiles a modifiable damage value
-                //explosion shouldn't hit enemies (or should it?)
-                if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
-                    (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
-                    CULog("Shot an enemy!");
-                    p->setExploding();
-                    //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
+            //update (commenting out the below) : player NO LONGER takes damage if running into enemy while not dodging
+            // else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
+            //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
+            //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
+            //     dir.normalize();
+            //     if (_level->getPlayer()->_state!=Player::state::DODGE) _level->getPlayer()->hit(dir);
+            // }
+            //player ranged attack
+            for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
+                intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
+                if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
+                    (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
+                    //TODO: give projectiles a modifiable damage value
+                    //explosion shouldn't hit enemies (or should it?)
+                    if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                        CULog("Shot an enemy!");
+                        p->setExploding();
+                        //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
+                    }
                 }
             }
         }
