@@ -223,6 +223,7 @@ void Enemy::setStunned() {
     _atkCD.reset(); // stunning should reset attack
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _attackAnimation->reset();
+    _hitboxAnimation->reset();
     _idleAnimation->reset();
     _walkAnimation->reset();
     _state = EnemyState::STUNNED;
