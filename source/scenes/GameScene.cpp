@@ -17,6 +17,7 @@
 #include "../models/Enemy.hpp"
 #include "../models/Projectile.hpp"
 #include "../models/MeleeEnemy.hpp"
+#include "../models/MeleeLizard.hpp"
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"

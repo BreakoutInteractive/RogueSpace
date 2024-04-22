@@ -1,16 +1,16 @@
 //
-//  MeleeEnemy.hpp
+//  MeleeLizard.hpp
 //  RS
 //
-//  Created by Dylan McIntyre on 3/23/24.
+//  Created by Dylan McIntyre on 4/22/24.
 //
 
-#ifndef MeleeEnemy_hpp
-#define MeleeEnemy_hpp
+#ifndef MeleeLizard_hpp
+#define MeleeLizard_hpp
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
-#include "Enemy.hpp"
+#include "MeleeEnemy.hpp"
 #include "GameObject.hpp"
 
 class Animation;
@@ -18,10 +18,10 @@ class Animation;
 /**
  *  This class represents a melee enemy in the game.
  */
-class MeleeEnemy : public Enemy {
+class MeleeLizard : public MeleeEnemy {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(MeleeEnemy);
+    CU_DISALLOW_COPY_AND_ASSIGN(MeleeLizard);
     
 protected:
     // std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
@@ -32,12 +32,12 @@ public:
     /**
      * Creates a new enemy at the origin.
      */
-    MeleeEnemy(void) : Enemy() { }
+    MeleeLizard(void) : MeleeEnemy() { }
     
     /**
      * Destroys this player, releasing all resources.
      */
-    virtual ~MeleeEnemy(void) { dispose(); }
+    virtual ~MeleeLizard(void) { dispose(); }
     
     /**
      * Disposes all resources and assets
@@ -76,10 +76,29 @@ public:
      *
      * @return a newly allocated player with the given position
      */
-    static std::shared_ptr<MeleeEnemy> alloc(std::shared_ptr<JsonValue> data) {
-        auto result = std::make_shared<MeleeEnemy>();
+    static std::shared_ptr<MeleeLizard> alloc(std::shared_ptr<JsonValue> data) {
+        auto result = std::make_shared<MeleeLizard>();
         return (result->init(data) ? result : nullptr);
     }
+
+#pragma mark -
+#pragma mark Accessors
+    
+    std::string getType() override { return "melee lizard"; }
+    
+#pragma mark -
+#pragma mark Animation and State
+    
+    /**
+     * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
+     */
+    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
+    
+    /**
+     * Sets the direction that the enemy is currently facing
+     */
+    void setFacingDir(cugl::Vec2 dir) override;
+    
 };
 
-#endif /* MeleeEnemy_hpp */
+#endif /* MeleeLizard_hpp */

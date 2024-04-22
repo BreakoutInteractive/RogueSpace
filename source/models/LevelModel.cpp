@@ -7,6 +7,7 @@
 #include "Enemy.hpp"
 #include "Projectile.hpp"
 #include "MeleeEnemy.hpp"
+#include "MeleeLizard.hpp"
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
 #include "MageAlien.hpp"
@@ -391,7 +392,7 @@ bool LevelModel::loadEnemies(const std::shared_ptr<JsonValue> constants, const s
         std::shared_ptr<Enemy> enemy;
         std::string enemyType = json->getString("type");
         if (enemyType == "melee-lizard") {
-            enemy = MeleeEnemy::alloc(json);
+            enemy = MeleeLizard::alloc(json);
         }
         else if (enemyType == "ranged-lizard") {
             enemy = RangedLizard::alloc(json);
