@@ -261,6 +261,7 @@
             0, 0, 0, 0, 92, 92, 92, 92, 92, 92, 92, 77, 0, 0, 0],
          "height":40,
          "id":21,
+         "locked":true,
          "name":"Tile Layer 5",
          "opacity":1,
          "type":"tilelayer",
@@ -323,9 +324,9 @@
         }, 
         {
          "draworder":"topdown",
-         "id":6,
+         "id":27,
          "locked":true,
-         "name":"walls",
+         "name":"energy-walls",
          "objects":[
                 {
                  "gid":60,
@@ -736,57 +737,141 @@
                  "width":128,
                  "x":640,
                  "y":736
-                }, 
-                {
-                 "gid":34,
-                 "height":128,
-                 "id":807,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":576,
-                 "y":704
-                }, 
-                {
-                 "gid":34,
-                 "height":128,
-                 "id":809,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":1792,
-                 "y":672
-                }, 
-                {
-                 "gid":34,
-                 "height":128,
-                 "id":810,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":1152,
-                 "y":992
-                }, 
-                {
-                 "gid":49,
-                 "height":128,
-                 "id":812,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":1216,
-                 "y":384
                 }],
          "opacity":1,
          "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "class":"Random",
+         "id":28,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":6,
+                 "locked":true,
+                 "name":"stone",
+                 "objects":[
+                        {
+                         "gid":34,
+                         "height":128,
+                         "id":807,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":576,
+                         "y":704
+                        }, 
+                        {
+                         "gid":34,
+                         "height":128,
+                         "id":809,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1792,
+                         "y":672
+                        }, 
+                        {
+                         "gid":34,
+                         "height":128,
+                         "id":810,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1152,
+                         "y":992
+                        }, 
+                        {
+                         "gid":49,
+                         "height":128,
+                         "id":812,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1216,
+                         "y":384
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":29,
+                 "locked":true,
+                 "name":"rock",
+                 "objects":[
+                        {
+                         "gid":51,
+                         "height":128,
+                         "id":815,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":576,
+                         "y":704
+                        }, 
+                        {
+                         "gid":35,
+                         "height":128,
+                         "id":816,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1216,
+                         "y":384
+                        }, 
+                        {
+                         "gid":36,
+                         "height":128,
+                         "id":817,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1792,
+                         "y":672
+                        }, 
+                        {
+                         "gid":50,
+                         "height":128,
+                         "id":818,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1152,
+                         "y":992
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":false,
+                 "x":0,
+                 "y":0
+                }],
+         "locked":true,
+         "name":"stone-walls or rock-walls (random)",
+         "opacity":1,
+         "type":"group",
          "visible":true,
          "x":0,
          "y":0
@@ -797,18 +882,6 @@
          "locked":true,
          "name":"entities",
          "objects":[
-                {
-                 "gid":250,
-                 "height":128,
-                 "id":551,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":768,
-                 "y":672
-                }, 
                 {
                  "gid":251,
                  "height":128,
@@ -844,9 +917,93 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "class":"Random",
+         "id":23,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":26,
+                 "locked":true,
+                 "name":"left",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":551,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":768,
+                         "y":672
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":24,
+                 "locked":true,
+                 "name":"top",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":813,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1212.59401468097,
+                         "y":438.604178430265
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":false,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":25,
+                 "locked":true,
+                 "name":"bottom",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":814,
+                         "name":"",
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1152.26199887069,
+                         "y":908.332015810277
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":false,
+                 "x":0,
+                 "y":0
+                }],
+         "locked":true,
+         "name":"player-spawn-locations",
+         "opacity":1,
+         "type":"group",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":23,
- "nextobjectid":813,
+ "nextlayerid":30,
+ "nextobjectid":819,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",
