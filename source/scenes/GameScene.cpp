@@ -112,7 +112,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _active = true;
     _complete = false;
     _defeat = false;
-    setLevel(_levelNumber);         // load initial level/hub
+    setLevel(_levelNumber);         // load initial level/hubx
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
 }
@@ -216,7 +216,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
 
-        if (_level->getPlayer()->_hp==0) setDefeat(true);
+        if (_level->getPlayer()->_hp<0.01) setDefeat(true);
     }
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
@@ -485,24 +485,10 @@ void GameScene::fixedUpdate(float step) {
     
 }
 
-void GameScene::applyUpgrade(std::string selectedAttribute){
-    auto player = _level->getPlayer();
-    if (selectedAttribute=="attack"){
-        player->attack->levelUp();
-        CULog("attack lvl: %d", player->attack->getCurrentLevel());
-        CULog("attack percentage: %f", player->attack->getCurrentPercentage());
-        CULog("attack val: %f", player->attack->getCurrentValue());
-
-//        CULog("curr atk level: %d",player->attack.getCurrentLevel());
-    } else{
-        player->defense->levelUp();
-        CULog("defense lvl: %d", player->defense->getCurrentLevel());
-        CULog("defense percentage: %f", player->defense->getCurrentPercentage());
-        CULog("defense val: %f", player->defense->getCurrentValue());
-
-//        CULog("curr atk level: %d",player->defense.getCurrentLevel());
-    }
+void GameScene::updatePlayerAttributes(std::string selectedAttribute){
+    _level->getPlayer()->applyUpgrade(selectedAttribute);
 }
+
 void GameScene::postUpdate(float remain) {
     // TODO: possibly apply interpolation.
     // We will need more data structures for this

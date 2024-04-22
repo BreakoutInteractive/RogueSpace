@@ -7,12 +7,21 @@
 
 #include "Upgradeable.hpp"
 
+
+Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue, std::string type){
+    _maxLevel = maxLevel;
+    _currLevel = 0;
+    _maxValue = maxValue;
+    _currValue = baseValue;
+    _stepAmt = (_maxValue-_currValue)/_maxLevel;
+    _type = type;
+}
+
+
 void Upgradeable::levelUp(){
-    if (_currentLevel<_maxLevel){
-        _currentLevel+=1;
-        float ratio = (float)_currentLevel/_maxLevel;
-        _currPercentage = ratio*_maxPercentage;
-        _currValue = (float)_baseValue+_currPercentage;
+    if (_currLevel<_maxLevel){
+        _currLevel+=1;
+        _currValue += _stepAmt;
     }
 }
 
@@ -20,21 +29,17 @@ void Upgradeable::levelUp(){
  * Decreases the current level and updates
  */
 void Upgradeable::levelDown(){
-    if (_currentLevel>0) {
-        _currentLevel-=1;
-        float ratio = (float)_currentLevel/_maxLevel;
-        _currPercentage = ratio*_maxPercentage;
-        _currValue = _baseValue+_currPercentage;
+    if (_currLevel>0) {
+        _currLevel-=1;
+        _currValue -= _stepAmt;
     }
 }
 
-void Upgradeable::boostStat(float boostPercentage){
-    _currPercentage = ((_currentLevel/_maxLevel)*_maxPercentage)+ boostPercentage;
-    _currValue = _baseValue+_currPercentage;
+void Upgradeable::boostStat(float boostValue){
+        _currValue += boostValue;
     
 }
 
-void Upgradeable::debuffStat(float boostPercentage){
-    _currPercentage = ((_currentLevel/_maxLevel)*_maxPercentage) - boostPercentage;
-    _currValue = _baseValue+_currPercentage;
+void Upgradeable::debuffStat(float boostValue){
+    _currValue -= boostValue;
 }

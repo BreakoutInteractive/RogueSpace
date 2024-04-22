@@ -82,10 +82,13 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
     _dodgeDuration.setMaxCount(GameConstants::PLAYER_DODGE_DURATION);
     _hp = GameConstants::PLAYER_MAX_HP;
-    defense =  std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_DEFENSE);
-    attack = std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_ATK_DAMAGE);
-    attributes.push_back(attack);
-    attributes.push_back(defense);
+    
+    defenseUpgrade  =  std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_DEFENSE, "DEFENSE");
+    attackUpgrade  = std::make_shared<Upgradeable>(10, 2, GameConstants::PLAYER_ATK_DAMAGE, "ATTACK");
+    dodgeUpgrade = std::make_shared<Upgradeable>(10, 30, GameConstants::PLAYER_DODGE_COOLDOWN, "DODGECD");
+    attributes.push_back(attackUpgrade);
+    attributes.push_back(defenseUpgrade);
+    attributes.push_back(dodgeUpgrade);
     _moveScale = GameConstants::PLAYER_MOVE_SPEED;
 
     
@@ -104,6 +107,18 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
 
 void Player::dispose() {
     _playerTextureKey = "";
+}
+
+void Player::applyUpgrade(std::string upgrade){
+    if (upgrade=="ATTACK"){
+        attackUpgrade->levelUp();
+    } else if (upgrade=="DEFENSE"){
+        defenseUpgrade->levelUp();
+    } else if (upgrade=="DODGECD"){
+        dodgeUpgrade->levelUp();
+        _dodgeCD.setMaxCount(dodgeUpgrade->getCurrentValue());
+    }
+    
 }
 
 
@@ -440,7 +455,7 @@ void Player::hit(Vec2 atkDir, int damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (_hitCounter.isZero() && _state != DODGE) {
         _hitCounter.reset();
-        _hp = std::fmax(0, (_hp - damage*(1-defense->getCurrentPercentage())));
+        _hp = std::fmax(0, (_hp - damage*defenseUpgrade->getCurrentValue()));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);
         _state = IDLE; //TODO: hit state ???
