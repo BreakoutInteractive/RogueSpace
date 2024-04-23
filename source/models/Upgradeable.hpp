@@ -11,100 +11,101 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 
-class Upgradeable { //map 1 to upgrades of type attack, map 2 to upgrades of type defense
+class Upgradeable {
         
 protected:
-    int _currentLevel;
-    
+    /** current level of stat on 0 based number scale*/
+    int _currLevel;
+    /** maximum level stat can reach on 0 based number scale */
     int _maxLevel;
-    
-    float _maxPercentage;
-    
-    float _currPercentage;
-    
-    float _baseValue;
-    
+    /** current value of stat */
     float _currValue;
+    /** maximum value stat can reach */
+    float _maxValue;
+    
+private:
+    /** amount gained between levels */
+    float _stepAmt;
+    /** category of stat */
+    std::string _type;
 
 public:
     Upgradeable(){
         _maxLevel=0;
-        _currentLevel=0;
-        _currPercentage=0;
-        _maxPercentage=0;
-        _baseValue=0;
+        _currLevel=0;
         _currValue=0;
+        _maxValue=0;
+        _stepAmt=0;
+        _type = "";
     }
     
     /**
      * Initializes an upgrade at level 0 and increments evenly by level up to max level
      *
-     * @param maxLevel maximum amount of levels
-     * @param maxPercentage maximum amount of increase possible on scale of 0-1
+     * @param maxLevel maximum amount of levels on 0 based number scale
+     * @param maxValue maximum value the stat can reach
      * @param baseValue starting value of stat
-     */
-    Upgradeable(int maxLevel, float maxPercentage, int baseValue):
-    _maxLevel(maxLevel), _currentLevel(0), _currPercentage(0), _maxPercentage(maxPercentage),
-    _baseValue(baseValue), _currValue(baseValue){
-            assert(maxLevel > 0);
-        }
-    
-    /**
-     * Initializes an upgrade at currLevel  and increments evenly by level up to max level
+     * @param type  category of stat
      *
-     * @param maxLevel maximum amount of levels
-     * @param maxPercentage maximum amount of increase possible on scale of 0-1
-     * @param baseValue starting value of stat
-     * @param currLevel starting level of sta
      */
-    Upgradeable(int maxLevel, int currLevel, float maxPercentage, int baseValue):
-    _maxLevel(maxLevel), _currentLevel(currLevel), _currPercentage(0), _maxPercentage(maxPercentage),
-    _baseValue(baseValue), _currValue(baseValue){
-            assert(maxLevel > 0);
-            assert(currLevel >= 0);
-        }
+    Upgradeable(int maxLevel, float maxValue, float baseValue, std::string type);
+    
     
     /**
-     * Increases the current level and updates
+     * Increases the current level and updates stat
      */
     void levelUp();
     
     /**
-     * Decreases the current level and updates
+     * Decreases the current level and updates stat
      */
     void levelDown();
     
     /**
-     * Adds an additonaal percent increase to stat
+     * Adds an increase to stat
      *
-     * @param boostPercentage amount of percent increase on scale of 0-1
+     * @param boostValue amount of increase
      */
     void boostStat(float boostPercentage);
     
     /**
-     * Adds an additonaal percent increase to stat
+     * Adds an additonal percent increase to stat
      *
-     * @param boostPercentage amount of percent decrease on scale of 0-1
+     * @param debuffValue amount of decrease
      */
-    void debuffStat(float boostPercentage);
+    void debuffStat(float debuffValue);
+    
+    void resetUpgrade();
     
     /**
      * Returns current level of stat
      */
-    int getCurrentLevel(){return _currentLevel;}
+    int getCurrentLevel(){return _currLevel;}
+    
+    /**
+     * Returns type of stat
+     */
+    std::string getType(){return _type;}
     
     /**
      * Returns max level of stat
      */
     int getMaxLevel(){return _maxLevel;}
     
-    float getBaseValue(){return _baseValue;}
-    float getMaxPercentage(){return _maxPercentage;}
+    /**
+     * Returns max level of stat
+     */
+    float getMaxValue(){return _maxValue;}
     
     /**
-     * Returns current percentage of stat
+     * Returns current percentage of stat in terms of percentage until its maximum Value is reached
      */
-    float getCurrentPercentage(){return _currPercentage;}
+    float getCurrentPercentage(){return _currValue/_maxValue;}
+    
+    /**
+     * Returns the value of stat after level up
+     */
+    float getNextValue(){return _currValue+_stepAmt;}
     
     /**
      * Returns current value of stat

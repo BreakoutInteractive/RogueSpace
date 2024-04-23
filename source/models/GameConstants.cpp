@@ -23,7 +23,7 @@ float GameConstants::ENEMY_SIGHT_RANGE = 8;
 
 float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
 
-float GameConstants::ENEMY_MELEE_ATK_RANGE = 2;
+float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.5f; // previously 2
 
 float GameConstants::ENEMY_RANGED_ATK_RANGE = 6;
 
@@ -61,7 +61,7 @@ float GameConstants::PLAYER_DEFENSE = 1;
 
 float GameConstants::PLAYER_ATK_DAMAGE =1;
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 2.0f;
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 
@@ -73,7 +73,7 @@ float GameConstants::CHARGE_TIME = 0.5f;
 
 float GameConstants::COMBO_TIME = 1.0f;
 
-float GameConstants::KNOCKBACK = 10.0f;
+float GameConstants::KNOCKBACK = 4.0f; // previously 10
 
 float GameConstants::KNOCKBACK_PWR_ATK = 20.0f;
 

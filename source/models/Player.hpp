@@ -120,9 +120,11 @@ public:
     /** counter that is active while the player takes damage */
     Counter _hitCounter;
     /** defense upgrade*/
-    std::shared_ptr<Upgradeable> defense;
+    std::shared_ptr<Upgradeable> defenseUpgrade;
     /** attack upgrade*/
-    std::shared_ptr<Upgradeable> attack;
+    std::shared_ptr<Upgradeable> attackUpgrade;
+    /** dodge upgrade*/
+    std::shared_ptr<Upgradeable> dodgeUpgrade ;
         
     std::vector<std::shared_ptr<Upgradeable>> attributes;
 
@@ -214,12 +216,12 @@ public:
     /**
      * Gets the attack strength accumulated by this player.
      */
-    const int getAtkDamage() {return attack->getCurrentValue();}
+    const int getAtkDamage() {return attackUpgrade->getCurrentValue();}
     
     /**
      * Gets the attack strength accumulated by this player.
      */
-    const int getDefense() {return defense->getCurrentValue();}
+    const int getDefense() {return defenseUpgrade->getCurrentValue();}
     
     /**
      * Returns the x-component of the force applied to this player.
@@ -270,6 +272,10 @@ public:
      * Sets the direction that the player is currently facing
      */
     void setFacingDir(cugl::Vec2 dir);
+    /**
+     * applies upgrade to player and updates attributes
+     */
+    void applyUpgrade(std::string upgrade);
     
     /**
      * @return the maximum HP of the player

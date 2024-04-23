@@ -469,6 +469,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"hp",
+                         "type":"int",
+                         "value":3
+                        }, 
+                        {
                          "name":"path",
                          "type":"object",
                          "value":0
