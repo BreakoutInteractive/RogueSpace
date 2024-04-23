@@ -95,6 +95,11 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         if (isEnabled()) {
             _chargingAnimation->start();
         }
+        setAiming(true);
+    });
+    
+    _attackAnimation->addCallback(0.45f, [this](){
+        setAiming(false);
     });
     
     _chargingAnimation->onComplete([this](){

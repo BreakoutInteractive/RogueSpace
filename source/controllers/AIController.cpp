@@ -192,9 +192,9 @@ void AIController::update(float dt) {
         }
         // enemies shouldn't move when stunned or while attacking
         if ((*it)->isAttacking()) {
-            // ranged enemies can change their facing direction while attacking,
-            // melee enemies cannot
-            if ((*it)->getType() != "melee lizard") {
+            // ranged enemies can change their facing direction while aiming their attack,
+            // melee enemies cannot do this
+            if (((*it)->getType() == "ranged lizard" || (*it)->getType() == "mage alien") && (*it)->getAiming()) {
                 Vec2 dir = _player->getPosition() - (*it)->getPosition();
                 dir.normalize();
                 (*it)->setFacingDir(dir);

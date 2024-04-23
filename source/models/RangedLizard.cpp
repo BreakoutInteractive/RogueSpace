@@ -91,8 +91,13 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
+    _attackAnimation->addCallback(0.0f, [this](){
+        setAiming(true);
+    });
+    
     _attackAnimation->addCallback(0.45f, [this](){
         _chargingAnimation->start();
+        setAiming(false);
     });
     
     _chargingAnimation->onComplete([this](){

@@ -95,6 +95,9 @@ protected:
     /** Whether the enemy is currently in its default state */
     bool _isDefault;
     
+    /** Whether the enemy is aiming its ranged attack */
+    bool _isAiming;
+    
     /** Whether the enemy's ranged attack is charged */
     bool _isCharged;
     
@@ -332,6 +335,16 @@ public:
      * Sets whether this enemy's ranged attack is charged
      */
     void setCharged(bool value) { _isCharged = value; }
+    
+    /**
+     * Gets whether this enemy is aiming its ranged attack
+     */
+    bool getAiming() const { return _isAiming; }
+    
+    /**
+     * Sets whether this enemy is aiming its ranged attack
+     */
+    void setAiming(bool value) { _isAiming = value; }
     
     /**
      * Gets this enemy's patrol path.

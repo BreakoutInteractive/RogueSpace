@@ -65,6 +65,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     
     // initialize enemy properties
     _isDefault = true;
+    _isAiming = false; // will always be false for melee enemies
     _isCharged = false; // will always be false for melee enemies
     _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
     _isAligned = false;
