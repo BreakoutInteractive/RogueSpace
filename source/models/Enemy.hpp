@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
 class Animation;
@@ -396,6 +397,12 @@ public:
      * Returns this enemy's type
      */
     virtual std::string getType() { return ""; };
+    
+    
+#pragma mark -
+#pragma mark Physics
+    
+    virtual void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets);
     
     
 #pragma mark -

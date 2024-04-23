@@ -8,6 +8,7 @@
 #include "MeleeLizard.hpp"
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
+#include "Player.hpp"
 #include "GameConstants.hpp"
 
 using namespace cugl;
@@ -31,6 +32,23 @@ bool MeleeLizard::init(std::shared_ptr<JsonValue> data) {
 void MeleeLizard::dispose() {
     _enemyTextureKey = "";
     _enemyTexture = nullptr;
+}
+
+
+#pragma mark -
+#pragma mark Physics
+
+void MeleeLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    Vec2 direction = level->getPlayer()->getPosition() * level->getPlayer()->getDrawScale() - getPosition() * getDrawScale();
+    direction.normalize();
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0){
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    
+    _attack->setPosition(_attack->getPosition().add(0, 64 / _drawScale.y)); //64 is half of the pixel height of the enemy
+    _attack->setAngle(ang);
 }
 
 

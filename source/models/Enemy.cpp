@@ -8,6 +8,7 @@
 #include "Enemy.hpp"
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
+#include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
 using namespace cugl;
@@ -104,6 +105,10 @@ void Enemy::dispose() {
 
 #pragma mark -
 #pragma mark Physics
+
+void Enemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    // nothing here: each enemy implements its own attack
+}
 
 
 #pragma mark -

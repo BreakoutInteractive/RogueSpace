@@ -33,6 +33,26 @@ void RangedLizard::dispose() {
     _enemyTexture = nullptr;
 }
 
+
+#pragma mark -
+#pragma mark Physics
+
+void RangedLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    Vec2 direction = getFacingDir();
+    direction.normalize();
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0){
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    
+    setCharged(false);
+    std::shared_ptr<Projectile> p = Projectile::lizardAlloc(getPosition().add(0, 64 / getDrawScale().y), 1, ang, assets);
+    p->setDrawScale(level->getDrawScale());
+    level->addProjectile(p);
+}
+
+
 #pragma mark -
 #pragma mark Animation
 

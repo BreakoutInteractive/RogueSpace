@@ -87,6 +87,11 @@ public:
     std::string getType() override { return "melee lizard"; }
     
 #pragma mark -
+#pragma mark Physics
+    
+    void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) override;
+    
+#pragma mark -
 #pragma mark Animation and State
     
     /**
