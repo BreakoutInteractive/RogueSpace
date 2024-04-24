@@ -260,6 +260,10 @@ void GameScene::preUpdate(float dt) {
         player->getCollider()->setBullet(false);
     }
     
+    // set player direction
+    if (moveForce.length() > 0 && player->_state != Player::state::DODGE && !player->isAttacking()){
+        player->setFacingDir(moveForce);
+    }
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
     //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
@@ -376,9 +380,6 @@ void GameScene::preUpdate(float dt) {
             else {
                 player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
             }
-            if (moveForce.length() > 0){
-                player->setFacingDir(moveForce);
-            }
             break;
         case Player::weapon::RANGED:
             //with the ranged weapon, dont move while attacking
@@ -387,9 +388,6 @@ void GameScene::preUpdate(float dt) {
             }
             else {
                 player->getCollider()->setLinearVelocity(Vec2::ZERO);
-            }
-            if (moveForce.length() > 0){
-                player->setFacingDir(moveForce);
             }
             break;
         }
