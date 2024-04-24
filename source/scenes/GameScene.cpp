@@ -75,7 +75,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _gameRenderer.init(_assets);
     _input.init();
     _audioController = std::make_shared<AudioController>();
-    _camController.init(getCamera(), 2.5f);
+    CameraController::CameraConfig config;
+    config.speed = GameConstants::GAME_CAMERA_SPEED;
+    config.minSpeed = GameConstants::GAME_CAMERA_SPEED;
+    config.maxSpeed = GameConstants::GAME_CAMERA_MAX_SPEED;
+    config.maxZoom = GameConstants::GAME_CAMERA_MAX_ZOOM_OUT;
+    _camController.init(getCamera(), config);
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
     
@@ -254,34 +259,6 @@ void GameScene::preUpdate(float dt) {
     if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
-        
-    //only move if we're not parrying or dodging or recovering
-    if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
-        && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
-        && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        switch (player->_weapon) {
-        case Player::weapon::MELEE:
-                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
-                // update the direction the player is facing in the direction of movement
-                if (moveForce.length() > 0){
-                    player->setFacingDir(moveForce);
-                }
-            break;
-        case Player::weapon::RANGED:
-            //with the ranged weapon, dont move while attacking
-            if (!player->isAttacking()){
-                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
-                // update the direction the player is facing in the direction of movement
-                if (moveForce.length() > 0){
-                    player->setFacingDir(moveForce);
-                }
-            }
-            break;
-        }
-        
-    } else if (player->_state != Player::state::DODGE && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
-        player->getCollider()->setLinearVelocity(Vec2::ZERO);
-    }
     
 
     std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
@@ -299,7 +276,8 @@ void GameScene::preUpdate(float dt) {
                 // dodge in the direction currently facing. normalize so that the dodge is constant speed
                 force = player->getFacingDir().getNormalization();
             }
-            player->getCollider()->setLinearVelocity(force * 30);
+            Vec2 velocity = force * GameConstants::PLAYER_DODGE_SPEED;
+            player->getCollider()->setLinearVelocity(velocity);
             player->getCollider()->setBullet(true);
             player->setFacingDir(force);
             player->_state = Player::state::DODGE;
@@ -385,6 +363,40 @@ void GameScene::preUpdate(float dt) {
             _input.swapControlMode(); // must do for mobile controls
         }
     }
+    
+    //only move if we're not parrying or dodging or recovering
+    if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
+        && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
+        && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+        switch (player->_weapon) {
+        case Player::weapon::MELEE:
+            if (player->isAttacking()){
+                player->getCollider()->setLinearVelocity(moveForce * GameConstants::PLAYER_ATK_MOVE_SPEED);
+            }
+            else {
+                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
+            }
+            if (moveForce.length() > 0){
+                player->setFacingDir(moveForce);
+            }
+            break;
+        case Player::weapon::RANGED:
+            //with the ranged weapon, dont move while attacking
+            if (!player->isAttacking()){
+                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
+            }
+            else {
+                player->getCollider()->setLinearVelocity(Vec2::ZERO);
+            }
+            if (moveForce.length() > 0){
+                player->setFacingDir(moveForce);
+            }
+            break;
+        }
+        
+    } else if (player->_state != Player::state::DODGE && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+        player->getCollider()->setLinearVelocity(Vec2::ZERO);
+    }
 
 #pragma mark - Enemy movement
     _AIController.update(dt);
@@ -465,8 +477,22 @@ void GameScene::fixedUpdate(float step) {
     if (_level != nullptr){
         _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto player = _level->getPlayer();
-        _camController.update(step);
+        if (player->_state == Player::state::DODGE){
+            _camController.setAcceleration(GameConstants::GAME_CAMERA_ACCEL);
+        }
+        else {
+            _camController.setAcceleration(GameConstants::GAME_CAMERA_DECEL);
+        }
         _camController.setTarget(player->getPosition() * player->getDrawScale());
+        
+        if (player->_weapon == Player::weapon::RANGED){
+            _camController.setZoomSpeed(GameConstants::GAME_CAMERA_ZOOM_SPEED);
+        }
+        else {
+            _camController.setZoomSpeed(-GameConstants::GAME_CAMERA_ZOOM_SPEED);
+        }
+        
+        _camController.update(step);
         _winNode->setPosition(_camController.getPosition());
         _loseNode->setPosition(_camController.getPosition());
         

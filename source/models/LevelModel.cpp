@@ -192,7 +192,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation = assets->get<Texture>("atk");
     std::shared_ptr<Texture> t = assets->get<Texture>("player-swipe");
     std::shared_ptr<SpriteSheet> s = SpriteSheet::alloc(t, 2, 3);
-    _playerAttack = Animation::alloc(s, 0.25f, false); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps)
+    _playerAttack = Animation::alloc(s, 0.3f, false); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps)
     std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
     std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 3);
 

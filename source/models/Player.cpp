@@ -134,7 +134,7 @@ int Player::getMoveScale(){
 }
 
 bool Player::isAttacking() {
-    return _state == CHARGING || _state == CHARGED || _state == SHOT;
+    return _state == CHARGING || _state == CHARGED || _state == SHOT || _state == ATTACK;
 }
 
 #pragma mark -

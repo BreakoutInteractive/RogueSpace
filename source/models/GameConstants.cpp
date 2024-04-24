@@ -9,6 +9,16 @@
 #include "GameConstants.hpp"
 
 #pragma mark -
+#pragma mark Camera
+
+float GameConstants::GAME_CAMERA_SPEED = 2.5f;
+float GameConstants::GAME_CAMERA_MAX_SPEED = 40.f;
+float GameConstants::GAME_CAMERA_ACCEL = 30.0f;
+float GameConstants::GAME_CAMERA_DECEL = -100.0f;
+float GameConstants::GAME_CAMERA_MAX_ZOOM_OUT = 1.3f;
+float GameConstants::GAME_CAMERA_ZOOM_SPEED = 0.7f;
+
+#pragma mark -
 #pragma mark Enemy
 
 int GameConstants::ENEMY_IFRAME = 16;
@@ -52,10 +62,13 @@ int GameConstants::PLAYER_DODGE_COOLDOWN = 60;
 
 float GameConstants::PLAYER_DODGE_DURATION = 10;
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
+float GameConstants::PLAYER_DODGE_SPEED = 20.0f;
 
 int GameConstants::PLAYER_MAX_HP = 3;
 
 float GameConstants::PLAYER_MOVE_SPEED =5;
+
+float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
 float GameConstants::PLAYER_DEFENSE = 1;
 
@@ -69,7 +82,7 @@ float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
 float GameConstants::PROJ_TIME_P = 1.0f;
 
-float GameConstants::CHARGE_TIME = 0.5f;
+float GameConstants::CHARGE_TIME = 0.3f;
 
 float GameConstants::COMBO_TIME = 1.0f;
 
