@@ -16,6 +16,7 @@ Wall::Wall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin
     float y = data->getFloat("y");
     float width = data->getFloat("width");
     float height = data->getFloat("height");
+    bool tall = data->getBool("tall");
     _size.set(width, height);
     GameObject::_position.set(x,y);
     
@@ -25,7 +26,12 @@ Wall::Wall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin
     _collider = p;
     b2Filter filter;
     // this is a wall
-    filter.categoryBits = CATEGORY_WALL;
+    if (tall) {
+        filter.categoryBits = CATEGORY_TALL_WALL;
+    }
+    else {
+        filter.categoryBits = CATEGORY_SHORT_WALL;
+    }
     // a wall can collide with a player or an enemy
     filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_PROJECTILE_SHADOW;
     p->setFilterData(filter);

@@ -46,7 +46,7 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
             return 1.0f;
         }
         // track if we see an obstacle
-        else if (fixture->GetFilterData().categoryBits == CATEGORY_WALL) {
+        else if (fixture->GetFilterData().categoryBits == CATEGORY_TALL_WALL) {
             if (fraction < obstacleFraction) {
                 obstacleFraction = fraction;
             }

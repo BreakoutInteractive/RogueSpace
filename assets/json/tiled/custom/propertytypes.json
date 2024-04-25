@@ -54,6 +54,11 @@
         "drawFill": true,
         "id": 4,
         "members": [
+            {
+                "name": "tall",
+                "type": "bool",
+                "value": false
+            }
         ],
         "name": "EnergyWall",
         "type": "class",

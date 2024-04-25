@@ -508,7 +508,7 @@ bool LevelModel::loadBoundary(const std::shared_ptr<JsonValue>& json) {
         p->PolygonObstacle::init(polygon, pos);
         b2Filter filter;
         // this is a wall
-        filter.categoryBits = CATEGORY_WALL;
+        filter.categoryBits = CATEGORY_TALL_WALL;
         // a wall can collide with a player or an enemy
         filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
         p->setFilterData(filter);
