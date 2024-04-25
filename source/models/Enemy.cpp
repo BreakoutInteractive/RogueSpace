@@ -8,6 +8,7 @@
 #include "Enemy.hpp"
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
+#include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
 using namespace cugl;
@@ -36,7 +37,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     collider->setFilterData(filter);
     _collider = collider;   // attach the collider to the game object
     
@@ -64,6 +65,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     
     // initialize enemy properties
     _isDefault = true;
+    _isAiming = false; // will always be false for melee enemies
     _isCharged = false; // will always be false for melee enemies
     _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
     _isAligned = false;
@@ -105,6 +107,10 @@ void Enemy::dispose() {
 #pragma mark -
 #pragma mark Physics
 
+void Enemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    // nothing here: each enemy implements its own attack
+}
+
 
 #pragma mark -
 #pragma mark Animation
@@ -143,47 +149,6 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     // nothing here: each enemy loads its own assets
-//    _enemyTexture = assets->get<Texture>("enemy-idle");
-//    auto walkTexture = assets->get<Texture>("enemy-walk");
-//    auto attackTexture = assets->get<Texture>("enemy-attack");
-//    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
-//    
-//    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
-//    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
-//    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
-//    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
-//    
-//    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
-//    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-//    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
-//    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
-//    
-//    _currAnimation = _idleAnimation; // set runnning
-//    
-//    // add callbacks
-//    _attackAnimation->onComplete([this](){
-//        _attackAnimation->reset();
-//        _hitboxAnimation->reset();
-//        _atkCD.reset(); // cooldown begins AFTER the attack is done
-//        _attack->setEnabled(false);
-//    });
-//    
-//    _attackAnimation->addCallback(0.5f, [this](){
-//        if (isEnabled()) {
-//            _attack->setEnabled(true);
-//            _hitboxAnimation->start();
-//            _attack->setAwake(true);
-//            _attack->setAngle(getFacingDir().getAngle());
-//            // TODO: clean this code
-//            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
-//        }
-//    });
-//    
-//    setAnimation(_idleAnimation);
-//
-//    _hitEffect->onComplete([this]() {
-//        _hitEffect->reset();
-//    });
 }
 
 void Enemy::setIdling() {
@@ -284,24 +249,4 @@ void Enemy::updateCounters() {
 
 void Enemy::setFacingDir(cugl::Vec2 dir) {
     // nothing here: each enemy has its own animations
-//    int prevDirection = _directionIndex;
-//    Vec2 d = dir.normalize();
-//    _directionIndex = -1;
-//    float similarity = -INFINITY;
-//    for (int i = 0; i < 8; i++){
-//        Vec2 cardinal = _directions[i];
-//        float dotprod = cardinal.dot(d);
-//        if (dotprod > similarity){
-//            similarity = dotprod;
-//            _directionIndex = i;
-//        }
-//    }
-//    assert(_directionIndex >= 0 && _directionIndex < 8);
-//    _facingDirection = dir;
-//    
-//    if (prevDirection != _directionIndex){
-//        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
-//        _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
-//        _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
-//    }
 }

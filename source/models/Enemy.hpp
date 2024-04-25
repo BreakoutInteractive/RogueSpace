@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
 class Animation;
@@ -93,6 +94,9 @@ protected:
     
     /** Whether the enemy is currently in its default state */
     bool _isDefault;
+    
+    /** Whether the enemy is aiming its ranged attack */
+    bool _isAiming;
     
     /** Whether the enemy's ranged attack is charged */
     bool _isCharged;
@@ -333,6 +337,16 @@ public:
     void setCharged(bool value) { _isCharged = value; }
     
     /**
+     * Gets whether this enemy is aiming its ranged attack
+     */
+    bool getAiming() const { return _isAiming; }
+    
+    /**
+     * Sets whether this enemy is aiming its ranged attack
+     */
+    void setAiming(bool value) { _isAiming = value; }
+    
+    /**
      * Gets this enemy's patrol path.
      */
     std::vector<cugl::Vec2> getPath() const { return _path; }
@@ -396,6 +410,12 @@ public:
      * Returns this enemy's type
      */
     virtual std::string getType() { return ""; };
+    
+    
+#pragma mark -
+#pragma mark Physics
+    
+    virtual void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets);
     
     
 #pragma mark -

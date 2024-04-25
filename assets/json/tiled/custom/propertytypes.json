@@ -26,7 +26,7 @@
     {
         "color": "#ff000000",
         "drawFill": true,
-        "id": 11,
+        "id": 2,
         "members": [
         ],
         "name": "Collection",
@@ -38,7 +38,7 @@
     {
         "color": "#ffffffff",
         "drawFill": true,
-        "id": 4,
+        "id": 3,
         "members": [
         ],
         "name": "Collider",
@@ -52,8 +52,13 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 13,
+        "id": 4,
         "members": [
+            {
+                "name": "tall",
+                "type": "bool",
+                "value": false
+            }
         ],
         "name": "EnergyWall",
         "type": "class",
@@ -66,7 +71,7 @@
     {
         "color": "#ffff2600",
         "drawFill": true,
-        "id": 2,
+        "id": 5,
         "members": [
         ],
         "name": "Hitbox",
@@ -80,7 +85,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 5,
+        "id": 6,
         "members": [
             {
                 "name": "enemy_type",
@@ -110,7 +115,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 6,
+        "id": 7,
         "members": [
             {
                 "name": "path",
@@ -129,7 +134,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 7,
+        "id": 8,
         "members": [
         ],
         "name": "Player",
@@ -143,7 +148,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 12,
+        "id": 9,
         "members": [
         ],
         "name": "Random",
@@ -154,7 +159,7 @@
         ]
     },
     {
-        "id": 8,
+        "id": 10,
         "name": "Type",
         "storageType": "string",
         "type": "enum",
@@ -167,8 +172,13 @@
     {
         "color": "#fff4c183",
         "drawFill": false,
-        "id": 3,
+        "id": 11,
         "members": [
+            {
+                "name": "tall",
+                "type": "bool",
+                "value": false
+            }
         ],
         "name": "Wall",
         "type": "class",
