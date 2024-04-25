@@ -11,20 +11,6 @@
     },
     
 	"textures": {
-		"earth": {
-			"file":     "textures/earthtile.png",
-            "wrapS":    "repeat",
-            "wrapT":    "repeat"
-		},
-        "floor": {
-            "file":     "textures/iso_floor_tile.png"
-        },
-        "floor-new": {
-            "file":     "textures/tiles_test.png"
-        },
-        "background": {
-            "file":     "textures/space_background.png"
-        },
         "atk": {
             "file":     "textures/attack.png"
         },
@@ -33,73 +19,6 @@
         },
         "enemy-swipe": {
             "file":     "textures/swipe_01.png"
-        },
-        "parry": {
-            "file":     "textures/player_parry.png"
-        },
-        "statusbar": {
-            "file": "textures/statusbar.png"
-        },
-        "js_ring": {
-            "file":     "textures/js_ring.png"
-        },
-        "js_button": {
-            "file":     "textures/js_button.png"
-        },
-        "js_aim": {
-            "file": "textures/js_aim.png"
-        },
-        "menuboard": {
-            "file": "textures/menuboard.png"
-        },
-        "setting": {
-            "file": "textures/setting.png"
-        },
-        "cooldown": {
-            "file": "textures/cooldown.png",
-            "atlas": {
-                "foreground" : [14,   0, 150, 15],
-                "leftcap"    : [0,    0,  14, 15],
-                "rightcap"   : [151,  0, 165, 15]
-            }
-        },
-        "cd_back": {
-            "file": "textures/cd_back.png",
-            "atlas": {
-                "background" : [0, 0, 165, 15]
-                }
-        },
-        "pause": {
-            "file": "textures/pause.png"
-        },
-        "resume": {
-            "file": "textures/resume.png"
-        },
-        "restart": {
-            "file": "textures/restart.png"
-        },
-        "up": {
-            "file": "textures/up.png"
-        },
-        "down": {
-            "file": "textures/down.png"
-        },
-        "confirm": {
-            "file": "textures/confirm.png"
-        },
-        "hp_back": {
-            "file": "textures/hp_back.png",
-            "atlas": {
-                "background" : [0, 0, 350, 25]
-            }
-        },
-        "hp": {
-            "file": "textures/hp.png",
-            "atlas":     {
-                "foreground" : [25,   0, 325, 25],
-                "leftcap"    : [0,    0,  25, 25],
-                "rightcap"   : [325,  0, 350, 25]
-            }
         }
 	},
     

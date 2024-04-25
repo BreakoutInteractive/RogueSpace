@@ -31,7 +31,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
         return false;
     }
     _assets = assets;
-    _backgroundTexture = assets->get<Texture>("background");
+    //_backgroundTexture = assets->get<Texture>("background");
 
     
     // acquire the HUD nodes
