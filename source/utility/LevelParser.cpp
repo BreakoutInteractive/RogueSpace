@@ -424,6 +424,13 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
 //    else {
 //        data->appendChild("passable", JsonValue::alloc(false));
 //    }
+    std::shared_ptr<JsonValue> heightProperty = getPropertyValueByName(json->get("properties"), "tall");
+    if (heightProperty != nullptr) {
+        data->appendChild("tall", JsonValue::alloc(heightProperty->asBool()));
+    }
+    else {
+        data->appendChild("tall", JsonValue::alloc(false));
+    }
     return data;
 }
 

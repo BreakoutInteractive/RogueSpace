@@ -7,6 +7,7 @@
 #include "Enemy.hpp"
 #include "Projectile.hpp"
 #include "MeleeEnemy.hpp"
+#include "MeleeLizard.hpp"
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
 #include "MageAlien.hpp"
@@ -388,7 +389,7 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
     std::shared_ptr<Enemy> enemy;
     std::string enemyType = json->getString("type");
     if (enemyType == "melee-lizard") {
-        enemy = MeleeEnemy::alloc(json);
+        enemy = MeleeLizard::alloc(json);
     }
     else if (enemyType == "ranged-lizard") {
         enemy = RangedLizard::alloc(json);
@@ -507,7 +508,7 @@ bool LevelModel::loadBoundary(const std::shared_ptr<JsonValue>& json) {
         p->PolygonObstacle::init(polygon, pos);
         b2Filter filter;
         // this is a wall
-        filter.categoryBits = CATEGORY_WALL;
+        filter.categoryBits = CATEGORY_TALL_WALL;
         // a wall can collide with a player or an enemy
         filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
         p->setFilterData(filter);

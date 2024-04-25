@@ -49,9 +49,9 @@ bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_p
 	shadow->setBodyType(b2_kinematicBody);
 	shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
 		+ 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
-	//the projectile shadow hits walls
+	//the projectile shadow hits tall walls
 	filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
-	filter.maskBits = CATEGORY_WALL;
+	filter.maskBits = CATEGORY_TALL_WALL;
 	shadow->setFilterData(filter);
 	_colliderShadow = shadow;
 
@@ -83,9 +83,9 @@ bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_p
 	obs->setName("lizard-projectile-collider");
 	obs->setPosition(pos);
 	b2Filter filter;
-	//projectiles are attacks. they can hit players and are destroyed on contact with a wall.
+	//projectiles are attacks. they can hit players and are destroyed on contact with a tall wall.
 	filter.categoryBits = CATEGORY_PROJECTILE;
-	filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_WALL;
+	filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_TALL_WALL;
 	obs->setFilterData(filter);
 	obs->setEnabled(true);
 	obs->setAwake(true);
@@ -98,9 +98,9 @@ bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_p
 	shadow->setBodyType(b2_kinematicBody);
 	shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
 		+ 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
-	//the projectile shadow hits walls
+	//the projectile shadow hits tall walls
 	filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
-	filter.maskBits = CATEGORY_WALL;
+	filter.maskBits = CATEGORY_TALL_WALL;
 	shadow->setFilterData(filter);
 	_colliderShadow = shadow;
 
@@ -132,9 +132,9 @@ bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr
 	obs->setName("mage-projectile-collider");
 	obs->setPosition(pos);
 	b2Filter filter;
-	//projectiles are attacks. they can hit players and are destroyed on contact with a wall.
+	//projectiles are attacks. they can hit players and are destroyed on contact with a tall wall.
 	filter.categoryBits = CATEGORY_PROJECTILE;
-	filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_WALL;
+	filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_TALL_WALL;
 	obs->setFilterData(filter);
 	obs->setEnabled(true);
 	obs->setAwake(true);
@@ -147,9 +147,9 @@ bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr
 	shadow->setBodyType(b2_kinematicBody);
 	shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
 		+ 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
-	//the projectile shadow hits walls
+	//the projectile shadow hits tall walls
 	filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
-	filter.maskBits = CATEGORY_WALL;
+	filter.maskBits = CATEGORY_TALL_WALL;
 	shadow->setFilterData(filter);
 	_colliderShadow = shadow;
 

@@ -18,6 +18,7 @@
 class Player;
 class Enemy;
 class MeleeEnemy;
+class MeleeLizard;
 class RangedEnemy;
 class RangedLizard;
 class MageAlien;

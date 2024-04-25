@@ -173,6 +173,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"EnergyWall"
         }, 
         {
@@ -338,6 +344,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"EnergyWall"
         }, 
         {
@@ -510,6 +522,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"EnergyWall"
         }, 
         {
@@ -682,6 +700,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"EnergyWall"
         }, 
         {
