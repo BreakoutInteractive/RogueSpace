@@ -12,6 +12,7 @@
 #include "GameObject.hpp"
 #include "GameConstants.hpp"
 #include "../components/Animation.hpp"
+#include "../components/Collider.hpp"
 #include "Upgradeable.hpp"
 
 using namespace cugl;
@@ -26,24 +27,11 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _dodge = 0;
     _combo = 1;
     _comboTimer = 0;
-    bool success = true;
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
-    Vec2 playerColliderPos(colliderData->getFloat("x"), colliderData->getFloat("y"));
-    std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
-    success = vertices.size() >= 2 && vertices.size() % 2 == 0;
-    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
-    Poly2 polygon(verts,(int)vertices.size()/2);
-    EarclipTriangulator triangulator;
-    triangulator.set(polygon.vertices);
-    triangulator.calculate();
-    polygon.setIndices(triangulator.getTriangulation());
-    
     // set up collider
-    auto collider = std::make_shared<physics2::PolygonObstacle>();
-    collider->init(polygon, playerColliderPos);
-    collider->setName(std::string("player-collider"));
-    // this is a player and can collide with an enemy "shadow", a wall, or an attack
+    auto collider = Collider::makePolygon(colliderData, b2_dynamicBody, "player-collider");
+    // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
     filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
@@ -51,9 +39,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _collider = collider;                   // attach Component
     
     // set the player collider-shadow
-    auto colliderShadow = std::make_shared<physics2::PolygonObstacle>();
-    colliderShadow->init(polygon, playerColliderPos);
-    colliderShadow->setName(std::string("player-collider-shadow"));
+    auto colliderShadow = Collider::makePolygon(colliderData, b2_kinematicBody, "player-collider-shadow");
     colliderShadow->setBodyType(b2_kinematicBody);
     filter.categoryBits = CATEGORY_PLAYER_SHADOW;
     filter.maskBits = CATEGORY_ENEMY;
@@ -63,12 +49,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     
     // set the player hitbox sensor
     std::shared_ptr<JsonValue> hitboxData = playerData->get("hitbox");
-    Size hitboxSize(hitboxData->getFloat("width"), hitboxData->getFloat("height"));
-    Vec2 hitboxPos(hitboxData->getFloat("x"), hitboxData->getFloat("y"));
-    auto hitbox = physics2::BoxObstacle::alloc(hitboxPos, hitboxSize);
-    hitbox->setBodyType(b2_kinematicBody);
-    hitbox->setSensor(true);
-    hitbox->setName(std::string("player-hitbox"));
+    auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "player-hitbox", true);
     filter.categoryBits = CATEGORY_PLAYER_HITBOX;
     filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     hitbox->setFilterData(filter);
