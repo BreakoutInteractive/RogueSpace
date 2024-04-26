@@ -132,9 +132,13 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales (right now default size)
     auto spriteSheet = _currAnimation->getSpriteSheet();
     
+    
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2::createTranslation(_position * _drawScale);
-    spriteSheet->draw(batch, _tint, origin, transform);
+    // make sure to NOT draw the player first when attacking + facing backwards
+    if (!(isAttacking() && _directionIndex >= 3 && _directionIndex <= 5)){
+        spriteSheet->draw(batch, _tint, origin, transform);
+    }
     
     //effects
     std::shared_ptr<SpriteSheet> sheet;
@@ -193,13 +197,6 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     default:
         break;
     }
-    if (_parryEffect->isActive()) { 
-        std::shared_ptr<SpriteSheet> effSheet = _parryEffect->getSpriteSheet();
-        transform.translate(0, spriteSheet->getFrameSize().height/2);
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform); 
-    }
-    
     if (_swipeEffect->isActive() || _comboSwipeEffect->isActive()){
         sheet = _comboSwipeEffect->isActive() ? _comboSwipeEffect->getSpriteSheet() : _swipeEffect->getSpriteSheet();
         Affine2 atkTrans = Affine2::createScale(GameConstants::PLAYER_MELEE_ATK_RANGE / ((Vec2)sheet->getFrameSize() / 2) * getDrawScale());
@@ -208,6 +205,20 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         atkTrans.translate(_meleeHitbox->getPosition() * _drawScale);
         sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
     }
+    
+    if ((isAttacking() && _directionIndex >= 3 && _directionIndex <= 5)){
+        spriteSheet->draw(batch, _tint, origin, transform);
+    }
+    
+    // this is always drawn on top of player
+    if (_parryEffect->isActive()) {
+        std::shared_ptr<SpriteSheet> effSheet = _parryEffect->getSpriteSheet();
+        transform.translate(0, spriteSheet->getFrameSize().height/2);
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform); 
+    }
+    
+
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
