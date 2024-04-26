@@ -18,6 +18,11 @@ class GameConstants {
 public:
     
 #pragma mark -
+#pragma mark Game Effects
+    
+    static int HIT_PAUSE_FRAMES;
+    
+#pragma mark -
 #pragma mark Game Camera Constants
     
     /** starting camera speed */
@@ -82,14 +87,12 @@ public:
     static float PLAYER_PARRY_TIME;
     /**the number of frames we wait before allowing another dodge*/
     static int PLAYER_DODGE_COOLDOWN;
-    /** the number of frames for the dodge effect to last*/
-    static float PLAYER_DODGE_DURATION;
     /** the number of seconds for the dodge effect to last*/
     static float PLAYER_DODGE_TIME;
     /** the speed of a dodging player*/
     static float PLAYER_DODGE_SPEED;
     /** player initial HP */
-    static int PLAYER_MAX_HP;
+    static float PLAYER_MAX_HP;
     /** player initial movement speed */
     static float PLAYER_MOVE_SPEED;
     /** player initial defense */

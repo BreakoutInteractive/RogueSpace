@@ -118,7 +118,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _active = true;
     _complete = false;
     _defeat = false;
-    setLevel(_levelNumber);         // load initial level/hubx
+    setLevel(_levelNumber);         // load initial level/hub
+    hitPauseCounter.setMaxCount(GameConstants::HIT_PAUSE_FRAMES + 3);
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
 }
@@ -186,6 +187,16 @@ void GameScene::preUpdate(float dt) {
         return;
     }
     
+    if (_collisionController.isComboContact() && hitPauseCounter.isZero()){
+        hitPauseCounter.reset();
+    }
+    if (!hitPauseCounter.isZero()){
+        hitPauseCounter.decrement();
+        if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
+            return; // this gives the vague "lag" effect
+        }
+    }
+    
     _input.update(dt);
     
     // Process the toggled key commands
@@ -222,7 +233,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
 
-        if (_level->getPlayer()->_hp<0.01) setDefeat(true);
+        if (_level->getPlayer()->_hp == 0) setDefeat(true);
     }
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
@@ -266,15 +277,12 @@ void GameScene::preUpdate(float dt) {
         player->setFacingDir(moveForce);
     }
 
-    std::shared_ptr<physics2::WheelObstacle> atk = _level->getAttack();
-    //TODO: Determine precedence for dodge, parry, and attack. We should only allow one at a time. What should we do if the player inputs multiple at once?
-    //Not sure if this will be possible on mobile, but it's definitely possible on the computer
+    // Priority order: Dodge, Attack/Shoot,  Parry
     if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED
         || player->_state == Player::state::PARRYSTART || player->_state == Player::state::PARRYSTANCE) {
         //for now, give highest precedence to dodge
-        if (_input.didDodge() && player->_dodgeCD.isZero()) {
-            player->_dodgeCD.reset();
-            player->_dodgeDuration.reset(); // set dodge frames
+        if (_input.didDodge() && player->dodgeCD.isZero()) {
+            player->dodgeCD.reset(); // reset cooldown
             //dodge
             auto force = _input.getDodgeDirection(player->getFacingDir());
             if (force.length() == 0) {
@@ -300,14 +308,9 @@ void GameScene::preUpdate(float dt) {
                         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                     }
-                    atk->setEnabled(true);
-                    atk->setAwake(true);
-                    atk->setAngle(ang);
-                    atk->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
+                    player->enableMeleeAttack(ang);
                     player->animateAttack();
-                    player->_atkCD.reset();
-                    _level->getPlayerAtk()->reset();
-                    _level->getPlayerAtk()->start();
+                    player->atkCD.reset();
                     break;
                 case Player::weapon::RANGED:
                     player->animateCharge();
@@ -357,10 +360,6 @@ void GameScene::preUpdate(float dt) {
         }
     }
 
-    if (player->_state != Player::state::ATTACK) {
-        atk->setEnabled(false);
-    }
-
     if (_input.didSwap()){
         if (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE){
             //other states are weapon-dependent, so don't allow swapping while in them
@@ -372,7 +371,7 @@ void GameScene::preUpdate(float dt) {
     //only move if we're not parrying or dodging or recovering
     if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
         && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
-        && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+        && (player->hitCounter.getCount() < player->hitCounter.getMaxCount() - 5)) {
         switch (player->_weapon) {
         case Player::weapon::MELEE:
             if (player->isAttacking()){
@@ -393,7 +392,7 @@ void GameScene::preUpdate(float dt) {
             break;
         }
         
-    } else if (player->_state != Player::state::DODGE && (player->_hitCounter.getCount() < player->_hitCounter.getMaxCount() - 5)) {
+    } else if (player->_state != Player::state::DODGE && (player->hitCounter.getCount() < player->hitCounter.getMaxCount() - 5)) {
         player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
 
@@ -433,8 +432,7 @@ void GameScene::preUpdate(float dt) {
     }
     
 #pragma mark - Component Updates
-    player->update(dt);
-    _level->getPlayerAtk()->update(dt);
+    player->update(dt); // updates animations, counters, hitboxes
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
         (*it)->updateAnimation(dt);
@@ -448,6 +446,9 @@ void GameScene::preUpdate(float dt) {
 
 
 void GameScene::fixedUpdate(float step) {
+    if (!hitPauseCounter.isZero() && hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
+        return; // this gives the vague "lag" effect
+    }
     if (_level != nullptr){
         _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto player = _level->getPlayer();
@@ -459,6 +460,7 @@ void GameScene::fixedUpdate(float step) {
         }
         _camController.setTarget(player->getPosition() * player->getDrawScale());
         
+        // use conditional if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING) in the event of restricted zoom
         if (player->_weapon == Player::weapon::RANGED){
             _camController.setZoomSpeed(GameConstants::GAME_CAMERA_ZOOM_SPEED);
         }
@@ -477,7 +479,6 @@ void GameScene::fixedUpdate(float step) {
             e->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
         }
         player->syncPositions();
-        _level->getAttack()->setPosition(player->getPosition().add(0, 64 / player->getDrawScale().y)); //64 is half of the pixel height of the player
 
         auto projs = _level->getProjectiles();
         for (auto it = projs.begin(); it != projs.end(); ++it) (*it)->syncPositions();

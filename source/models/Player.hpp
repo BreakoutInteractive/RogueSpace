@@ -14,35 +14,62 @@
 #include "Upgradeable.hpp"
 #include "GameConstants.hpp"
 
+using namespace cugl;
+
 class Animation;
+
+/**
+ * This class represents the player's melee attack hitbox. During the timeframe between the activation of this hitbox, it records whether there is a successful hit of any opponent to allow the player to perform combo hits.
+ * This is a separate component attached to the player and the player model is responsible for its physics.
+ */
+class PlayerHitbox : public physics2::WheelObstacle {
+    
+public:
+    
+    /** whether the hitbox hit any targets */
+    bool hitFlag;
+    
+    /**
+     * Creates a new hitbox located at the world origin
+     */
+    PlayerHitbox(void): physics2::WheelObstacle(), hitFlag(false) {}
+    
+    /**
+     * Returns a new hitbox arc of the given radius.
+     *
+     * @param  pos      Initial position in world coordinates
+     * @param  radius   The hitbox radius
+     *
+     * @return a new hitbox object of the given radius.
+     */
+    static std::shared_ptr<PlayerHitbox> alloc(const Vec2 pos, float radius) {
+        std::shared_ptr<PlayerHitbox> result = std::make_shared<PlayerHitbox>();
+        return (result->init(pos,radius) ? result : nullptr);
+    }
+    
+    /**
+     * Sets whether the body is enabled and clears the hit flag.
+     * Any processing of the hitflag has to be done between calls to this method before the truth value is cleared.
+     *
+     * @param value whether the body is enabled
+     */
+    void setEnabled(bool value) override {
+        WheelObstacle::setEnabled(value);
+        hitFlag = false; // clear the flag
+    }
+    
+};
 
 /**
  * This class is the player object in this game.
  */
 class Player : public GameObject {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(Player);
 
 protected:
+#pragma mark Player Animation States
 
-    /** The force applied to the player for general movement purposes */
-    cugl::Vec2 _force;
-
-    /** accumulated move buff*/
-    double _moveScale;
-
-    /** The texture key for the player*/
-    std::string _playerTextureKey;
-    /** The texture key for the parry animation */
-    std::string _parryTextureKey;
-    /** The texture key for the attack animation */
-    std::string _attackTextureKey;
-    
-    //TODO: come up with a system that is similar to that of Unity's AnimationController, avoid field-member-blow-up
-    /** The player texture*/
-    std::shared_ptr<cugl::Texture> _playerTexture;
-    
+    /** previous animation (animation state tracker) */
+    std::shared_ptr<Animation> _prevAnimation;
     //TODO: there are a lot of these, maybe put them in a hash table with key = animation name
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
@@ -72,6 +99,12 @@ protected:
     std::shared_ptr<Animation> _recoveryAnimation;
     /** The animation to use while running and using the bow*/
     std::shared_ptr<Animation> _bowRunAnimation;
+    
+#pragma mark Effects
+    /** The effect to use while performing combo melee attack */
+    std::shared_ptr<Animation> _comboSwipeEffect;
+    /** The effect to use while performing melee attack */
+    std::shared_ptr<Animation> _swipeEffect;
     /** The effect to use while charging the bow */
     std::shared_ptr<Animation> _chargingEffect;
     /** The effect to use while the bow is charged */
@@ -81,62 +114,64 @@ protected:
     /** The effect to use upon successfully parrying */
     std::shared_ptr<Animation> _parryEffect;
     
+#pragma mark Misc Internal State
+
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
-    cugl::Vec2 _directions[8];
-    
+    Vec2 _directions[8];
     /** The direction that the player is currently facing */
-    cugl::Vec2 _facingDirection;
-    
+    Vec2 _facingDirection;
     /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
     int _directionIndex;
-    
-    std::shared_ptr<Animation> _prevAnimation;
 
+    /** accumulated move buff*/
+    double _moveScale;
+    
     /** how long we have been dodging for */
     float _dodge;
+    
+#pragma mark Melee Attack State
 
     /**time since the last attack*/
     float _comboTimer;
-
     /** which step in the melee combo we are in */
     int _combo;
+    /** player melee hitbox (semi-circle) */
+    std::shared_ptr<PlayerHitbox> _meleeHitbox;
     
 public:
-#pragma mark -
+#pragma mark Player States
+
     enum weapon { MELEE, RANGED };
-    //TODO: modify more stuff (in particular, animation) to use states. Add hit and knockback states
     enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE};
     weapon _weapon;
     state _state;
+    
+    float _hp;
+
 #pragma mark Counters
+
     /** attack cooldown counter*/
-    Counter _atkCD;
-    /** parry cooldown counter */
-    Counter _parryCD;
+    Counter atkCD; //TODO: possibly deprecated
     /** dodge cooldown counter*/
-    Counter _dodgeCD;
-    /** counter that is active during the dodge motion*/
-    Counter _dodgeDuration;
+    Counter dodgeCD;
     /** counter that is active while the player takes damage */
-    Counter _hitCounter;
+    Counter hitCounter;
     /** defense upgrade*/
     std::shared_ptr<Upgradeable> defenseUpgrade;
     /** attack upgrade*/
     std::shared_ptr<Upgradeable> attackUpgrade;
     /** dodge upgrade*/
     std::shared_ptr<Upgradeable> dodgeUpgrade ;
-        
+    /** list of all upgrades */
     std::vector<std::shared_ptr<Upgradeable>> attributes;
-
-    float _hp;
     
     /**
      * decrement all counters
      */
     void updateCounters();
-    
 
 #pragma mark Constructors
+
     /**
      * Creates a new player at the origin.
      */
@@ -149,26 +184,17 @@ public:
     
     /**
      * Disposes all resources and assets
-     *
-     * Any assets owned by this object will be immediately released.
-     * Requires initialization before next use.
      */
     void dispose();
-    
     
     /**
      * Initializes a newly allocated player
      *
      * The player size is specified in world coordinates.
-     *
      * @param playerData  the structured json with player collision, hitbox, position data
-     *
      * @return true if the player is initialized properly, false otherwise.
      */
     virtual bool init(std::shared_ptr<JsonValue> playerData);
-    
-    
-#pragma mark Static Constructors
     
     /**
      * Returns a newly allocated player
@@ -183,7 +209,7 @@ public:
     }
     
 #pragma mark -
-#pragma mark Accessors
+#pragma mark Player Stats Accessors
     
     /**
     * Gets the movement boost accumulated by this player.
@@ -192,26 +218,14 @@ public:
     int getMoveScale();
     
     /**
-     * Returns the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
+     * @return the list of upgrades applied on this player
      */
-    const cugl::Vec2 getForce() const { return _force; }
-
-    /**
-     * Sets the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value  the force applied to this player.
-     */
-    void setForce(const cugl::Vec2 value) { _force.set(value); }
-    
     std::vector<std::shared_ptr<Upgradeable>> getPlayerAttributes() {return attributes;}
+    
+    /**
+     * applies upgrade to player and updates attributes
+     */
+    void applyUpgrade(std::string upgrade);
     
     /**
      * Gets the attack strength accumulated by this player.
@@ -224,149 +238,65 @@ public:
     const int getDefense() {return defenseUpgrade->getCurrentValue();}
     
     /**
-     * Returns the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the x-component of the force applied to this player.
+     * @return the maximum HP of the player
      */
-    float getFX() const { return _force.x; }
+    int getMaxHP();
     
-    /**
-     * Sets the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this player.
-     */
-    void setFX(float value) { _force.x = value; }
-    
-    /**
-     * Returns the y-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the y-component of the force applied to this player.
-     */
-    float getFY() const { return _force.y; }
-    
-    /**
-     * Sets the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this player.
-     */
-    void setFY(float value) { _force.y = value; }
-    
+#pragma mark -
+#pragma mark Player Game State Accessors
     /**
      * @return the unit vector direction that the player is facing towards
      */
-    cugl::Vec2 getFacingDir(){ return _facingDirection; }
+    Vec2 getFacingDir(){ return _facingDirection; }
     
     /**
      * Sets the direction that the player is currently facing
      */
-    void setFacingDir(cugl::Vec2 dir);
-    /**
-     * applies upgrade to player and updates attributes
-     */
-    void applyUpgrade(std::string upgrade);
+    void setFacingDir(Vec2 dir);
     
     /**
-     * @return the maximum HP of the player
+     * To be explicit, player is attacking when charging a bow / having charged a bow / striking with melee / firing
+     * @return whether the player is attacking, includes preparing an attack.
      */
-    int getMaxHP();
-
-    /**
-     * @return which hit of the combo the player is on
-     */
-    int getCombo() const { return _combo; }
-
     bool isAttacking();
 
+    /**
+     * switches the weapon of the player from melee to range or vice versa.
+     */
     void swapWeapon() { _weapon = static_cast<weapon>((_weapon + 1) % 2); }
+    
+    /**
+     * resets the combo hit to be the first hit
+     */
+    void resetCombo() { _combo = 1; }
+    
+    /**
+     * advance combo by 1 (if at end of combo, this resets)
+     */
+    void accumulateCombo() { _combo += 1; if (_combo > 3){ _combo = 1;} }
+    
+    /**
+     * @return whether the current melee attack is a combo hit
+     */
+    bool isComboStrike() const { return _combo == 3; }
 
 #pragma mark -
 #pragma mark Animation
  
     /**
-    * Returns the idle texture (key) for this player
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @return the texture (key) for this player
-    */
-    const std::string& getTextureKey() const { return _playerTextureKey; }
-
-    /**
-    * Returns the idle texture (key) for this player
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @param  strip    the texture (key) for this player
-    */
-    void setTextureKey(const std::string& key) { _playerTextureKey = key; }
-
-    /**
-    * Returns the texture (key) for this player's parry animation
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @return the texture (key) for this player's parry animation
-    */
-    const std::string& getParryTextureKey() const { return _parryTextureKey; }
-
-    /**
-    * Returns the texture (key) for this player's parry animation
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @param  strip    the texture (key) for this player's parry animation
-    */
-    void setParryTextureKey(const std::string& key) { _parryTextureKey = key; }
-    /**
-    * Returns the texture (key) for this player's attack animation
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @return the texture (key) for this player's attack animation
-    */
-    const std::string& getAttackTextureKey() const { return _attackTextureKey; }
-
-    /**
-    * Returns the texture (key) for this player's attack animation
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @param  strip    the texture (key) for this player's attack animation
-    */
-    void setAttackTextureKey(const std::string& key) { _attackTextureKey = key; }
-    
-    /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
-    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets);
+    void loadAssets(const std::shared_ptr<AssetManager>& assets);
 
     /** Change to using the parry start animation and change state to PARRYSTART */
     void animateParryStart();
     /** Change to using the parry animation and change state to PARRY */
     void animateParry();
-    /** Change to using the default (idle) animation and change state to IDLE */
+    /** Change to using the default (idle/running) animation and change state to IDLE */
     void animateDefault();
     /** Change to using the melee attack animation and change state to ATTACK */
     void animateAttack();
-    /** Change to using the charging animation and change state to CHARGE. Also start the charging effect */
+    /** Change to using the charging animation and change state to CHARGING. Also start the charging effect */
     void animateCharge();
     /** Change to using the shooting animation and change state to SHOT */
     void animateShot();
@@ -379,17 +309,43 @@ public:
     * @param damage how much damage the player takes
     * @param knockback_scl the factor to multiply the direction by for applying knockback
     */
-    void hit(cugl::Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
+    void hit(Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
     
-    // INHERITED
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    void draw(const std::shared_ptr<SpriteBatch>& batch) override;
     void setAnimation(std::shared_ptr<Animation> animation) override;
     void updateAnimation(float dt) override;
     
     void update(float dt);
+    
 #pragma mark -
 #pragma mark Physics
+    
+    /**
+     * @return reference to the player melee hitbox
+     */
+    std::shared_ptr<PlayerHitbox> getMeleeHitbox(){ return _meleeHitbox; }
+    
+    /**
+     * enables the melee attack hitbox
+     *
+     * @param angle the attack angle/direction
+     */
+    void enableMeleeAttack(float angle);
+    
+    /**
+     * turns off the melee attack hitbox
+     */
+    void disableMeleeAttack(){ _meleeHitbox->setEnabled(false); }
+    
+    void addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) override;
+    
+    void removeObstaclesFromWorld(std::shared_ptr<physics2::ObstacleWorld> world) override;
 
+    void setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug) override;
+    
+    void syncPositions() override;
 };
+
+    
 
 #endif /* Player_hpp */

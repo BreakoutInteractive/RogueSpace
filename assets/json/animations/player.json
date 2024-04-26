@@ -26,6 +26,12 @@
         },
         "parry-effect":{
             "file":     "textures/effect_parry.png"
+        },
+        "player-swipe": {
+            "file":     "textures/player_swipe_01.png"
+        },
+        "player-swipe-combo": {
+            "file":     "textures/player_swipe_02.png"
         }
     }
 }
