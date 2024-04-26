@@ -9,6 +9,11 @@
 #include "GameConstants.hpp"
 
 #pragma mark -
+#pragma mark Game Effects
+    
+int GameConstants::HIT_PAUSE_FRAMES = 8;
+
+#pragma mark -
 #pragma mark Camera
 
 float GameConstants::GAME_CAMERA_SPEED = 2.5f;
@@ -55,19 +60,15 @@ int GameConstants::PLAYER_IFRAME = 16;
 
 int GameConstants::PLAYER_ATTACK_COOLDOWN =  16;
 
-int GameConstants::PLAYER_PARRY_COOLDOWN = 6;
 float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
 int GameConstants::PLAYER_DODGE_COOLDOWN = 60;
-
-float GameConstants::PLAYER_DODGE_DURATION = 10;
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
 float GameConstants::PLAYER_DODGE_SPEED = 20.0f;
 
-int GameConstants::PLAYER_MAX_HP = 3;
+float GameConstants::PLAYER_MAX_HP = 3;
 
 float GameConstants::PLAYER_MOVE_SPEED =5;
-
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
 float GameConstants::PLAYER_DEFENSE = 1;
@@ -88,6 +89,6 @@ float GameConstants::COMBO_TIME = 1.0f;
 
 float GameConstants::KNOCKBACK = 4.0f; // previously 10
 
-float GameConstants::KNOCKBACK_PWR_ATK = 20.0f;
+float GameConstants::KNOCKBACK_PWR_ATK = 8.0f; // previously 20
 
 float GameConstants::PROJ_SHADOW_SCALE = 0.25f;

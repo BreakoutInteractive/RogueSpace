@@ -94,32 +94,11 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
             atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
             atkTrans.translate(enemyAtk->getPosition() * _scale);
             sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
-            /*batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
-                _enemies[ii]->getAttack()->getAngle() + M_PI_2, _enemies[ii]->getAttack()->getPosition() * _scale);*/
         }
-//        if (_enemies[ii]->isEnabled()) {
-//            batch->draw(_attackAnimation, Color4(255,255,255,64), (Vec2)_attackAnimation->getSize() / 2, _enemies[ii]->getSightRange()/((Vec2)_attackAnimation->getSize()/2) * _scale,
-//                        _enemies[ii]->getFacingDir().getAngle() + M_PI_2, _enemies[ii]->getPosition() * _scale);
-//        }
     }
 
     for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->draw(batch);
-    
-    if (_playerAttack->isActive()){
-        auto sheet = _playerAttack->getSpriteSheet();
-        Affine2 atkTrans = Affine2::createScale(GameConstants::PLAYER_MELEE_ATK_RANGE / ((Vec2)sheet->getFrameSize() / 2) * _scale);
-        //we subtract pi/2 from the angle since the animation is pointing up but the hitbox points right by default
-        atkTrans.rotate(_atk->getAngle() - M_PI_2);
-        atkTrans.translate(_atk->getPosition() * _scale);
-        sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
-        //batch->draw(_attackAnimation, Color4(255,255,255,200), (Vec2)_attackAnimation->getSize() / 2, ATK_RADIUS/((Vec2)_attackAnimation->getSize()/2) * _scale,
-        //    _atk->getAngle() + M_PI_2, _atk->getPosition() * _scale);
-    }
-    
-    
-    // make sure debug node is hidden when not active
-    _atk->getDebugNode()->setVisible(_atk->isEnabled());
-    
+        
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
     }
@@ -152,8 +131,6 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     
     // debug node should be added once objects are initialized
     _player->setDebugNode(_debugNode);
-    _atk->setDebugScene(_debugNode);
-    _atk->setDebugColor(Color4::RED);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->setDebugScene(_debugNode);
@@ -190,10 +167,6 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
         _walls[ii]->loadAssets(assets);
     }
 
-    _attackAnimation = assets->get<Texture>("atk");
-    std::shared_ptr<Texture> t = assets->get<Texture>("player-swipe");
-    std::shared_ptr<SpriteSheet> s = SpriteSheet::alloc(t, 2, 3);
-    _playerAttack = Animation::alloc(s, 0.3f, false); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps)
     std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
     std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 3);
 
@@ -253,8 +226,6 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
 
     // Add objects to world
     _player->addObstaclesToWorld(_world);
-	addObstacle(_atk);
-    _atk->setEnabled(false); // turn off the attack semisphere
     _dynamicObjects.push_back(_player); // add the player to sorting layer
     
     for (int ii = 0; ii < _enemies.size(); ii++){
@@ -362,26 +333,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
     playerCollider->setRestitution(constants->getDouble(RESTITUTION_FIELD));
     playerCollider->setFixedRotation(!constants->getBool(ROTATION_FIELD));
     playerCollider->setDebugColor(parseColor(constants->getString(DEBUG_COLOR_FIELD)));
-    _player->setTextureKey(constants->getString(TEXTURE_FIELD)); //idle spritesheet
-    _player->setParryTextureKey(constants->getString(PARRY_FIELD));
-    _player->setAttackTextureKey(constants->getString(ATTACK_FIELD));
     _player->setDrawScale(_scale);
-
-    std::string btype = constants->getString(BODYTYPE_FIELD);
-    if (btype == STATIC_VALUE) {
-        playerCollider->setBodyType(b2_staticBody);
-    }
-
-    //setup the attack for collision detection
-    Vec2 pos(json->getFloat("x"), json->getFloat("y"));
-	_atk = physics2::WheelObstacle::alloc(pos, GameConstants::PLAYER_MELEE_ATK_RANGE);
-	_atk->setSensor(true);
-	_atk->setBodyType(b2_dynamicBody);
-    b2Filter filter;
-    // this is an attack and, since it is the player's, can collide with enemies
-    filter.categoryBits = CATEGORY_ATTACK;
-    filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX;
-    _atk->setFilterData(filter);
     return success;
 }
 
@@ -542,7 +494,7 @@ void LevelModel::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& ob
 
 void LevelModel::addProjectile(std::shared_ptr<Projectile> p) {
     _projectiles.push_back(p);
-    _dynamicObjects.push_back(p);
+    //_dynamicObjects.push_back(p);
     p->addObstaclesToWorld(_world);
     p->setDebugNode(_debugNode);
     p->getCollider()->setDebugColor(Color4::RED);

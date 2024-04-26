@@ -14,9 +14,6 @@
         "atk": {
             "file":     "textures/attack.png"
         },
-        "player-swipe": {
-            "file":     "textures/swipe_01.png"
-        },
         "enemy-swipe": {
             "file":     "textures/swipe_01.png"
         }

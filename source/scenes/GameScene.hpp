@@ -23,6 +23,7 @@
 #include "../models/LevelModel.hpp"
 #include "GameRenderer.hpp"
 #include "../utility/LevelParser.hpp"
+#include "../models/Counter.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -82,6 +83,9 @@ protected:
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
+    
+    /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
+    Counter hitPauseCounter;
     
 public:
 #pragma mark -

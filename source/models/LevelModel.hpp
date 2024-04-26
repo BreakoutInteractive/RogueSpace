@@ -42,13 +42,6 @@ class Projectile;
 #pragma mark Level Model
 /**
 * Class that represents a dynamically loaded level in the game
-*
-* This class is a subclass of Asset so that we can use it with a GenericLoader. As with
-* all assets, this class SHOULD NOT make any references to AssetManager in the load/unload 
-* methods. Assets should be treated as if they load in parallel, not in sequence.  Therefore,
-* it is unsafe to assume that one asset loads before another.  If this level needs to connect 
-* to other assets (sound, images, etc.) this should take place after asset loading, such as 
-* during scene graph initialization.
 */
 class LevelModel {
 protected:
@@ -69,22 +62,18 @@ protected:
     
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
-
+    /** list of all projectiles */
     std::vector<std::shared_ptr<Projectile>> _projectiles;
     
     /** list of all moving game objects */
     std::vector<std::shared_ptr<GameObject>> _dynamicObjects;
-
-    std::shared_ptr<physics2::WheelObstacle> _atk;
     
+    /** reference to all tile layers*/
     std::vector<std::shared_ptr<TileLayer>> _tileLayers;
-    
     /** Reference to all the walls */
     std::vector<std::shared_ptr<Wall>> _walls;
-    
     /** Reference to all energy walls*/
     std::vector<std::shared_ptr<EnergyWall>> _energyWalls;
-
     /** Reference to all custom boundaries (box2d obstacles) */
     std::vector<std::shared_ptr<physics2::Obstacle>> _boundaries;
     
@@ -93,9 +82,6 @@ protected:
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
-
-    std::shared_ptr<cugl::Texture> _attackAnimation;
-    std::shared_ptr<Animation> _playerAttack;
     
     std::shared_ptr<LevelGrid> _grid;
     
@@ -220,11 +206,6 @@ public:
      * @return the player in this game level
      */
     const std::shared_ptr<Player> getPlayer() {return _player; }
-    
-    /**
-     * @return the player's attack semi-sphere
-     */
-    const std::shared_ptr<physics2::WheelObstacle> getAttack() { return _atk; }
 
     /**
      * @return the enemies in this game level
@@ -240,8 +221,6 @@ public:
      * @return the energy walls in this game level
      */
     const std::vector<std::shared_ptr<EnergyWall>> getEnergyWalls() { return _energyWalls; }
-
-    const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 
     /** add a projectile to this level */
     void addProjectile(std::shared_ptr<Projectile> p);

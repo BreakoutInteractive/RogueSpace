@@ -32,6 +32,12 @@ void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets,
     _audioController = audio;
 }
 
+bool CollisionController::isComboContact(){
+    bool value = _comboStriked;
+    _comboStriked = false;
+    return value;
+}
+
 
 #pragma mark -
 #pragma mark Collision Handling
@@ -39,7 +45,8 @@ void CollisionController::beginContact(b2Contact* contact){
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
     std::shared_ptr<Player> player = _level->getPlayer();
-    intptr_t aptr = reinterpret_cast<intptr_t>(_level->getAttack().get());
+    std::shared_ptr<PlayerHitbox> meleeHitbox = player->getMeleeHitbox();
+    intptr_t aptr = reinterpret_cast<intptr_t>(meleeHitbox.get());
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
@@ -53,19 +60,23 @@ void CollisionController::beginContact(b2Contact* contact){
                 dir.normalize();
                 float ang = acos(dir.dot(Vec2::UNIT_X));
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
-                if (abs(ang - _level->getAttack()->getAngle()) <= M_PI_2 || abs(ang - _level->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, _level->getPlayer()->getAtkDamage(), player->getCombo() != 3 ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                float hitboxAngle = player->getMeleeHitbox()->getAngle();
+                if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
+                    (*it)->hit(dir, player->getAtkDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
                     _audioController->playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
+                    // record the hit
+                    if (!meleeHitbox->hitFlag){
+                        // the hitbox is active and this is the first hit of the frame
+                        meleeHitbox->hitFlag = true;
+                        if (player->isComboStrike()){
+                            // set flag to request "hit pause" effect
+                            _comboStriked = true;
+                        }
+                    }
                 }
             }
-            //update (commenting out the below) : player NO LONGER takes damage if running into enemy while not dodging
-            // else if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
-            //     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            //     Vec2 dir = (_level->getPlayer()->getPosition() - (*it)->getPosition());
-            //     dir.normalize();
-            //     if (_level->getPlayer()->_state!=Player::state::DODGE) _level->getPlayer()->hit(dir);
-            // }
+
             //player ranged attack
             for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
                 intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
@@ -160,24 +171,8 @@ void CollisionController::beginContact(b2Contact* contact){
 
 void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold){
 
-    float speed = 0;
-
-    // Use Ian Parberry's method to compute a speed threshold
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
-//    b2WorldManifold worldManifold;
-//    contact->GetWorldManifold(&worldManifold);
-//    b2PointState state1[2], state2[2];
-//    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
-//    for (int ii = 0; ii < 2; ii++) {
-//        if (state2[ii] == b2_addState) {
-//            b2Vec2 wp = worldManifold.points[0];
-//            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
-//            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
-//            b2Vec2 dv = v1 - v2;
-//            speed = b2Dot(dv, worldManifold.normal);
-//        }
-//    }
 
     intptr_t pptr = reinterpret_cast<intptr_t>(_level->getPlayer().get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();

@@ -152,13 +152,13 @@ void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
     
     auto player = _level->getPlayer();
     _hpBar->setProgress(player->_hp / (float) player->getMaxHP());
-    _stamina->setProgress(1-(player->_dodgeCD.getCount()/(float) player->_dodgeCD.getMaxCount()));
+    _stamina->setProgress(1-(player->dodgeCD.getCount()/(float) player->dodgeCD.getMaxCount()));
     
     // using game camera, render the game
     if (_gameCam != nullptr){
         batch->begin(_gameCam->getCombined());
-        Size s = Application::get()->getDisplaySize();
-        Vec3 camPos = _gameCam->getPosition();
+//        Size s = Application::get()->getDisplaySize();
+//        Vec3 camPos = _gameCam->getPosition();
         // this draws the space background, can be removed.
 //        batch->draw(_backgroundTexture, Rect(camPos.x - s.width/2, camPos.y - s.height/2, s.width, s.height));
         if (_level != nullptr){
