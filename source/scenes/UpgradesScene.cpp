@@ -138,7 +138,7 @@ void UpgradesScene::getRandomUpgrade(unsigned long size){
 
 void UpgradesScene::updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes){
     
-    if (_displayedAttribute1== -1 and _displayedAttribute2== -1){
+    if (_displayedAttribute1== -1 && _displayedAttribute2== -1){
         getRandomUpgrade(attributes.size());
     }
     

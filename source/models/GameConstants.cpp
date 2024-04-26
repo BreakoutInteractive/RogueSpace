@@ -52,6 +52,8 @@ float GameConstants::PROJ_RADIUS_MAGE = 0.75f;
 
 float GameConstants::PROJ_TIME_E = 1.0f;
 
+float GameConstants::PARRY_ENEMY_DR = 0.1f;
+
 
 #pragma mark -
 #pragma mark Player
