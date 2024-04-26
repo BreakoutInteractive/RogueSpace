@@ -8,6 +8,7 @@
 #include "Enemy.hpp"
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
+#include "../components/Collider.hpp"
 #include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
@@ -20,20 +21,7 @@ using namespace cugl;
 bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _position.set(data->getFloat("x"), data->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = data->get("collider");
-    Vec2 colliderPos(colliderData->getFloat("x"), colliderData->getFloat("y"));
-    std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
-    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
-    Poly2 polygon(verts,(int)vertices.size()/2);
-    EarclipTriangulator triangulator;
-    triangulator.set(polygon.vertices);
-    triangulator.calculate();
-    polygon.setIndices(triangulator.getTriangulation());
-    
-    
-    auto collider = std::make_shared<physics2::PolygonObstacle>();
-    collider->init(polygon, colliderPos);
-    std::string name("enemy-collider");
-    collider->setName(name);
+    auto collider = Collider::makeCollider(colliderData, b2_dynamicBody, "enemy-collider");
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
@@ -41,8 +29,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     collider->setFilterData(filter);
     _collider = collider;   // attach the collider to the game object
     
-    auto shadow = physics2::PolygonObstacle::alloc(polygon,colliderPos);
-    shadow->setBodyType(b2_kinematicBody);
+    auto shadow = Collider::makeCollider(colliderData, b2_kinematicBody, "enemy-shadow");
     // this is an enemy "shadow" and can collide with the player
     filter.categoryBits = CATEGORY_ENEMY_SHADOW;
     filter.maskBits = CATEGORY_PLAYER;
@@ -51,12 +38,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     
     // set the enemy hitbox sensor
     std::shared_ptr<JsonValue> hitboxData = data->get("hitbox");
-    Size hitboxSize(hitboxData->getFloat("width"), hitboxData->getFloat("height"));
-    Vec2 hitboxPos(hitboxData->getFloat("x"), hitboxData->getFloat("y"));
-    auto hitbox = physics2::BoxObstacle::alloc(hitboxPos, hitboxSize);
-    hitbox->setBodyType(b2_kinematicBody);
-    hitbox->setSensor(true);
-    hitbox->setName(std::string("enemy-hitbox"));
+    auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "enemy-hurtbox", true);
     filter.categoryBits = CATEGORY_ENEMY_HITBOX;
     filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     hitbox->setFilterData(filter);
@@ -128,7 +110,7 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2();
     // transform.scale(0.5);
-    transform.translate(getPosition() * _drawScale);
+    transform.translate(_position * _drawScale); // previously using getPosition()
     
     spriteSheet->draw(batch, _tint, origin, transform);
 

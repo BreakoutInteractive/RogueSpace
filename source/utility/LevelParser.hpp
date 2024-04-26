@@ -107,6 +107,29 @@ private:
      */
     const std::shared_ptr<JsonValue> parsePhysicsObject(const std::shared_ptr<JsonValue>& objectJson, bool parseAsset, bool parseCollider, bool parseHitbox);
     
+    /**
+     * wrapper method that invokes either of `parsePolyCollider` or `parseBoxCollider`
+     */
+    const std::shared_ptr<JsonValue> parseGenericCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize);
+    
+    /**
+     * parses a polygon collider component
+     * @param colliderJson the raw json data for a polygon
+     * @param tileSize the dimensions of the tile (image)
+     * @param tilePos where the tile object is placed in cartesian world
+     * @param objectSize the size of the object placed (may be the same as tileSize if no scaling applied)
+     */
+    const std::shared_ptr<JsonValue> parsePolyCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize);
+    
+    /**
+     * parses a box collider component
+     * @param colliderJson the raw json data for a box
+     * @param tileSize the dimensions of the tile (image)
+     * @param tilePos where the tile object is placed in cartesian world
+     * @param objectSize the size of the object placed (may be the same as tileSize if no scaling applied)
+     */
+    const std::shared_ptr<JsonValue> parseBoxCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize);
+    
 #pragma mark Internal Parsing Helpers (Asset References)
     /**
      * load the dependencies of the current tiled map to resolve references

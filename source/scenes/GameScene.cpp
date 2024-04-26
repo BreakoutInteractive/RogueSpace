@@ -256,7 +256,7 @@ void GameScene::preUpdate(float dt) {
 #ifdef CU_TOUCH_SCREEN
     
     // if player just got hit, cancel any combat requiring hold-times
-    if (player->_hitCounter.isMaximum()){
+    if (player->hitCounter.isMaximum()){
         _input.clearHeldGesture();
         _gameRenderer.updateAimJoystick(false, _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
