@@ -55,5 +55,6 @@
 #define CLASS_LIZARD        "Lizard"
 #define CLASS_CASTER        "Caster"
 #define CLASS_PARRY			"Parry"
+#define CLASS_RELIC         "Relic"
 
 #endif /* defined(__LEVEL_CONSTANTS_H__) */

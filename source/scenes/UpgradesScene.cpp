@@ -195,7 +195,6 @@ void UpgradesScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
-
             _choice = NONE;
             _option1->activate();
             _option2->activate();

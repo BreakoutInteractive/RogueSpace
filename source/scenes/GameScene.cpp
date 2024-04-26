@@ -1,4 +1,3 @@
-//
 //  GameScene.cpp
 //
 //  WARNING: There are a lot of shortcuts in this design that will do not adapt
@@ -73,6 +72,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     _parser.loadTilesets(assets);
     _levelNumber = 1;
+    _nextValidLevel=-1;
+    _lvlsToUpgrade.setMaxCount(3);
+    _lvlsToUpgrade.setCount(3);
+    upgradeScreenActive=false;
+    upgradeChosen=false;
     _gameRenderer.init(_assets);
     _input.init();
     _audioController = std::make_shared<AudioController>();
@@ -108,8 +112,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _loseNode->setForeground(Color4::RED);
     _loseNode->setVisible(false);
       
-    addChild(_debugNode); //this we keep
-    addChild(_winNode); //TODO: remove
+    addChild(_debugNode);  //this we keep
+    addChild(_winNode);   //TODO: remove
     addChild(_loseNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
@@ -145,9 +149,20 @@ void GameScene::restart(){
 
 void GameScene::setLevel(int level){
     _debugNode->removeAllChildren();
+    if (level==7){ //starts inactive, need new boolean
+        _nextValidLevel = _levelNumber+1;
+        _levelNumber=level;
+    }
+    else if (_levelNumber == 8){
+        _levelNumber =_nextValidLevel;
+        _nextValidLevel = -1;
+    }
+    else{
+        _lvlsToUpgrade.decrement();
+        _levelNumber = level;
+    }
     
-    _levelNumber = level;
-    Size dimen = computeActiveSize();
+        Size dimen = computeActiveSize();
     
     auto parsed = _parser.parseTiled(_assets->get<JsonValue>(getLevelKey(_levelNumber)));
     _level = LevelModel::alloc(_assets->get<JsonValue>("constants"), parsed);
@@ -165,6 +180,9 @@ void GameScene::setLevel(int level){
     _AIController.init(_level);
     _collisionController.setLevel(_level);
     _gameRenderer.setGameElements(getCamera(), _level);
+    if(_levelNumber==7){
+        _level->getRelic()->active = true;
+    }
     setComplete(false);
     setDefeat(false);
     _input.activateMeleeControls();
@@ -238,8 +256,15 @@ void GameScene::preUpdate(float dt) {
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
     if (_level->isCompleted()){
-        if (_levelNumber < MAX_LEVEL){
-            setLevel(_levelNumber + 1);
+        if (_levelNumber < MAX_LEVEL or _nextValidLevel<MAX_LEVEL){
+            _levelNumber+=1;
+            if (_lvlsToUpgrade.getCount()==0){
+                setLevel(7);
+                _lvlsToUpgrade.reset();
+                return;
+            }
+            setLevel(_levelNumber);
+            upgradeChosen=false;
             return;
         }
         else {
@@ -430,7 +455,9 @@ void GameScene::preUpdate(float dt) {
         }
         
     }
-    
+    if (_level->getRelic()!=nullptr && upgradeChosen == false){
+        upgradeScreenActive =_level->getRelic()->getRelicTouched();
+    }
 #pragma mark - Component Updates
     player->update(dt); // updates animations, counters, hitboxes
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {

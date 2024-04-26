@@ -23,6 +23,7 @@
 #include "Projectile.hpp"
 #include "LevelGrid.hpp"
 #include "Wall.hpp"
+#include "Relic.hpp"
 
 using namespace cugl;
 
@@ -72,6 +73,9 @@ protected:
     std::vector<std::shared_ptr<TileLayer>> _tileLayers;
     /** Reference to all the walls */
     std::vector<std::shared_ptr<Wall>> _walls;
+    /** reference to the relic object*/
+    std::shared_ptr<Relic> _relic;
+    
     /** Reference to all energy walls*/
     std::vector<std::shared_ptr<EnergyWall>> _energyWalls;
     /** Reference to all custom boundaries (box2d obstacles) */
@@ -157,6 +161,8 @@ protected:
      * @return true if the collision object was successfully loaded
      */
     bool loadBoundary(const std::shared_ptr<JsonValue>& json);
+    
+    bool loadRelic(const std::shared_ptr<JsonValue>& json);
 
     /**
      * Converts the string to a color
@@ -206,7 +212,12 @@ public:
      * @return the player in this game level
      */
     const std::shared_ptr<Player> getPlayer() {return _player; }
-
+    
+    /**
+     * @return the relic in this game level
+     */
+    const std::shared_ptr<Relic> getRelic() {return _relic; }
+    
     /**
      * @return the enemies in this game level
      */

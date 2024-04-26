@@ -41,6 +41,8 @@ protected:
     LevelParser _parser;
     
     int _levelNumber;
+    /** next level to load after upgrade level*/
+    int _nextValidLevel;
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
@@ -86,8 +88,15 @@ protected:
     
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
+    /** a counter for the number levels until player earns upgrade */
+    Counter _lvlsToUpgrade;
     
 public:
+    /** whether the upgrades screen should be active*/
+    bool upgradeScreenActive;
+    
+    /** whether an upgrade has been chosen*/
+    bool upgradeChosen;
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -146,6 +155,13 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
+    
+    /**
+     * Sets whether Relic object is active
+     *
+     * @param activate whether relic object is active.
+     */
+    void setRelicActive(bool activate) { _level->getRelic()->active =activate; }
     
     /**
      * Returns a reference to the game renderer

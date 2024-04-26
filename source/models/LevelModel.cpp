@@ -2,6 +2,7 @@
 #include "LevelModel.hpp"
 #include "LevelConstants.hpp"
 #include "Wall.hpp"
+#include "Relic.hpp"
 #include "TileLayer.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
@@ -56,6 +57,9 @@ void LevelModel::setDrawScale(Vec2 scale) {
     else {
         CUAssertLog(false, "Failed to set draw scale for player");
     }
+    if (_relic != nullptr) {
+        _relic->setDrawScale(scale);
+    }
     for (int ii = 0; ii < _tileLayers.size(); ii++){
         _tileLayers[ii]->setDrawScale(scale);
     }
@@ -84,8 +88,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if ((*it)->isEnabled()){
             (*it)->draw(batch);
         }
-    }
-    
+    }    
+
     for (int ii = 0; ii < _enemies.size(); ii++){
         auto enemyAtk = _enemies[ii]->getAttack();
         //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
@@ -155,6 +159,10 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
         _projectiles[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
     }
+    if (_relic != nullptr){
+        _relic->setDebugNode(_debugNode);
+        _relic->getCollider()->setDebugColor(Color4::WHITE);
+    }
 }
 
 void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
@@ -167,7 +175,11 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     for (int ii = 0; ii < _walls.size(); ii++){
         _walls[ii]->loadAssets(assets);
     }
-
+    
+    if (_relic!=nullptr){
+        _relic->loadAssets(assets);
+    }
+    
     std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
     std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 3);
 
@@ -222,7 +234,7 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
         loadGameComponent(constants, layer);
     }
     CUAssertLog(_player != nullptr, "No player could be generated for the given map, either no player is added to the map or player is being randomized!");
-    CUAssertLog(_enemies.size() > 0, "No enemies could be found/generated!");
+//    CUAssertLog(_enemies.size() > 0, "No enemies could be found/generated!");  //upgrades level has no enemies
     CUAssertLog(_tileLayers.size() > 0, "no tile layers found!");
 
     // Add objects to world
@@ -240,6 +252,10 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
     for (int ii = 0; ii < _walls.size(); ii++){
         _walls[ii]->addObstaclesToWorld(_world);
         _dynamicObjects.push_back(_walls[ii]); // TODO: need to separate out walls to reduce sorting overhead;
+    }
+    if (_relic!=nullptr){
+        _relic->addObstaclesToWorld(_world);
+        _dynamicObjects.push_back(_relic);
     }
     
     for (int ii = 0; ii < _boundaries.size(); ii++){
@@ -261,6 +277,10 @@ void LevelModel::unload() {
             _world->removeObstacle(*it);
         }
     }
+    if (_relic!=nullptr){
+        _relic->removeObstaclesFromWorld(_world);
+    }
+    _relic=nullptr;
 	_enemies.clear();
 	_walls.clear();
     _energyWalls.clear();
@@ -316,6 +336,9 @@ bool LevelModel::loadGameComponent(const std::shared_ptr<JsonValue> constants, c
     }
     else if (objectClass == CLASS_TILELAYER){
         loadTileLayer(json); // this changes the grid data structure by marking walkable tiles
+    }
+    else if (objectClass == CLASS_RELIC){
+        loadRelic(json);
     }
     else {
         CUAssertLog(false, "unrecognized data type to load");
@@ -441,6 +464,31 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
         }
     }
 	return success;
+}
+
+bool LevelModel::loadRelic(const std::shared_ptr<JsonValue>& json) {
+    bool success = true;
+
+    std::shared_ptr<JsonValue> colliderData = json->get("collider");
+    Vec2 obstaclePosition(colliderData->getFloat("x"), colliderData->getFloat("y"));
+    std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
+    success = vertices.size() >= 2 && vertices.size() % 2 == 0;
+    
+    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
+    Poly2 polygon(verts,(int)vertices.size()/2);
+    EarclipTriangulator triangulator;
+    triangulator.set(polygon.vertices);
+    triangulator.calculate();
+    polygon.setIndices(triangulator.getTriangulation());
+    triangulator.clear();
+    
+    // Get the object, which is automatically retained
+    if (success){
+            std::shared_ptr<Relic> relicobj = std::make_shared<Relic>(json, polygon, obstaclePosition);
+            _grid->setNode(_grid->worldToTile(relicobj->getPosition()), 0); // 0 means non-walkable for now
+            _relic = relicobj;
+    }
+    return success;
 }
 
 bool LevelModel::loadBoundary(const std::shared_ptr<JsonValue>& json) {

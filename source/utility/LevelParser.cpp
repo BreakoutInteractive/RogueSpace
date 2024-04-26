@@ -296,6 +296,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type == CLASS_PLAYER){
             data = parsePlayer(object);
         }
+        else if (type== CLASS_RELIC){
+            data = parseRelic(object);
+        }
         else if (type == CLASS_COLLIDER){
             data = parseCustomCollision(object);
         }
@@ -422,6 +425,12 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
     else {
         data->appendChild("tall", JsonValue::alloc(false));
     }
+    return data;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseRelic(const std::shared_ptr<JsonValue>& json){
+    auto data = parsePhysicsObject(json, true, true, false);
+    data->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_RELIC)));
     return data;
 }
 
