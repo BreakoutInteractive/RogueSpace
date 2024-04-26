@@ -7,6 +7,7 @@
 #include "Enemy.hpp"
 #include "Projectile.hpp"
 #include "MeleeEnemy.hpp"
+#include "ParryEnemy.hpp"
 #include "MeleeLizard.hpp"
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
@@ -396,6 +397,9 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
     }
     else if (enemyType == "caster") {
         enemy = MageAlien::alloc(json);
+    }
+    else if (enemyType == "parry") {
+        enemy = ParryEnemy::alloc(json);
     }
     CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());
     auto enemyCollider = enemy->getCollider();

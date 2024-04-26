@@ -35,6 +35,9 @@
         },
         "stun-effect": {
             "file":     "textures/effect_stunned.png"
+        },
+        "parry-idle": {
+            "file":     "textures/parry_idle.png"
         }
     }
 }

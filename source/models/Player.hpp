@@ -216,10 +216,10 @@ public:
     /**
      * Gets the attack strength accumulated by this player.
      */
-    const int getAtkDamage() {return attackUpgrade->getCurrentValue();}
+    const float getAtkDamage() {return attackUpgrade->getCurrentValue();}
     
     /**
-     * Gets the attack strength accumulated by this player.
+     * Gets the defense accumulated by this player.
      */
     const int getDefense() {return defenseUpgrade->getCurrentValue();}
     

@@ -196,7 +196,7 @@ void Enemy::setStunned() {
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir, int damage, float knockback_scl) {
+void Enemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
         setHealth(getHealth()-damage);

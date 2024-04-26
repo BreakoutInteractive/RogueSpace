@@ -54,5 +54,6 @@
 #define CLASS_TILELAYER     "TileLayer"
 #define CLASS_LIZARD        "Lizard"
 #define CLASS_CASTER        "Caster"
+#define CLASS_PARRY			"Parry"
 
 #endif /* defined(__LEVEL_CONSTANTS_H__) */

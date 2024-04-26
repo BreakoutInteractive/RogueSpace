@@ -299,7 +299,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type == CLASS_COLLIDER){
             data = parseCustomCollision(object);
         }
-        else if (type == CLASS_LIZARD || type == CLASS_CASTER){
+        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_PARRY){
             data = parseEnemy(object, type);
         }
         if (data != nullptr){
@@ -456,6 +456,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<J
     }
     else if (enemyType == CLASS_CASTER){
         enemyData->appendChild("type", JsonValue::alloc(std::string("caster")));
+    }
+    else if (enemyType == CLASS_PARRY) {
+        enemyData->appendChild("type", JsonValue::alloc(std::string("parry")));
     }
     enemyData->appendChild("path", enemyPathData);
     enemyData->appendChild("defaultstate", JsonValue::alloc(std::string(enemyPathData->size() > 2 ? "patrol" : "sentry")));

@@ -61,6 +61,8 @@ public:
     static float PROJ_RADIUS_MAGE;
     /** how many seconds the enemy projectile lasts, not including the explosion animation */
     static float PROJ_TIME_E;
+    /** the fraction of damage the parry enemy takes when not stunned */
+    static float PARRY_ENEMY_DR;
 
 #pragma mark -
 #pragma mark Player Constants
