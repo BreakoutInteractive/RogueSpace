@@ -97,7 +97,7 @@ void App::preUpdate(float dt) {
         case MENU:
             break;
         case UPGRADE:
-            _upgrades.updateScene(_gameplay.getAttributes());
+            _upgrades.updateScene(_gameplay.upgradesForLevel, _gameplay.availableUpgrades);
             _upgrades.setActive(true);
             _gameplay.activateInputs(true);
             _gameplay.getRenderer().setActivated(false);
@@ -184,7 +184,7 @@ void App::updateUpgradesScene(float dt){
         _upgrades.setActive(false);
         _gameplay.getRenderer().setActivated(true);
         _scene = State::GAME;
-    } else{
+    } else{ 
         switch (_upgrades.getChoice()) {
             case UpgradesScene::NONE:
                 break;

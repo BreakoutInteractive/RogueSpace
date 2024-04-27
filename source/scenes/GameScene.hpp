@@ -76,8 +76,6 @@ protected:
 
     /** The level model */
     std::shared_ptr<LevelModel> _level;
-    /**Reference to upgadeable player attributes**/
-    std::vector<std::shared_ptr<Upgradeable>> _playerAttributes;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -92,11 +90,40 @@ protected:
     Counter _lvlsToUpgrade;
     
 public:
+#pragma mark Player Upgrades
     /** whether the upgrades screen should be active*/
     bool upgradeScreenActive;
     
     /** whether an upgrade has been chosen*/
     bool upgradeChosen;
+    
+    /** classification of the different upgrade types*/
+    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE, MOVEMENT};
+    
+    /** sets the player attributes of the crrent level's player*/
+    void setPlayerAttributes();
+    
+    /** upgrades generated for level*/
+    std::vector<int> upgradesForLevel;
+    
+    /** all upgradeable stats for the player*/
+    std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
+        
+    /** defense upgrade*/
+    std::shared_ptr<Upgradeable> defenseUpgrade;
+    /** attack upgrade*/
+    std::shared_ptr<Upgradeable> meleeUpgrade;
+    /** dodge upgrade*/
+    std::shared_ptr<Upgradeable> dodgeCDUpgrade;
+    
+    /**
+     * Chooses random upgrades
+     *
+     *
+     * @param size length of attribute array
+     */
+    void generateRandomUpgrades();
+    
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -167,11 +194,7 @@ public:
      * Returns a reference to the game renderer
      */
     GameRenderer& getRenderer(){return _gameRenderer;}
-    /**
-     * Returns a reference to the player's attributes
-     */
-    std::vector<std::shared_ptr<Upgradeable>> getAttributes() {return _playerAttributes= _level->getPlayer()->getPlayerAttributes();}
-    
+
     /**
      * toggle input devices
      */
@@ -311,7 +334,7 @@ public:
     /**
      * Applies selected attribute to player.
      */
-    void updatePlayerAttributes(std::string selectedAttribute);
+    void updatePlayerAttributes(int selectedAttribute);
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

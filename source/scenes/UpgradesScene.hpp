@@ -35,27 +35,34 @@ public:
         /** User wants upgrade option 2 */
         UPGRADE_2
     };
+    
+    /**
+     * upgrade classes.
+     *
+     * Should be consistent with GameScene.
+     */
+    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE,  MOVEMENT};
+    
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
     
     /** The button for upgrade option 1 */
     std::shared_ptr<cugl::scene2::Button> _option1;
     /** The button to confirm upgrade option 1*/
     std::shared_ptr<cugl::scene2::Button> _confirm1;
-    shared_ptr<scene2::Label> _option1Lvl;
-    shared_ptr<scene2::Label> _option1Change;
-    shared_ptr<scene2::Label> _option1Type;
+    shared_ptr<scene2::Label> _option1Name;
+    shared_ptr<scene2::Label> _option1Descrip;
+    shared_ptr<scene2::Label> _option1Level;
     
     
     /** The button for upgrade option 2 */
     std::shared_ptr<cugl::scene2::Button> _option2;
     /** The button to confirm upgrade option 2*/
     std::shared_ptr<cugl::scene2::Button> _confirm2;
-    shared_ptr<scene2::Label> _option2Lvl;
-    shared_ptr<scene2::Label> _option2Change;
-    shared_ptr<scene2::Label> _option2Type;
+    shared_ptr<scene2::Label> _option2Name;
+    shared_ptr<scene2::Label> _option2Descrip;
+    shared_ptr<scene2::Label> _option2Level;
     
     int _displayedAttribute1;
     int _displayedAttribute2;
@@ -63,20 +70,11 @@ protected:
     Choice _choice;
     bool _active;
     
-private:
-    /**
-     * Chooses random upgrades
-     *
-     *
-     * @param size length of attribute array
-     */
-    void getRandomUpgrade(unsigned long size);
-    
 public:
 #pragma mark -
     
-    /** description of selcted upgrade */
-    std::string _selectedUpgrade;
+    /** enum number of selcted upgrade */
+    int _selectedUpgrade;
 #pragma mark Constructors
     /**
      * Creates a new  menu scene with the default values.
@@ -120,7 +118,9 @@ public:
      *
      * @param attributes available payer upgrades
      */
-    void updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes);
+    void updateScene(std::vector<int> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
+    
+    void setButtonText(int upgrade, int buttonType);
 
     /**
      * Sets whether the scene is currently active

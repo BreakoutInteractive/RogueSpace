@@ -67,7 +67,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 float hitboxAngle = player->getMeleeHitbox()->getAngle();
                 if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, player->getAtkDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    (*it)->hit(dir, player->meleeDamage, !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
                     _audioController->playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
                     // record the hit
