@@ -9,6 +9,7 @@
 #include "../models/MageAlien.hpp"
 #include "../models/Player.hpp"
 #include "../models/Wall.hpp"
+#include "../models/Relic.hpp"
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
@@ -24,6 +25,9 @@ void CollisionController::setLevel(std::shared_ptr<LevelModel> level){
     world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
         beforeSolve(contact,oldManifold);
     };
+    world->onEndContact = [this](b2Contact* contact) {
+        endContact(contact);
+    };
     _level = level;
 }
 
@@ -37,6 +41,7 @@ bool CollisionController::isComboContact(){
     _comboStriked = false;
     return value;
 }
+
 
 
 #pragma mark -
@@ -62,7 +67,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 float hitboxAngle = player->getMeleeHitbox()->getAngle();
                 if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, player->getAtkDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    (*it)->hit(dir, player->meleeDamage, !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
                     _audioController->playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
                     // record the hit
@@ -166,7 +171,31 @@ void CollisionController::beginContact(b2Contact* contact){
             }
         }
     }
+    if (_level->getRelic() != nullptr){
+        intptr_t relptr = reinterpret_cast<intptr_t>(_level->getRelic().get());
+        if (((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
+            (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) && (_level->getRelic()->active)) {
+            _level->getRelic()->setRelicTouched(true);
+        }
+    }
 }
+
+
+void CollisionController::endContact(b2Contact* contact){
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();
+    std::shared_ptr<Player> player = _level->getPlayer();
+    intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
+    
+    if (_level->getRelic() != nullptr){
+        intptr_t relptr = reinterpret_cast<intptr_t>(_level->getRelic().get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
+            (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) {
+            _level->getRelic()->setRelicTouched(false);
+        }
+    }
+}
+
 
 
 void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold){

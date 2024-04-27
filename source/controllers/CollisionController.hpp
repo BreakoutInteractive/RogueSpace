@@ -73,6 +73,16 @@ public:
      * @param  contact  The two bodies that collided
      */
     void beginContact(b2Contact* contact);
+        
+    /**
+     * Processes the end of a collision
+     *
+     * This method is called after we get a collision between two objects.
+     * We use this method to test if it is the "right" kind of collision. 
+     *
+     * @param  contact  The two bodies that collided
+     */
+    void endContact(b2Contact* contact);
 
     /**
      * Handles any modifications necessary before collision resolution

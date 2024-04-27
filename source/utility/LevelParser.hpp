@@ -129,6 +129,11 @@ private:
      * @param objectSize the size of the object placed (may be the same as tileSize if no scaling applied)
      */
     const std::shared_ptr<JsonValue> parseBoxCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize);
+
+    /**
+     * Parses a relic object and produces the corresponding data for Relic model
+     */
+    const std::shared_ptr<JsonValue> parseRelic(const std::shared_ptr<JsonValue>& json);
     
 #pragma mark Internal Parsing Helpers (Asset References)
     /**

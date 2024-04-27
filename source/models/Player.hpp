@@ -156,14 +156,10 @@ public:
     Counter dodgeCD;
     /** counter that is active while the player takes damage */
     Counter hitCounter;
-    /** defense upgrade*/
-    std::shared_ptr<Upgradeable> defenseUpgrade;
-    /** attack upgrade*/
-    std::shared_ptr<Upgradeable> attackUpgrade;
-    /** dodge upgrade*/
-    std::shared_ptr<Upgradeable> dodgeUpgrade ;
-    /** list of all upgrades */
-    std::vector<std::shared_ptr<Upgradeable>> attributes;
+    /** melee damage*/
+    float meleeDamage;
+    /** player defense */
+    float defense;
     
     /**
      * decrement all counters
@@ -216,27 +212,12 @@ public:
     *
     */
     int getMoveScale();
-    
-    /**
-     * @return the list of upgrades applied on this player
-     */
-    std::vector<std::shared_ptr<Upgradeable>> getPlayerAttributes() {return attributes;}
-    
-    /**
-     * applies upgrade to player and updates attributes
-     */
-    void applyUpgrade(std::string upgrade);
-    
+
     /**
      * Gets the attack strength accumulated by this player.
      */
-    const float getAtkDamage() {return attackUpgrade->getCurrentValue();}
-    
-    /**
-     * Gets the defense accumulated by this player.
-     */
-    const int getDefense() {return defenseUpgrade->getCurrentValue();}
-    
+    void setMeleeDamage(float damage) {meleeDamage = damage;}
+        
     /**
      * @return the maximum HP of the player
      */

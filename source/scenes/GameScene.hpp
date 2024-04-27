@@ -41,6 +41,8 @@ protected:
     LevelParser _parser;
     
     int _levelNumber;
+    /** next level to load after upgrade level*/
+    int _nextValidLevel;
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
@@ -74,8 +76,6 @@ protected:
 
     /** The level model */
     std::shared_ptr<LevelModel> _level;
-    /**Reference to upgadeable player attributes**/
-    std::vector<std::shared_ptr<Upgradeable>> _playerAttributes;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -86,8 +86,44 @@ protected:
     
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
+    /** a counter for the number levels until player earns upgrade */
+    Counter _lvlsToUpgrade;
     
 public:
+#pragma mark Player Upgrades
+    /** whether the upgrades screen should be active*/
+    bool upgradeScreenActive;
+    
+    /** whether an upgrade has been chosen*/
+    bool upgradeChosen;
+    
+    /** classification of the different upgrade types*/
+    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE, MOVEMENT};
+    
+    /** sets the player attributes of the crrent level's player*/
+    void setPlayerAttributes();
+    
+    /** upgrades generated for level*/
+    std::vector<int> upgradesForLevel;
+    
+    /** all upgradeable stats for the player*/
+    std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
+        
+    /** defense upgrade*/
+    std::shared_ptr<Upgradeable> defenseUpgrade;
+    /** attack upgrade*/
+    std::shared_ptr<Upgradeable> meleeUpgrade;
+    /** dodge upgrade*/
+    std::shared_ptr<Upgradeable> dodgeCDUpgrade;
+    
+    /**
+     * Chooses random upgrades
+     *
+     *
+     * @param size length of attribute array
+     */
+    void generateRandomUpgrades();
+    
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -148,14 +184,17 @@ public:
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
     
     /**
+     * Sets whether Relic object is active
+     *
+     * @param activate whether relic object is active.
+     */
+    void setRelicActive(bool activate) { _level->getRelic()->active =activate; }
+    
+    /**
      * Returns a reference to the game renderer
      */
     GameRenderer& getRenderer(){return _gameRenderer;}
-    /**
-     * Returns a reference to the player's attributes
-     */
-    std::vector<std::shared_ptr<Upgradeable>> getAttributes() {return _playerAttributes= _level->getPlayer()->getPlayerAttributes();}
-    
+
     /**
      * toggle input devices
      */
@@ -295,7 +334,7 @@ public:
     /**
      * Applies selected attribute to player.
      */
-    void updatePlayerAttributes(std::string selectedAttribute);
+    void updatePlayerAttributes(int selectedAttribute);
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

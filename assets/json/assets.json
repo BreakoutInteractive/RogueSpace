@@ -7,6 +7,7 @@
         "level4": "json/tiled/exports/cb_lvl_03.json",
         "level5": "json/tiled/exports/cb_lvl_04.json",
         "level6": "json/tiled/exports/cb_lvl_05.json",
+        "level7": "json/tiled/exports/cb_lvl_upgrades.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     

@@ -34,7 +34,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
-    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC;
     collider->setFilterData(filter);
     _collider = collider;                   // attach Component
     
@@ -71,13 +71,9 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
     _hp = GameConstants::PLAYER_MAX_HP;
     
-    defenseUpgrade  =  std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_DEFENSE, "DEFENSE");
-    attackUpgrade  = std::make_shared<Upgradeable>(10, 2, GameConstants::PLAYER_ATK_DAMAGE, "ATTACK");
-    dodgeUpgrade = std::make_shared<Upgradeable>(10, 30, GameConstants::PLAYER_DODGE_COOLDOWN, "DODGECD");
-    attributes.push_back(attackUpgrade);
-    attributes.push_back(defenseUpgrade);
-    attributes.push_back(dodgeUpgrade);
     _moveScale = GameConstants::PLAYER_MOVE_SPEED;
+    defense = GameConstants::PLAYER_DEFENSE;
+    meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
 
     
     // initialize directions
@@ -96,19 +92,6 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
 void Player::dispose() {
     // nothing to clean
 }
-
-void Player::applyUpgrade(std::string upgrade){
-    if (upgrade=="ATTACK"){
-        attackUpgrade->levelUp();
-    } else if (upgrade=="DEFENSE"){
-        defenseUpgrade->levelUp();
-    } else if (upgrade=="DODGECD"){
-        dodgeUpgrade->levelUp();
-        dodgeCD.setMaxCount(dodgeUpgrade->getCurrentValue());
-    }
-    
-}
-
 
 #pragma mark -
 #pragma mark Properties
@@ -480,7 +463,7 @@ void Player::hit(Vec2 atkDir, int damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (hitCounter.isZero() && _state != DODGE) {
         hitCounter.reset();
-        _hp = std::fmax(0, (_hp - damage*defenseUpgrade->getCurrentValue()));
+        _hp = std::fmax(0, (_hp - damage*defense));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);
         if (_state == ATTACK){
