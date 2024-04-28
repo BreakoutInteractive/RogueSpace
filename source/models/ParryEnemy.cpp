@@ -60,21 +60,21 @@ void ParryEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     //TODO: real animations
     auto walkTexture = assets->get<Texture>("parry-idle");
     auto attackTexture = assets->get<Texture>("parry-idle");
-    auto stunTexture = assets->get<Texture>("parry-idle");
+    auto stunTexture = assets->get<Texture>("parry-stunned");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
 
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 5);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 5);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 5);
+    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 7);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
 
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 4);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 4);
-    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 4);
+    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 6);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
 
@@ -127,7 +127,7 @@ void ParryEnemy::setFacingDir(cugl::Vec2 dir) {
         _idleAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _walkAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _attackAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
-        _stunAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
+        _stunAnimation->setFrameRange(7 * _directionIndex, 7 * _directionIndex + 6);
     }
 }
 

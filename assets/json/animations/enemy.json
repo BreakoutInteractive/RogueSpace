@@ -38,6 +38,9 @@
         },
         "parry-idle": {
             "file":     "textures/parry_idle.png"
+        },
+        "parry-stun": {
+            "file":     "textures/parry_stunned.png"
         }
     }
 }
