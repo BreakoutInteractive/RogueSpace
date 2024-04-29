@@ -123,6 +123,7 @@ void App::preUpdate(float dt) {
                 _scene = State::PAUSE;
                 _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
                 _gameplay.getRenderer().setActivated(false);
+                
             } else if(_gameplay.getRenderer().getCust()){
                 _scene = State::CUST;
                 _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.

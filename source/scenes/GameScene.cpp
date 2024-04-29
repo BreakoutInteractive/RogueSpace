@@ -159,6 +159,7 @@ void GameScene::dispose() {
 void GameScene::restart(){
     _winNode->setVisible(false);
     setLevel(1); // reload the first level
+    _level->getPlayer()->setMeleeDamage(GameConstants::PLAYER_ATK_DAMAGE);
 }
 
 void GameScene::setLevel(int level){

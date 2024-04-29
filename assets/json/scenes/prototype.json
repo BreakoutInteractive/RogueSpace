@@ -141,7 +141,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -155,7 +155,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.2
           }
         },
@@ -184,7 +184,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.25
           }
         },
@@ -205,7 +205,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -219,7 +219,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.3
           }
         },
@@ -248,7 +248,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.35
           }
         },
@@ -269,7 +269,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -283,7 +283,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.4
           }
         },
@@ -312,7 +312,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.45
           }
         },
@@ -333,7 +333,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -347,7 +347,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.5
           }
         },
@@ -376,7 +376,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.55
           }
         },
@@ -397,7 +397,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -411,7 +411,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.6
           }
         },
@@ -440,7 +440,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.65
           }
         },
@@ -461,7 +461,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -475,7 +475,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.7
           }
         },
@@ -504,7 +504,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.75
           }
         },
@@ -525,7 +525,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -539,7 +539,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.8
           }
         },
@@ -568,7 +568,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.85
           }
         },
@@ -589,7 +589,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -603,7 +603,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.9
           }
         },
@@ -632,7 +632,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.25,
+            "x_offset": 0.2,
             "y_offset": -0.95
           }
         },
@@ -653,7 +653,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -667,7 +667,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.2
           }
         },
@@ -696,7 +696,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.25
           }
         },
@@ -717,7 +717,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -731,7 +731,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.3
           }
         },
@@ -760,7 +760,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.35
           }
         },
@@ -781,7 +781,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -795,7 +795,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.4
           }
         },
@@ -824,7 +824,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.45
           }
         },
@@ -845,7 +845,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -859,7 +859,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.5
           }
         },
@@ -888,7 +888,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.55
           }
         },
@@ -909,7 +909,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -923,7 +923,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.6
           }
         },
@@ -952,7 +952,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.65
           }
         },
@@ -973,7 +973,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -987,7 +987,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.7
           }
         },
@@ -1016,7 +1016,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.75
           }
         },
@@ -1037,7 +1037,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -1051,7 +1051,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.8
           }
         },
@@ -1080,7 +1080,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.85
           }
         },
@@ -1101,7 +1101,7 @@
             "bounds": [
               0,
               30,
-              500,
+              400,
               0
             ],
             "range": [
@@ -1115,7 +1115,7 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.9
           }
         },
@@ -1144,8 +1144,136 @@
           "layout": {
             "x_anchor": "left",
             "y_anchor": "top",
-            "x_offset": 0.75,
+            "x_offset": 0.8,
             "y_offset": -0.95
+          }
+        },
+        "inf-player-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              90,
+              0
+            ],
+            "range": [
+              0,
+              1
+            ],
+            "value": 1,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.5,
+            "y_offset": -0.4
+          }
+        },
+        "inf-player-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player takes health: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.5,
+            "y_offset": -0.45
+          }
+        },
+        "inf-enemy-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              90,
+              0
+            ],
+            "range": [
+              0,
+              1
+            ],
+            "value": 1,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.5,
+            "y_offset": -0.6
+          }
+        },
+        "inf-enemy-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy takes health: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.5,
+            "y_offset": -0.65
           }
         }
       }

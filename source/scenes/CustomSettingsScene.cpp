@@ -62,17 +62,15 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
         }
     });
     
-    // TODO: abstract this
-    // TODO: possibly clean up the scene graph JSON
+    // TODO: list of constants in testing
+    _varMap.push_back("kb");
     _varMap.push_back("parrytime");
     _varMap.push_back("player-attack-melee-range");
     _varMap.push_back("player-attack-cd");
     _varMap.push_back("combotime");
-    _varMap.push_back("kb");
     _varMap.push_back("player-parry-cd");
     _varMap.push_back("player-projs");
     _varMap.push_back("player-projt");
-    
     _varMap.push_back("enemy-stun-cd");
     _varMap.push_back("enemy-attack-melee-range");
     _varMap.push_back("enemy-attack-cd");
@@ -81,6 +79,9 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
     _varMap.push_back("charge");
     _varMap.push_back("enemy-projs");
     _varMap.push_back("enemy-projt");
+    
+    _varMap.push_back("inf-player");
+    _varMap.push_back("inf-enemy");
     
     for (int i = 0; i < _varMap.size(); i++) {
         std::shared_ptr<cugl::scene2::Slider> si = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("settings_" + _varMap[i] + "-action"));
@@ -92,14 +93,27 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
         
         size_t label_length = _labels[i]->getText().find(':');
         std::string temp_label = _labels[i]->getText().substr(0, label_length + 2);
-        _labels[i]->setText(temp_label + cugl::strtool::to_string(_values[i],1));
-        _sliders[i]->addListener([&, i, temp_label](const std::string& name, float value) {
-            if (value != _values[i]) {
-                _values[i] = value;
-                _labels[i]->setText(temp_label + cugl::strtool::to_string(_values[i],1));
-                CustomSettingsScene::writeTo(i);
-            }
-        });
+        
+        // last two
+        if (_varMap.size() - i <= 2) {
+            _labels[i]->setText(temp_label + ((_values[i] == 1) ? "YES" : "NO"));
+            _sliders[i]->addListener([&, i, temp_label](const std::string& name, float value) {
+                if (value != _values[i]) {
+                    _values[i] = value;
+                    _labels[i]->setText(temp_label + ((_values[i] == 1) ? "YES" : "NO"));
+                    CustomSettingsScene::writeTo(i);
+                }
+            });
+        } else {
+            _labels[i]->setText(temp_label + cugl::strtool::to_string(_values[i], 2));
+            _sliders[i]->addListener([&, i, temp_label](const std::string& name, float value) {
+                if (value != _values[i]) {
+                    _values[i] = value;
+                    _labels[i]->setText(temp_label + cugl::strtool::to_string(_values[i], 2));
+                    CustomSettingsScene::writeTo(i);
+                }
+            });
+        }
     }
     
     std::shared_ptr<cugl::scene2::Label> title  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("settings_title"));
@@ -164,6 +178,10 @@ bool CustomSettingsScene::writeTo(int i) {
         GameConstants::PARRY_ENEMY_DR = _values[i];
     } else if (var == "combotime") {
         GameConstants::COMBO_TIME = _values[i];
+    } else if (var == "inf-player") {
+        GameConstants::PLAYER_MAX_HP = -1000 * (_values[i] - 1) + 3;
+    } else if (var == "inf-enemy") {
+        GameConstants::PLAYER_ATK_DAMAGE = _values[i];
     }
     return true;
 }
