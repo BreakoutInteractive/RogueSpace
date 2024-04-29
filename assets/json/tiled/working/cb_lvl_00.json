@@ -910,18 +910,6 @@
                  "width":0,
                  "x":1536,
                  "y":640
-                }, 
-                {
-                 "gid":253,
-                 "height":128,
-                 "id":820,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":1164.35643564356,
-                 "y":603.60396039604
                 }],
          "opacity":1,
          "type":"objectgroup",

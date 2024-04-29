@@ -100,7 +100,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     availableUpgrades.push_back(std::move(dodgeCDUpgrade));
     availableUpgrades.push_back(std::move(defenseUpgrade));
 
-
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -130,6 +129,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     addChild(_loseNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    
+    _areaClearEffect = Animation::alloc(SpriteSheet::alloc(assets->get<Texture>("area-clear"), 5, 2), 1.0f, false);
   
 #pragma mark - Game State Initialization
     _active = true;
@@ -264,6 +265,11 @@ void GameScene::preUpdate(float dt) {
             auto energyWalls = _level->getEnergyWalls();
             for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
                 (*it)->deactivate();
+            }
+            if (_level->getEnemies().size() > 0){
+                // no more enemies remain, but there were enemies initially
+                _areaClearEffect->reset();
+                _areaClearEffect->start();
             }
         }
 
@@ -485,13 +491,11 @@ void GameScene::preUpdate(float dt) {
         (*it)->updateAnimation(dt);
         if ((*it)->isCompleted()) _level->delProjectile((*it));
     }
+    _areaClearEffect->update(dt); // does nothing when not active
 }
 
 
 void GameScene::fixedUpdate(float step) {
-    if (!hitPauseCounter.isZero() && hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
-        return; // this gives the vague "lag" effect
-    }
     if (_level != nullptr){
         _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto player = _level->getPlayer();
@@ -585,4 +589,20 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
+}
+
+void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
+    _gameRenderer.render(batch);
+    if (_areaClearEffect->isActive()){
+        batch->begin(_camera->getCombined());
+        auto sheet = _areaClearEffect->getSpriteSheet();
+        Size frameSize = sheet->getFrameSize();
+        // take up around half the screen height
+        float verticalScale = 0.25f * Application::get()->getDisplaySize().height / frameSize.height;
+        Affine2 transform = Affine2::createScale(verticalScale);
+        transform.translate(_camera->getPosition());
+        sheet->draw(batch, frameSize/2, transform);
+        batch->end();
+    }
+    Scene2::render(batch);
 }

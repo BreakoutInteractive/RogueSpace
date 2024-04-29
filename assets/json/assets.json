@@ -17,6 +17,9 @@
         },
         "enemy-swipe": {
             "file":     "textures/swipe_01.png"
+        },
+        "area-clear": {
+            "file":      "textures/area_clear.png"
         }
 	},
     
