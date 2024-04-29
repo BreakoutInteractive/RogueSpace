@@ -1,28 +1,28 @@
 {
 	"textures": {
 		"logo": {
-			"file":      "textures/cugl-logo.png",
+			"file":      "textures/loading/cugl-logo.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
 		},
         "name": {
-            "file":      "textures/cugl-name.png",
+            "file":      "textures/loading/cugl-name.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
         },
         "play": {
-            "file":      "textures/cugl-play.png",
+            "file":      "textures/loading/cugl-play.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
         },
         "progress": {
-            "file":      "textures/progress.png",
+            "file":      "textures/loading/progress.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",

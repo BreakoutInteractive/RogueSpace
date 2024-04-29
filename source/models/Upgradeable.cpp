@@ -8,15 +8,13 @@
 #include "Upgradeable.hpp"
 
 
-Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue, std::string type){
+Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue){
     _maxLevel = maxLevel;
     _currLevel = 0;
     _maxValue = maxValue;
     _currValue = baseValue;
     _stepAmt = (_maxValue-_currValue)/_maxLevel;
-    _type = type;
 }
-
 
 void Upgradeable::levelUp(){
     if (_currLevel<_maxLevel){

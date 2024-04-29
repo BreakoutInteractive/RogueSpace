@@ -1,10 +1,10 @@
 {
     "textures": {
         "terrain" : {
-            "file":      "textures/terrain.png"
+            "file":      "textures/tileset/terrain.png"
         },
         "stone_walls": {
-            "file":     "textures/stone_walls.png"
+            "file":     "textures/tileset/stone_walls.png"
         }
     },
     "jsons": {

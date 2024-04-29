@@ -1,0 +1,34 @@
+{
+    "textures": {
+        "settingboard": {
+            "file": "textures/settingboard.png"
+        },
+        "setting_close": {
+            "file": "textures/setting_close.png"
+        },
+        "vol_up": {
+            "file": "textures/vol_up.png"
+        },
+        "vol_bar": {
+            "file": "textures/vol_bar.png"
+        },
+        "vol_back10": {
+            "file": "textures/vol_back.png"
+        },
+        "vol_front10": {
+            "file": "textures/vol_front.png"
+        },
+        "vol_down": {
+            "file": "textures/vol_down.png"
+        },
+        "setting_select": {
+            "file": "textures/setting_select.png"
+        },
+        "setting_unselect": {
+            "file": "textures/setting_unselect.png"
+        },
+    }
+    
+    
+    
+}

@@ -1,16 +1,16 @@
 {
     "textures": {
         "resume": {
-            "file": "textures/resume.png"
+            "file": "textures/pause/resume.png"
         },
         "restart": {
-            "file": "textures/restart.png"
+            "file": "textures/pause/restart.png"
         },
         "menuboard": {
-            "file": "textures/menuboard.png"
+            "file": "textures/pause/menuboard.png"
         },
         "setting": {
-            "file": "textures/setting.png"
+            "file": "textures/pause/setting.png"
         }
     },
     "scene2s": {

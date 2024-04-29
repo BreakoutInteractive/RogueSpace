@@ -186,8 +186,14 @@ void App::updateUpgradesScene(float dt){
         _scene = State::GAME;
     } else{ 
         switch (_upgrades.getChoice()) {
-            case UpgradesScene::NONE:
-                break;
+            case UpgradesScene::HEALTH:
+                _upgrades.setActive(false);
+                _gameplay.getRenderer().setActivated(true);
+                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
+                _gameplay.upgradeScreenActive=false;
+                _gameplay.upgradeChosen = true;
+                _gameplay.setRelicActive(false);
+                _scene = State::GAME;
             case UpgradesScene::Choice::UPGRADE_1:
                 _upgrades.setActive(false);
                 _gameplay.getRenderer().setActivated(true);
@@ -195,7 +201,6 @@ void App::updateUpgradesScene(float dt){
                 _gameplay.upgradeScreenActive=false;
                 _gameplay.upgradeChosen = true;
                 _gameplay.setRelicActive(false);
-                //give/set instance of upgrade object to gameplay
                 _scene = State::GAME;
                 break;
             case UpgradesScene::Choice::UPGRADE_2:
@@ -206,6 +211,8 @@ void App::updateUpgradesScene(float dt){
                 _gameplay.upgradeChosen = true;
                 _gameplay.setRelicActive(false);
                 _scene = State::GAME;
+                break;
+            default:
                 break;
         }
     }

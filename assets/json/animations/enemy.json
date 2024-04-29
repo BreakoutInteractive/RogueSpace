@@ -1,43 +1,43 @@
 {
     "textures": {
         "lizard-walk": {
-            "file":     "textures/lizard_walk.png"
+            "file":     "textures/sprites/lizard_walk.png"
         },
         "lizard-idle": {
-            "file":     "textures/lizard_idle.png"
+            "file":     "textures/sprites/lizard_idle.png"
         },
         "lizard-attack": {
-            "file":     "textures/lizard_atk.png"
+            "file":     "textures/sprites/lizard_atk.png"
         },
         "lizard-ranged-attack": {
-            "file":     "textures/lizard_ranged_atk.png"
+            "file":     "textures/sprites/lizard_ranged_atk.png"
         },
         "lizard-stun": {
-            "file":     "textures/lizard_stun.png"
+            "file":     "textures/sprites/lizard_stun.png"
         },
         "lizard-projectile": {
-            "file":     "textures/boomerang_spritesheet.png"
+            "file":     "textures/sprites/boomerang_spritesheet.png"
         },
         "mage-walk": {
-            "file":     "textures/mage_walk.png"
+            "file":     "textures/sprites/mage_walk.png"
         },
         "mage-idle": {
-            "file":     "textures/mage_idle.png"
+            "file":     "textures/sprites/mage_idle.png"
         },
         "mage-attack": {
-            "file":     "textures/mage_atk.png"
+            "file":     "textures/sprites/mage_atk.png"
         },
         "mage-projectile": {
-            "file":     "textures/spelleffect_spritesheet.png"
+            "file":     "textures/sprites/spelleffect_spritesheet.png"
         },
         "enemy-hit-effect": {
-            "file":     "textures/hit_01.png"
+            "file":     "textures/sprites/hit_01.png"
         },
         "stun-effect": {
-            "file":     "textures/effect_stunned.png"
+            "file":     "textures/sprites/effect_stunned.png"
         },
         "parry-idle": {
-            "file":     "textures/parry_idle.png"
+            "file":     "textures/sprites/parry_idle.png"
         }
     }
 }

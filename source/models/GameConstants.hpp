@@ -115,6 +115,8 @@ public:
     static float PROJ_SIZE_P_HALF;
     /** how many seconds the player projectile lasts, not including the explosion animation */
     static float PROJ_TIME_P;
+    /** player initial projectile damage */
+    static float PROJ_DAMAGE_P;
     /** how many seconds it takes for the player to charge the ranged attack */
     static float CHARGE_TIME;
     /** the maximum time before restting the combo */

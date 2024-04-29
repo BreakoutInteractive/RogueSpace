@@ -98,10 +98,10 @@ public:
     bool upgradeChosen;
     
     /** classification of the different upgrade types*/
-    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE, MOVEMENT};
+    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
     
     /** sets the player attributes of the crrent level's player*/
-    void setPlayerAttributes();
+    void setPlayerAttributes(float hp);
     
     /** upgrades generated for level*/
     std::vector<int> upgradesForLevel;

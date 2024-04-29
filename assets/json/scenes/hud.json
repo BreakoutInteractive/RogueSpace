@@ -1,19 +1,19 @@
 {
     "textures": {
         "statusbar": {
-            "file": "textures/statusbar.png"
+            "file": "textures/hud/statusbar.png"
         },
         "pause": {
-            "file": "textures/pause.png"
+            "file": "textures/hud/pause.png"
         },
         "hp_back": {
-            "file": "textures/hp_back.png",
+            "file": "textures/hud/hp_back.png",
             "atlas": {
                 "background" : [0, 0, 350, 25]
             }
         },
         "hp": {
-            "file": "textures/hp.png",
+            "file": "textures/hud/hp.png",
             "atlas":     {
                 "foreground" : [25,   0, 325, 25],
                 "leftcap"    : [0,    0,  25, 25],
@@ -21,7 +21,7 @@
             }
         },
         "cooldown": {
-            "file": "textures/cooldown.png",
+            "file": "textures/hud/cooldown.png",
             "atlas": {
                 "foreground" : [14,   0, 150, 15],
                 "leftcap"    : [0,    0,  14, 15],
@@ -29,19 +29,19 @@
             }
         },
         "cd_back": {
-            "file": "textures/cd_back.png",
+            "file": "textures/hud/cd_back.png",
             "atlas": {
                 "background" : [0, 0, 165, 15]
                 }
         },
         "js_ring": {
-            "file":     "textures/js_ring.png"
+            "file":     "textures/hud/js_ring.png"
         },
         "js_button": {
-            "file":     "textures/js_button.png"
+            "file":     "textures/hud/js_button.png"
         },
         "js_aim": {
-            "file": "textures/js_aim.png"
+            "file": "textures/hud/js_aim.png"
         }
     },
     "scene2s": {

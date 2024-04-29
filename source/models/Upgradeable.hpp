@@ -26,8 +26,6 @@ protected:
 private:
     /** amount gained between levels */
     float _stepAmt;
-    /** category of stat */
-    std::string _type;
 
 public:
     Upgradeable(){
@@ -36,7 +34,6 @@ public:
         _currValue=0;
         _maxValue=0;
         _stepAmt=0;
-        _type = "";
     }
     
     /**
@@ -48,7 +45,7 @@ public:
      * @param type  category of stat
      *
      */
-    Upgradeable(int maxLevel, float maxValue, float baseValue, std::string type);
+    Upgradeable(int maxLevel, float maxValue, float baseValue);
     
     
     /**
@@ -81,12 +78,7 @@ public:
      * Returns current level of stat
      */
     int getCurrentLevel(){return _currLevel;}
-    
-    /**
-     * Returns type of stat
-     */
-    std::string getType(){return _type;}
-    
+        
     /**
      * Returns max level of stat
      */

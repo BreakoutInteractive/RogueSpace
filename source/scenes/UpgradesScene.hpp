@@ -28,8 +28,8 @@ public:
      * chose.
      */
     enum Choice {
-        /** User has not yet made a choice */
-        NONE,
+        /** User wants to heal */
+        HEALTH,
         /** User wants upgrade option 1 */
         UPGRADE_1,
         /** User wants upgrade option 2 */
@@ -37,11 +37,18 @@ public:
     };
     
     /**
-     * upgrade classes.
+     * Stats that can be upgraded.
      *
      * Should be consistent with GameScene.
      */
-    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE,  MOVEMENT};
+    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
+    
+    /**
+     * Level classes of upgrades.
+     *
+     * Should be consistent with GameScene.
+     */
+    enum upgradeLevel {NORMAL, RARE, EPIC, LEGENDARY, MAX};
     
 protected:
     /** The asset manager for this scene. */
@@ -51,9 +58,20 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _option1;
     /** The button to confirm upgrade option 1*/
     std::shared_ptr<cugl::scene2::Button> _confirm1;
-    shared_ptr<scene2::Label> _option1Name;
-    shared_ptr<scene2::Label> _option1Descrip;
-    shared_ptr<scene2::Label> _option1Level;
+    /** The button for upgrade option 1 */
+    std::shared_ptr<cugl::scene2::Button> _heal;
+    /** The button to confirm upgrade option 1*/
+    std::shared_ptr<scene2::Label> _option1Name;
+    std::shared_ptr<scene2::Label> _option1Descrip;
+    std::shared_ptr<scene2::Label> _option1Level;
+    std::shared_ptr<scene2::TexturedNode> _option1Icon;
+    std::shared_ptr<Texture> _healTexture;
+    std::shared_ptr<Texture> _parryTexture;
+    std::shared_ptr<Texture> _shieldTexture;
+    std::shared_ptr<Texture> _atkSdTexture;
+    std::shared_ptr<Texture> _dashTexture;
+    std::shared_ptr<Texture> _bowTexture;
+    std::shared_ptr<Texture> _swordTexture;
     
     
     /** The button for upgrade option 2 */
@@ -63,6 +81,7 @@ protected:
     shared_ptr<scene2::Label> _option2Name;
     shared_ptr<scene2::Label> _option2Descrip;
     shared_ptr<scene2::Label> _option2Level;
+    std::shared_ptr<scene2::TexturedNode> _option2Icon;
     
     int _displayedAttribute1;
     int _displayedAttribute2;
@@ -120,7 +139,7 @@ public:
      */
     void updateScene(std::vector<int> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
     
-    void setButtonText(int upgrade, int buttonType);
+    void setButtonText(int upgrade, int buttonType, int level);
 
     /**
      * Sets whether the scene is currently active
