@@ -60,7 +60,7 @@ void ParryEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     //TODO: real animations
     auto walkTexture = assets->get<Texture>("parry-idle");
     auto attackTexture = assets->get<Texture>("parry-idle");
-    auto stunTexture = assets->get<Texture>("parry-stunned");
+    auto stunTexture = assets->get<Texture>("parry-stun");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
 
