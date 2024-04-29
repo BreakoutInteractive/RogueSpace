@@ -13,13 +13,10 @@
     
 	"textures": {
         "atk": {
-            "file":     "textures/attack.png"
-        },
-        "enemy-swipe": {
-            "file":     "textures/swipe_01.png"
+            "file":     "textures/gameplay/semicircle.png"
         },
         "area-clear": {
-            "file":      "textures/area_clear.png"
+            "file":      "textures/gameplay/area_clear.png"
         }
 	},
     
@@ -151,6 +148,22 @@
         "robotoBold24": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 24
+        },
+        "robotoMedium20": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 20
+        },
+        "robotoRegular20": {
+            "file": "fonts/Roboto-Regular.ttf",
+            "size": 20
+        },
+        "robotoBold32": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 32
+        },
+        "robotoRegular16": {
+        "file": "fonts/Roboto-Regular.ttf",
+        "size": 16
         }
 	}
 }

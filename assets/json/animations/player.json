@@ -1,37 +1,37 @@
 {
     "textures": {
         "player-run": {
-            "file":     "textures/player_run.png"
+            "file":     "textures/sprites/player/player_run.png"
         },
         "player-idle": {
-            "file":     "textures/player_idle.png"
+            "file":     "textures/sprites/player/player_idle.png"
         },
         "player-attack": {
-            "file":     "textures/player_sword_attack.png"
+            "file":     "textures/sprites/player/player_sword_attack.png"
         },
         "player-parry": {
-            "file":     "textures/player_parry.png"
+            "file":     "textures/sprites/player/player_parry.png"
         },
         "player-projectile": {
-            "file":     "textures/player_bow_projectile.png"
+            "file":     "textures/sprites/player/player_bow_projectile.png"
         },
         "player-ranged": {
-            "file":     "textures/player_bow_attack.png"
+            "file":     "textures/sprites/player/player_bow_attack.png"
         },
         "player-bow-idle": {
-            "file":     "textures/player_bow_idle.png"
+            "file":     "textures/sprites/player/player_bow_idle.png"
         },
         "player-bow-run": {
-            "file":     "textures/player_bow_run.png"
+            "file":     "textures/sprites/player/player_bow_run.png"
         },
         "parry-effect":{
-            "file":     "textures/effect_parry.png"
+            "file":     "textures/sprites/effect_parry.png"
         },
         "player-swipe": {
-            "file":     "textures/player_swipe_01.png"
+            "file":     "textures/sprites/player/player_swipe_01.png"
         },
         "player-swipe-combo": {
-            "file":     "textures/player_swipe_02.png"
+            "file":     "textures/sprites/player/player_swipe_02.png"
         }
     }
 }

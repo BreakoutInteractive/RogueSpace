@@ -53,19 +53,30 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("upgrades");
     scene->setContentSize(dimen);
     scene->doLayout();
+    
+    _healTexture = assets->get<Texture>("heal");
+    _parryTexture = assets->get<Texture>("upgrade-speed");
+    _shieldTexture = assets->get<Texture>("upgrade-shield");
+    _atkSdTexture = assets->get<Texture>("upgrade-parry");
+    _dashTexture = assets->get<Texture>("upgrade-dash");
+    _bowTexture = assets->get<Texture>("upgrade-bow");
+    _swordTexture = assets->get<Texture>("upgrade-sword");
 
-    _choice = Choice::NONE;
+
     _selectedUpgrade = 0;
     _option1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item"));
     _option1Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_name"));
     _option1Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_description"));
     _option1Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_tier"));
+    _option1Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_upgrade-icon"));
 
     _option2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1"));
     _option2Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_name"));
     _option2Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_description"));
     _option2Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_tier"));
+    _option2Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_upgrade-icon"));
     
+    _heal = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_heal"));
 
     _confirm1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm"));
     _confirm2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm-1"));
@@ -84,6 +95,13 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::UPGRADE_2;
             _selectedUpgrade = _displayedAttribute2;
             
+        }
+    });
+    
+    _heal->addListener([this](const std::string& name, bool down) {
+        if (down) {
+            _choice = Choice::HEALTH;
+            _selectedUpgrade = -1;
         }
     });
     
@@ -123,69 +141,91 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     setActive(false);
     return true;
 }
-void UpgradesScene::setButtonText(int upgrade, int buttonType){
-    std::string buttonName;
-    std::string buttonDescription;
+void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
+    std::string upgradeName;
+    std::string upgradeDescription;
+    std::string upgradeType;
+    Color4 typeColor;
+    std::shared_ptr<Texture> upgradeTexture;
     switch (upgrade) {
-        case HEALTH:
-            buttonName = "HEALTH";
-            buttonDescription = "Restore Health";
+        case SWORD:
+            upgradeName = "SWORD";
+            upgradeDescription = "Increases melee strength";
+            upgradeTexture = _swordTexture;
             break;
         case PARRY:
-            buttonName = "HEALTH";
-            buttonDescription = "Restore Health";
+            upgradeName = "PARRY";
+            upgradeDescription = "Increases parry success rate";
+            upgradeTexture = _parryTexture;
             break;
-        case RANGED:
-            buttonName = "BOW";
-            buttonDescription = "Increases ranged attack";
+        case SHIELD:
+            upgradeName = "SHIELD";
+            upgradeDescription = "Decreases damage taken";
+            upgradeTexture = _shieldTexture;
             break;
-        case MELEE:
-            buttonName = "SWORD";
-            buttonDescription = "Increases sword damage";
+        case ATK_SPEED:
+            upgradeName = "VIGOR";
+            upgradeDescription = "Increases melee speed";
+            upgradeTexture = _atkSdTexture;
             break;
-        case DODGE:
-            buttonName = "DASH";
-            buttonDescription = "Decreases dash cooldown";
+        case BOW:
+            upgradeName = "BOW";
+            upgradeDescription = "Increases ranged strength";
+            upgradeTexture = _bowTexture;
             break;
-        case DEFENSE:
-            buttonName = "SHIELD";
-            buttonDescription = "Increases defense";
-            break;
-        case MOVEMENT:
-            buttonName = "HEALTH";
-            buttonDescription = "Restore Health";
+        case DASH:
+            upgradeName = "DASH";
+            upgradeDescription = "Increases energy regeneration";
+            upgradeTexture = _dashTexture;
             break;
         default:
             break;
             
     }
+    switch (level) {
+        case RARE:
+            upgradeType = "RARE";
+            typeColor = Color4("#438EFF");
+            break;
+        case EPIC:
+            upgradeType = "EPIC";
+            typeColor = Color4("#AC43FF");
+            break;
+        case LEGENDARY:
+            upgradeType = "LEGENDARY";
+            typeColor = Color4("#FFE37E");
+            break;
+        case MAX:
+            upgradeType = "ULTIMATE";
+            typeColor = Color4("#E91818");
+            break;
+        default:
+            break;
+    }
     if (buttonType==0) {
-        _option1Name->setText(buttonName);
-        _option1Descrip->setText(buttonDescription);
+        _option1Name->setText(upgradeName);
+        _option1Descrip->setText(upgradeDescription);
+        _option1Level->setText(upgradeType);
+        _option1Level->setForeground(typeColor);
+        _option1Icon->setTexture(upgradeTexture);
     } else{
-        _option2Name->setText(buttonName);
-        _option2Descrip->setText(buttonDescription);
+        _option2Name->setText(upgradeName);
+        _option2Descrip->setText(upgradeDescription);
+        _option2Level->setText(upgradeType);
+        _option2Level->setForeground(typeColor);
+        _option2Icon->setTexture(upgradeTexture);
     }
     
 }
 
 void UpgradesScene::updateScene(std::vector<int> attributes, std::vector<std::shared_ptr<Upgradeable>> availableUpgrades){
-    if (availableUpgrades.at(attributes.at(0))->getCurrentLevel()==availableUpgrades.at(attributes.at(0))->getMaxLevel()){
-        _option1Level->setText(strtool::format("MAXED OUT"));
-    } else {
-        _option1Level->setText(strtool::format("Level %d", availableUpgrades.at(attributes.at(0))->getCurrentLevel()+1));
-    }
     
-    if (availableUpgrades.at(attributes.at(1))->getCurrentLevel()==availableUpgrades.at(attributes.at(1))->getMaxLevel()){
-        _option2Level->setText(strtool::format("MAXED OUT"));
-    } else {
-        _option2Level->setText(strtool::format("Level %d", availableUpgrades.at(attributes.at(1))->getCurrentLevel()+1));
-    }
-    setButtonText(attributes.at(0)+3,0);
-    setButtonText(attributes.at(1)+3,1);
+
+    setButtonText(attributes.at(0),availableUpgrades.at(attributes.at(0))->getCurrentLevel()+1,0);
+    setButtonText(attributes.at(1),availableUpgrades.at(attributes.at(0))->getCurrentLevel()+1,1);
     
-    _displayedAttribute1 = attributes.at(0)+3;
-    _displayedAttribute2  =attributes.at(1)+3;
+    _displayedAttribute1 = attributes.at(0);
+    _displayedAttribute2  =attributes.at(1);
 }
 
 /**
@@ -216,14 +256,15 @@ void UpgradesScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
-            _choice = NONE;
             _option1->activate();
             _option2->activate();
+            _heal->activate();
         } else {
             _option1->deactivate();
-            _confirm1->deactivate();
+            _heal->deactivate();
             _option2->deactivate();
-            _confirm1->deactivate();
+            _confirm2->deactivate();
+            _heal->deactivate();
             
             _displayedAttribute1 = -1;
             _displayedAttribute2 = -1;
@@ -233,6 +274,7 @@ void UpgradesScene::setActive(bool value) {
             _confirm1->setDown(false);
             _option2->setDown(false);
             _confirm2->setDown(false);
+            _heal->setDown(false);
         }
     }
 }

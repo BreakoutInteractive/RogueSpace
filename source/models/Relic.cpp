@@ -16,7 +16,6 @@ Relic::Relic(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 orig
     float y = data->getFloat("y");
     float width = data->getFloat("width");
     float height = data->getFloat("height");
-    contactMade = false;
     active = false;
     _size.set(width, height);
     GameObject::_position.set(x,y);

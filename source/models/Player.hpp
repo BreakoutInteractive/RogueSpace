@@ -156,10 +156,6 @@ public:
     Counter dodgeCD;
     /** counter that is active while the player takes damage */
     Counter hitCounter;
-    /** melee damage*/
-    float meleeDamage;
-    /** player defense */
-    float defense;
     
     /**
      * decrement all counters
@@ -212,17 +208,26 @@ public:
     *
     */
     int getMoveScale();
-
-    /**
-     * Gets the attack strength accumulated by this player.
-     */
-    void setMeleeDamage(float damage) {meleeDamage = damage;}
-        
     /**
      * @return the maximum HP of the player
      */
     int getMaxHP();
     
+    /** melee strength stat*/
+    float meleeDamage;
+    
+    /** defense stat  */
+    float defense;
+    
+    /** melee strength stat*/
+    float parryWindow;
+    
+    /** defense stat  */
+    float atkSpeed;
+    
+    /** melee strength stat*/
+    float bowDamage;
+        
 #pragma mark -
 #pragma mark Player Game State Accessors
     /**

@@ -20,10 +20,7 @@ protected:
     
     /** reference to the texture region */
     std::shared_ptr<cugl::Texture> _texture;
-    
-    /** whether player is touching object*/
-    bool contactMade;
-    
+        
     /** the size of the visible object (including transparent region) expressed in game units */
     cugl::Vec2 _size;
 
@@ -46,16 +43,15 @@ public:
         _jsonData = nullptr;
         _texture = nullptr;
     }
-    
-    /**
-     * Sets whether relic has been touched.
-     */
-    void setRelicTouched(bool touched) { contactMade =touched; }
-    
+        
     /**
      * Gets whether relic has been touched.
      */
-    bool getRelicTouched() { return contactMade; }
+    bool getRelicTouched() { return !contactMade.isZero(); }
+    
+    /** Number of contact points between object and player*/
+    Counter contactMade;
+
 
 #pragma mark Animation and Assets
 

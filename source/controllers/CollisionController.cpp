@@ -90,7 +90,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     //TODO: give projectiles a modifiable damage value
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage()*player->bowDamage);
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
@@ -175,7 +175,8 @@ void CollisionController::beginContact(b2Contact* contact){
         intptr_t relptr = reinterpret_cast<intptr_t>(_level->getRelic().get());
         if (((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
             (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) && (_level->getRelic()->active)) {
-            _level->getRelic()->setRelicTouched(true);
+            _level->getRelic()->contactMade.increment();
+            CULog("%d", _level->getRelic()->contactMade.getCount());
         }
     }
 }
@@ -191,7 +192,7 @@ void CollisionController::endContact(b2Contact* contact){
         intptr_t relptr = reinterpret_cast<intptr_t>(_level->getRelic().get());
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
             (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) {
-            _level->getRelic()->setRelicTouched(false);
+            _level->getRelic()->contactMade.decrement();
         }
     }
 }

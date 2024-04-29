@@ -52,7 +52,7 @@ using namespace cugl;
 #define RESET_MESSAGE       "Resetting"
 
 /** The length of to display on a level reset */
-#define UPGRADES_LENGTH     7
+#define UPGRADES_LENGTH     6
 
 #pragma mark -
 #pragma mark Constructors
@@ -89,16 +89,24 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _collisionController.setAssets(_assets, _audioController);
     
     _lvlsToUpgrade.setMaxCount(3);
-    _lvlsToUpgrade.setCount(3);
+    _lvlsToUpgrade.reset();
     upgradeScreenActive=false;
     upgradeChosen=false;
-    std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(10, 2, GameConstants::PLAYER_ATK_DAMAGE, "SWORD");
-    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(10, 30, GameConstants::PLAYER_DODGE_COOLDOWN, "DODGE");
-    std::shared_ptr<Upgradeable> defenseUpgrade =  std::make_shared<Upgradeable>(10, .5, GameConstants::PLAYER_DEFENSE, "DEFENSE");
+
+    std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE);
+    std::shared_ptr<Upgradeable> parryUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
+    std::shared_ptr<Upgradeable> defenseUpgrade =  std::make_shared<Upgradeable>(5, .5, GameConstants::PLAYER_DEFENSE);
+    std::shared_ptr<Upgradeable> meleeSpeedUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
+    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(5, 30, GameConstants::PLAYER_DODGE_COOLDOWN);
+    std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PROJ_DAMAGE_P);
+    
     
     availableUpgrades.push_back(std::move(meleeUpgrade));
-    availableUpgrades.push_back(std::move(dodgeCDUpgrade));
+    availableUpgrades.push_back(std::move(parryUpgrade));
     availableUpgrades.push_back(std::move(defenseUpgrade));
+    availableUpgrades.push_back(std::move(meleeSpeedUpgrade));
+    availableUpgrades.push_back(std::move(dodgeCDUpgrade));
+    availableUpgrades.push_back(std::move(bowUpgrade));
 
     
 #pragma mark - GameScene:: Scene Graph Initialization
@@ -158,10 +166,16 @@ void GameScene::dispose() {
 
 void GameScene::restart(){
     _winNode->setVisible(false);
+    _lvlsToUpgrade.reset();
     setLevel(1); // reload the first level
+    _level->getPlayer()->_hp = GameConstants::PLAYER_MAX_HP;
 }
 
 void GameScene::setLevel(int level){
+    float currentHp = GameConstants::PLAYER_MAX_HP;
+    if (_level!=nullptr) {
+        currentHp = _level->getPlayer()->_hp;
+    }
     _debugNode->removeAllChildren();
     if (level==7){
         _nextValidLevel = _levelNumber+1;
@@ -206,7 +220,7 @@ void GameScene::setLevel(int level){
     
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
-    setPlayerAttributes();
+    setPlayerAttributes(currentHp);
 }
 
 std::string GameScene::getLevelKey(int level){
@@ -533,39 +547,40 @@ void GameScene::fixedUpdate(float step) {
 }
 
 void GameScene::generateRandomUpgrades(){
-    int displayedAttribute1 = std::rand()%3;
+    int displayedAttribute1 = std::rand()%UPGRADES_LENGTH;
     upgradesForLevel.push_back(displayedAttribute1);
 
-    int displayedAttribute2 = std::rand()%(3);
+    int displayedAttribute2 = std::rand()%UPGRADES_LENGTH;
     while (displayedAttribute2==displayedAttribute1){
-        displayedAttribute2 =std::rand()%3;
+        displayedAttribute2 =std::rand()%UPGRADES_LENGTH;
     }
     upgradesForLevel.push_back(displayedAttribute2);
 }
 
 void GameScene::updatePlayerAttributes(int selectedAttribute){
     switch (selectedAttribute) {
-        case MELEE:
-            availableUpgrades.at(selectedAttribute%3)->levelUp();
-            _level->getPlayer()->setMeleeDamage(availableUpgrades.at(selectedAttribute%3)->getCurrentValue());
+        case SWORD:
+            availableUpgrades.at(selectedAttribute)->levelUp();
+            _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
             break;
-        case DODGE:
-            availableUpgrades.at(selectedAttribute%3)->levelUp();
-            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute%3)->getCurrentValue());
+        case DASH:
+            availableUpgrades.at(selectedAttribute)->levelUp();
+            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
             break;
-        case DEFENSE:
-            availableUpgrades.at(selectedAttribute%3)->levelUp();
-            _level->getPlayer()->defense = availableUpgrades.at(selectedAttribute%3)->getCurrentValue();
+        case SHIELD:
+            availableUpgrades.at(selectedAttribute)->levelUp();
+            _level->getPlayer()->defense = availableUpgrades.at(selectedAttribute)->getCurrentValue();
             break;
         default:
-            break;
+            _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
     }
 }
 
-void GameScene::setPlayerAttributes(){
-    _level->getPlayer()->meleeDamage = availableUpgrades.at(0)->getCurrentValue();
-    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(1)->getCurrentValue());
-    _level->getPlayer()->defense = availableUpgrades.at(2)->getCurrentValue();
+void GameScene::setPlayerAttributes(float hp){
+    _level->getPlayer()->_hp = hp;
+    _level->getPlayer()->meleeDamage = availableUpgrades.at(SWORD)->getCurrentValue();
+    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
+    _level->getPlayer()->defense = availableUpgrades.at(SHIELD)->getCurrentValue();
 }
 
 void GameScene::postUpdate(float remain) {
