@@ -3,8 +3,72 @@
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "tilesets/entities.json": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "tilesets/stone_walls.json": {
+            "scaleInDock": 1
+        },
         "tilesets/terrain.json": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "working/cb_lvl_00.json": {
+            "scale": 0.5003780241935484,
+            "selectedLayer": 10,
+            "viewCenter": {
+                "x": 992.2498111306977,
+                "y": 657.5028959959709
+            }
+        },
+        "working/cb_lvl_01.json": {
+            "scale": 0.6204687499999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 800.2014605892724,
+                "y": 401.30949383026956
+            }
+        },
+        "working/cb_lvl_02.json": {
+            "scale": 0.6204687499999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 800.2014605892724,
+                "y": 401.30949383026956
+            }
+        },
+        "working/cb_lvl_03.json": {
+            "scale": 0.6204687499999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 800.2014605892724,
+                "y": 401.30949383026956
+            }
+        },
+        "working/cb_lvl_04.json": {
+            "scale": 0.62,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 800.8064516129034,
+                "y": 400.0000000000001
+            }
+        },
+        "working/cb_lvl_05.json": {
+            "scale": 0.3977363782051282,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 1248.3142785192647,
+                "y": 1040.890455804583
+            }
+        },
+        "working/cb_lvl_upgrades.json": {
+            "scale": 0.6204687499999999,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": 800.2014605892724,
+                "y": 401.30949383026956
+            }
         }
     },
     "last.objectTypesPath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/custom/propertytypes.json",
@@ -12,5 +76,12 @@
     ],
     "project": "roguespace.tiled-project",
     "recentFiles": [
+        "working/cb_lvl_04.json",
+        "working/cb_lvl_03.json",
+        "working/cb_lvl_02.json",
+        "working/cb_lvl_01.json",
+        "working/cb_lvl_05.json",
+        "working/cb_lvl_00.json",
+        "working/cb_lvl_upgrades.json"
     ]
 }

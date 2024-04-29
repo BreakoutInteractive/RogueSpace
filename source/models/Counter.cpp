@@ -31,3 +31,10 @@ void Counter::decrement(bool cycle){
     }
     _count = std::max(0, _count - 1);
 }
+
+void Counter::increment(){
+    if (_count == _maxCount){
+        return;
+    }
+    _count+=1;
+}

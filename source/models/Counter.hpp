@@ -32,9 +32,9 @@ public:
     std::string name;
     
     /**
-     * Initializes an adjustable counter at 0 with counter length (max counter value) being 1
+     * Initializes an adjustable counter at 0 with counter length (max counter value) being integer maximum.
      */
-    Counter(void): _maxCount(1), _count(0), _adjustable(true){}
+    Counter(void): _maxCount(INT_MAX), _count(0), _adjustable(true){}
     
     /**
      * Initializes a counter at 0 with counter cooldown being given maximum count
@@ -102,6 +102,9 @@ public:
      * to cycle the counter, `cycle` parameter must be true.
      */
     void decrement(bool cycle = false);
+    
+    /** increments the internals of the counter (not to exceed the maximum count value)*/
+    void increment();
     
     /**
      * Resets the counter to maximum count

@@ -13,10 +13,10 @@
     
 	"textures": {
         "atk": {
-            "file":     "textures/attack.png"
+            "file":     "textures/gameplay/semicircle.png"
         },
-        "enemy-swipe": {
-            "file":     "textures/swipe_01.png"
+        "area-clear": {
+            "file":      "textures/gameplay/area_clear.png"
         }
 	},
     

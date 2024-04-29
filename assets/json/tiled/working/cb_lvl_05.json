@@ -3228,6 +3228,18 @@
                  "width":0,
                  "x":1536,
                  "y":1824
+                }, 
+                {
+                 "gid":253,
+                 "height":128,
+                 "id":682,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":128,
+                 "x":1344,
+                 "y":640
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3236,7 +3248,7 @@
          "y":0
         }],
  "nextlayerid":20,
- "nextobjectid":682,
+ "nextobjectid":683,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",
