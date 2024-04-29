@@ -124,7 +124,7 @@
             "y_offset": -0.07
           }
         },
-        "parrytime-action": {
+        "kb-action": {
           "type": "Slider",
           "format": {
             "type": "Anchored"
@@ -145,11 +145,11 @@
               0
             ],
             "range": [
-              0.05,
-              2
+              1,
+              8
             ],
-            "value": 0.5,
-            "tick": 0.05,
+            "value": 4,
+            "tick": 0.1,
             "snap": true
           },
           "layout": {
@@ -159,11 +159,11 @@
             "y_offset": -0.2
           }
         },
-        "parrytime-label": {
+        "kb-label": {
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Player parry time: 0.0",
+            "text": "Player knockback: 0.0",
             "foreground": [
               255,
               255,
@@ -210,10 +210,10 @@
             ],
             "range": [
               1,
-              10
+              3
             ],
-            "value": 2,
-            "tick": 0.1,
+            "value": 1.3,
+            "tick": 0.05,
             "snap": true
           },
           "layout": {
@@ -316,7 +316,7 @@
             "y_offset": -0.45
           }
         },
-        "player-health-action": {
+        "combotime-action": {
           "type": "Slider",
           "format": {
             "type": "Anchored"
@@ -337,11 +337,11 @@
               0
             ],
             "range": [
-              1,
-              10
+              0,
+              2
             ],
-            "value": 3,
-            "tick": 1,
+            "value": 1,
+            "tick": 0.05,
             "snap": true
           },
           "layout": {
@@ -351,11 +351,11 @@
             "y_offset": -0.5
           }
         },
-        "player-health-label": {
+        "combotime-label": {
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Player max health: 0.0",
+            "text": "Combo time: 0.0",
             "foreground": [
               255,
               255,
@@ -380,7 +380,7 @@
             "y_offset": -0.55
           }
         },
-        "kb-action": {
+        "parrytime-action": {
           "type": "Slider",
           "format": {
             "type": "Anchored"
@@ -401,11 +401,11 @@
               0
             ],
             "range": [
-              1,
-              12
+              0.05,
+              2
             ],
-            "value": 4,
-            "tick": 0.1,
+            "value": 0.5,
+            "tick": 0.05,
             "snap": true
           },
           "layout": {
@@ -415,11 +415,11 @@
             "y_offset": -0.6
           }
         },
-        "kb-label": {
+        "parrytime-label": {
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Player knockback: 0.0",
+            "text": "Player parry windup time: 0.0",
             "foreground": [
               255,
               255,
@@ -722,10 +722,10 @@
             ],
             "range": [
               1,
-              10
+              3
             ],
-            "value": 2,
-            "tick": 0.1,
+            "value": 1.5,
+            "tick": 0.05,
             "snap": true
           },
           "layout": {
@@ -850,10 +850,10 @@
             ],
             "range": [
               1,
-              30
+              20
             ],
             "value": 8,
-            "tick": 1,
+            "tick": 0.2,
             "snap": true
           },
           "layout": {
@@ -867,7 +867,7 @@
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Power melee knockback: 0.0",
+            "text": "Combo power melee knockback: 0.0",
             "foreground": [
               255,
               255,
@@ -892,7 +892,7 @@
             "y_offset": -0.55
           }
         },
-        "enemy-proxrange-action": {
+        "parryenemy-action": {
           "type": "Slider",
           "format": {
             "type": "Anchored"
@@ -913,11 +913,11 @@
               0
             ],
             "range": [
-              1,
-              20
+              0,
+              2
             ],
-            "value": 5,
-            "tick": 1,
+            "value": 0.1,
+            "tick": 0.01,
             "snap": true
           },
           "layout": {
@@ -927,11 +927,11 @@
             "y_offset": -0.6
           }
         },
-        "enemy-proxrange-label": {
+        "parryenemy-label": {
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Enemy proximity range: 0.0",
+            "text": "Parry enemy duration: 0.0",
             "foreground": [
               255,
               255,
@@ -995,7 +995,7 @@
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Ranged charge: 0.0",
+            "text": "Ranged windup time: 0.0",
             "foreground": [
               255,
               255,

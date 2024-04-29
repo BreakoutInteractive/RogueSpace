@@ -67,7 +67,7 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
     _varMap.push_back("parrytime");
     _varMap.push_back("player-attack-melee-range");
     _varMap.push_back("player-attack-cd");
-    _varMap.push_back("player-health");
+    _varMap.push_back("combotime");
     _varMap.push_back("kb");
     _varMap.push_back("player-parry-cd");
     _varMap.push_back("player-projs");
@@ -77,7 +77,7 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
     _varMap.push_back("enemy-attack-melee-range");
     _varMap.push_back("enemy-attack-cd");
     _varMap.push_back("kb-power");
-    _varMap.push_back("enemy-proxrange");
+    _varMap.push_back("parryenemy");
     _varMap.push_back("charge");
     _varMap.push_back("enemy-projs");
     _varMap.push_back("enemy-projt");
@@ -160,6 +160,10 @@ bool CustomSettingsScene::writeTo(int i) {
         GameConstants::KNOCKBACK = _values[i];
     } else if (var == "charge") {
         GameConstants::CHARGE_TIME = _values[i];
+    } else if (var == "parryenemy") {
+        GameConstants::PARRY_ENEMY_DR = _values[i];
+    } else if (var == "combotime") {
+        GameConstants::COMBO_TIME = _values[i];
     }
     return true;
 }

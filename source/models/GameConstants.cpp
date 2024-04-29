@@ -70,12 +70,12 @@ float GameConstants::PLAYER_DODGE_SPEED = 20.0f;
 
 float GameConstants::PLAYER_MAX_HP = 3;
 
-float GameConstants::PLAYER_MOVE_SPEED =5;
+float GameConstants::PLAYER_MOVE_SPEED = 5;
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
 float GameConstants::PLAYER_DEFENSE = 1;
 
-float GameConstants::PLAYER_ATK_DAMAGE =1;
+float GameConstants::PLAYER_ATK_DAMAGE = 1;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
 
@@ -87,7 +87,7 @@ float GameConstants::PROJ_TIME_P = 1.0f;
 
 float GameConstants::CHARGE_TIME = 0.3f;
 
-float GameConstants::COMBO_TIME = 1.0f;
+float GameConstants::COMBO_TIME = 1.0f; // TO TEST
 
 float GameConstants::KNOCKBACK = 4.0f; // previously 10
 
