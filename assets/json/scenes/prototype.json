@@ -636,7 +636,7 @@
             "y_offset": -0.95
           }
         },
-        "enemy-stun-cd-action": {
+        "kb-power-action": {
           "type": "Slider",
           "format": {
             "type": "Anchored"
@@ -657,11 +657,11 @@
               0
             ],
             "range": [
-              10,
-              400
+              1,
+              20
             ],
-            "value": 60,
-            "tick": 10,
+            "value": 8,
+            "tick": 0.2,
             "snap": true
           },
           "layout": {
@@ -671,11 +671,11 @@
             "y_offset": -0.2
           }
         },
-        "enemy-stun-cd-label": {
+        "kb-power-label": {
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Enemy stun time: 0.0",
+            "text": "Combo power melee knockback: 0.0",
             "foreground": [
               255,
               255,
@@ -828,7 +828,7 @@
             "y_offset": -0.45
           }
         },
-        "kb-power-action": {
+        "enemy-stun-cd-action": {
           "type": "Slider",
           "format": {
             "type": "Anchored"
@@ -849,11 +849,11 @@
               0
             ],
             "range": [
-              1,
-              20
+              10,
+              400
             ],
-            "value": 8,
-            "tick": 0.2,
+            "value": 60,
+            "tick": 10,
             "snap": true
           },
           "layout": {
@@ -863,11 +863,11 @@
             "y_offset": -0.5
           }
         },
-        "kb-power-label": {
+        "enemy-stun-cd-label": {
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Combo power melee knockback: 0.0",
+            "text": "Enemy stun time: 0.0",
             "foreground": [
               255,
               255,
@@ -1209,7 +1209,7 @@
             "x_anchor": "left",
             "y_anchor": "top",
             "x_offset": 0.5,
-            "y_offset": -0.45
+            "y_offset": -0.4
           }
         },
         "inf-enemy-action": {
@@ -1273,7 +1273,7 @@
             "x_anchor": "left",
             "y_anchor": "top",
             "x_offset": 0.5,
-            "y_offset": -0.65
+            "y_offset": -0.6
           }
         }
       }
