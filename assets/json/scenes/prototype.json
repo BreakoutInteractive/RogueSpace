@@ -1,0 +1,1154 @@
+{
+  "textures": {
+    "resume": {
+      "file": "textures/resume.png"
+    },
+    "restart": {
+      "file": "textures/restart.png"
+    },
+    "menuboard": {
+      "file": "textures/menuboard.png"
+    },
+    "setting": {
+      "file": "textures/setting.png"
+    }
+  },
+  "scene2s": {
+    "settings": {
+      "type": "Node",
+      "format": {
+        "type": "Anchored"
+      },
+      "data": {
+        "anchor": [
+          0,
+          0
+        ],
+        "size": [
+          1280,
+          720
+        ],
+        "angle": 0,
+        "position": [
+          0,
+          0
+        ],
+        "visible": true
+      },
+      "children": {
+        "back": {
+          "type": "Button",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              90,
+              90
+            ],
+            "angle": 0,
+            "position": [
+              45,
+              45
+            ],
+            "visible": true,
+            "upnode": "restart"
+          },
+          "children": {
+            "restart": {
+              "type": "Image",
+              "data": {
+                "texture": "restart",
+                "anchor": [
+                  0.5,
+                  0.5
+                ],
+                "size": [
+                  90,
+                  90
+                ],
+                "angle": 0,
+                "position": [
+                  0,
+                  0
+                ],
+                "visible": true
+              },
+              "layout": {
+                "x_anchor": "center",
+                "y_anchor": "middle",
+                "absolute": false,
+                "x_offset": 0,
+                "y_offset": 0
+              }
+            }
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "absolute": false,
+            "x_offset": 0.05,
+            "y_offset": -0.1
+          }
+        },
+        "title": {
+          "type": "Label",
+          "data": {
+            "font": "retro",
+            "text": "Settings",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "center",
+            "y_anchor": "top",
+            "x_offset": 0,
+            "y_offset": -0.07
+          }
+        },
+        "parrytime-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              0.05,
+              2
+            ],
+            "value": 0.5,
+            "tick": 0.05,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.2
+          }
+        },
+        "parrytime-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player parry time: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.25
+          }
+        },
+        "player-attack-melee-range-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              10
+            ],
+            "value": 2,
+            "tick": 0.1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.3
+          }
+        },
+        "player-attack-melee-range-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player melee attack range: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.35
+          }
+        },
+        "player-attack-cd-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              100
+            ],
+            "value": 16,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.4
+          }
+        },
+        "player-attack-cd-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player attack cooldown: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.45
+          }
+        },
+        "player-health-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              10
+            ],
+            "value": 3,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.5
+          }
+        },
+        "player-health-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player max health: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.55
+          }
+        },
+        "kb-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              12
+            ],
+            "value": 4,
+            "tick": 0.1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.6
+          }
+        },
+        "kb-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player knockback: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.65
+          }
+        },
+        "player-parry-cd-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              20
+            ],
+            "value": 6,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.7
+          }
+        },
+        "player-parry-cd-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player parry cooldown: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.75
+          }
+        },
+        "player-projs-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              50
+            ],
+            "value": 10,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.8
+          }
+        },
+        "player-projs-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player projectile speed: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.85
+          }
+        },
+        "player-projt-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              0.1,
+              3.0
+            ],
+            "value": 1,
+            "tick": 0.1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.9
+          }
+        },
+        "player-projt-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Player projectile duration: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.25,
+            "y_offset": -0.95
+          }
+        },
+        "enemy-stun-cd-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              10,
+              400
+            ],
+            "value": 60,
+            "tick": 10,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.2
+          }
+        },
+        "enemy-stun-cd-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy stun time: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.25
+          }
+        },
+        "enemy-attack-melee-range-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              10
+            ],
+            "value": 2,
+            "tick": 0.1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.3
+          }
+        },
+        "enemy-attack-melee-range-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy melee attack range: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.35
+          }
+        },
+        "enemy-attack-cd-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              10,
+              1000
+            ],
+            "value": 120,
+            "tick": 10,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.4
+          }
+        },
+        "enemy-attack-cd-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy attack cooldown: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.45
+          }
+        },
+        "kb-power-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              30
+            ],
+            "value": 8,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.5
+          }
+        },
+        "kb-power-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Power melee knockback: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.55
+          }
+        },
+        "enemy-proxrange-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              20
+            ],
+            "value": 5,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.6
+          }
+        },
+        "enemy-proxrange-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy proximity range: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.65
+          }
+        },
+        "charge-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              0.05,
+              2.5
+            ],
+            "value": 0.5,
+            "tick": 0.05,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.7
+          }
+        },
+        "charge-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Ranged charge: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.75
+          }
+        },
+        "enemy-projs-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              1,
+              50
+            ],
+            "value": 10,
+            "tick": 1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.8
+          }
+        },
+        "enemy-projs-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy projectile speed: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.85
+          }
+        },
+        "enemy-projt-action": {
+          "type": "Slider",
+          "format": {
+            "type": "Anchored"
+          },
+          "data": {
+            "anchor": [
+              0.5,
+              0.5
+            ],
+            "size": [
+              100,
+              10
+            ],
+            "bounds": [
+              0,
+              30,
+              500,
+              0
+            ],
+            "range": [
+              0.1,
+              3.0
+            ],
+            "value": 1,
+            "tick": 0.1,
+            "snap": true
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.9
+          }
+        },
+        "enemy-projt-label": {
+          "type": "Label",
+          "data": {
+            "font": "robotoMedium16",
+            "text": "Enemy projectile duration: 0.0",
+            "foreground": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "size": [
+              600,
+              70
+            ],
+            "valign": "middle",
+            "halign": "center",
+            "anchor": [
+              0.5,
+              0.5
+            ]
+          },
+          "layout": {
+            "x_anchor": "left",
+            "y_anchor": "top",
+            "x_offset": 0.75,
+            "y_offset": -0.95
+          }
+        }
+      }
+    }
+  }
+}

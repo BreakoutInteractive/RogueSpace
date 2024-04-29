@@ -64,21 +64,22 @@ bool CustomSettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets
     
     // TODO: abstract this
     // TODO: possibly clean up the scene graph JSON
-    _varMap.push_back("player-ms");
-    _varMap.push_back("enemy-ms");
+    _varMap.push_back("parrytime");
     _varMap.push_back("player-attack-melee-range");
-    _varMap.push_back("enemy-attack-melee-range");
     _varMap.push_back("player-attack-cd");
-    _varMap.push_back("enemy-attack-cd");
-    _varMap.push_back("player-dodge-cd");
+    _varMap.push_back("player-health");
     _varMap.push_back("kb");
-    _varMap.push_back("enemy-sightrange");
-    _varMap.push_back("enemy-proxrange");
     _varMap.push_back("player-parry-cd");
-    _varMap.push_back("charge");
     _varMap.push_back("player-projs");
-    _varMap.push_back("enemy-projs");
     _varMap.push_back("player-projt");
+    
+    _varMap.push_back("enemy-stun-cd");
+    _varMap.push_back("enemy-attack-melee-range");
+    _varMap.push_back("enemy-attack-cd");
+    _varMap.push_back("kb-power");
+    _varMap.push_back("enemy-proxrange");
+    _varMap.push_back("charge");
+    _varMap.push_back("enemy-projs");
     _varMap.push_back("enemy-projt");
     
     for (int i = 0; i < _varMap.size(); i++) {
@@ -132,9 +133,9 @@ bool CustomSettingsScene::writeTo(int i) {
     } else if (var == "player-dodge-cd") {
         GameConstants::PLAYER_DODGE_COOLDOWN = _values[i];
     } else if (var == "player-dodge-duration") {
-        GameConstants::PLAYER_DODGE_DURATION = _values[i];
+        GameConstants::PLAYER_DODGE_TIME = _values[i];
     } else if (var == "player-parry-cd") {
-        GameConstants::PLAYER_PARRY_COOLDOWN = _values[i];
+        GameConstants::PLAYER_PARRY_TIME = _values[i];
     } else if (var == "enemy-ms") {
         GameConstants::ENEMY_MOVE_SPEED = _values[i];
     } else if (var == "enemy-attack-cd") {

@@ -16,7 +16,27 @@
 class GameConstants {
     
 public:
-
+    
+#pragma mark -
+#pragma mark Game Effects
+    
+    static int HIT_PAUSE_FRAMES;
+    
+#pragma mark -
+#pragma mark Game Camera Constants
+    
+    /** starting camera speed */
+    static float GAME_CAMERA_SPEED;
+    /** how fast the camera can move when accelerating */
+    static float GAME_CAMERA_MAX_SPEED;
+    /** camera acceleration */
+    static float GAME_CAMERA_ACCEL;
+    /** camera deceleration */
+    static float GAME_CAMERA_DECEL;
+    /** the maximum zoom out */
+    static float GAME_CAMERA_MAX_ZOOM_OUT;
+    /** the speed at which the camera zooms out */
+    static float GAME_CAMERA_ZOOM_SPEED;
 #pragma mark -
 #pragma mark Enemy Constants
     // should be at least the player's attack duration so that it can't get hit twice by the same attack
@@ -46,6 +66,8 @@ public:
     static float PROJ_RADIUS_MAGE;
     /** how many seconds the enemy projectile lasts, not including the explosion animation */
     static float PROJ_TIME_E;
+    /** the fraction of damage the parry enemy takes when not stunned */
+    static float PARRY_ENEMY_DR;
 
 #pragma mark -
 #pragma mark Player Constants
@@ -65,18 +87,21 @@ public:
     static float PLAYER_PARRY_TIME;
     /**the number of frames we wait before allowing another dodge*/
     static int PLAYER_DODGE_COOLDOWN;
-    /** the number of frames for the dodge effect to last*/
-    static float PLAYER_DODGE_DURATION;
     /** the number of seconds for the dodge effect to last*/
     static float PLAYER_DODGE_TIME;
+    /** the speed of a dodging player*/
+    static float PLAYER_DODGE_SPEED;
     /** player initial HP */
-    static int PLAYER_MAX_HP;
+    static float PLAYER_MAX_HP;
     /** player initial movement speed */
     static float PLAYER_MOVE_SPEED;
     /** player initial defense */
     static float PLAYER_DEFENSE;
     /** player initial attack damage */
     static float PLAYER_ATK_DAMAGE;
+    /** player speed while melee attacking */
+    static float PLAYER_ATK_MOVE_SPEED;
+    
     /** player melee attack range
      
      the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player.

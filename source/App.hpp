@@ -11,8 +11,8 @@
 #include "scenes/GameScene.hpp"
 #include "scenes/LoadingScene.hpp"
 #include "scenes/PauseScene.hpp"
-#include "scenes/CustomSettingsScene.hpp"
 #include "scenes/UpgradesScene.hpp"
+#include "scenes/CustomSettingsScene.hpp"
 
 /**
  * This class represents the application root for the ship demo.
@@ -31,7 +31,7 @@ protected:
         UPGRADE,
         /** The scene to play the game */
         GAME,
-        /** The custom settings menu */
+        /** The custom scene */
         CUST
     };
     
@@ -47,10 +47,10 @@ protected:
     LoadingScene _loading;
     /** The controller for the pause screen */
     PauseScene _pause;
-    /** The controller for the custom settings screen */
-    CustomSettingsScene _cust;
     /** The controller for the upgrades screen */
     UpgradesScene _upgrades;
+    /** The controller for the upgrades screen */
+    CustomSettingsScene _cust;
     /** The current active scene */
     State _scene;
         
@@ -238,14 +238,14 @@ private:
     void updatePauseScene(float dt);
     
     /**
-     * Inidividualized update method for the custom settings scene.
+     * Inidividualized update method for the prototype scene.
      *
      * This method keeps the primary {@link #update} from being a mess of switch
      * statements. It also handles the transition logic from the loading scene.
      *
      * @param dt  The amount of time (in seconds) since the last frame
      */
-    void updateCustomSettingsScene(float dt);
+    void updateCustScene(float dt);
     
     /**
      * Inidividualized update method for the upgrades scene.
@@ -256,7 +256,6 @@ private:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateUpgradesScene(float dt);
-
     
     /**
      * Inidividualized update method for the loading scene.

@@ -8,6 +8,8 @@
 #include "Enemy.hpp"
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
+#include "../components/Collider.hpp"
+#include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
 using namespace cugl;
@@ -19,29 +21,15 @@ using namespace cugl;
 bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _position.set(data->getFloat("x"), data->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = data->get("collider");
-    Vec2 colliderPos(colliderData->getFloat("x"), colliderData->getFloat("y"));
-    std::vector<float> vertices = colliderData->get("vertices")->asFloatArray();
-    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
-    Poly2 polygon(verts,(int)vertices.size()/2);
-    EarclipTriangulator triangulator;
-    triangulator.set(polygon.vertices);
-    triangulator.calculate();
-    polygon.setIndices(triangulator.getTriangulation());
-    
-    
-    auto collider = std::make_shared<physics2::PolygonObstacle>();
-    collider->init(polygon, colliderPos);
-    std::string name("enemy-collider");
-    collider->setName(name);
+    auto collider = Collider::makeCollider(colliderData, b2_dynamicBody, "enemy-collider");
     b2Filter filter;
     // this is an enemy and can collide with a player "shadow", an enemy (when not idle), a wall, or an attack
     filter.categoryBits = CATEGORY_ENEMY;
-    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_PLAYER_SHADOW | CATEGORY_ENEMY | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_RELIC | CATEGORY_ATTACK | CATEGORY_PROJECTILE ;
     collider->setFilterData(filter);
     _collider = collider;   // attach the collider to the game object
     
-    auto shadow = physics2::PolygonObstacle::alloc(polygon,colliderPos);
-    shadow->setBodyType(b2_kinematicBody);
+    auto shadow = Collider::makeCollider(colliderData, b2_kinematicBody, "enemy-shadow");
     // this is an enemy "shadow" and can collide with the player
     filter.categoryBits = CATEGORY_ENEMY_SHADOW;
     filter.maskBits = CATEGORY_PLAYER;
@@ -50,12 +38,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     
     // set the enemy hitbox sensor
     std::shared_ptr<JsonValue> hitboxData = data->get("hitbox");
-    Size hitboxSize(hitboxData->getFloat("width"), hitboxData->getFloat("height"));
-    Vec2 hitboxPos(hitboxData->getFloat("x"), hitboxData->getFloat("y"));
-    auto hitbox = physics2::BoxObstacle::alloc(hitboxPos, hitboxSize);
-    hitbox->setBodyType(b2_kinematicBody);
-    hitbox->setSensor(true);
-    hitbox->setName(std::string("enemy-hitbox"));
+    auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "enemy-hurtbox", true);
     filter.categoryBits = CATEGORY_ENEMY_HITBOX;
     filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
     hitbox->setFilterData(filter);
@@ -64,6 +47,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     
     // initialize enemy properties
     _isDefault = true;
+    _isAiming = false; // will always be false for melee enemies
     _isCharged = false; // will always be false for melee enemies
     _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
     _isAligned = false;
@@ -105,6 +89,10 @@ void Enemy::dispose() {
 #pragma mark -
 #pragma mark Physics
 
+void Enemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    // nothing here: each enemy implements its own attack
+}
+
 
 #pragma mark -
 #pragma mark Animation
@@ -122,63 +110,27 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2();
     // transform.scale(0.5);
-    transform.translate(getPosition() * _drawScale);
+    transform.translate(_position * _drawScale); // previously using getPosition()
     
     spriteSheet->draw(batch, _tint, origin, transform);
 
     if (_hitEffect->isActive()) {
         auto effSheet = _hitEffect->getSpriteSheet();
-        Affine2 effTrans = Affine2();
-        effTrans.scale(2);
-        effTrans.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        Vec2 effOrigin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, effOrigin, effTrans);
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
+    }
+    if (_state == EnemyState::STUNNED) {
+        auto effSheet = _stunEffect->getSpriteSheet();
+        transform = Affine2::createTranslation(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
     }
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     // nothing here: each enemy loads its own assets
-//    _enemyTexture = assets->get<Texture>("enemy-idle");
-//    auto walkTexture = assets->get<Texture>("enemy-walk");
-//    auto attackTexture = assets->get<Texture>("enemy-attack");
-//    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
-//    
-//    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
-//    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
-//    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
-//    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
-//    
-//    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
-//    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-//    _attackAnimation = Animation::alloc(attackSheet, 0.75f, false, 0, 17);
-//    _hitEffect = Animation::alloc(hitSheet, 0.375f, false);
-//    
-//    _currAnimation = _idleAnimation; // set runnning
-//    
-//    // add callbacks
-//    _attackAnimation->onComplete([this](){
-//        _attackAnimation->reset();
-//        _hitboxAnimation->reset();
-//        _atkCD.reset(); // cooldown begins AFTER the attack is done
-//        _attack->setEnabled(false);
-//    });
-//    
-//    _attackAnimation->addCallback(0.5f, [this](){
-//        if (isEnabled()) {
-//            _attack->setEnabled(true);
-//            _hitboxAnimation->start();
-//            _attack->setAwake(true);
-//            _attack->setAngle(getFacingDir().getAngle());
-//            // TODO: clean this code
-//            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
-//        }
-//    });
-//    
-//    setAnimation(_idleAnimation);
-//
-//    _hitEffect->onComplete([this]() {
-//        _hitEffect->reset();
-//    });
 }
 
 void Enemy::setIdling() {
@@ -218,13 +170,15 @@ void Enemy::setStunned() {
     _atkCD.reset(); // stunning should reset attack
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _attackAnimation->reset();
+    _hitboxAnimation->reset();
     _idleAnimation->reset();
     _walkAnimation->reset();
     _state = EnemyState::STUNNED;
+    _stunEffect->start();
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir, int damage, float knockback_scl) {
+void Enemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
         setHealth(getHealth()-damage);
@@ -259,12 +213,12 @@ void Enemy::updateAnimation(float dt){
     }
     else if (_state == EnemyState::STUNNED){
         // TODO: could possibly use stunned animation and remove this state altogether
-        _tint = Color4::YELLOW;
+        //_tint = Color4::YELLOW;
     }
     else {
         _tint = Color4::WHITE;
     }
-    
+    _stunEffect->update(dt);
     _hitboxAnimation->update(dt);
 }
 
@@ -277,24 +231,4 @@ void Enemy::updateCounters() {
 
 void Enemy::setFacingDir(cugl::Vec2 dir) {
     // nothing here: each enemy has its own animations
-//    int prevDirection = _directionIndex;
-//    Vec2 d = dir.normalize();
-//    _directionIndex = -1;
-//    float similarity = -INFINITY;
-//    for (int i = 0; i < 8; i++){
-//        Vec2 cardinal = _directions[i];
-//        float dotprod = cardinal.dot(d);
-//        if (dotprod > similarity){
-//            similarity = dotprod;
-//            _directionIndex = i;
-//        }
-//    }
-//    assert(_directionIndex >= 0 && _directionIndex < 8);
-//    _facingDirection = dir;
-//    
-//    if (prevDirection != _directionIndex){
-//        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
-//        _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
-//        _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
-//    }
 }

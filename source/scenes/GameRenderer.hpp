@@ -68,7 +68,7 @@ private:
     std::shared_ptr<LevelModel> _level;
     /** whether the pause button has been clicked */
     bool _paused;
-    /** whether the pause button has been clicked */
+    /** whether the prototype button has been clicked */
     bool _cust;
     
 #pragma mark -
@@ -113,7 +113,7 @@ public:
     bool getPaused(){return _paused;}
     
     /**
-     * Returns whether cust button as been pressed.
+     * Returns whether custom settings button as been pressed.
      *
      * @return true if the button has been pressed, false otherwise.
      */

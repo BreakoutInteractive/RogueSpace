@@ -32,6 +32,15 @@
         },
         "enemy-hit-effect": {
             "file":     "textures/hit_01.png"
+        },
+        "stun-effect": {
+            "file":     "textures/effect_stunned.png"
+        },
+        "parry-idle": {
+            "file":     "textures/parry_idle.png"
+        },
+        "parry-stun": {
+            "file":     "textures/parry_stunned.png"
         }
     }
 }

@@ -11,7 +11,7 @@
 #include <cugl/cugl.h>
 #include <iostream>
 #include <sstream>
-#include "Upgradeable.hpp"
+#include "../models/Upgradeable.hpp"
 
 
 using namespace cugl;
@@ -35,29 +35,37 @@ public:
         /** User wants upgrade option 2 */
         UPGRADE_2
     };
+    
+    /**
+     * upgrade classes.
+     *
+     * Should be consistent with GameScene.
+     */
+    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE,  MOVEMENT};
+    
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
     
     /** The button for upgrade option 1 */
     std::shared_ptr<cugl::scene2::Button> _option1;
     /** The button to confirm upgrade option 1*/
     std::shared_ptr<cugl::scene2::Button> _confirm1;
-    shared_ptr<scene2::Label> _option1Lvl;
-    shared_ptr<scene2::Label> _option1Change;
-    shared_ptr<scene2::Label> _option1Att;
+    shared_ptr<scene2::Label> _option1Name;
+    shared_ptr<scene2::Label> _option1Descrip;
+    shared_ptr<scene2::Label> _option1Level;
     
     
     /** The button for upgrade option 2 */
     std::shared_ptr<cugl::scene2::Button> _option2;
     /** The button to confirm upgrade option 2*/
     std::shared_ptr<cugl::scene2::Button> _confirm2;
-    shared_ptr<scene2::Label> _option2Lvl;
-    shared_ptr<scene2::Label> _option2Change;
-    shared_ptr<scene2::Label> _option2Att;
+    shared_ptr<scene2::Label> _option2Name;
+    shared_ptr<scene2::Label> _option2Descrip;
+    shared_ptr<scene2::Label> _option2Level;
     
-    std::vector<std::shared_ptr<Upgradeable>> _playerAttributes;
+    int _displayedAttribute1;
+    int _displayedAttribute2;
     /** The player choice */
     Choice _choice;
     bool _active;
@@ -65,8 +73,8 @@ protected:
 public:
 #pragma mark -
     
-    /** description of selcted upgrade */
-    std::string _selectedUpgrade;
+    /** enum number of selcted upgrade */
+    int _selectedUpgrade;
 #pragma mark Constructors
     /**
      * Creates a new  menu scene with the default values.
@@ -103,9 +111,16 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::vector<std::shared_ptr<Upgradeable>> attributes);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    /**
+     * Updates button infomartionon on scene
+     *
+     *
+     * @param attributes available payer upgrades
+     */
+    void updateScene(std::vector<int> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
     
-    void updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes);
+    void setButtonText(int upgrade, int buttonType);
 
     /**
      * Sets whether the scene is currently active
@@ -119,13 +134,14 @@ public:
     virtual void setActive(bool value) override;
     
     /**
-     * Returns the user's menu choice.
+     * Returns a random Upgrade
      *
-     * This will return NONE if the user had no yet made a choice.
+     * This will make sure upgrades returned are .
      *
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+        
 
 };
 

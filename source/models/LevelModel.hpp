@@ -23,6 +23,7 @@
 #include "Projectile.hpp"
 #include "LevelGrid.hpp"
 #include "Wall.hpp"
+#include "Relic.hpp"
 
 using namespace cugl;
 
@@ -31,6 +32,7 @@ class TileLayer;
 class Player;
 class Enemy;
 class MeleeEnemy;
+class MeleeLizard;
 class RangedEnemy;
 class RangedLizard;
 class MageAlien;
@@ -41,13 +43,6 @@ class Projectile;
 #pragma mark Level Model
 /**
 * Class that represents a dynamically loaded level in the game
-*
-* This class is a subclass of Asset so that we can use it with a GenericLoader. As with
-* all assets, this class SHOULD NOT make any references to AssetManager in the load/unload 
-* methods. Assets should be treated as if they load in parallel, not in sequence.  Therefore,
-* it is unsafe to assume that one asset loads before another.  If this level needs to connect 
-* to other assets (sound, images, etc.) this should take place after asset loading, such as 
-* during scene graph initialization.
 */
 class LevelModel {
 protected:
@@ -68,22 +63,21 @@ protected:
     
     /** list of enemy references */
     std::vector<std::shared_ptr<Enemy>> _enemies;
-
+    /** list of all projectiles */
     std::vector<std::shared_ptr<Projectile>> _projectiles;
     
     /** list of all moving game objects */
     std::vector<std::shared_ptr<GameObject>> _dynamicObjects;
-
-    std::shared_ptr<physics2::WheelObstacle> _atk;
     
+    /** reference to all tile layers*/
     std::vector<std::shared_ptr<TileLayer>> _tileLayers;
-    
     /** Reference to all the walls */
     std::vector<std::shared_ptr<Wall>> _walls;
+    /** reference to the relic object*/
+    std::shared_ptr<Relic> _relic;
     
     /** Reference to all energy walls*/
     std::vector<std::shared_ptr<EnergyWall>> _energyWalls;
-
     /** Reference to all custom boundaries (box2d obstacles) */
     std::vector<std::shared_ptr<physics2::Obstacle>> _boundaries;
     
@@ -92,16 +86,24 @@ protected:
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<scene2::SceneNode> _debugNode;
-
-    std::shared_ptr<cugl::Texture> _attackAnimation;
-    std::shared_ptr<Animation> _playerAttack;
     
     std::shared_ptr<LevelGrid> _grid;
     
     /** whether the player is exiting the level*/
     bool _exiting;
+    
+    /** the random number generator */
+    std::mt19937 generator;
+    /** the random number distribution (uniform distribution) */
+    std::uniform_real_distribution<double> distribution;
 
 #pragma mark Internal Helper Methods
+    
+    /**
+     * depending on the component `class`property, calls the approriate loader function.
+     * If the component is a list of components (`Random` and `Collection` classes), the loading will be called on each subcomponent.
+     */
+    bool loadGameComponent(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
     
     /**
      * Loads the player object
@@ -119,20 +121,23 @@ protected:
     /**
      * Loads the enemy object
      *
-     * The enemies will be stored in the  `_enemies` field and retained.
+     * The enemy will be stored in the  `_enemies` field and retained.
+     *
+     * @param constants : the constants associated with enemies
+     * @param json the dynamic data from the map editor for this enemy
      */
-    bool loadEnemies(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
+    bool loadEnemy(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue>& json);
     
     
     /**
-     * Loads tile layers
+     * Loads a tile layer
      *
      * @param  json   a JSON reader with cursor ready to read the tile layer data
      *
      * @retain the floor tiles
-     * @return true if the floor tiles were successfully loaded
+     * @return true if the  tiles were successfully loaded
      */
-    bool loadTileLayers(const std::shared_ptr<JsonValue>& json);
+    bool loadTileLayer(const std::shared_ptr<JsonValue>& json);
     
 
     /**
@@ -156,6 +161,8 @@ protected:
      * @return true if the collision object was successfully loaded
      */
     bool loadBoundary(const std::shared_ptr<JsonValue>& json);
+    
+    bool loadRelic(const std::shared_ptr<JsonValue>& json);
 
     /**
      * Converts the string to a color
@@ -207,10 +214,10 @@ public:
     const std::shared_ptr<Player> getPlayer() {return _player; }
     
     /**
-     * @return the player's attack semi-sphere
+     * @return the relic in this game level
      */
-    const std::shared_ptr<physics2::WheelObstacle> getAttack() { return _atk; }
-
+    const std::shared_ptr<Relic> getRelic() {return _relic; }
+    
     /**
      * @return the enemies in this game level
      */
@@ -225,8 +232,6 @@ public:
      * @return the energy walls in this game level
      */
     const std::vector<std::shared_ptr<EnergyWall>> getEnergyWalls() { return _energyWalls; }
-
-    const std::shared_ptr<Animation> getPlayerAtk() { return _playerAttack; }
 
     /** add a projectile to this level */
     void addProjectile(std::shared_ptr<Projectile> p);

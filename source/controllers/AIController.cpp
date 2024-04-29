@@ -3,6 +3,7 @@
 #include "../models/LevelGrid.hpp"
 #include "../models/Enemy.hpp"
 #include "../models/MeleeEnemy.hpp"
+#include "../models/MeleeLizard.hpp"
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
@@ -45,7 +46,7 @@ cugl::Vec2 AIController::lineOfSight(std::shared_ptr<Enemy> e, std::shared_ptr<P
             return 1.0f;
         }
         // track if we see an obstacle
-        else if (fixture->GetFilterData().categoryBits == CATEGORY_WALL) {
+        else if (fixture->GetFilterData().categoryBits == CATEGORY_TALL_WALL) {
             if (fraction < obstacleFraction) {
                 obstacleFraction = fraction;
             }
@@ -191,9 +192,9 @@ void AIController::update(float dt) {
         }
         // enemies shouldn't move when stunned or while attacking
         if ((*it)->isAttacking()) {
-            // ranged enemies can change their facing direction while attacking,
-            // melee enemies cannot
-            if ((*it)->getType() != "melee lizard") {
+            // ranged enemies can change their facing direction while aiming their attack,
+            // melee enemies cannot do this
+            if (((*it)->getType() == "ranged lizard" || (*it)->getType() == "mage alien") && (*it)->getAiming()) {
                 Vec2 dir = _player->getPosition() - (*it)->getPosition();
                 dir.normalize();
                 (*it)->setFacingDir(dir);

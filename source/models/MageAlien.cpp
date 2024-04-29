@@ -33,6 +33,26 @@ void MageAlien::dispose() {
     _enemyTexture = nullptr;
 }
 
+
+#pragma mark -
+#pragma mark Physics
+
+void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    Vec2 direction = getFacingDir();
+    direction.normalize();
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0){
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    
+    setCharged(false);
+    std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition().add(0, 64 / getDrawScale().y), 1, ang, assets);
+    p->setDrawScale(level->getDrawScale());
+    level->addProjectile(p);
+}
+
+
 #pragma mark -
 #pragma mark Animation
 
@@ -42,6 +62,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture = assets->get<Texture>("mage-attack");
     auto stunTexture = assets->get<Texture>("mage-idle"); // use idle animation for now
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("mage-projectile");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 9);
@@ -49,6 +70,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 14);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 7);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
@@ -56,6 +78,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     _chargingAnimation = Animation::alloc(projectileSheet, 0.5625f, false, 0, 13);
     
     _currAnimation = _idleAnimation; // set runnning
@@ -72,6 +95,11 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         if (isEnabled()) {
             _chargingAnimation->start();
         }
+        setAiming(true);
+    });
+    
+    _attackAnimation->addCallback(0.45f, [this](){
+        setAiming(false);
     });
     
     _chargingAnimation->onComplete([this](){

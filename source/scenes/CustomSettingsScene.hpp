@@ -26,9 +26,7 @@ public:
         /** User has not yet made a choice */
         NONE,
         /** User wants to restart game */
-        RESTART,
-        /** User wants to go back to a game */
-        GAME
+        RESTART
     };
     
 

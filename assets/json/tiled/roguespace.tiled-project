@@ -1,0 +1,227 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "compatibilityVersion": 1100,
+    "extensionsPath": "extensions",
+    "folders": [
+        "."
+    ],
+    "properties": [
+    ],
+    "propertyTypes": [
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": false,
+            "id": 1,
+            "members": [
+                {
+                    "name": "hp",
+                    "type": "int",
+                    "value": 3
+                },
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Caster",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ff000000",
+            "drawFill": true,
+            "id": 2,
+            "members": [
+            ],
+            "name": "Collection",
+            "type": "class",
+            "useAs": [
+                "layer"
+            ]
+        },
+        {
+            "color": "#ffffffff",
+            "drawFill": true,
+            "id": 3,
+            "members": [
+            ],
+            "name": "Collider",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 4,
+            "members": [
+                {
+                    "name": "tall",
+                    "type": "bool",
+                    "value": false
+                }
+            ],
+            "name": "EnergyWall",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffff2600",
+            "drawFill": true,
+            "id": 5,
+            "members": [
+            ],
+            "name": "Hitbox",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": false,
+            "id": 6,
+            "members": [
+                {
+                    "name": "enemy_type",
+                    "propertyType": "Type",
+                    "type": "string",
+                    "value": "MELEE"
+                },
+                {
+                    "name": "hp",
+                    "type": "int",
+                    "value": 2
+                },
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Lizard",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": false,
+            "id": 7,
+            "members": [
+                {
+                    "name": "hp",
+                    "type": "int",
+                    "value": 2
+                },
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Parry",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 8,
+            "members": [
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Path",
+            "type": "class",
+            "useAs": [
+                "property",
+                "object",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": false,
+            "id": 9,
+            "members": [
+            ],
+            "name": "Player",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 10,
+            "members": [
+            ],
+            "name": "Random",
+            "type": "class",
+            "useAs": [
+                "layer",
+                "project"
+            ]
+        },
+        {
+            "id": 11,
+            "name": "Type",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "RANGE",
+                "MELEE"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#fff4c183",
+            "drawFill": false,
+            "id": 12,
+            "members": [
+                {
+                    "name": "tall",
+                    "type": "bool",
+                    "value": false
+                }
+            ],
+            "name": "Wall",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        }
+    ]
+}

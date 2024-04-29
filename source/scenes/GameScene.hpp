@@ -23,6 +23,8 @@
 #include "../models/LevelModel.hpp"
 #include "GameRenderer.hpp"
 #include "../utility/LevelParser.hpp"
+#include "../models/Counter.hpp"
+#include "../components/Animation.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -40,6 +42,8 @@ protected:
     LevelParser _parser;
     
     int _levelNumber;
+    /** next level to load after upgrade level*/
+    int _nextValidLevel;
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
@@ -65,6 +69,8 @@ protected:
     //cugl::Vec2 _offset;
     /** custom renderer for this scene */
     GameRenderer _gameRenderer;
+    /** the animation played to signal area is cleared */
+    std::shared_ptr<Animation> _areaClearEffect;
 
     // MODEL
 
@@ -73,8 +79,6 @@ protected:
 
     /** The level model */
     std::shared_ptr<LevelModel> _level;
-    
-    std::vector<std::shared_ptr<Upgradeable>> playerAttributes;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -83,7 +87,46 @@ protected:
     /** Whether or not debug mode is active */
     bool _debug;
     
+    /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
+    Counter hitPauseCounter;
+    /** a counter for the number levels until player earns upgrade */
+    Counter _lvlsToUpgrade;
+    
 public:
+#pragma mark Player Upgrades
+    /** whether the upgrades screen should be active*/
+    bool upgradeScreenActive;
+    
+    /** whether an upgrade has been chosen*/
+    bool upgradeChosen;
+    
+    /** classification of the different upgrade types*/
+    enum upgrades {HEALTH, PARRY, RANGED, MELEE, DODGE, DEFENSE, MOVEMENT};
+    
+    /** sets the player attributes of the crrent level's player*/
+    void setPlayerAttributes();
+    
+    /** upgrades generated for level*/
+    std::vector<int> upgradesForLevel;
+    
+    /** all upgradeable stats for the player*/
+    std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
+        
+    /** defense upgrade*/
+    std::shared_ptr<Upgradeable> defenseUpgrade;
+    /** attack upgrade*/
+    std::shared_ptr<Upgradeable> meleeUpgrade;
+    /** dodge upgrade*/
+    std::shared_ptr<Upgradeable> dodgeCDUpgrade;
+    
+    /**
+     * Chooses random upgrades
+     *
+     *
+     * @param size length of attribute array
+     */
+    void generateRandomUpgrades();
+    
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -144,12 +187,17 @@ public:
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
     
     /**
+     * Sets whether Relic object is active
+     *
+     * @param activate whether relic object is active.
+     */
+    void setRelicActive(bool activate) { _level->getRelic()->active =activate; }
+    
+    /**
      * Returns a reference to the game renderer
      */
     GameRenderer& getRenderer(){return _gameRenderer;}
-    
-    std::vector<std::shared_ptr<Upgradeable>> getAttributes() {return _level->getPlayer()->getPlayerAttributes();}
-    
+
     /**
      * toggle input devices
      */
@@ -286,16 +334,16 @@ public:
      */
     std::string getLevelKey(int level);
     
-    void applyUpgrade(std::string selectedAttribute);
+    /**
+     * Applies selected attribute to player.
+     */
+    void updatePlayerAttributes(int selectedAttribute);
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override {
-        _gameRenderer.render(batch);
-        Scene2::render(batch);
-    }
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
 protected:
 #pragma mark -

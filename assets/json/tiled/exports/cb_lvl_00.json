@@ -253,6 +253,7 @@
             0, 0, 0, 0, 92, 92, 92, 92, 92, 92, 92, 77, 0, 0, 0],
          "height":40,
          "id":21,
+         "locked":true,
          "name":"Tile Layer 5",
          "opacity":1,
          "type":"tilelayer",
@@ -315,15 +316,21 @@
         }, 
         {
          "draworder":"topdown",
-         "id":6,
+         "id":27,
          "locked":true,
-         "name":"walls",
+         "name":"energy-walls",
          "objects":[
                 {
                  "gid":60,
                  "height":128,
                  "id":711,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -336,6 +343,12 @@
                  "height":128,
                  "id":712,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -348,6 +361,12 @@
                  "height":128,
                  "id":713,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -360,6 +379,12 @@
                  "height":128,
                  "id":714,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -372,6 +397,12 @@
                  "height":128,
                  "id":715,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -384,6 +415,12 @@
                  "height":128,
                  "id":716,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -396,6 +433,12 @@
                  "height":128,
                  "id":717,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -408,6 +451,12 @@
                  "height":128,
                  "id":718,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -420,6 +469,12 @@
                  "height":128,
                  "id":719,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -432,6 +487,12 @@
                  "height":128,
                  "id":722,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -444,6 +505,12 @@
                  "height":128,
                  "id":723,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -456,6 +523,12 @@
                  "height":128,
                  "id":724,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -468,6 +541,12 @@
                  "height":128,
                  "id":725,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -480,6 +559,12 @@
                  "height":128,
                  "id":726,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -492,6 +577,12 @@
                  "height":128,
                  "id":727,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -505,6 +596,12 @@
                  "height":128,
                  "id":728,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -517,6 +614,12 @@
                  "height":128,
                  "id":729,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -529,6 +632,12 @@
                  "height":128,
                  "id":730,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -541,6 +650,12 @@
                  "height":128,
                  "id":731,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -553,6 +668,12 @@
                  "height":128,
                  "id":732,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -565,6 +686,12 @@
                  "height":128,
                  "id":733,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -577,6 +704,12 @@
                  "height":128,
                  "id":734,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -589,6 +722,12 @@
                  "height":128,
                  "id":735,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -601,6 +740,12 @@
                  "height":128,
                  "id":736,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -613,6 +758,12 @@
                  "height":128,
                  "id":738,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -625,6 +776,12 @@
                  "height":128,
                  "id":739,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -637,6 +794,12 @@
                  "height":128,
                  "id":740,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -649,6 +812,12 @@
                  "height":128,
                  "id":741,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -661,6 +830,12 @@
                  "height":128,
                  "id":743,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -673,6 +848,12 @@
                  "height":128,
                  "id":744,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -686,6 +867,12 @@
                  "height":128,
                  "id":745,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -698,6 +885,12 @@
                  "height":128,
                  "id":746,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -710,6 +903,12 @@
                  "height":128,
                  "id":747,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
@@ -722,60 +921,18 @@
                  "height":128,
                  "id":748,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"EnergyWall",
                  "visible":true,
                  "width":128,
                  "x":640,
                  "y":736
-                }, 
-                {
-                 "gid":34,
-                 "height":128,
-                 "id":807,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":576,
-                 "y":704
-                }, 
-                {
-                 "gid":34,
-                 "height":128,
-                 "id":809,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1792,
-                 "y":672
-                }, 
-                {
-                 "gid":34,
-                 "height":128,
-                 "id":810,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1152,
-                 "y":992
-                }, 
-                {
-                 "gid":49,
-                 "height":128,
-                 "id":812,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":1216,
-                 "y":384
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -784,23 +941,190 @@
          "y":0
         }, 
         {
+         "class":"Random",
+         "id":28,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":6,
+                 "locked":true,
+                 "name":"stone",
+                 "objects":[
+                        {
+                         "gid":34,
+                         "height":128,
+                         "id":807,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":576,
+                         "y":704
+                        }, 
+                        {
+                         "gid":34,
+                         "height":128,
+                         "id":809,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":1792,
+                         "y":672
+                        }, 
+                        {
+                         "gid":34,
+                         "height":128,
+                         "id":810,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":1152,
+                         "y":992
+                        }, 
+                        {
+                         "gid":49,
+                         "height":128,
+                         "id":812,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":1216,
+                         "y":384
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":29,
+                 "locked":true,
+                 "name":"rock",
+                 "objects":[
+                        {
+                         "gid":51,
+                         "height":128,
+                         "id":815,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":576,
+                         "y":704
+                        }, 
+                        {
+                         "gid":35,
+                         "height":128,
+                         "id":816,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":1216,
+                         "y":384
+                        }, 
+                        {
+                         "gid":36,
+                         "height":128,
+                         "id":817,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":1792,
+                         "y":672
+                        }, 
+                        {
+                         "gid":50,
+                         "height":128,
+                         "id":818,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
+                         "rotation":0,
+                         "type":"Wall",
+                         "visible":true,
+                         "width":128,
+                         "x":1152,
+                         "y":992
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":false,
+                 "x":0,
+                 "y":0
+                }],
+         "locked":true,
+         "name":"stone-walls or rock-walls (random)",
+         "opacity":1,
+         "type":"group",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
-                {
-                 "gid":250,
-                 "height":128,
-                 "id":551,
-                 "name":"",
-                 "rotation":0,
-                 "type":"Player",
-                 "visible":true,
-                 "width":128,
-                 "x":768,
-                 "y":672
-                }, 
                 {
                  "gid":251,
                  "height":128,
@@ -853,9 +1177,93 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "class":"Random",
+         "id":23,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":26,
+                 "locked":true,
+                 "name":"left",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":551,
+                         "name":"",
+                         "rotation":0,
+                         "type":"Player",
+                         "visible":true,
+                         "width":128,
+                         "x":768,
+                         "y":672
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":24,
+                 "locked":true,
+                 "name":"top",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":813,
+                         "name":"",
+                         "rotation":0,
+                         "type":"Player",
+                         "visible":true,
+                         "width":128,
+                         "x":1212.59401468097,
+                         "y":438.604178430265
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":false,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":25,
+                 "locked":true,
+                 "name":"bottom",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":814,
+                         "name":"",
+                         "rotation":0,
+                         "type":"Player",
+                         "visible":true,
+                         "width":128,
+                         "x":1152.26199887069,
+                         "y":908.332015810277
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":false,
+                 "x":0,
+                 "y":0
+                }],
+         "locked":true,
+         "name":"player-spawn-locations",
+         "opacity":1,
+         "type":"group",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":23,
- "nextobjectid":813,
+ "nextlayerid":30,
+ "nextobjectid":821,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

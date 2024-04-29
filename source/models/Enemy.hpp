@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include "Counter.hpp"
 #include "GameObject.hpp"
+#include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
 class Animation;
@@ -53,7 +54,8 @@ protected:
 
     /** The hit effect animation */
     std::shared_ptr<Animation> _hitEffect;
-    
+    /** The stun effect animation */
+    std::shared_ptr<Animation> _stunEffect;
     
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
@@ -76,7 +78,7 @@ protected:
     float _moveSpeed;
     
     /** The enemy's current health */
-    int _health;
+    float _health;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -92,6 +94,9 @@ protected:
     
     /** Whether the enemy is currently in its default state */
     bool _isDefault;
+    
+    /** Whether the enemy is aiming its ranged attack */
+    bool _isAiming;
     
     /** Whether the enemy's ranged attack is charged */
     bool _isCharged;
@@ -284,12 +289,12 @@ public:
     /**
      * Gets the current health of this enemy.
      */
-    int getHealth() const { return _health; }
+    float getHealth() const { return _health; }
     
     /**
      * Sets the current health of this enemy.
      */
-    void setHealth(int value) { _health = value; }
+    void setHealth(float value) { _health = value; }
     
     /**
      * Gets this enemy's attack hitbox.
@@ -330,6 +335,16 @@ public:
      * Sets whether this enemy's ranged attack is charged
      */
     void setCharged(bool value) { _isCharged = value; }
+    
+    /**
+     * Gets whether this enemy is aiming its ranged attack
+     */
+    bool getAiming() const { return _isAiming; }
+    
+    /**
+     * Sets whether this enemy is aiming its ranged attack
+     */
+    void setAiming(bool value) { _isAiming = value; }
     
     /**
      * Gets this enemy's patrol path.
@@ -395,6 +410,12 @@ public:
      * Returns this enemy's type
      */
     virtual std::string getType() { return ""; };
+    
+    
+#pragma mark -
+#pragma mark Physics
+    
+    virtual void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets);
     
     
 #pragma mark -
@@ -466,7 +487,7 @@ public:
      * @param damage how much damage this enemy takes
      * @param knockback_scl the factor to multiply the direction by for applying knockback
      */
-    void hit(cugl::Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
+    virtual void hit(cugl::Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
 
     /**
      * Method to call when an enemy is stunned, e.g. when parried

@@ -37,7 +37,7 @@ using namespace std;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::vector<std::shared_ptr<Upgradeable>> attributes) {
+bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_HEIGHT/dimen.height;
@@ -46,7 +46,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std:
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    _playerAttributes = attributes;
     // Start up the input handler
     _assets = assets;
     
@@ -56,22 +55,18 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std:
     scene->doLayout();
 
     _choice = Choice::NONE;
-    _selectedUpgrade = "";
+    _selectedUpgrade = 0;
     _option1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item"));
-    _option1Lvl = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_name"));
-    _option1Change = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_description"));
-    _option1Att = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_tier"));
-                                                                                                                        
-    _option1Att->setText("ATTACK");
-                                                                                                                        
+    _option1Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_name"));
+    _option1Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_description"));
+    _option1Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_tier"));
+
     _option2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1"));
-    _option2Lvl = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_name"));
-    _option2Change = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_description"));
-    _option2Att = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_tier"));
+    _option2Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_name"));
+    _option2Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_description"));
+    _option2Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_tier"));
     
-    _option2Att->setText("DEFENSE");
-    
-    
+
     _confirm1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm"));
     _confirm2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm-1"));
     _confirm1->setVisible(false);
@@ -81,16 +76,14 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std:
     _confirm1->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::UPGRADE_1;
-            _selectedUpgrade = "attack";
-            
+            _selectedUpgrade = _displayedAttribute1;
         }
     });
     _confirm2->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::UPGRADE_2;
-            // create instance upgrade/effect of choice
+            _selectedUpgrade = _displayedAttribute2;
             
-            _selectedUpgrade = "defense";
         }
     });
     
@@ -105,7 +98,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std:
             _option1->setToggle(true);
             _confirm1->setVisible(true);
             _confirm1->activate();
-            CULog("player choice opt 1");
         } else{
             _confirm1->setVisible(false);
             _confirm1->deactivate();
@@ -121,7 +113,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std:
             _option2->setToggle(true);
             _confirm2->setVisible(true);
             _confirm2->activate();
-            CULog("player choice opt 2");
         } else{
             _confirm2->setVisible(false);
             _confirm2->deactivate();
@@ -132,17 +123,69 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std:
     setActive(false);
     return true;
 }
+void UpgradesScene::setButtonText(int upgrade, int buttonType){
+    std::string buttonName;
+    std::string buttonDescription;
+    switch (upgrade) {
+        case HEALTH:
+            buttonName = "HEALTH";
+            buttonDescription = "Restore Health";
+            break;
+        case PARRY:
+            buttonName = "HEALTH";
+            buttonDescription = "Restore Health";
+            break;
+        case RANGED:
+            buttonName = "BOW";
+            buttonDescription = "Increases ranged attack";
+            break;
+        case MELEE:
+            buttonName = "SWORD";
+            buttonDescription = "Increases sword damage";
+            break;
+        case DODGE:
+            buttonName = "DASH";
+            buttonDescription = "Decreases dash cooldown";
+            break;
+        case DEFENSE:
+            buttonName = "SHIELD";
+            buttonDescription = "Increases defense";
+            break;
+        case MOVEMENT:
+            buttonName = "HEALTH";
+            buttonDescription = "Restore Health";
+            break;
+        default:
+            break;
+            
+    }
+    if (buttonType==0) {
+        _option1Name->setText(buttonName);
+        _option1Descrip->setText(buttonDescription);
+    } else{
+        _option2Name->setText(buttonName);
+        _option2Descrip->setText(buttonDescription);
+    }
+    
+}
 
-void UpgradesScene::updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes){
-    _playerAttributes = attributes;
-    float ratio1 = (float)(_playerAttributes.at(0)->getCurrentLevel()+1)/_playerAttributes.at(0)->getMaxLevel();
-    float ratio2 = (float)(_playerAttributes.at(1)->getCurrentLevel()+1)/_playerAttributes.at(1)->getMaxLevel();
+void UpgradesScene::updateScene(std::vector<int> attributes, std::vector<std::shared_ptr<Upgradeable>> availableUpgrades){
+    if (availableUpgrades.at(attributes.at(0))->getCurrentLevel()==availableUpgrades.at(attributes.at(0))->getMaxLevel()){
+        _option1Level->setText(strtool::format("MAXED OUT"));
+    } else {
+        _option1Level->setText(strtool::format("Level %d", availableUpgrades.at(attributes.at(0))->getCurrentLevel()+1));
+    }
     
-    _option1Lvl->setText(strtool::format("Level %d", _playerAttributes.at(0)->getCurrentLevel()+1));
-    _option1Change->setText(strtool::format("%g%% -> %g%%", 100*((float)_playerAttributes.at(0)->getCurrentPercentage()),100*((float)(ratio1*_playerAttributes.at(0)->getMaxPercentage()))));
+    if (availableUpgrades.at(attributes.at(1))->getCurrentLevel()==availableUpgrades.at(attributes.at(1))->getMaxLevel()){
+        _option2Level->setText(strtool::format("MAXED OUT"));
+    } else {
+        _option2Level->setText(strtool::format("Level %d", availableUpgrades.at(attributes.at(1))->getCurrentLevel()+1));
+    }
+    setButtonText(attributes.at(0)+3,0);
+    setButtonText(attributes.at(1)+3,1);
     
-    _option2Lvl->setText(strtool::format("Level %d", _playerAttributes.at(1)->getCurrentLevel()+1));
-    _option2Change->setText(strtool::format("%g%% -> %g%%", 100*((float)_playerAttributes.at(1)->getCurrentPercentage()),100*((float)(ratio2*_playerAttributes.at(1)->getMaxPercentage()))));
+    _displayedAttribute1 = attributes.at(0)+3;
+    _displayedAttribute2  =attributes.at(1)+3;
 }
 
 /**
@@ -172,7 +215,6 @@ void UpgradesScene::dispose() {
 void UpgradesScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
-
         if (value) {
             _choice = NONE;
             _option1->activate();
@@ -182,6 +224,9 @@ void UpgradesScene::setActive(bool value) {
             _confirm1->deactivate();
             _option2->deactivate();
             _confirm1->deactivate();
+            
+            _displayedAttribute1 = -1;
+            _displayedAttribute2 = -1;
             
             // If any were pressed, reset them
             _option1->setDown(false);

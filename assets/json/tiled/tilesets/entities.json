@@ -9,7 +9,7 @@
  "name":"entities",
  "objectalignment":"bottom",
  "spacing":0,
- "tilecount":3,
+ "tilecount":4,
  "tiledversion":"1.10.2",
  "tileheight":128,
  "tiles":[
@@ -21,7 +21,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -184,6 +183,77 @@
              "y":0
             },
          "type":"Caster"
+        }, 
+        {
+         "id":3,
+         "image":"..\/images\/parry.png",
+         "imageheight":128,
+         "imagewidth":128,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"collider",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":22.7048,
+                             "y":-11.3524
+                            }, 
+                            {
+                             "x":0,
+                             "y":-22.7048
+                            }, 
+                            {
+                             "x":-22.7048,
+                             "y":-11.3524
+                            }],
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":0,
+                     "x":64,
+                     "y":126.493519441675
+                    }, 
+                    {
+                     "height":0,
+                     "id":8,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":-34.2971086739781,
+                             "y":-52.2432701894317
+                            }, 
+                            {
+                             "x":-67.3978065802592,
+                             "y":-1.59521435692921
+                            }],
+                     "rotation":0,
+                     "type":"Hitbox",
+                     "visible":true,
+                     "width":0,
+                     "x":98.5044865403789,
+                     "y":57.4277168494516
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"Parry"
         }],
  "tilewidth":128,
  "type":"tileset",

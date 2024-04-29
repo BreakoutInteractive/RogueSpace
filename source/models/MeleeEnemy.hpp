@@ -80,25 +80,6 @@ public:
         auto result = std::make_shared<MeleeEnemy>();
         return (result->init(data) ? result : nullptr);
     }
-    
-#pragma mark -
-#pragma mark Accessors
-    
-    std::string getType() override { return "melee lizard"; }
-    
-#pragma mark -
-#pragma mark Animation and State
-    
-    /**
-     * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
-     */
-    void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
-    
-    /**
-     * Sets the direction that the enemy is currently facing
-     */
-    void setFacingDir(cugl::Vec2 dir) override;
-    
 };
 
 #endif /* MeleeEnemy_hpp */

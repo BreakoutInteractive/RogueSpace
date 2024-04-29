@@ -17,7 +17,6 @@ void App::onStartup() {
 #else
     Input::activate<Mouse>();
     Input::get<Mouse>()->setPointerAwareness(Mouse::PointerAwareness::DRAG);
-
 #endif
     
     _assets->attach<Font>(FontLoader::alloc()->getHook());
@@ -34,7 +33,10 @@ void App::onStartup() {
     // Queue the other assets
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    _assets->loadDirectoryAsync("json/scenes.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/prototype.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
@@ -85,7 +87,7 @@ void App::update(float dt){
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
         _cust.init(_assets);
-        _upgrades.init(_assets,_gameplay.getAttributes());
+        _upgrades.init(_assets);
         _scene = State::GAME;
         setDeterministic(true);
     }
@@ -99,7 +101,11 @@ void App::preUpdate(float dt) {
         case MENU:
             break;
         case UPGRADE:
+            _upgrades.updateScene(_gameplay.upgradesForLevel, _gameplay.availableUpgrades);
             _upgrades.setActive(true);
+            _gameplay.activateInputs(true);
+            _gameplay.getRenderer().setActivated(false);
+            _gameplay.preUpdate(dt);
             updateUpgradesScene(dt);
             break;
         case PAUSE:
@@ -109,18 +115,22 @@ void App::preUpdate(float dt) {
             break;
         case CUST:
             _cust.setActive(true);
-            updateCustomSettingsScene(dt);
+//            AudioEngine::get()->getMusicQueue()->advance();
+            updateCustScene(dt);
             break;
         case GAME:
-            if (_gameplay.getRenderer().getPaused()) {
+            if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
                 _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
                 _gameplay.getRenderer().setActivated(false);
-            } else if (_gameplay.getRenderer().getCust()) {
+            } else if(_gameplay.getRenderer().getCust()){
                 _scene = State::CUST;
-                _gameplay.activateInputs(false);
+                _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
                 _gameplay.getRenderer().setActivated(false);
-            } else {
+            } else if (_gameplay.upgradeScreenActive){
+                _scene = State::UPGRADE;
+            }
+            else{
                 _gameplay.activateInputs(true);
                 _gameplay.preUpdate(dt);
             }
@@ -135,6 +145,9 @@ void App::fixedUpdate() {
             // Compute time to report to game scene version of fixedUpdate
             _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
             break;
+        case UPGRADE:
+            _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
+            break;
         default:
             break;
     }
@@ -145,6 +158,9 @@ void App::postUpdate(float dt) {
     switch (_scene) {
         case GAME:
             // Compute time to report to game scene version of postUpdate
+            _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
+            break;
+        case UPGRADE:
             _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
             break;
         default:
@@ -169,16 +185,14 @@ void App::updatePauseScene(float dt) {
             break;
         case PauseScene::Choice::SETTINGS:
             _pause.setActive(false);
-            _upgrades.updateScene(_gameplay.getAttributes());
-            _scene = State::UPGRADE;
             break;
         case PauseScene::Choice::NONE:
             break;
     }
 }
 
-void App::updateCustomSettingsScene(float timestep) {
-    _cust.update(timestep);
+void App::updateCustScene(float dt) {
+    _cust.update(dt);
     switch (_cust.getChoice()) {
         case CustomSettingsScene::Choice::RESTART:
             _cust.setActive(false);
@@ -186,34 +200,41 @@ void App::updateCustomSettingsScene(float timestep) {
             _gameplay.restart();
             _scene = State::GAME;
             break;
-        case CustomSettingsScene::Choice::GAME:
-            _cust.setActive(false);
-            _gameplay.getRenderer().setActivated(true);
-            _scene = State::GAME;
-            break;
         case CustomSettingsScene::Choice::NONE:
             break;
     }
 }
 
-void App::updateUpgradesScene(float dt) {
+void App::updateUpgradesScene(float dt){
     _upgrades.update(dt);
-    switch (_upgrades.getChoice()) {
-        case UpgradesScene::NONE:
-            break;
-        case UpgradesScene::Choice::UPGRADE_1:
-            _upgrades.setActive(false);
-            _gameplay.getRenderer().setActivated(true);
-            _gameplay.applyUpgrade(_upgrades._selectedUpgrade);
-            //give/set instance of upgrade object to gameplay
-            _scene = State::GAME;
-            break;
-        case UpgradesScene::Choice::UPGRADE_2:
-            _upgrades.setActive(false);
-            _gameplay.getRenderer().setActivated(true);
-            _gameplay.applyUpgrade(_upgrades._selectedUpgrade);
-            _scene = State::GAME;
-            break;
+    if (!_gameplay.upgradeScreenActive){
+        _upgrades.setActive(false);
+        _gameplay.getRenderer().setActivated(true);
+        _scene = State::GAME;
+    } else{ 
+        switch (_upgrades.getChoice()) {
+            case UpgradesScene::NONE:
+                break;
+            case UpgradesScene::Choice::UPGRADE_1:
+                _upgrades.setActive(false);
+                _gameplay.getRenderer().setActivated(true);
+                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
+                _gameplay.upgradeScreenActive=false;
+                _gameplay.upgradeChosen = true;
+                _gameplay.setRelicActive(false);
+                //give/set instance of upgrade object to gameplay
+                _scene = State::GAME;
+                break;
+            case UpgradesScene::Choice::UPGRADE_2:
+                _upgrades.setActive(false);
+                _gameplay.getRenderer().setActivated(true);
+                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
+                _gameplay.upgradeScreenActive=false;
+                _gameplay.upgradeChosen = true;
+                _gameplay.setRelicActive(false);
+                _scene = State::GAME;
+                break;
+        }
     }
 }
 

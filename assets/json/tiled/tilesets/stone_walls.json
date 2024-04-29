@@ -15,7 +15,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -52,6 +51,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -95,6 +100,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -138,6 +149,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -181,6 +198,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -224,6 +247,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -267,6 +296,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -310,6 +345,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -353,6 +394,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -396,6 +443,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }, 
         {
@@ -439,6 +492,12 @@
              "x":0,
              "y":0
             },
+         "properties":[
+                {
+                 "name":"tall",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"Wall"
         }],
  "tilewidth":128,

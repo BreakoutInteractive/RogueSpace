@@ -33,6 +33,26 @@ void RangedLizard::dispose() {
     _enemyTexture = nullptr;
 }
 
+
+#pragma mark -
+#pragma mark Physics
+
+void RangedLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    Vec2 direction = getFacingDir();
+    direction.normalize();
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0){
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    
+    setCharged(false);
+    std::shared_ptr<Projectile> p = Projectile::lizardAlloc(getPosition().add(0, 64 / getDrawScale().y), 1, ang, assets);
+    p->setDrawScale(level->getDrawScale());
+    level->addProjectile(p);
+}
+
+
 #pragma mark -
 #pragma mark Animation
 
@@ -42,6 +62,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("lizard-projectile");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
@@ -50,6 +71,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 5);
+    auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
@@ -57,6 +79,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     _chargingAnimation = Animation::alloc(projectileSheet, 0.28125f, false, 0, 4);
+    _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -68,8 +91,13 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
+    _attackAnimation->addCallback(0.0f, [this](){
+        setAiming(true);
+    });
+    
     _attackAnimation->addCallback(0.45f, [this](){
         _chargingAnimation->start();
+        setAiming(false);
     });
     
     _chargingAnimation->onComplete([this](){
