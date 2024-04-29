@@ -24,6 +24,7 @@
 #include "GameRenderer.hpp"
 #include "../utility/LevelParser.hpp"
 #include "../models/Counter.hpp"
+#include "../components/Animation.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -68,6 +69,8 @@ protected:
     //cugl::Vec2 _offset;
     /** custom renderer for this scene */
     GameRenderer _gameRenderer;
+    /** the animation played to signal area is cleared */
+    std::shared_ptr<Animation> _areaClearEffect;
 
     // MODEL
 
@@ -340,10 +343,7 @@ public:
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
      * the debug scene may be drawn.
      */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override {
-        _gameRenderer.render(batch);
-        Scene2::render(batch);
-    }
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
 protected:
 #pragma mark -

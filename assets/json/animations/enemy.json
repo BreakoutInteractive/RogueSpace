@@ -1,43 +1,49 @@
 {
     "textures": {
         "lizard-walk": {
-            "file":     "textures/sprites/lizard_walk.png"
+            "file":     "textures/sprites/lizard/lizard_walk.png"
         },
         "lizard-idle": {
-            "file":     "textures/sprites/lizard_idle.png"
+            "file":     "textures/sprites/lizard/lizard_idle.png"
         },
         "lizard-attack": {
-            "file":     "textures/sprites/lizard_atk.png"
+            "file":     "textures/sprites/lizard/lizard_atk.png"
         },
         "lizard-ranged-attack": {
-            "file":     "textures/sprites/lizard_ranged_atk.png"
+            "file":     "textures/sprites/lizard/lizard_ranged_atk.png"
         },
         "lizard-stun": {
-            "file":     "textures/sprites/lizard_stun.png"
+            "file":     "textures/sprites/lizard/lizard_stun.png"
         },
         "lizard-projectile": {
-            "file":     "textures/sprites/boomerang_spritesheet.png"
+            "file":     "textures/sprites/lizard/boomerang_spritesheet.png"
         },
         "mage-walk": {
-            "file":     "textures/sprites/mage_walk.png"
+            "file":     "textures/sprites/caster/mage_walk.png"
         },
         "mage-idle": {
-            "file":     "textures/sprites/mage_idle.png"
+            "file":     "textures/sprites/caster/mage_idle.png"
         },
         "mage-attack": {
-            "file":     "textures/sprites/mage_atk.png"
+            "file":     "textures/sprites/caster/mage_atk.png"
         },
         "mage-projectile": {
-            "file":     "textures/sprites/spelleffect_spritesheet.png"
+            "file":     "textures/sprites/caster/spelleffect_spritesheet.png"
         },
         "enemy-hit-effect": {
-            "file":     "textures/sprites/hit_01.png"
+            "file":     "textures/sprites/hit.png"
+        },
+        "enemy-swipe": {
+            "file":     "textures/sprites/swipe.png"
         },
         "stun-effect": {
             "file":     "textures/sprites/effect_stunned.png"
         },
         "parry-idle": {
-            "file":     "textures/sprites/parry_idle.png"
+            "file":     "textures/sprites/tank/parry_idle.png"
+        },
+        "parry-stun": {
+            "file":     "textures/sprites/tank/parry_stunned.png"
         }
     }
 }

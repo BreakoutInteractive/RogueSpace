@@ -176,7 +176,7 @@ void CollisionController::beginContact(b2Contact* contact){
         if (((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
             (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) && (_level->getRelic()->active)) {
             _level->getRelic()->contactMade.increment();
-            _level->getRelic()->contactMade.reset();
+            CULog("%d", _level->getRelic()->contactMade.getCount());
         }
     }
 }
