@@ -598,8 +598,9 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
         auto sheet = _areaClearEffect->getSpriteSheet();
         Size frameSize = sheet->getFrameSize();
         // take up around half the screen height
-        float verticalScale = 0.25f * Application::get()->getDisplaySize().height / frameSize.height;
-        Affine2 transform = Affine2::createScale(verticalScale);
+        float verticalScale = 0.35f * Application::get()->getDisplaySize().height / frameSize.height;
+        float horizontalScale = 0.35f * Application::get()->getDisplaySize().width / frameSize.width;
+        Affine2 transform = Affine2::createScale(std::min(horizontalScale, verticalScale));
         transform.translate(_camera->getPosition());
         sheet->draw(batch, frameSize/2, transform);
         batch->end();
