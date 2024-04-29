@@ -1209,7 +1209,7 @@
             "x_anchor": "left",
             "y_anchor": "top",
             "x_offset": 0.5,
-            "y_offset": -0.4
+            "y_offset": -0.45
           }
         },
         "inf-enemy-action": {
@@ -1273,7 +1273,7 @@
             "x_anchor": "left",
             "y_anchor": "top",
             "x_offset": 0.5,
-            "y_offset": -0.6
+            "y_offset": -0.65
           }
         }
       }
