@@ -337,8 +337,8 @@
               0
             ],
             "range": [
-              0,
-              2
+              0.05,
+              5
             ],
             "value": 1,
             "tick": 0.05,
@@ -914,7 +914,7 @@
             ],
             "range": [
               0,
-              2
+              1
             ],
             "value": 0.1,
             "tick": 0.01,
@@ -931,7 +931,7 @@
           "type": "Label",
           "data": {
             "font": "robotoMedium16",
-            "text": "Parry enemy duration: 0.0",
+            "text": "Parry enemy % damage taken: 0.0",
             "foreground": [
               255,
               255,

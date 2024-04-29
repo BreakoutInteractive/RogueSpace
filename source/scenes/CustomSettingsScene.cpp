@@ -172,6 +172,8 @@ bool CustomSettingsScene::writeTo(int i) {
         GameConstants::PROJ_TIME_E = _values[i];
     } else if (var == "kb") {
         GameConstants::KNOCKBACK = _values[i];
+    } else if (var == "kb-power") {
+        GameConstants::KNOCKBACK_PWR_ATK = _values[i];
     } else if (var == "charge") {
         GameConstants::CHARGE_TIME = _values[i];
     } else if (var == "parryenemy") {

@@ -42,7 +42,7 @@ float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.5f; // previously 2
 
 float GameConstants::ENEMY_RANGED_ATK_RANGE = 6;
 
-float GameConstants::ENEMY_MOVE_SPEED = 2;
+float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
 float GameConstants::PROJ_SPEED_E = 10.0f;
 
@@ -70,7 +70,7 @@ float GameConstants::PLAYER_DODGE_SPEED = 20.0f;
 
 float GameConstants::PLAYER_MAX_HP = 3;
 
-float GameConstants::PLAYER_MOVE_SPEED = 5;
+float GameConstants::PLAYER_MOVE_SPEED = 4.5; // previously 5
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
 float GameConstants::PLAYER_DEFENSE = 1;
