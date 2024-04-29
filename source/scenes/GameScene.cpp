@@ -574,9 +574,9 @@ void GameScene::updatePlayerAttributes(int selectedAttribute){
 
 void GameScene::setPlayerAttributes(float hp){
     _level->getPlayer()->_hp = hp;
-    _level->getPlayer()->meleeDamage = availableUpgrades.at(0)->getCurrentValue();
-    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(1)->getCurrentValue());
-    _level->getPlayer()->defense = availableUpgrades.at(2)->getCurrentValue();
+    _level->getPlayer()->meleeDamage = availableUpgrades.at(SWORD)->getCurrentValue();
+    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
+    _level->getPlayer()->defense = availableUpgrades.at(SHIELD)->getCurrentValue();
 }
 
 void GameScene::postUpdate(float remain) {
