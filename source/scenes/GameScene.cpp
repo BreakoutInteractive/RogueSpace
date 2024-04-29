@@ -292,7 +292,7 @@ void GameScene::preUpdate(float dt) {
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
     if (_level->isCompleted()){
-        if (_levelNumber < MAX_LEVEL or _nextValidLevel<MAX_LEVEL){
+        if (_levelNumber < MAX_LEVEL || _nextValidLevel<MAX_LEVEL){
             _levelNumber+=1;
             if (_lvlsToUpgrade.getCount()==0){
                 setLevel(7);
