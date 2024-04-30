@@ -806,6 +806,12 @@
                  "height":128,
                  "id":806,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -818,6 +824,12 @@
                  "height":128,
                  "id":809,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -831,6 +843,12 @@
                  "height":128,
                  "id":811,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
