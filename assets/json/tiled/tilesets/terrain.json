@@ -1,5 +1,5 @@
 { "columns":15,
- "image":"..\/..\/..\/textures\/terrain.png",
+ "image":"..\/..\/..\/textures\/tileset\/terrain.png",
  "imageheight":2048,
  "imagewidth":2048,
  "margin":8,
@@ -186,7 +186,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
