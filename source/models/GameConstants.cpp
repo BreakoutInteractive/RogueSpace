@@ -28,9 +28,9 @@ float GameConstants::GAME_CAMERA_ZOOM_SPEED = 0.7f;
 
 int GameConstants::ENEMY_IFRAME = 16;
 
-int GameConstants::ENEMY_ATK_COOLDOWN = 120;
+int GameConstants::ENEMY_ATK_COOLDOWN = 50;
 
-int GameConstants::ENEMY_STUN_COOLDOWN = 60;
+int GameConstants::ENEMY_STUN_COOLDOWN = 100;
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 120;
 
@@ -38,19 +38,19 @@ float GameConstants::ENEMY_SIGHT_RANGE = 8;
 
 float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
 
-float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.5f; // previously 2
+float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.6f; // previously 2
 
 float GameConstants::ENEMY_RANGED_ATK_RANGE = 6;
 
-float GameConstants::ENEMY_MOVE_SPEED = 2;
+float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
-float GameConstants::PROJ_SPEED_E = 10.0f;
+float GameConstants::PROJ_SPEED_E = 6.0f;
 
-float GameConstants::PROJ_RADIUS_LIZARD = 1.0f;
+float GameConstants::PROJ_RADIUS_LIZARD = 0.5f;
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.75f;
+float GameConstants::PROJ_RADIUS_MAGE = 0.75f; 
 
-float GameConstants::PROJ_TIME_E = 1.0f;
+float GameConstants::PROJ_TIME_E = 1.5f;
 
 float GameConstants::PARRY_ENEMY_DR = 0.1f;
 
@@ -64,13 +64,13 @@ int GameConstants::PLAYER_ATTACK_COOLDOWN =  16;
 
 float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
-int GameConstants::PLAYER_DODGE_COOLDOWN = 60;
+int GameConstants::PLAYER_DODGE_COOLDOWN = 50;
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
-float GameConstants::PLAYER_DODGE_SPEED = 20.0f;
+float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 float GameConstants::PLAYER_MAX_HP = 3;
 
-float GameConstants::PLAYER_MOVE_SPEED =5;
+float GameConstants::PLAYER_MOVE_SPEED =4.6;
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
 float GameConstants::PLAYER_DEFENSE = 1;
@@ -91,8 +91,8 @@ float GameConstants::CHARGE_TIME = 0.3f;
 
 float GameConstants::COMBO_TIME = 1.0f;
 
-float GameConstants::KNOCKBACK = 4.0f; // previously 10
+float GameConstants::KNOCKBACK = 1.6f; // previously 10
 
-float GameConstants::KNOCKBACK_PWR_ATK = 8.0f; // previously 20
+float GameConstants::KNOCKBACK_PWR_ATK = 4.0f; // previously 20
 
 float GameConstants::PROJ_SHADOW_SCALE = 0.25f;

@@ -1149,7 +1149,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
@@ -1178,7 +1178,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
@@ -1243,7 +1243,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",

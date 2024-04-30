@@ -173,6 +173,12 @@
                  "height":256,
                  "id":55,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -185,6 +191,12 @@
                  "height":256,
                  "id":56,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -197,6 +209,12 @@
                  "height":256,
                  "id":57,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -209,6 +227,12 @@
                  "height":256,
                  "id":59,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -221,6 +245,12 @@
                  "height":256,
                  "id":60,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -233,6 +263,12 @@
                  "height":256,
                  "id":61,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -245,6 +281,12 @@
                  "height":256,
                  "id":62,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -257,6 +299,12 @@
                  "height":256,
                  "id":64,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -269,6 +317,12 @@
                  "height":256,
                  "id":67,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -281,6 +335,12 @@
                  "height":256,
                  "id":68,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -293,6 +353,12 @@
                  "height":256,
                  "id":70,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -305,6 +371,12 @@
                  "height":256,
                  "id":71,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -318,6 +390,12 @@
                  "height":256,
                  "id":72,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -330,6 +408,12 @@
                  "height":256,
                  "id":73,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -342,6 +426,12 @@
                  "height":256,
                  "id":74,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -354,6 +444,12 @@
                  "height":256,
                  "id":75,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -366,6 +462,12 @@
                  "height":256,
                  "id":76,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -378,6 +480,12 @@
                  "height":256,
                  "id":77,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -390,6 +498,12 @@
                  "height":256,
                  "id":78,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -402,6 +516,12 @@
                  "height":256,
                  "id":80,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -414,6 +534,12 @@
                  "height":256,
                  "id":82,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -448,7 +574,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
@@ -500,7 +626,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
@@ -589,7 +715,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",

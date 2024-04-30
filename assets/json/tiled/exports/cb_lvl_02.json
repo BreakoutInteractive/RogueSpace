@@ -818,7 +818,7 @@
                  "width":128,
                  "x":256,
                  "y":736
-                },
+                }, 
                 {
                  "gid":21,
                  "height":128,
@@ -855,7 +855,7 @@
                  "width":128,
                  "x":256,
                  "y":672
-                },
+                }, 
                 {
                  "gid":243,
                  "height":256,
@@ -865,7 +865,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -883,7 +883,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -891,7 +891,7 @@
                  "width":128,
                  "x":1280,
                  "y":352
-                },
+                }, 
                 {
                  "gid":230,
                  "height":256,
@@ -901,7 +901,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -909,7 +909,7 @@
                  "width":128,
                  "x":1088,
                  "y":256
-                },
+                }, 
                 {
                  "gid":228,
                  "height":256,
@@ -919,7 +919,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -927,7 +927,7 @@
                  "width":128,
                  "x":1344,
                  "y":384
-                },
+                }, 
                 {
                  "gid":234,
                  "height":256,
@@ -937,7 +937,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -955,7 +955,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -1003,7 +1003,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
@@ -1028,11 +1028,11 @@
                          "propertytype":"Type",
                          "type":"string",
                          "value":"RANGE"
-                        },
+                        }, 
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
