@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"..\/exports\/ob_lvl_00.json"
+         "target":"..\/exports\/cb_lvl_00.json"
         }
     },
  "height":72,
