@@ -64,6 +64,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
 
     _selectedUpgrade = 0;
+    _choice = Choice::NONE;
     _option1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item"));
     _option1Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_name"));
     _option1Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_description"));
@@ -293,6 +294,7 @@ void UpgradesScene::setActive(bool value) {
             _confirm2->setDown(false);
             _heal->setToggle(false);
             _heal->setDown(false);
+            _choice = Choice::NONE;
             
         }
     }

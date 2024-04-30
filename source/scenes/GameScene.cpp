@@ -183,6 +183,7 @@ void GameScene::setLevel(int level){
         _lvlsToUpgrade.reset();
         upgradesForLevel.clear();
         _upgradeLevelActive=false;
+        upgradeChosen=false;
         
     }
     else if (_lvlsToUpgrade.isZero()){
@@ -191,10 +192,11 @@ void GameScene::setLevel(int level){
         _upgradeLevelActive=true;
     }
     else{
-        _lvlsToUpgrade.decrement();
         _levelNumber = level;
         levelToParse = getLevelKey(_levelNumber);
     }
+    
+    _lvlsToUpgrade.decrement();
     
     CULog("currLevel %d", _levelNumber);
     auto parsed = _parser.parseTiled(_assets->get<JsonValue>(levelToParse));
