@@ -29,6 +29,9 @@
         },
         "heal": {
             "file": "textures/upgrades-screen/heal.png"
+        },
+        "heal-confirm": {
+            "file": "textures/upgrades-screen/heal-confirm.png"
         }
     },
     "scene2s": {
@@ -730,9 +733,37 @@
                         297
                     ],
                     "visible": true,
-                    "upnode": "heal"
+                    "upnode": "heal",
+                    "downnode": "heal-confirm"
                 },
                 "children": {
+                    "heal-confirm": {
+                        "type": "Image",
+                        "data": {
+                            "texture": "heal-confirm",
+                            "anchor": [
+                                0,
+                                1
+                            ],
+                            "size": [
+                                70,
+                                70
+                            ],
+                            "angle": 0,
+                            "position": [
+                                0,
+                                0
+                            ],
+                            "visible": true
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "top",
+                            "absolute": false,
+                            "x_offset": 0,
+                            "y_offset": 0
+                        }
+                    },
                     "heal": {
                         "type": "Image",
                         "data": {

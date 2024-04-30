@@ -212,22 +212,18 @@ public:
      * @return the maximum HP of the player
      */
     int getMaxHP();
+
+    /** damage done by melee*/
+    float meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
+    /** percentage of how much damage gets taken  */
+    float defense = GameConstants::PLAYER_DEFENSE;
+    /** size of parry window*/
+    float parryWindow = 1; //unimplemented
+    /** speed of melee attack  */
+    float atkSpeed = 1; //unimplemented
+    /** bow strength stat*/
+    float bowDamage = GameConstants::PROJ_DAMAGE_P;
     
-    /** melee strength stat*/
-    float meleeDamage;
-    
-    /** defense stat  */
-    float defense;
-    
-    /** melee strength stat*/
-    float parryWindow;
-    
-    /** defense stat  */
-    float atkSpeed;
-    
-    /** melee strength stat*/
-    float bowDamage;
-        
 #pragma mark -
 #pragma mark Player Game State Accessors
     /**

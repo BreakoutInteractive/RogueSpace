@@ -23,11 +23,12 @@ protected:
         
     /** the size of the visible object (including transparent region) expressed in game units */
     cugl::Vec2 _size;
+    /** whether relic object is active in level*/
+    bool _active;
 
 
 public:
     
-    bool active;
 #pragma mark Constructors
     /**
      * Creates a new wall with the given data, of which the polygon is represented by a set of vertices
@@ -43,15 +44,22 @@ public:
         _jsonData = nullptr;
         _texture = nullptr;
     }
-        
+    
+    /** Sets whether relic object is active
+     * @param active whether relic active or inactive.
+     */
+    void setActive(bool active){_active = active; }
+    
+    /** Returns whether relic object is active **/
+    bool getActive(){return _active; }
+    
     /**
      * Gets whether relic has been touched.
      */
-    bool getRelicTouched() { return !contactMade.isZero(); }
+    bool getTouched() { return !contactMade.isZero(); }
     
     /** Number of contact points between object and player*/
     Counter contactMade;
-
 
 #pragma mark Animation and Assets
 

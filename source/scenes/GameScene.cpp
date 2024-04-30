@@ -51,9 +51,6 @@ using namespace cugl;
 /** The message to display on a level reset */
 #define RESET_MESSAGE       "Resetting"
 
-/** The length of to display on a level reset */
-#define UPGRADES_LENGTH     6
-
 #pragma mark -
 #pragma mark Constructors
 
@@ -75,7 +72,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     _parser.loadTilesets(assets);
     _levelNumber = 1;
-    _nextValidLevel=-1;
+    _upgradeLevelActive = false;
     _gameRenderer.init(_assets);
     _input.init();
     _audioController = std::make_shared<AudioController>();
@@ -168,56 +165,65 @@ void GameScene::restart(){
     _winNode->setVisible(false);
     _lvlsToUpgrade.reset();
     setLevel(1); // reload the first level
-    _level->getPlayer()->_hp = GameConstants::PLAYER_MAX_HP;
+    _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
 }
 
 void GameScene::setLevel(int level){
+    _debugNode->removeAllChildren();
     float currentHp = GameConstants::PLAYER_MAX_HP;
+    std::string levelToParse = "";
+    
     if (_level!=nullptr) {
         currentHp = _level->getPlayer()->_hp;
     }
-    _debugNode->removeAllChildren();
-    if (level==7){
-        _nextValidLevel = _levelNumber+1;
-        generateRandomUpgrades();
-        _levelNumber=level;
-    }
-    else if (_levelNumber == 8){
-        _levelNumber =_nextValidLevel;
+    
+    if (_upgradeLevelActive){
+        _levelNumber-=1;
+        levelToParse = getLevelKey(_levelNumber);
+        _lvlsToUpgrade.reset();
         upgradesForLevel.clear();
-        _nextValidLevel = -1;
+        _upgradeLevelActive=false;
+        
+    }
+    else if (_lvlsToUpgrade.isZero()){
+        levelToParse = "upgrades";
+        generateRandomUpgrades();
+        _upgradeLevelActive=true;
     }
     else{
         _lvlsToUpgrade.decrement();
         _levelNumber = level;
+        levelToParse = getLevelKey(_levelNumber);
     }
     
-        Size dimen = computeActiveSize();
-    
-    auto parsed = _parser.parseTiled(_assets->get<JsonValue>(getLevelKey(_levelNumber)));
+    CULog("currLevel %d", _levelNumber);
+    auto parsed = _parser.parseTiled(_assets->get<JsonValue>(levelToParse));
+    Size dimen = computeActiveSize();
+
     _level = LevelModel::alloc(_assets->get<JsonValue>("constants"), parsed);
     _level->setAssets(_assets);
-    
-    
+        
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
-                                          dimen.height/_level->getViewBounds().height;
+                                              dimen.height/_level->getViewBounds().height;
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
     setDebug(isDebug());
     _AIController.init(_level);
     _collisionController.setLevel(_level);
     _gameRenderer.setGameElements(getCamera(), _level);
-    if(_levelNumber==7){
-        _level->getRelic()->active = true;
+    
+    if (_upgradeLevelActive) {
+        _level->getRelic()->setActive(true);
     }
+    
     setComplete(false);
     setDefeat(false);
     _input.activateMeleeControls();
     _input.setActive(true);
-    
+
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     setPlayerAttributes(currentHp);
@@ -293,13 +299,8 @@ void GameScene::preUpdate(float dt) {
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
     if (_level->isCompleted()){
-        if (_levelNumber < MAX_LEVEL || _nextValidLevel<MAX_LEVEL){
+        if (_levelNumber < MAX_LEVEL){
             _levelNumber+=1;
-            if (_lvlsToUpgrade.getCount()==0){
-                setLevel(7);
-                _lvlsToUpgrade.reset();
-                return;
-            }
             setLevel(_levelNumber);
             upgradeChosen=false;
             return;
@@ -492,8 +493,8 @@ void GameScene::preUpdate(float dt) {
         }
         
     }
-    if (_level->getRelic()!=nullptr && upgradeChosen == false){
-        upgradeScreenActive =_level->getRelic()->getRelicTouched();
+    if (_level->getRelic()!=nullptr && !upgradeChosen){
+        upgradeScreenActive =_level->getRelic()->getTouched();
     }
 #pragma mark - Component Updates
     player->update(dt); // updates animations, counters, hitboxes
@@ -548,12 +549,12 @@ void GameScene::fixedUpdate(float step) {
 }
 
 void GameScene::generateRandomUpgrades(){
-    int displayedAttribute1 = std::rand()%UPGRADES_LENGTH;
+    int displayedAttribute1 = std::rand()%availableUpgrades.size();
     upgradesForLevel.push_back(displayedAttribute1);
 
-    int displayedAttribute2 = std::rand()%UPGRADES_LENGTH;
+    int displayedAttribute2 = std::rand()%availableUpgrades.size();
     while (displayedAttribute2==displayedAttribute1){
-        displayedAttribute2 =std::rand()%UPGRADES_LENGTH;
+        displayedAttribute2 =std::rand()%availableUpgrades.size();
     }
     upgradesForLevel.push_back(displayedAttribute2);
 }
@@ -564,13 +565,25 @@ void GameScene::updatePlayerAttributes(int selectedAttribute){
             availableUpgrades.at(selectedAttribute)->levelUp();
             _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
             break;
-        case DASH:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+        case PARRY: //unimplemented
+//            availableUpgrades.at(selectedAttribute)->levelUp();
+//            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
             break;
         case SHIELD:
             availableUpgrades.at(selectedAttribute)->levelUp();
             _level->getPlayer()->defense = availableUpgrades.at(selectedAttribute)->getCurrentValue();
+            break;
+        case ATK_SPEED: //unimplemented
+//            availableUpgrades.at(selectedAttribute)->levelUp();
+//            _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
+            break;
+        case DASH:
+            availableUpgrades.at(selectedAttribute)->levelUp();
+            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+            break;
+        case BOW:
+            availableUpgrades.at(selectedAttribute)->levelUp();
+            _level->getPlayer()->bowDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
             break;
         default:
             _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
@@ -580,8 +593,11 @@ void GameScene::updatePlayerAttributes(int selectedAttribute){
 void GameScene::setPlayerAttributes(float hp){
     _level->getPlayer()->_hp = hp;
     _level->getPlayer()->meleeDamage = availableUpgrades.at(SWORD)->getCurrentValue();
-    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
+    _level->getPlayer()->parryWindow = availableUpgrades.at(PARRY)->getCurrentValue(); //unimplemented
     _level->getPlayer()->defense = availableUpgrades.at(SHIELD)->getCurrentValue();
+    _level->getPlayer()->atkSpeed = (availableUpgrades.at(ATK_SPEED)->getCurrentValue()); //unimplemented
+    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
+    _level->getPlayer()->bowDamage = availableUpgrades.at(BOW)->getCurrentValue(); 
 }
 
 void GameScene::postUpdate(float remain) {
