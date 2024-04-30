@@ -37,6 +37,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":24,
          "id":1,
+         "locked":true,
          "name":"ground",
          "opacity":1,
          "type":"tilelayer",
@@ -747,7 +748,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
                 {
@@ -786,12 +786,6 @@
                  "id":751,
                  "name":"",
                  "properties":[
-                        {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
-                        }, 
                         {
                          "name":"path",
                          "type":"object",

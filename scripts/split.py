@@ -15,7 +15,7 @@ def extract_subregions(input_image_path, output_folder):
 
     # Define the size of subregions
     subregion_size_height = 128
-    subregion_size_width = 128
+    subregion_size_width = 64
     image_name = os.path.splitext(os.path.basename(input_image_path))[0]
 
     # Iterate over the image and extract subregions

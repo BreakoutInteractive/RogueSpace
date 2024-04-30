@@ -17,8 +17,7 @@ private:
 	state _state;
 	int _damage;
 public:
-	//this object exists so that there is a different pointer in the user data of the shadow
-	char* collisionString;
+
 	/**
 	 * Creates a new player projectile.
 	 *

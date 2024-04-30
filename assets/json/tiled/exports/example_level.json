@@ -137,6 +137,12 @@
                  "height":128,
                  "id":24,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -149,6 +155,12 @@
                  "height":128,
                  "id":30,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -161,6 +173,12 @@
                  "height":128,
                  "id":35,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
                  "rotation":0,
                  "type":"Wall",
                  "visible":true,
@@ -566,14 +584,13 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
                         }, 
                         {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":5
                         }, 
                         {
@@ -595,8 +612,13 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":3
                         }, 
                         {
@@ -618,14 +640,13 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
                         }, 
                         {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":5
                         }, 
                         {
@@ -707,14 +728,13 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
                         }, 
                         {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":5
                         }, 
                         {

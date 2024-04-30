@@ -8,7 +8,7 @@
 #include "Enemy.hpp"
 #include "Projectile.hpp"
 #include "MeleeEnemy.hpp"
-#include "ParryEnemy.hpp"
+#include "TankEnemy.hpp"
 #include "MeleeLizard.hpp"
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
@@ -364,17 +364,17 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
 bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std::shared_ptr<JsonValue> &json){
     std::shared_ptr<Enemy> enemy;
     std::string enemyType = json->getString("type");
-    if (enemyType == "melee-lizard") {
+    if (enemyType == CLASS_LIZARD) {
         enemy = MeleeLizard::alloc(json);
     }
-    else if (enemyType == "ranged-lizard") {
+    else if (enemyType == CLASS_RANGEDLIZARD) {
         enemy = RangedLizard::alloc(json);
     }
-    else if (enemyType == "caster") {
+    else if (enemyType == CLASS_CASTER) {
         enemy = MageAlien::alloc(json);
     }
-    else if (enemyType == "parry") {
-        enemy = ParryEnemy::alloc(json);
+    else if (enemyType == CLASS_TANK) {
+        enemy = TankEnemy::alloc(json);
     }
     CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());
     auto enemyCollider = enemy->getCollider();
@@ -385,7 +385,7 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
     enemyCollider->setFixedRotation(!constants->getBool(ROTATION_FIELD));
     enemyCollider->setDebugColor(parseColor(constants->getString(DEBUG_COLOR_FIELD)));
     
-    enemy->setHealth(json->getInt("health"));
+    enemy->setHealth(json->getFloat(ENEMY_HP_FIELD));
     enemy->setDefaultState(json->getString("defaultstate"));
     std::vector<Vec2> path;
     std::vector<float> vertices = json->get("path")->asFloatArray();

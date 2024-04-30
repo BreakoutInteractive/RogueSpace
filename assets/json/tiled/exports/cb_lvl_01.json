@@ -1009,7 +1009,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
                 {
@@ -1031,14 +1030,13 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
                         }, 
                         {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":5
                         }, 
                         {
@@ -1060,14 +1058,13 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
                         }, 
                         {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":5
                         }, 
                         {

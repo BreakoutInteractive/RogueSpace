@@ -722,7 +722,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
                 {
@@ -756,30 +755,6 @@
                  "y":256
                 }, 
                 {
-                 "gid":251,
-                 "height":128,
-                 "id":751,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"RANGE"
-                        }, 
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":778
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":768,
-                 "y":704
-                }, 
-                {
                  "height":0,
                  "id":778,
                  "name":"",
@@ -802,6 +777,24 @@
                  "width":0,
                  "x":832,
                  "y":256
+                }, 
+                {
+                 "gid":254,
+                 "height":128,
+                 "id":832,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":778
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":761.975760840291,
+                 "y":695.66029266541
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -810,7 +803,7 @@
          "y":0
         }],
  "nextlayerid":21,
- "nextobjectid":832,
+ "nextobjectid":833,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

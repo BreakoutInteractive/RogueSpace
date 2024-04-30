@@ -3082,7 +3082,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
                 {

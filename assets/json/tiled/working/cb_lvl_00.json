@@ -882,9 +882,21 @@
          "name":"entities",
          "objects":[
                 {
+                 "height":0,
+                 "id":778,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Path",
+                 "visible":true,
+                 "width":0,
+                 "x":1536,
+                 "y":640
+                }, 
+                {
                  "gid":251,
                  "height":128,
-                 "id":751,
+                 "id":821,
                  "name":"",
                  "properties":[
                         {
@@ -898,18 +910,6 @@
                  "width":64,
                  "x":1216,
                  "y":704
-                }, 
-                {
-                 "height":0,
-                 "id":778,
-                 "name":"",
-                 "point":true,
-                 "rotation":0,
-                 "type":"Path",
-                 "visible":true,
-                 "width":0,
-                 "x":1536,
-                 "y":640
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1002,7 +1002,7 @@
          "y":0
         }],
  "nextlayerid":30,
- "nextobjectid":821,
+ "nextobjectid":822,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

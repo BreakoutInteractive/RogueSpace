@@ -1119,7 +1119,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"entities",
          "objects":[
                 {
@@ -1133,64 +1132,6 @@
                  "width":128,
                  "x":384,
                  "y":480
-                }, 
-                {
-                 "gid":251,
-                 "height":128,
-                 "id":749,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"RANGE"
-                        }, 
-                        {
-                         "name":"hp",
-                         "type":"int",
-                         "value":5
-                        }, 
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":779
-                        }],
-                 "rotation":0,
-                 "type":"Lizard",
-                 "visible":true,
-                 "width":64,
-                 "x":896,
-                 "y":256
-                }, 
-                {
-                 "gid":251,
-                 "height":128,
-                 "id":751,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"RANGE"
-                        }, 
-                        {
-                         "name":"hp",
-                         "type":"int",
-                         "value":5
-                        }, 
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":778
-                        }],
-                 "rotation":0,
-                 "type":"Lizard",
-                 "visible":true,
-                 "width":64,
-                 "x":768,
-                 "y":704
                 }, 
                 {
                  "height":0,
@@ -1235,14 +1176,13 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
                         }, 
                         {
                          "name":"hp",
-                         "type":"int",
+                         "type":"float",
                          "value":5
                         }, 
                         {
@@ -1274,6 +1214,62 @@
                  "width":0,
                  "x":896,
                  "y":416
+                }, 
+                {
+                 "gid":254,
+                 "height":128,
+                 "id":783,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":5
+                        }, 
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":779
+                        }],
+                 "rotation":0,
+                 "type":"RangedLizard",
+                 "visible":true,
+                 "width":64,
+                 "x":860.830240201833,
+                 "y":235.903195956151
+                }, 
+                {
+                 "gid":254,
+                 "height":128,
+                 "id":784,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":5
+                        }, 
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":778
+                        }],
+                 "rotation":0,
+                 "type":"RangedLizard",
+                 "visible":true,
+                 "width":64,
+                 "x":768.333788499469,
+                 "y":714.334091943559
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1282,7 +1278,7 @@
          "y":0
         }],
  "nextlayerid":21,
- "nextobjectid":783,
+ "nextobjectid":785,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",
