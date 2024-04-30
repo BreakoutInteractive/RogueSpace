@@ -28,7 +28,7 @@ float GameConstants::GAME_CAMERA_ZOOM_SPEED = 0.7f;
 
 int GameConstants::ENEMY_IFRAME = 16;
 
-int GameConstants::ENEMY_ATK_COOLDOWN = 40;
+int GameConstants::ENEMY_ATK_COOLDOWN = 50;
 
 int GameConstants::ENEMY_STUN_COOLDOWN = 100;
 
@@ -44,13 +44,13 @@ float GameConstants::ENEMY_RANGED_ATK_RANGE = 6;
 
 float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
-float GameConstants::PROJ_SPEED_E = 10.0f;
+float GameConstants::PROJ_SPEED_E = 6.0f;
 
-float GameConstants::PROJ_RADIUS_LIZARD = 1.0f;
+float GameConstants::PROJ_RADIUS_LIZARD = 0.5f;
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.75f;
+float GameConstants::PROJ_RADIUS_MAGE = 0.75f; 
 
-float GameConstants::PROJ_TIME_E = 1.0f;
+float GameConstants::PROJ_TIME_E = 1.5f;
 
 float GameConstants::PARRY_ENEMY_DR = 0.1f;
 
@@ -64,9 +64,9 @@ int GameConstants::PLAYER_ATTACK_COOLDOWN =  16;
 
 float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
-int GameConstants::PLAYER_DODGE_COOLDOWN = 60;
+int GameConstants::PLAYER_DODGE_COOLDOWN = 50;
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
-float GameConstants::PLAYER_DODGE_SPEED = 10.0f;
+float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 float GameConstants::PLAYER_MAX_HP = 3;
 
