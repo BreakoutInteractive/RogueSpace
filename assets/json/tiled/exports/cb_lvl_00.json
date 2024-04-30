@@ -955,6 +955,12 @@
                          "height":128,
                          "id":807,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -967,6 +973,12 @@
                          "height":128,
                          "id":809,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -979,6 +991,12 @@
                          "height":128,
                          "id":810,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -991,6 +1009,12 @@
                          "height":128,
                          "id":812,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1015,6 +1039,12 @@
                          "height":128,
                          "id":815,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1027,6 +1057,12 @@
                          "height":128,
                          "id":816,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1039,6 +1075,12 @@
                          "height":128,
                          "id":817,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1051,6 +1093,12 @@
                          "height":128,
                          "id":818,
                          "name":"",
+                         "properties":[
+                                {
+                                 "name":"tall",
+                                 "type":"bool",
+                                 "value":false
+                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1067,6 +1115,12 @@
          "locked":true,
          "name":"stone-walls or rock-walls (random)",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -1077,35 +1131,6 @@
          "id":9,
          "name":"entities",
          "objects":[
-                {
-                 "gid":251,
-                 "height":128,
-                 "id":751,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"enemy_type",
-                         "propertytype":"Type",
-                         "type":"string",
-                         "value":"MELEE"
-                        }, 
-                        {
-                         "name":"hp",
-                         "type":"int",
-                         "value":5
-                        }, 
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":778
-                        }],
-                 "rotation":0,
-                 "type":"Lizard",
-                 "visible":true,
-                 "width":64,
-                 "x":1216,
-                 "y":704
-                }, 
                 {
                  "height":0,
                  "id":778,
@@ -1123,6 +1148,34 @@
                  "width":0,
                  "x":1536,
                  "y":640
+                }, 
+                {
+                 "gid":251,
+                 "height":128,
+                 "id":821,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":5
+                        }, 
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":778
+                        }],
+                 "rotation":0,
+                 "type":"Lizard",
+                 "visible":true,
+                 "width":64,
+                 "x":1216,
+                 "y":704
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1209,13 +1262,19 @@
          "locked":true,
          "name":"player-spawn-locations",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
          "y":0
         }],
  "nextlayerid":30,
- "nextobjectid":821,
+ "nextobjectid":822,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

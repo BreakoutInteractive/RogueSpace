@@ -18,17 +18,6 @@
 
 using namespace cugl;
 
-#define TILE_LAYER      "tilelayer"
-#define GROUP_LAYER     "group"
-#define OBJECT_LAYER    "objectgroup"
-#define LAYERS_KEY      "layers"
-#define TYPE            "type"
-#define VISIBLE         "visible"
-#define FIRSTGID        "firstgid"
-
-#define CLASS_COLLIDER  "Collider"
-#define CLASS_HITBOX    "Hitbox"
-
 #pragma mark -
 #pragma mark Loading Dependencies (Assets)
 
@@ -302,7 +291,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type == CLASS_COLLIDER){
             data = parseCustomCollision(object);
         }
-        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_PARRY){
+        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_PARRY || type == CLASS_RANGEDLIZARD){
             data = parseEnemy(object, type);
         }
         if (data != nullptr){
@@ -443,28 +432,15 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
 const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<JsonValue>& json, std::string enemyType){
     std::shared_ptr<JsonValue> enemyData = parsePhysicsObject(json, false, true, true);
     std::shared_ptr<JsonValue> enemyPathData = parsePath(json);
-    if (enemyType == CLASS_LIZARD){
-        std::shared_ptr<JsonValue> enemyTypeProperty = getPropertyValueByName(json->get("properties"), "enemy_type");
-        CUAssertLog(enemyTypeProperty != nullptr, "unable to find lizard type on object id %d", json->getInt("id"));
-        std::string lizardType = enemyTypeProperty->asString();
-        if (lizardType == "MELEE"){
-            enemyData->appendChild("type", JsonValue::alloc(std::string("melee-lizard")));
-        }
-        else {
-            enemyData->appendChild("type", JsonValue::alloc(std::string("ranged-lizard")));
-        }
-    }
-    else if (enemyType == CLASS_CASTER){
-        enemyData->appendChild("type", JsonValue::alloc(std::string("caster")));
-    }
-    else if (enemyType == CLASS_PARRY) {
-        enemyData->appendChild("type", JsonValue::alloc(std::string("parry")));
-    }
+    enemyData->appendChild("type", JsonValue::alloc(std::string(enemyType)));
     enemyData->appendChild("path", enemyPathData);
     enemyData->appendChild("defaultstate", JsonValue::alloc(std::string(enemyPathData->size() > 2 ? "patrol" : "sentry")));
-    std::shared_ptr<JsonValue> enemyHpProperty = getPropertyValueByName(json->get("properties"), "hp");
-    CUAssertLog(enemyHpProperty != nullptr, "unable to find lizard hp on object id %d", json->getInt("id"));
-    enemyData->appendChild("health", JsonValue::alloc(enemyHpProperty->asLong()));
+    std::shared_ptr<JsonValue> enemyHpProperty = getPropertyValueByName(json->get("properties"), ENEMY_HP_FIELD);
+    CUAssertLog(enemyHpProperty != nullptr, "unable to find enemy hp on object id %d", json->getInt("id"));
+    std::shared_ptr<JsonValue> enemyDmgProperty = getPropertyValueByName(json->get("properties"), ENEMY_DMG_FIELD);
+    CUAssertLog(enemyHpProperty != nullptr, "unable to find enemy damage on object id %d", json->getInt("id"));
+    enemyData->appendChild(ENEMY_HP_FIELD, JsonValue::alloc(enemyHpProperty->asFloat()));
+    enemyData->appendChild(ENEMY_DMG_FIELD, JsonValue::alloc(enemyDmgProperty->asFloat()));
     enemyData->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_ENEMY)));
     return enemyData;
 }

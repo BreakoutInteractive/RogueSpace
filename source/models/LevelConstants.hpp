@@ -7,12 +7,8 @@
 /** The global fields of the level model */
 #define WIDTH_FIELD         "width"
 #define HEIGHT_FIELD        "height"
-#define GRAVITY_FIELD       "gravity"
 #define PLAYER_FIELD        "player"
 #define ENEMY_FIELD         "enemy"
-#define GOALDOOR_FIELD      "exit"
-#define CRATES_FIELD        "crates"
-#define WALLS_FIELD         "walls"
 
 /** The physics fields for each object */
 #define POSITION_FIELD      "pos"
@@ -24,20 +20,11 @@
 #define DAMPING_FIELD       "damping"
 #define ROTATION_FIELD      "rotation"
 #define STATIC_VALUE        "static"
-
-/** The drawing fields for each object */
-#define TEXTURE_FIELD       "texture"
-#define PARRY_FIELD			"parry"
-#define ATTACK_FIELD		"attack"
 #define DEBUG_COLOR_FIELD   "debugcolor"
 #define DEBUG_OPACITY_FIELD "debugopacity"
 
-/** The wall specific fields */
-#define WALL_FIELD          "walls"
-#define BOUNDARY_FIELD      "boundaries"
-
-/** The key for our loaded level */
-#define LEVEL_KEY           "level"
+#pragma mark -
+#pragma mark Data Categories
 
 /** Level Data Format*/
 #define CONTENTS_FIELD      "contents"
@@ -53,8 +40,29 @@
 #define CLASS_COLLECTION    "Collection"
 #define CLASS_TILELAYER     "TileLayer"
 #define CLASS_LIZARD        "Lizard"
+#define CLASS_RANGEDLIZARD  "RangedLizard"
 #define CLASS_CASTER        "Caster"
-#define CLASS_PARRY			"Parry"
+#define CLASS_PARRY			"ParryEnemy"
 #define CLASS_RELIC         "Relic"
+#define CLASS_COLLIDER      "Collider"
+#define CLASS_HITBOX        "Hitbox"
+
+#pragma mark -
+#pragma mark Enemy Stat Fields
+
+#define ENEMY_HP_FIELD      "hp"
+#define ENEMY_DMG_FIELD     "damage"
+
+
+#pragma mark -
+#pragma mark Parsing Attributes
+
+#define TILE_LAYER          "tilelayer"
+#define GROUP_LAYER         "group"
+#define OBJECT_LAYER        "objectgroup"
+#define LAYERS_KEY          "layers"
+#define TYPE                "type"
+#define VISIBLE             "visible"
+#define FIRSTGID            "firstgid"
 
 #endif /* defined(__LEVEL_CONSTANTS_H__) */

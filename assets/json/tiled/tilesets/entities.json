@@ -9,7 +9,7 @@
  "name":"entities",
  "objectalignment":"bottom",
  "spacing":0,
- "tilecount":4,
+ "tilecount":5,
  "tiledversion":"1.10.2",
  "tileheight":128,
  "tiles":[
@@ -125,13 +125,64 @@
              "x":0,
              "y":0
             },
-         "properties":[
-                {
-                 "name":"hp",
-                 "type":"int",
-                 "value":5
-                }],
          "type":"Lizard"
+        }, 
+        {
+         "id":4,
+         "image":"..\/images\/ranged_lizard.png",
+         "imageheight":128,
+         "imagewidth":64,
+         "objectgroup":
+            {
+             "draworder":"topdown",
+             "name":"",
+             "objects":[
+                    {
+                     "height":110.393954897871,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"Hitbox",
+                     "visible":true,
+                     "width":27.3525128891338,
+                     "x":17.5134794757763,
+                     "y":8.46156873548742
+                    }, 
+                    {
+                     "height":0,
+                     "id":2,
+                     "name":"collider",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":22.7047971903825,
+                             "y":-11.3523985951912
+                            }, 
+                            {
+                             "x":0,
+                             "y":-22.7047971903825
+                            }, 
+                            {
+                             "x":-22.7047971903825,
+                             "y":-11.3523985951912
+                            }],
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":0,
+                     "x":32,
+                     "y":123.916508300482
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"RangedLizard"
         }, 
         {
          "id":2,
@@ -258,7 +309,7 @@
              "x":0,
              "y":0
             },
-         "type":"Parry"
+         "type":"ParryEnemy"
         }],
  "tilewidth":128,
  "type":"tileset",

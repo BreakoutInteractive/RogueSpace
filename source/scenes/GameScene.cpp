@@ -221,10 +221,11 @@ void GameScene::setLevel(int level){
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     setPlayerAttributes(currentHp);
+    CULog("level %d", _levelNumber);
 }
 
 std::string GameScene::getLevelKey(int level){
-    return LEVEL_KEY+std::to_string(level);
+    return "level"+std::to_string(level);
 }
 
 

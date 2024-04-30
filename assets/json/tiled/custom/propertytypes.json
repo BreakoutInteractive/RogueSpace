@@ -5,8 +5,13 @@
         "id": 1,
         "members": [
             {
+                "name": "damage",
+                "type": "float",
+                "value": 1
+            },
+            {
                 "name": "hp",
-                "type": "int",
+                "type": "float",
                 "value": 3
             },
             {
@@ -28,6 +33,11 @@
         "drawFill": true,
         "id": 2,
         "members": [
+            {
+                "name": "weight",
+                "type": "int",
+                "value": 1
+            }
         ],
         "name": "Collection",
         "type": "class",
@@ -88,15 +98,14 @@
         "id": 6,
         "members": [
             {
-                "name": "enemy_type",
-                "propertyType": "Type",
-                "type": "string",
-                "value": "MELEE"
+                "name": "damage",
+                "type": "float",
+                "value": 1
             },
             {
                 "name": "hp",
-                "type": "int",
-                "value": 2
+                "type": "float",
+                "value": 5
             },
             {
                 "name": "path",
@@ -118,8 +127,13 @@
         "id": 7,
         "members": [
             {
+                "name": "damage",
+                "type": "float",
+                "value": 1
+            },
+            {
                 "name": "hp",
-                "type": "int",
+                "type": "float",
                 "value": 2
             },
             {
@@ -128,7 +142,7 @@
                 "value": 0
             }
         ],
-        "name": "Parry",
+        "name": "ParryEnemy",
         "type": "class",
         "useAs": [
             "object",
@@ -174,6 +188,11 @@
         "drawFill": true,
         "id": 10,
         "members": [
+            {
+                "name": "weight",
+                "type": "int",
+                "value": 1
+            }
         ],
         "name": "Random",
         "type": "class",
@@ -181,17 +200,6 @@
             "layer",
             "project"
         ]
-    },
-    {
-        "id": 11,
-        "name": "Type",
-        "storageType": "string",
-        "type": "enum",
-        "values": [
-            "RANGE",
-            "MELEE"
-        ],
-        "valuesAsFlags": false
     },
     {
         "color": "#fff4c183",
@@ -205,6 +213,35 @@
             }
         ],
         "name": "Wall",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 13,
+        "members": [
+            {
+                "name": "damage",
+                "type": "float",
+                "value": 1
+            },
+            {
+                "name": "hp",
+                "type": "float",
+                "value": 5
+            },
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "RangedLizard",
         "type": "class",
         "useAs": [
             "object",
