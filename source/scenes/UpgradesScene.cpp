@@ -183,7 +183,7 @@ void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
             upgradeTexture = _shieldTexture;
             break;
         case ATK_SPEED:
-            upgradeName = "VIGOR";
+            upgradeName = "SPEED";
             upgradeDescription = "Increases melee speed";
             upgradeTexture = _atkSdTexture;
             break;
