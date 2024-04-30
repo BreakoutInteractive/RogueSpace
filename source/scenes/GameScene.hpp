@@ -42,8 +42,6 @@ protected:
     LevelParser _parser;
     
     int _levelNumber;
-    /** next level to load after upgrade level*/
-    int _nextValidLevel;
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
@@ -86,19 +84,15 @@ protected:
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
+    /** whether active level is upgrades*/
+    bool _upgradeLevelActive;
     
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
     /** a counter for the number levels until player earns upgrade */
     Counter _lvlsToUpgrade;
     
-public:
 #pragma mark Player Upgrades
-    /** whether the upgrades screen should be active*/
-    bool upgradeScreenActive;
-    
-    /** whether an upgrade has been chosen*/
-    bool upgradeChosen;
     
     /** classification of the different upgrade types*/
     enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
@@ -111,13 +105,19 @@ public:
     
     /** all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
-        
-    /** defense upgrade*/
-    std::shared_ptr<Upgradeable> defenseUpgrade;
-    /** attack upgrade*/
-    std::shared_ptr<Upgradeable> meleeUpgrade;
-    /** dodge upgrade*/
-    std::shared_ptr<Upgradeable> dodgeCDUpgrade;
+    
+public:
+    /** Returns all upgradeable stats for the player*/
+    std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
+    
+    /** Returns upgradeable stats to be displayed for level*/
+    std::vector<int> getDisplayedUpgrades(){return upgradesForLevel;}
+    
+    /** whether the upgrades screen should be active*/
+    bool upgradeScreenActive;
+    
+    /** whether an upgrade has been chosen*/
+    bool upgradeChosen;
     
     /**
      * Chooses random upgrades
@@ -191,7 +191,14 @@ public:
      *
      * @param activate whether relic object is active.
      */
-    void setRelicActive(bool activate) { _level->getRelic()->active =activate; }
+    void setRelicActive(bool activate) { _level->getRelic()->setActive(activate); }
+    
+    /**
+     * Returns whether Relic object is active
+     */
+    bool isRelicActive() { return _level->getRelic()->getActive(); }
+    
+    std::shared_ptr<Relic> getRelic() {return _level->getRelic();}
     
     /**
      * Returns a reference to the game renderer

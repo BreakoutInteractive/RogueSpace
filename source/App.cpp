@@ -97,7 +97,6 @@ void App::preUpdate(float dt) {
         case MENU:
             break;
         case UPGRADE:
-            _upgrades.updateScene(_gameplay.upgradesForLevel, _gameplay.availableUpgrades);
             _upgrades.setActive(true);
             _gameplay.activateInputs(true);
             _gameplay.getRenderer().setActivated(false);
@@ -115,7 +114,9 @@ void App::preUpdate(float dt) {
                 _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
                 _gameplay.getRenderer().setActivated(false);
             } else if (_gameplay.upgradeScreenActive){
+                _upgrades.setActive(false);
                 _scene = State::UPGRADE;
+                _upgrades.updateScene(_gameplay.getDisplayedUpgrades(), _gameplay.getAvailableUpgrades());
             }
             else{
                 _gameplay.activateInputs(true);
