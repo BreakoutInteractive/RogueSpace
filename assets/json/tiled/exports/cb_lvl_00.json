@@ -955,12 +955,6 @@
                          "height":128,
                          "id":807,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -973,12 +967,6 @@
                          "height":128,
                          "id":809,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -991,12 +979,6 @@
                          "height":128,
                          "id":810,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1009,12 +991,6 @@
                          "height":128,
                          "id":812,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1039,12 +1015,6 @@
                          "height":128,
                          "id":815,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1057,12 +1027,6 @@
                          "height":128,
                          "id":816,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1075,12 +1039,6 @@
                          "height":128,
                          "id":817,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1093,12 +1051,6 @@
                          "height":128,
                          "id":818,
                          "name":"",
-                         "properties":[
-                                {
-                                 "name":"tall",
-                                 "type":"bool",
-                                 "value":false
-                                }],
                          "rotation":0,
                          "type":"Wall",
                          "visible":true,
@@ -1140,7 +1092,7 @@
                         {
                          "name":"hp",
                          "type":"int",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
