@@ -153,7 +153,7 @@
                     "value": 0
                 }
             ],
-            "name": "ParryEnemy",
+            "name": "TankEnemy",
             "type": "class",
             "useAs": [
                 "object",
@@ -213,25 +213,6 @@
             ]
         },
         {
-            "color": "#fff4c183",
-            "drawFill": false,
-            "id": 12,
-            "members": [
-                {
-                    "name": "tall",
-                    "type": "bool",
-                    "value": false
-                }
-            ],
-            "name": "Wall",
-            "type": "class",
-            "useAs": [
-                "object",
-                "tile",
-                "project"
-            ]
-        },
-        {
             "color": "#ffa0a0a4",
             "drawFill": true,
             "id": 13,
@@ -253,6 +234,25 @@
                 }
             ],
             "name": "RangedLizard",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#fff4c183",
+            "drawFill": false,
+            "id": 12,
+            "members": [
+                {
+                    "name": "tall",
+                    "type": "bool",
+                    "value": false
+                }
+            ],
+            "name": "Wall",
             "type": "class",
             "useAs": [
                 "object",

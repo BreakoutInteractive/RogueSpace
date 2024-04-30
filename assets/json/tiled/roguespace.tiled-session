@@ -1,9 +1,10 @@
 {
     "activeFile": "",
     "expandedProjectPaths": [
+        "exports",
+        "tilesets",
         "working",
-        ".",
-        "tilesets"
+        "."
     ],
     "fileStates": {
         "exports/cb_lvl_00.json": {
@@ -11,7 +12,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 992.2498111306977,
-                "y": 657.5028959959709
+                "y": 645.5119617224882
             }
         },
         "exports/cb_lvl_01.json": {
@@ -48,10 +49,40 @@
         },
         "exports/cb_lvl_05.json": {
             "scale": 0.3977363782051282,
-            "selectedLayer": 0,
+            "selectedLayer": 5,
             "viewCenter": {
                 "x": 1248.3142785192647,
                 "y": 1040.890455804583
+            }
+        },
+        "exports/ob_lvl_00.json": {
+            "expandedGroupLayers": [
+                60,
+                48
+            ],
+            "expandedObjectLayers": [
+                64,
+                63,
+                65,
+                62,
+                37,
+                60,
+                9,
+                61
+            ],
+            "scale": 0.5348,
+            "selectedLayer": 36,
+            "viewCenter": {
+                "x": 2377.5243081525805,
+                "y": 1241.5856394913985
+            }
+        },
+        "exports/parry_enemy_test.json": {
+            "scale": 0.5003780241935484,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 992.2498111306977,
+                "y": 657.5028959959709
             }
         },
         "tilesets/entities.json": {
@@ -67,7 +98,7 @@
         "tilesets/terrain.json": {
             "dynamicWrapping": false,
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 0.5949
         },
         "working/alpha_level.json": {
             "scale": 0.748,
@@ -149,8 +180,27 @@
             "scale": 0.5003780241935484,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 992.2498111306977,
+                "x": 994.2483001762779,
                 "y": 817.3820196424075
+            }
+        },
+        "working/ob_default_small.json": {
+            "scale": 0.2892,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2546.680497925311,
+                "y": 1196.4038727524205
+            }
+        },
+        "working/ob_lvl_00.json": {
+            "expandedGroupLayers": [
+                55
+            ],
+            "scale": 1.1555,
+            "selectedLayer": 24,
+            "viewCenter": {
+                "x": 2587.191691908265,
+                "y": 1217.6546949372566
             }
         }
     },
@@ -163,17 +213,17 @@
     "project": "roguespace.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "working/cb_lvl_05.json",
-        "working/cb_lvl_04.json",
-        "working/cb_lvl_03.json",
-        "working/cb_lvl_02.json",
-        "working/cb_lvl_01.json",
-        "working/cb_lvl_00.json",
+        "tilesets/terrain.json",
         "exports/cb_lvl_05.json",
-        "exports/cb_lvl_04.json",
-        "exports/cb_lvl_03.json",
-        "exports/cb_lvl_02.json",
-        "exports/cb_lvl_01.json",
-        "exports/cb_lvl_00.json"
+        "tilesets/entities.json",
+        "exports/parry_enemy_test.json",
+        "working/example_level.json",
+        "working/cb_lvl_upgrades.json",
+        "working/cb_lvl_05.json",
+        "working/ob_lvl_00.json",
+        "working/ob_default_small.json",
+        "exports/ob_lvl_00.json",
+        "exports/cb_lvl_00.json",
+        "working/cb_lvl_04.json"
     ]
 }
