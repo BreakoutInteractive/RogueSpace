@@ -1732,6 +1732,12 @@
          "locked":true,
          "name":"rocks_bottom",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -2128,6 +2134,12 @@
          "locked":true,
          "name":"rocks_top",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -2529,6 +2541,12 @@
          "locked":true,
          "name":"rocks_left",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -3051,6 +3069,12 @@
          "locked":true,
          "name":"rocks_right",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -5679,6 +5703,12 @@
                 }],
          "name":"rock_surroundings",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -5701,10 +5731,9 @@
                          "name":"",
                          "properties":[
                                 {
-                                 "name":"enemy_type",
-                                 "propertytype":"Type",
-                                 "type":"string",
-                                 "value":"MELEE"
+                                 "name":"damage",
+                                 "type":"float",
+                                 "value":1
                                 }, 
                                 {
                                  "name":"hp",
@@ -5760,10 +5789,9 @@
                          "name":"",
                          "properties":[
                                 {
-                                 "name":"enemy_type",
-                                 "propertytype":"Type",
-                                 "type":"string",
-                                 "value":"MELEE"
+                                 "name":"damage",
+                                 "type":"float",
+                                 "value":1
                                 }, 
                                 {
                                  "name":"hp",
@@ -5819,10 +5847,9 @@
                          "name":"",
                          "properties":[
                                 {
-                                 "name":"enemy_type",
-                                 "propertytype":"Type",
-                                 "type":"string",
-                                 "value":"MELEE"
+                                 "name":"damage",
+                                 "type":"float",
+                                 "value":1
                                 }, 
                                 {
                                  "name":"hp",
@@ -5896,10 +5923,9 @@
                          "name":"",
                          "properties":[
                                 {
-                                 "name":"enemy_type",
-                                 "propertytype":"Type",
-                                 "type":"string",
-                                 "value":"MELEE"
+                                 "name":"damage",
+                                 "type":"float",
+                                 "value":1
                                 }, 
                                 {
                                  "name":"hp",
@@ -6009,10 +6035,9 @@
                          "name":"",
                          "properties":[
                                 {
-                                 "name":"enemy_type",
-                                 "propertytype":"Type",
-                                 "type":"string",
-                                 "value":"MELEE"
+                                 "name":"damage",
+                                 "type":"float",
+                                 "value":1
                                 }, 
                                 {
                                  "name":"hp",
@@ -6068,10 +6093,9 @@
                          "name":"",
                          "properties":[
                                 {
-                                 "name":"enemy_type",
-                                 "propertytype":"Type",
-                                 "type":"string",
-                                 "value":"MELEE"
+                                 "name":"damage",
+                                 "type":"float",
+                                 "value":1
                                 }, 
                                 {
                                  "name":"hp",
@@ -6152,6 +6176,12 @@
                 }],
          "name":"melee_spawn",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
@@ -6260,6 +6290,12 @@
          "locked":true,
          "name":"player-spawn-locations",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"weight",
+                 "type":"int",
+                 "value":1
+                }],
          "type":"group",
          "visible":true,
          "x":0,
