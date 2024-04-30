@@ -55,9 +55,9 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->doLayout();
     
     _healTexture = assets->get<Texture>("heal");
-    _parryTexture = assets->get<Texture>("upgrade-speed");
+    _parryTexture = assets->get<Texture>("upgrade-parry");
     _shieldTexture = assets->get<Texture>("upgrade-shield");
-    _atkSdTexture = assets->get<Texture>("upgrade-parry");
+    _atkSdTexture = assets->get<Texture>("upgrade-speed");
     _dashTexture = assets->get<Texture>("upgrade-dash");
     _bowTexture = assets->get<Texture>("upgrade-bow");
     _swordTexture = assets->get<Texture>("upgrade-sword");
@@ -160,6 +160,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     setActive(false);
     return true;
 }
+
 void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
     std::string upgradeName;
     std::string upgradeDescription;
