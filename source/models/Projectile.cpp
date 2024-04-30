@@ -8,7 +8,6 @@ bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_p
     _drawScale.set(1.0f, 1.0f);
     _damage = damage;
     _state = FLYING;
-    collisionString = "shadow";
 
     //init hitbox
     std::vector<Vec2> v;
@@ -31,7 +30,6 @@ bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_p
     obs->setFilterData(filter);
     obs->setEnabled(true);
     obs->setAwake(true);
-    //obs->setBodyType(b2_kinematicBody);
     //might need this depending on projectile speed
     // obs->setBullet(true);
     _collider = obs;
@@ -75,7 +73,6 @@ bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_p
     _drawScale.set(1.0f, 1.0f);
     _damage = damage;
     _state = FLYING;
-    collisionString = "shadow";
 
     //init hitbox
     //TODO: modify shape and size
@@ -89,7 +86,6 @@ bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_p
     obs->setFilterData(filter);
     obs->setEnabled(true);
     obs->setAwake(true);
-    obs->setBodyType(b2_kinematicBody);
     //might need this depending on projectile speed
     // obs->setBullet(true);
     _collider = obs;
@@ -124,7 +120,6 @@ bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr
     _drawScale.set(1.0f, 1.0f);
     _damage = damage;
     _state = FLYING;
-    collisionString = "shadow";
 
     //init hitbox
     //TODO: modify shape and size
@@ -138,7 +133,6 @@ bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr
     obs->setFilterData(filter);
     obs->setEnabled(true);
     obs->setAwake(true);
-    obs->setBodyType(b2_kinematicBody);
     //might need this depending on projectile speed
     // obs->setBullet(true);
     _collider = obs;
@@ -181,7 +175,7 @@ void Projectile::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
 
 void Projectile::addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) {
     GameObject::addObstaclesToWorld(world);
-    _colliderShadow->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(collisionString);
+    //_colliderShadow->getBody()->GetUserData().pointer = reinterpret_cast<intptr_t>(collisionString);
 }
 
 void Projectile::syncPositions() {

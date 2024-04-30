@@ -136,7 +136,6 @@ void CollisionController::beginContact(b2Contact* contact){
     // enemy ranged attack and projectile-wall collisions
     for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
         intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
-        intptr_t keyptr = reinterpret_cast<intptr_t>(p->collisionString);
         if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
@@ -150,11 +149,10 @@ void CollisionController::beginContact(b2Contact* contact){
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
             intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
-            if ((body1->GetUserData().pointer == keyptr && body2->GetUserData().pointer == wptr) ||
-                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == keyptr)) {
+            if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == wptr) ||
+                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == projptr)) {
                 //destroy projectile when hitting a wall
-                //might need to do some stuff with shadows b/c it's kinda weird as-is
-                if (!w->getCollider()->isSensor()) p->setExploding();
+                if (!w->getCollider()->isSensor() && !p->isExploding()) p->setExploding();
             }
         }
     }
@@ -228,19 +226,11 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
     }
     for (std::shared_ptr<Projectile> p : _level->getProjectiles()) {
         intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
-        intptr_t keyptr = reinterpret_cast<intptr_t>(p->collisionString);
         if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
+            // ignore projectile-player collision when player is dodging
             if (_level->getPlayer()->_state == Player::state::DODGE) {
                 contact->SetEnabled(false);
-            }
-        }
-        for (std::shared_ptr<Wall> w : _level->getWalls()) {
-            intptr_t wptr = reinterpret_cast<intptr_t>(w.get());
-            if ((body1->GetUserData().pointer == keyptr && body2->GetUserData().pointer == wptr) ||
-                (body1->GetUserData().pointer == wptr && body2->GetUserData().pointer == keyptr)) {
-                //projectiles phase through passable walls
-                if (w->getCollider()->isSensor()) contact->SetEnabled(false);
             }
         }
     }
