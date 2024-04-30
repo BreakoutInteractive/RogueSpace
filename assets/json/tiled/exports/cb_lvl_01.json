@@ -29,7 +29,6 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":24,
          "id":1,
-         "locked":true,
          "name":"ground",
          "opacity":1,
          "type":"tilelayer",
