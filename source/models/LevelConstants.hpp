@@ -42,7 +42,7 @@
 #define CLASS_LIZARD        "Lizard"
 #define CLASS_RANGEDLIZARD  "RangedLizard"
 #define CLASS_CASTER        "Caster"
-#define CLASS_PARRY			"ParryEnemy"
+#define CLASS_TANK			"TankEnemy"
 #define CLASS_RELIC         "Relic"
 #define CLASS_COLLIDER      "Collider"
 #define CLASS_HITBOX        "Hitbox"

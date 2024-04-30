@@ -291,7 +291,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type == CLASS_COLLIDER){
             data = parseCustomCollision(object);
         }
-        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_PARRY || type == CLASS_RANGEDLIZARD){
+        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD){
             data = parseEnemy(object, type);
         }
         if (data != nullptr){
@@ -438,7 +438,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<J
     std::shared_ptr<JsonValue> enemyHpProperty = getPropertyValueByName(json->get("properties"), ENEMY_HP_FIELD);
     CUAssertLog(enemyHpProperty != nullptr, "unable to find enemy hp on object id %d", json->getInt("id"));
     std::shared_ptr<JsonValue> enemyDmgProperty = getPropertyValueByName(json->get("properties"), ENEMY_DMG_FIELD);
-    CUAssertLog(enemyHpProperty != nullptr, "unable to find enemy damage on object id %d", json->getInt("id"));
+    CUAssertLog(enemyDmgProperty != nullptr, "unable to find enemy damage on object id %d", json->getInt("id"));
     enemyData->appendChild(ENEMY_HP_FIELD, JsonValue::alloc(enemyHpProperty->asFloat()));
     enemyData->appendChild(ENEMY_DMG_FIELD, JsonValue::alloc(enemyDmgProperty->asFloat()));
     enemyData->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_ENEMY)));

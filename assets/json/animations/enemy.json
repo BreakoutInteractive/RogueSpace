@@ -39,11 +39,14 @@
         "stun-effect": {
             "file":     "textures/sprites/effect_stunned.png"
         },
-        "parry-idle": {
-            "file":     "textures/sprites/tank/parry_idle.png"
+        "tank-idle": {
+            "file":     "textures/sprites/tank/tank_idle.png"
         },
-        "parry-stun": {
-            "file":     "textures/sprites/tank/parry_stunned.png"
+        "tank-stun": {
+            "file":     "textures/sprites/tank/tank_stunned.png"
+        },
+        "tank-attack": {
+            "file":     "textures/sprites/tank/tank_attack.png"
         }
     }
 }

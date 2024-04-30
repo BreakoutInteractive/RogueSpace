@@ -4676,7 +4676,7 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"ParryEnemy",
+                 "type":"TankEnemy",
                  "visible":true,
                  "width":128,
                  "x":1344,

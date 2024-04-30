@@ -1,12 +1,12 @@
 //
-//  ParryEnemy.hpp
+//  TankEnemy.hpp
 //  RS
 //
 //  Created by Miguel Amor on 4/25/24.
 //
 
-#ifndef ParryEnemy_hpp
-#define ParryEnemy_hpp
+#ifndef TankEnemy_hpp
+#define TankEnemy_hpp
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
@@ -18,10 +18,10 @@ class Animation;
 /**
  *  This class represents a melee enemy in the game. It can only be damaged while stunned
  */
-class ParryEnemy : public Enemy {
+class TankEnemy : public Enemy {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(ParryEnemy);
+    CU_DISALLOW_COPY_AND_ASSIGN(TankEnemy);
 
 protected:
     // std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
@@ -32,12 +32,12 @@ public:
     /**
      * Creates a new enemy at the origin.
      */
-    ParryEnemy(void) : Enemy() { }
+    TankEnemy(void) : Enemy() { }
 
     /**
      * Destroys this player, releasing all resources.
      */
-    virtual ~ParryEnemy(void) { dispose(); }
+    virtual ~TankEnemy(void) { dispose(); }
 
     /**
      * Disposes all resources and assets
@@ -76,15 +76,15 @@ public:
      *
      * @return a newly allocated player with the given position
      */
-    static std::shared_ptr<ParryEnemy> alloc(std::shared_ptr<JsonValue> data) {
-        auto result = std::make_shared<ParryEnemy>();
+    static std::shared_ptr<TankEnemy> alloc(std::shared_ptr<JsonValue> data) {
+        auto result = std::make_shared<TankEnemy>();
         return (result->init(data) ? result : nullptr);
     }
 
 #pragma mark -
 #pragma mark Accessors
 
-    std::string getType() override { return "parry enemy"; }
+    std::string getType() override { return "tank enemy"; }
 
 #pragma mark -
 #pragma mark Physics
@@ -114,4 +114,4 @@ public:
 
 };
 
-#endif /* ParryEnemy_hpp */
+#endif /* TankEnemy_hpp */

@@ -142,7 +142,7 @@
                 "value": 0
             }
         ],
-        "name": "ParryEnemy",
+        "name": "TankEnemy",
         "type": "class",
         "useAs": [
             "object",
