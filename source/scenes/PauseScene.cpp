@@ -58,6 +58,20 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _resume = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_resume"));
     _settings = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_pausemenu_menu_setting"));
     
+    _sword = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_sword"));
+    _bow = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_bow"));
+    _parry = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_parry"));
+    _dash = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_dash"));
+    _shield = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_shield"));
+    _speed = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("pausemenu_speed"));
+    
+    _sword->setVisible(false);
+    _bow->setVisible(false);
+    _parry->setVisible(false);
+    _dash->setVisible(false);
+    _shield->setVisible(false);
+    _speed->setVisible(false);
+
     // Program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
         if (down) {

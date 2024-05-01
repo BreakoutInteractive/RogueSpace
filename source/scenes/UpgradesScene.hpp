@@ -28,6 +28,8 @@ public:
      * chose.
      */
     enum Choice {
+        /**User has made no choice**/
+        NONE,
         /** User wants to heal */
         HEALTH,
         /** User wants upgrade option 1 */

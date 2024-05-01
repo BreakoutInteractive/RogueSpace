@@ -28,7 +28,7 @@
          "file": "textures/upgrades-screen/upgrade-shield.png"
       },
       "upgrade-speed": {
-         "file": "textures/upgrades-screen/upgrade-speed.png"
+         "file": "textures/upgrades-screen/upgrade-atkspeed.png"
       }
    },
    "scene2s": {

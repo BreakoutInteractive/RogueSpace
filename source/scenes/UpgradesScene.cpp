@@ -55,15 +55,16 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->doLayout();
     
     _healTexture = assets->get<Texture>("heal");
-    _parryTexture = assets->get<Texture>("upgrade-speed");
+    _parryTexture = assets->get<Texture>("upgrade-parry");
     _shieldTexture = assets->get<Texture>("upgrade-shield");
-    _atkSdTexture = assets->get<Texture>("upgrade-parry");
+    _atkSdTexture = assets->get<Texture>("upgrade-speed");
     _dashTexture = assets->get<Texture>("upgrade-dash");
     _bowTexture = assets->get<Texture>("upgrade-bow");
     _swordTexture = assets->get<Texture>("upgrade-sword");
     
 
     _selectedUpgrade = 0;
+    _choice = Choice::NONE;
     _option1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item"));
     _option1Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_name"));
     _option1Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_description"));
@@ -159,6 +160,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     setActive(false);
     return true;
 }
+
 void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
     std::string upgradeName;
     std::string upgradeDescription;
@@ -182,7 +184,7 @@ void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
             upgradeTexture = _shieldTexture;
             break;
         case ATK_SPEED:
-            upgradeName = "VIGOR";
+            upgradeName = "SPEED";
             upgradeDescription = "Increases melee speed";
             upgradeTexture = _atkSdTexture;
             break;
@@ -293,6 +295,7 @@ void UpgradesScene::setActive(bool value) {
             _confirm2->setDown(false);
             _heal->setToggle(false);
             _heal->setDown(false);
+            _choice = Choice::NONE;
             
         }
     }

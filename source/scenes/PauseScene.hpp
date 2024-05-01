@@ -40,6 +40,20 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _resume;
     /** The button for in-game settings */
     std::shared_ptr<cugl::scene2::Button> _settings;
+    
+    /** The button for restarting  game */
+    std::shared_ptr<cugl::scene2::Button> _sword;
+    /** The button for going back to game */
+    std::shared_ptr<cugl::scene2::Button> _bow;
+    /** The button for in-game settings */
+    std::shared_ptr<cugl::scene2::Button> _parry;
+    /** The button for restarting  game */
+    std::shared_ptr<cugl::scene2::Button> _dash;
+    /** The button for going back to game */
+    std::shared_ptr<cugl::scene2::Button> _shield;
+    /** The button for in-game settings */
+    std::shared_ptr<cugl::scene2::Button> _speed;
+    
     /** The player choice */
     Choice _choice;
     bool _active;
