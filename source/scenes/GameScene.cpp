@@ -308,6 +308,12 @@ void GameScene::preUpdate(float dt) {
             return;
         }
         else {
+            if (_upgradeLevelActive) {
+                _levelNumber+=1;
+                setLevel(_levelNumber);
+                upgradeChosen=false;
+                return;
+            }
             _winNode->setVisible(true); // for now
         }
     }
