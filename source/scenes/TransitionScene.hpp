@@ -88,6 +88,11 @@ public:
      */
     virtual void setActive(bool value) override;
     
+    /** sets the initial color to fade from*/
+    void setInitialColor(Color4 color){
+        _startColor = color;
+    }
+    
     /**
      * sets the fade-in effect duration and color
      * @param duration length (seconds) for fade in to last

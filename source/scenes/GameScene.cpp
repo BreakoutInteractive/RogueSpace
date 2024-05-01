@@ -138,8 +138,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _areaClearEffect = Animation::alloc(SpriteSheet::alloc(assets->get<Texture>("area-clear"), 5, 2), 1.0f, false);
     
     _levelTransition.init(assets);
-    _levelTransition.setFadeIn(GameConstants::TRANSITION_FADE_IN_TIME, Color4::WHITE);
-    _levelTransition.setFadeOut(GameConstants::TRANSITION_FADE_OUT_TIME, Color4::CLEAR);
+    _levelTransition.setInitialColor(Color4(255, 255, 255, 0));
+    _levelTransition.setFadeIn(GameConstants::TRANSITION_FADE_IN_TIME);
+    _levelTransition.setFadeOut(GameConstants::TRANSITION_FADE_OUT_TIME, Color4(255, 255, 255, 0));
     _levelTransition.setFadeInCallBack([this](){
         this->_levelNumber+=1;
         this->setLevel(_levelNumber);
