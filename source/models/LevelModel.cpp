@@ -79,6 +79,11 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         _tileLayers[ii]->draw(batch);
     }
     
+    // indicators should be drawn between tile layers and objects
+    if (_player->_state == Player::state::CHARGING || _player->_state == Player::state::CHARGED){
+        _player->drawRangeIndicator(batch);
+    }
+    
     // sort elements to be drawn
     std::sort(_dynamicObjects.begin(), _dynamicObjects.end(),
         [](const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b) {
