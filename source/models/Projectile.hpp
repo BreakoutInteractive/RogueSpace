@@ -8,9 +8,9 @@
 using namespace cugl;
 class Projectile : public GameObject {
 private:
-	bool playerInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets);
-	bool lizardInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets);
-	bool mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets);
+	bool playerInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
+	bool lizardInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
+	bool mageInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
 	std::shared_ptr<Animation> _flyingAnimation;
 	std::shared_ptr<Animation> _explodingAnimation;
 	enum state { FLYING, EXPLODING };
@@ -26,7 +26,7 @@ public:
 	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the player projectile assets
 	 */
-	static std::shared_ptr<Projectile> playerAlloc(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> playerAlloc(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
 		return (result->playerInit(pos, damage, ang, assets) ? result : nullptr);
 	}
@@ -38,7 +38,7 @@ public:
 	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the enemy projectile assets
 	 */
-	static std::shared_ptr<Projectile> lizardAlloc(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> lizardAlloc(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
 		return (result->lizardInit(pos, damage, ang, assets) ? result : nullptr);
 	}
@@ -50,7 +50,7 @@ public:
 	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the enemy projectile assets
 	 */
-	static std::shared_ptr<Projectile> mageAlloc(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> mageAlloc(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
 		return (result->mageInit(pos, damage, ang, assets) ? result : nullptr);
 	}
@@ -80,7 +80,7 @@ public:
 	void addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) override;
 	void syncPositions() override;
 
-	const int getDamage() { return _damage; }
+	const float getDamage() { return _damage; }
 
 	void setAngle(float ang) { 
 		_collider->setAngle(ang);

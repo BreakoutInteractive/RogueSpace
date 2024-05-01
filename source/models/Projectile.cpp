@@ -1,6 +1,6 @@
 #include "Projectile.hpp"
 
-bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
     //init fields
     _enabled = true;
     _position = pos;
@@ -63,7 +63,7 @@ bool Projectile::playerInit(Vec2 pos, int damage, float ang, const std::shared_p
     return true;
 }
 
-bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::lizardInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
     //TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
 
     //init fields
@@ -110,7 +110,7 @@ bool Projectile::lizardInit(Vec2 pos, int damage, float ang, const std::shared_p
     return true;
 }
 
-bool Projectile::mageInit(Vec2 pos, int damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
     //TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
 
     //init fields
