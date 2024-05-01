@@ -136,9 +136,18 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     
     _areaClearEffect = Animation::alloc(SpriteSheet::alloc(assets->get<Texture>("area-clear"), 5, 2), 1.0f, false);
+    
+    _levelTransition.init(assets);
+    _levelTransition.setFadeIn(GameConstants::TRANSITION_FADE_IN_TIME, Color4::WHITE);
+    _levelTransition.setFadeOut(GameConstants::TRANSITION_FADE_OUT_TIME, Color4::CLEAR);
+    _levelTransition.setFadeInCallBack([this](){
+        this->_levelNumber+=1;
+        this->setLevel(_levelNumber);
+        this->upgradeChosen=false;
+    });
   
 #pragma mark - Game State Initialization
-    _active = true;
+    setActive(true);
     _complete = false;
     _defeat = false;
     setLevel(_levelNumber);         // load initial level/hub
@@ -148,7 +157,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 }
 
 void GameScene::dispose() {
-    if (_active) {
+    if (isActive()) {
         _input.dispose();
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
@@ -273,7 +282,6 @@ void GameScene::preUpdate(float dt) {
         return;
     }
     
-    // TODO: this is only a temporary win condition, revisit after Gameplay Release
     if (!isComplete() && !isDefeat()){
         // game not won, check if any enemies active
         int activeCount = 0;
@@ -300,12 +308,13 @@ void GameScene::preUpdate(float dt) {
     }
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
+    // level is completed when player successfully exits the room
     if (_level->isCompleted()){
         if (_levelNumber < MAX_LEVEL){
-            _levelNumber+=1;
-            setLevel(_levelNumber);
-            upgradeChosen=false;
-            return;
+            // begin transitioning to next level
+            if (!_levelTransition.isActive()){
+                _levelTransition.setActive(true);
+            }
         }
         else {
             if (_upgradeLevelActive) {
@@ -516,12 +525,12 @@ void GameScene::preUpdate(float dt) {
         if ((*it)->isCompleted()) _level->delProjectile((*it));
     }
     _areaClearEffect->update(dt); // does nothing when not active
+    _levelTransition.update(dt); // also does nothing when not active
 }
 
 
 void GameScene::fixedUpdate(float step) {
     if (_level != nullptr){
-        _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto player = _level->getPlayer();
         if (player->_state == Player::state::DODGE){
             _camController.setAcceleration(GameConstants::GAME_CAMERA_ACCEL);
@@ -543,6 +552,13 @@ void GameScene::fixedUpdate(float step) {
         _winNode->setPosition(_camController.getPosition());
         _loseNode->setPosition(_camController.getPosition());
         
+        if (!hitPauseCounter.isZero()){
+            if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
+                return; // this gives the vague "lag" effect (quitting physics update)
+            }
+        }
+        
+        _level->getWorld()->update(step);     // Turn the physics engine crank.
         auto enemies = _level->getEnemies();
         for (auto it = enemies.begin(); it != enemies.end(); ++it){
             auto e = *it;
@@ -646,4 +662,7 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
         batch->end();
     }
     Scene2::render(batch);
+    if (_levelTransition.isActive()){
+        _levelTransition.render(batch);
+    }
 }

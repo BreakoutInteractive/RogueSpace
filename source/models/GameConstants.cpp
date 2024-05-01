@@ -11,6 +11,8 @@
 #pragma mark -
 #pragma mark Game Effects
     
+float GameConstants::TRANSITION_FADE_IN_TIME = 2.0f;
+float GameConstants::TRANSITION_FADE_OUT_TIME = 1.0f;
 int GameConstants::HIT_PAUSE_FRAMES = 8;
 
 #pragma mark -
