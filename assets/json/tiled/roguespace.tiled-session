@@ -7,11 +7,11 @@
     ],
     "fileStates": {
         "exports/cb_lvl_00.json": {
-            "scale": 0.5003780241935484,
+            "scale": 0.8664,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 992.2498111306977,
-                "y": 645.5119617224882
+                "x": 988.5734072022161,
+                "y": 488.2271468144046
             }
         },
         "exports/cb_lvl_01.json": {
@@ -56,24 +56,53 @@
         },
         "exports/ob_lvl_00.json": {
             "expandedGroupLayers": [
-                60,
                 48
             ],
             "expandedObjectLayers": [
-                64,
-                63,
-                65,
-                62,
-                37,
                 60,
-                9,
-                61
+                37,
+                27
             ],
-            "scale": 0.5348,
-            "selectedLayer": 36,
+            "scale": 1.03,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 2377.5243081525805,
-                "y": 1241.5856394913985
+                "x": 2265.5339805825242,
+                "y": 1074.7572815533981
+            }
+        },
+        "exports/ob_lvl_01.json": {
+            "expandedObjectLayers": [
+                27
+            ],
+            "scale": 0.8283,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 2148.3761922008935,
+                "y": 952.5534226729446
+            }
+        },
+        "exports/ob_lvl_02.json": {
+            "expandedObjectLayers": [
+                27
+            ],
+            "scale": 1.1015,
+            "selectedLayer": 22,
+            "viewCenter": {
+                "x": 1794.3713118474807,
+                "y": 829.7775760326826
+            }
+        },
+        "exports/ob_lvl_03.json": {
+            "expandedGroupLayers": [
+                206,
+                165,
+                173
+            ],
+            "scale": 0.7915,
+            "selectedLayer": 16,
+            "viewCenter": {
+                "x": 1773.2154137713203,
+                "y": 963.9924194567277
             }
         },
         "exports/parry_enemy_test.json": {
@@ -176,11 +205,11 @@
             }
         },
         "working/example_level.json": {
-            "scale": 0.5003780241935484,
+            "scale": 2.1605,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 994.2483001762779,
-                "y": 817.3820196424075
+                "x": 712.1036797037724,
+                "y": 448.50728997917156
             }
         },
         "working/ob_default_small.json": {
@@ -188,18 +217,75 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 2546.680497925311,
-                "y": 1196.4038727524205
+                "y": 1196.4038727524203
             }
         },
         "working/ob_lvl_00.json": {
             "expandedGroupLayers": [
-                55
+                60
             ],
-            "scale": 1.1555,
-            "selectedLayer": 24,
+            "expandedObjectLayers": [
+                27
+            ],
+            "scale": 0.7392,
+            "selectedLayer": 43,
             "viewCenter": {
-                "x": 2587.191691908265,
-                "y": 1217.6546949372566
+                "x": 2309.9296536796537,
+                "y": 1017.3160173160175
+            }
+        },
+        "working/ob_lvl_01.json": {
+            "expandedObjectLayers": [
+                27
+            ],
+            "scale": 0.7199,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1994.0269481872483,
+                "y": 1152.9379080427839
+            }
+        },
+        "working/ob_lvl_02.json": {
+            "expandedObjectLayers": [
+                27
+            ],
+            "scale": 0.3532,
+            "selectedLayer": 22,
+            "viewCenter": {
+                "x": 1660.5322763306906,
+                "y": 787.0894677236691
+            }
+        },
+        "working/ob_lvl_03.json": {
+            "scale": 0.21248929794520546,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2336.588264920675,
+                "y": 1171.823721984387
+            }
+        },
+        "working/ob_lvl_04.json": {
+            "scale": 0.27213541666666663,
+            "selectedLayer": 20,
+            "viewCenter": {
+                "x": 1824.459330143541,
+                "y": 981.1291866028711
+            }
+        },
+        "working/ob_lvl_05.json": {
+            "scale": 0.27213541666666663,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 1824.459330143541,
+                "y": 981.1291866028711
+            }
+        },
+        "working/ob_lvl_upgrades.json": {
+            "scale": 0.27265625,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 1824.6418338108883,
+                "y": 979.2550143266474
             }
         }
     },
@@ -210,19 +296,19 @@
     "openFiles": [
     ],
     "project": "roguespace.tiled-project",
-    "property.type": "object",
+    "property.type": "int",
     "recentFiles": [
-        "tilesets/terrain.json",
-        "exports/cb_lvl_05.json",
-        "tilesets/entities.json",
-        "exports/parry_enemy_test.json",
-        "working/example_level.json",
-        "working/cb_lvl_upgrades.json",
-        "working/cb_lvl_05.json",
-        "working/ob_lvl_00.json",
-        "working/ob_default_small.json",
         "exports/ob_lvl_00.json",
-        "exports/cb_lvl_00.json",
-        "working/cb_lvl_04.json"
+        "working/ob_lvl_05.json",
+        "working/ob_lvl_upgrades.json",
+        "working/ob_lvl_04.json",
+        "working/ob_lvl_03.json",
+        "working/ob_lvl_02.json",
+        "working/ob_lvl_00.json",
+        "working/ob_lvl_01.json",
+        "working/cb_lvl_01.json",
+        "exports/ob_lvl_01.json",
+        "working/ob_default_small.json",
+        "working/example_level.json"
     ]
 }

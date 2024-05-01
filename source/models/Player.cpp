@@ -532,7 +532,6 @@ void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
 
 void Player::update(float dt) {
     updateCounters();
-    updateAnimation(dt);
     if (_combo > 1){
         _comboTimer += dt; // incrementing timer to constraint player on making 2nd/3rd hits within time constraint
     }

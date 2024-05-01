@@ -2046,7 +2046,6 @@
         {
          "draworder":"topdown",
          "id":27,
-         "locked":true,
          "name":"energy-walls",
          "objects":[
                 {

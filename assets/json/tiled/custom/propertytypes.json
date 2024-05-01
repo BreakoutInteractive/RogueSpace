@@ -65,6 +65,11 @@
         "id": 4,
         "members": [
             {
+                "name": "animation",
+                "type": "int",
+                "value": 0
+            },
+            {
                 "name": "tall",
                 "type": "bool",
                 "value": false
@@ -114,35 +119,6 @@
             }
         ],
         "name": "Lizard",
-        "type": "class",
-        "useAs": [
-            "object",
-            "tile",
-            "project"
-        ]
-    },
-    {
-        "color": "#ffa0a0a4",
-        "drawFill": false,
-        "id": 7,
-        "members": [
-            {
-                "name": "damage",
-                "type": "float",
-                "value": 1
-            },
-            {
-                "name": "hp",
-                "type": "float",
-                "value": 2
-            },
-            {
-                "name": "path",
-                "type": "object",
-                "value": 0
-            }
-        ],
-        "name": "TankEnemy",
         "type": "class",
         "useAs": [
             "object",
@@ -202,25 +178,6 @@
         ]
     },
     {
-        "color": "#fff4c183",
-        "drawFill": false,
-        "id": 12,
-        "members": [
-            {
-                "name": "tall",
-                "type": "bool",
-                "value": false
-            }
-        ],
-        "name": "Wall",
-        "type": "class",
-        "useAs": [
-            "object",
-            "tile",
-            "project"
-        ]
-    },
-    {
         "color": "#ffa0a0a4",
         "drawFill": true,
         "id": 13,
@@ -242,6 +199,54 @@
             }
         ],
         "name": "RangedLizard",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 7,
+        "members": [
+            {
+                "name": "damage",
+                "type": "float",
+                "value": 1
+            },
+            {
+                "name": "hp",
+                "type": "float",
+                "value": 2
+            },
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "TankEnemy",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#fff4c183",
+        "drawFill": false,
+        "id": 12,
+        "members": [
+            {
+                "name": "tall",
+                "type": "bool",
+                "value": false
+            }
+        ],
+        "name": "Wall",
         "type": "class",
         "useAs": [
             "object",

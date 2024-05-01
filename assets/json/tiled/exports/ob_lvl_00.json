@@ -183,6 +183,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -200,6 +205,11 @@
                  "id":822,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -219,6 +229,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -236,6 +251,11 @@
                  "id":824,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -255,6 +275,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -272,6 +297,11 @@
                  "id":826,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -291,6 +321,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -308,6 +343,11 @@
                  "id":828,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -327,6 +367,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -344,6 +389,11 @@
                  "id":830,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -363,6 +413,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -380,6 +435,11 @@
                  "id":832,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -399,6 +459,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -416,6 +481,11 @@
                  "id":834,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -435,6 +505,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -452,6 +527,11 @@
                  "id":836,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -471,6 +551,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -488,6 +573,11 @@
                  "id":838,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -507,6 +597,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -524,6 +619,11 @@
                  "id":840,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -543,6 +643,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -560,6 +665,11 @@
                  "id":842,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -579,6 +689,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -596,6 +711,11 @@
                  "id":844,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -615,6 +735,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -632,6 +757,11 @@
                  "id":858,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -651,6 +781,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -668,6 +803,11 @@
                  "id":860,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -687,6 +827,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -704,6 +849,11 @@
                  "id":862,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -723,6 +873,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -740,6 +895,11 @@
                  "id":864,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -759,6 +919,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -776,6 +941,11 @@
                  "id":866,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -795,6 +965,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -812,6 +987,11 @@
                  "id":868,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -832,6 +1012,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -849,6 +1034,11 @@
                  "id":870,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -868,6 +1058,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -885,6 +1080,11 @@
                  "id":872,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -904,6 +1104,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -921,6 +1126,11 @@
                  "id":874,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -940,6 +1150,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -957,6 +1172,11 @@
                  "id":876,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -976,6 +1196,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -993,6 +1218,11 @@
                  "id":879,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1012,6 +1242,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1029,6 +1264,11 @@
                  "id":881,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1048,6 +1288,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1065,6 +1310,11 @@
                  "id":883,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1084,6 +1334,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1101,6 +1356,11 @@
                  "id":885,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1120,6 +1380,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1137,6 +1402,11 @@
                  "id":887,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1156,6 +1426,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1173,6 +1448,11 @@
                  "id":889,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1192,6 +1472,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1209,6 +1494,11 @@
                  "id":891,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -1228,6 +1518,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -1245,6 +1540,11 @@
                  "id":893,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -7491,7 +7791,7 @@
                  "value":1
                 }],
          "type":"group",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 

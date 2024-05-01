@@ -527,16 +527,22 @@ void GameScene::preUpdate(float dt) {
         upgradeScreenActive =_level->getRelic()->getTouched();
     }
 #pragma mark - Component Updates
-    player->update(dt); // updates animations, counters, hitboxes
+    
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
-        (*it)->updateAnimation(dt);
     }
     std::vector<std::shared_ptr<Projectile>> projs = _level->getProjectiles();
     for (auto it = projs.begin(); it != projs.end(); ++it) {
         (*it)->updateAnimation(dt);
         if ((*it)->isCompleted()) _level->delProjectile((*it));
     }
+    
+    // update every animation in game objects
+    for (auto& gameobject : _level->getDynamicObjects()){
+        gameobject->updateAnimation(dt);
+    }
+    
+    player->update(dt); // updates counters, hitboxes
     _areaClearEffect->update(dt); // does nothing when not active
     _levelTransition.update(dt); // also does nothing when not active
 }

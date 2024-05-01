@@ -17,6 +17,9 @@
         },
         "area-clear": {
             "file":      "textures/gameplay/area_clear.png"
+        },
+        "energy-wall": {
+            "file":        "textures/gameplay/energy_wall.png"
         }
 	},
     
