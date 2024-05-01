@@ -172,9 +172,8 @@ void CollisionController::beginContact(b2Contact* contact){
     if (_level->getRelic() != nullptr){
         intptr_t relptr = reinterpret_cast<intptr_t>(_level->getRelic().get());
         if (((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
-            (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) && (_level->getRelic()->active)) {
+            (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) && (_level->getRelic()->getActive())) {
             _level->getRelic()->contactMade.increment();
-            CULog("%d", _level->getRelic()->contactMade.getCount());
         }
     }
 }

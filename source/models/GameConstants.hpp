@@ -20,6 +20,12 @@ public:
 #pragma mark -
 #pragma mark Game Effects
     
+    /** duration (seconds) for fade-in  between levels */
+    static float TRANSITION_FADE_IN_TIME;
+    /** duration (seconds) for fade-out  between levels */
+    static float TRANSITION_FADE_OUT_TIME;
+    
+    /** the number of frames the critical hit-lag lasts */
     static int HIT_PAUSE_FRAMES;
     
 #pragma mark -
