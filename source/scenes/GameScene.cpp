@@ -136,6 +136,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     
     _areaClearEffect = Animation::alloc(SpriteSheet::alloc(assets->get<Texture>("area-clear"), 5, 2), 1.0f, false);
+    
+    _levelTransition.init(assets);
   
 #pragma mark - Game State Initialization
     _active = true;
@@ -271,7 +273,6 @@ void GameScene::preUpdate(float dt) {
         return;
     }
     
-    // TODO: this is only a temporary win condition, revisit after Gameplay Release
     if (!isComplete() && !isDefeat()){
         // game not won, check if any enemies active
         int activeCount = 0;
@@ -508,6 +509,7 @@ void GameScene::preUpdate(float dt) {
         if ((*it)->isCompleted()) _level->delProjectile((*it));
     }
     _areaClearEffect->update(dt); // does nothing when not active
+    _levelTransition.update(dt); // also does nothing when not active
 }
 
 
@@ -638,4 +640,8 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
         batch->end();
     }
     Scene2::render(batch);
+    if (_levelTransition.isActive()){
+        CULog("it's actively drawing");
+        _levelTransition.render(batch);
+    }
 }

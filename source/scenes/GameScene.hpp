@@ -25,6 +25,7 @@
 #include "../utility/LevelParser.hpp"
 #include "../models/Counter.hpp"
 #include "../components/Animation.hpp"
+#include "TransitionScene.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -69,6 +70,8 @@ protected:
     GameRenderer _gameRenderer;
     /** the animation played to signal area is cleared */
     std::shared_ptr<Animation> _areaClearEffect;
+    
+    TransitionScene _levelTransition;
 
     // MODEL
 
