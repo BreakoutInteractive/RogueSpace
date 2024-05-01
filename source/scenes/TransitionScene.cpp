@@ -58,12 +58,9 @@ void TransitionScene::setFadeOut(float duration, Color4 color){
 void TransitionScene::setActive(bool value){
     if (isActive() != value) {
         Scene2::setActive(value);
-        
+        resetTransition();
         if (value){
             _transitionState = FADEIN;
-        }
-        else {
-            resetTransition();
         }
     }
 }

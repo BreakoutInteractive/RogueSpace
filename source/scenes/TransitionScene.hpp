@@ -80,7 +80,7 @@ public:
     /**
      * Sets whether the scene is currently active.
      *
-     * if the scene is set to active, the transition starts playing and can be updated/
+     * if the scene is set to active, the transition starts playing and can be updated.
      *
      * if the scene is deactivated, the transition resets and stops.
      *
