@@ -74,7 +74,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     _upgradeLevelActive = false;
     _gameRenderer.init(_assets);
-    _input.init();
+    _input.init([this](Vec2 pos){
+        return _gameRenderer.isInputProcessed(pos);
+    });
     _audioController = std::make_shared<AudioController>();
     CameraController::CameraConfig config;
     config.speed = GameConstants::GAME_CAMERA_SPEED;
@@ -240,6 +242,12 @@ void GameScene::setLevel(int level){
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     setPlayerAttributes(currentHp);
     CULog("level %d", _levelNumber);
+    
+    // TODO: edit the function later, has temporary side effect: sets the swap button to be down (since player always gets sword) ...
+    _gameRenderer.setSwapButtonCallback([this](){
+        _level->getPlayer()->swapWeapon();
+        _input.swapControlMode();
+    });
 }
 
 std::string GameScene::getLevelKey(int level){
@@ -440,7 +448,11 @@ void GameScene::preUpdate(float dt) {
             }
         }
     }
+    
+    // disable the swap button based on player state
+    _gameRenderer.setSwapButtonActive(player->_state == Player::state::IDLE || player->_state == Player::state::DODGE);
 
+    // TODO: could remove, this is PC-only
     if (_input.didSwap()){
         if (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE){
             //other states are weapon-dependent, so don't allow swapping while in them

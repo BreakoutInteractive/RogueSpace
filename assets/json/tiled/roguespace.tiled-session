@@ -1,10 +1,9 @@
 {
     "activeFile": "",
     "expandedProjectPaths": [
-        "exports",
         "tilesets",
-        "working",
-        "."
+        ".",
+        "working"
     ],
     "fileStates": {
         "exports/cb_lvl_00.json": {

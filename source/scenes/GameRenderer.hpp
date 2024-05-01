@@ -45,6 +45,8 @@ private:
     std::shared_ptr<scene2::SceneNode> _joystickAimRing;
     
     std::shared_ptr<scene2::SceneNode> _joystickAimButton;
+    /** swap weapon button */
+    std::shared_ptr<scene2::Button> _swapButton;
     
     /** frames of holding the move stick */
     int _moveHoldCounter;
@@ -119,6 +121,16 @@ public:
         _level = level;
     }
     
+    /**
+     * Input can be viewed as being processed simultaneously but only one UI element across
+     * different active screen components should be processing the user input.
+     *
+     * @return whether an event with the given position will be processed by the HUD elements.
+     */
+    bool isInputProcessed(Vec2 pos){
+        return _pauseButton->inContentBounds(pos) || _swapButton->inContentBounds(pos);
+    }
+    
 #pragma mark -
 #pragma mark View (Methods)
     
@@ -136,8 +148,20 @@ public:
         
     /**
      * sets whether or not this HUD scene is activated.
+     *
+     * All nodes all hidden when this scene is not activated
      */
     void setActivated(bool value);
+    
+    /**
+     * activates/deactivates the swap button. A deactivated swap button still renders but it is faded out.
+     */
+    void setSwapButtonActive(bool value);
+    
+    /** 
+     * sets the callback to execute when the swap button is toggled
+     */
+    void setSwapButtonCallback(std::function<void()> callback);
         
     /**
      * Draws the game scene with the given sprite batch.

@@ -53,7 +53,7 @@ void InputController::dispose() {
     }
 }
 
-bool InputController::init() {
+bool InputController::init(std::function<bool(Vec2)> preprocesser) {
     bool success = true;
     
     // Only process keyboard on desktop
@@ -79,6 +79,7 @@ bool InputController::init() {
     _active = success;
     reversedGestures = false;
     rangedMode = false;
+    this->preprocesser = preprocesser;
     clear();
     return success;
 }
@@ -320,6 +321,10 @@ void InputController::initGestureDataFromEvent(GestureData& data, const cugl::To
 }
 
 void InputController::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
+    // ignore all inputs that are processed elsewhere
+    if (preprocesser(event.position)){
+        return;
+    }
     // prevent new finger inputs if not active
     if (!_active){
         return;;
