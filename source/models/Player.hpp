@@ -186,7 +186,7 @@ public:
      * @param playerData  the structured json with player collision, hitbox, position data
      * @return true if the player is initialized properly, false otherwise.
      */
-    virtual bool init(std::shared_ptr<JsonValue> playerData);
+    virtual bool init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::physics2::ObstacleWorld> world);
     
     /**
      * Returns a newly allocated player
@@ -195,9 +195,9 @@ public:
      *
      * @return a newly allocated player
      */
-    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData) {
+    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::physics2::ObstacleWorld> world) {
         std::shared_ptr<Player> result = std::make_shared<Player>();
-        return (result->init(playerData) ? result : nullptr);
+        return (result->init(playerData, world) ? result : nullptr);
     }
     
 #pragma mark -
@@ -225,8 +225,10 @@ public:
     /** defense stat  */
     float atkSpeed;
     
-    /** melee strength stat*/
+    /** ranged strength stat*/
     float bowDamage;
+
+    std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
         
 #pragma mark -
 #pragma mark Player Game State Accessors
@@ -295,8 +297,8 @@ public:
     * @param damage how much damage the player takes
     * @param knockback_scl the factor to multiply the direction by for applying knockback
     */
-    void hit(Vec2 atkDir, int damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
-    
+    void hit(Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
+    void drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch);
     void draw(const std::shared_ptr<SpriteBatch>& batch) override;
     void setAnimation(std::shared_ptr<Animation> animation) override;
     void updateAnimation(float dt) override;

@@ -66,8 +66,8 @@ public:
     static float PROJ_RADIUS_MAGE;
     /** how many seconds the enemy projectile lasts, not including the explosion animation */
     static float PROJ_TIME_E;
-    /** the fraction of damage the parry enemy takes when not stunned */
-    static float PARRY_ENEMY_DR;
+    /** the fraction of damage the tank enemy takes when not stunned */
+    static float TANK_ENEMY_DR;
 
 #pragma mark -
 #pragma mark Player Constants
@@ -109,6 +109,8 @@ public:
      this is how sweeping melee attacks work in Hades
      */
     static float PLAYER_MELEE_ATK_RANGE;
+    /** player initial ranged attack damage */
+    static float PLAYER_BOW_DAMAGE;
     /** the speed of a player projectile */
     static float PROJ_SPEED_P;
     /** half of the size of a player projectile */

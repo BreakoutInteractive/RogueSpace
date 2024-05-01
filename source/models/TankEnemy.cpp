@@ -134,5 +134,5 @@ void TankEnemy::setFacingDir(cugl::Vec2 dir) {
 void TankEnemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
     //this enemy type takes much less damage when not stunned
     if (isStunned()) Enemy::hit(atkDir, damage, knockback_scl);
-    else Enemy::hit(atkDir, damage*GameConstants::PARRY_ENEMY_DR, knockback_scl);
+    else Enemy::hit(atkDir, damage*GameConstants::TANK_ENEMY_DR, knockback_scl);
 };

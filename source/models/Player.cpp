@@ -21,7 +21,8 @@ using namespace cugl;
 #pragma mark Constructors
 
 
-bool Player::init(std::shared_ptr<JsonValue> playerData) {
+bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::physics2::ObstacleWorld> world) {
+    _world = world;
     _weapon = MELEE;
     _state = IDLE;
     _dodge = 0;
@@ -74,7 +75,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     _moveScale = GameConstants::PLAYER_MOVE_SPEED;
     defense = GameConstants::PLAYER_DEFENSE;
     meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
-
+    bowDamage = GameConstants::PLAYER_BOW_DAMAGE;
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -110,6 +111,59 @@ bool Player::isAttacking() {
 
 #pragma mark -
 #pragma mark Animation
+
+void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch) {
+    Vec2 direction = getFacingDir();
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0) {
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    Affine2 t = Affine2::createRotation(ang);
+    t.scale(_drawScale);
+    t.translate(getPosition() * _drawScale);
+    float rayLength = GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P + GameConstants::PROJ_SIZE_P_HALF;
+    Vec2 rayEnd = getPosition() + rayLength * getFacingDir();
+    float frac = 1;
+    Vec2 loc;
+    std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
+        = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
+        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && !fixture->IsSensor()) {
+            frac = fraction;
+            loc = point;
+            return 1.0f;
+        }
+        else return -1.0f;
+        };
+    _world->rayCast(callback, getPosition(), rayEnd);
+    if (abs(frac-1)<0.001) {
+        float dist = getPosition().distance(loc);
+        if (dist >= GameConstants::PROJ_SIZE_P_HALF) {
+            std::vector<Vec2> vec = std::vector<Vec2>();
+            vec.push_back(Vec2(0, GameConstants::PROJ_SIZE_P_HALF / 2));
+            vec.push_back(Vec2(0, -GameConstants::PROJ_SIZE_P_HALF / 2));
+            vec.push_back(Vec2(dist - GameConstants::PROJ_SIZE_P_HALF, -GameConstants::PROJ_SIZE_P_HALF / 2));
+            vec.push_back(Vec2(dist, 0));
+            vec.push_back(Vec2(dist - GameConstants::PROJ_SIZE_P_HALF, GameConstants::PROJ_SIZE_P_HALF / 2));
+            EarclipTriangulator et = EarclipTriangulator(vec);
+            et.calculate();
+            Poly2 poly = et.getPolygon();
+            batch->draw(nullptr, Color4(0, 0, 0, 150), poly, Vec2::ZERO, t);
+        }
+    }
+    else {
+        std::vector<Vec2> vec = std::vector<Vec2>();
+        vec.push_back(Vec2(0, GameConstants::PROJ_SIZE_P_HALF / 2));
+        vec.push_back(Vec2(0, -GameConstants::PROJ_SIZE_P_HALF / 2));
+        vec.push_back(Vec2(GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P, -GameConstants::PROJ_SIZE_P_HALF / 2));
+        vec.push_back(Vec2(GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P + GameConstants::PROJ_SIZE_P_HALF, 0));
+        vec.push_back(Vec2(GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P, GameConstants::PROJ_SIZE_P_HALF / 2));
+        EarclipTriangulator et = EarclipTriangulator(vec);
+        et.calculate();
+        Poly2 poly = et.getPolygon();
+        batch->draw(nullptr, Color4(0, 0, 0, 150), poly, Vec2::ZERO, t);
+    }
+}
 
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render player with appropriate scales (right now default size)
@@ -192,7 +246,9 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if ((isAttacking() && _directionIndex >= 3 && _directionIndex <= 5)){
         spriteSheet->draw(batch, _tint, origin, transform);
     }
-    
+
+    if (_state == CHARGING || _state == CHARGED) drawRangeIndicator(batch);
+
     // this is always drawn on top of player
     if (_parryEffect->isActive()) {
         std::shared_ptr<SpriteSheet> effSheet = _parryEffect->getSpriteSheet();
@@ -459,7 +515,7 @@ void Player::setFacingDir(cugl::Vec2 dir){
     }
 }
 
-void Player::hit(Vec2 atkDir, int damage, float knockback_scl) {
+void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (hitCounter.isZero() && _state != DODGE) {
         hitCounter.reset();

@@ -90,7 +90,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     //TODO: give projectiles a modifiable damage value
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage()*player->bowDamage);
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx

@@ -52,7 +52,7 @@ float GameConstants::PROJ_RADIUS_MAGE = 0.75f;
 
 float GameConstants::PROJ_TIME_E = 1.5f;
 
-float GameConstants::PARRY_ENEMY_DR = 0.1f;
+float GameConstants::TANK_ENEMY_DR = 0.1f;
 
 
 #pragma mark -
@@ -60,7 +60,7 @@ float GameConstants::PARRY_ENEMY_DR = 0.1f;
 
 int GameConstants::PLAYER_IFRAME = 16;
 
-int GameConstants::PLAYER_ATTACK_COOLDOWN =  16;
+int GameConstants::PLAYER_ATTACK_COOLDOWN = 16;
 
 float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
@@ -70,14 +70,16 @@ float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 float GameConstants::PLAYER_MAX_HP = 3;
 
-float GameConstants::PLAYER_MOVE_SPEED =4.6;
+float GameConstants::PLAYER_MOVE_SPEED = 4.6;
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
 float GameConstants::PLAYER_DEFENSE = 1;
 
-float GameConstants::PLAYER_ATK_DAMAGE =1;
+float GameConstants::PLAYER_ATK_DAMAGE = 1;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
+
+float GameConstants::PLAYER_BOW_DAMAGE = 1;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 
