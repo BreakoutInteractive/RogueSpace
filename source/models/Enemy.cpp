@@ -113,7 +113,17 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     transform.translate(_position * _drawScale); // previously using getPosition()
     
     spriteSheet->draw(batch, _tint, origin, transform);
+    
+    //enemy health bar
+    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
+    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
+    
+    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
+    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
 
+    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
+    batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
+    
     if (_hitEffect->isActive()) {
         auto effSheet = _hitEffect->getSpriteSheet();
         transform = Affine2::createScale(2);

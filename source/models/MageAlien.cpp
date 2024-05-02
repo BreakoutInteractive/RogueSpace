@@ -58,6 +58,8 @@ void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 
 void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _enemyTexture = assets->get<Texture>("mage-idle");
+    _healthBG =  assets->get<Texture>("hp_back");
+    _healthFG =  assets->get<Texture>("hp");
     auto walkTexture = assets->get<Texture>("mage-walk");
     auto attackTexture = assets->get<Texture>("mage-attack");
     auto stunTexture = assets->get<Texture>("mage-idle"); // use idle animation for now
@@ -125,6 +127,16 @@ void MageAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     transform.translate(getPosition() * _drawScale);
     
     spriteSheet->draw(batch, _tint, origin, transform);
+    
+    //enemy health bar
+    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
+    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
+    
+    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
+    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
+
+    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
+    batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
 
     if (_hitEffect->isActive()) {
         auto effSheet = _hitEffect->getSpriteSheet();

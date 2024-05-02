@@ -38,6 +38,12 @@ protected:
     /** The enemy texture*/
     std::shared_ptr<cugl::Texture> _enemyTexture;
     
+    /** The enemy health bar background */
+    std::shared_ptr<cugl::Texture> _healthBG;
+    
+    /** The enemy health bar foreground */
+    std::shared_ptr<cugl::Texture> _healthFG;
+    
     /** The animation to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
     
@@ -79,6 +85,8 @@ protected:
     
     /** The enemy's current health */
     float _health;
+    /** The enemy's maximum health */
+    float _maxHealth;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -295,6 +303,11 @@ public:
      * Sets the current health of this enemy.
      */
     void setHealth(float value) { _health = value; }
+    
+    /**
+     * Sets the maximum health of this enemy.
+     */
+    void setMaxHealth(float value){ _maxHealth = value; }
     
     /**
      * Gets this enemy's attack hitbox.
