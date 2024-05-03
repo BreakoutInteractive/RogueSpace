@@ -57,6 +57,8 @@ void TankEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 
 void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     _enemyTexture = assets->get<Texture>("tank-idle");
+    _healthBG =  assets->get<Texture>("hp_back");
+    _healthFG =  assets->get<Texture>("hp");
     //TODO: real animations
     auto walkTexture = assets->get<Texture>("tank-idle");
     auto attackTexture = assets->get<Texture>("tank-attack");
@@ -67,14 +69,14 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 5);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 8);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 7);
+    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 6);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
 
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 4);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 7);
-    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 6);
+    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 5);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
 
@@ -127,7 +129,7 @@ void TankEnemy::setFacingDir(cugl::Vec2 dir) {
         _idleAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _walkAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _attackAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
-        _stunAnimation->setFrameRange(7 * _directionIndex, 7 * _directionIndex + 6);
+        _stunAnimation->setFrameRange(6 * _directionIndex, 6 * _directionIndex + 5);
     }
 }
 

@@ -51,6 +51,8 @@ using namespace cugl;
 /** The message to display on a level reset */
 #define RESET_MESSAGE       "Resetting"
 
+#define NUM_LEVELS_TO_UPGRADE       3
+
 #pragma mark -
 #pragma mark Constructors
 
@@ -74,7 +76,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     _upgradeLevelActive = false;
     _gameRenderer.init(_assets);
-    _input.init();
+    _input.init([this](Vec2 pos){
+        return _gameRenderer.isInputProcessed(pos);
+    });
     _audioController = std::make_shared<AudioController>();
     CameraController::CameraConfig config;
     config.speed = GameConstants::GAME_CAMERA_SPEED;
@@ -85,7 +89,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
     
-    _lvlsToUpgrade.setMaxCount(3);
+    _lvlsToUpgrade.setMaxCount(NUM_LEVELS_TO_UPGRADE);
     _lvlsToUpgrade.reset();
     upgradeScreenActive=false;
     upgradeChosen=false;
@@ -148,10 +152,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     });
   
 #pragma mark - Game State Initialization
-    setActive(true);
+    setActive(false);
     _complete = false;
     _defeat = false;
-    setLevel(_levelNumber);         // load initial level/hub
     hitPauseCounter.setMaxCount(GameConstants::HIT_PAUSE_FRAMES + 3);
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
@@ -174,6 +177,9 @@ void GameScene::dispose() {
 void GameScene::restart(){
     _winNode->setVisible(false);
     _lvlsToUpgrade.reset();
+    for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
+        (*it)->resetUpgrade();
+    }
     setLevel(1); // reload the first level
     _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
 }
@@ -240,6 +246,12 @@ void GameScene::setLevel(int level){
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     setPlayerAttributes(currentHp);
     CULog("level %d", _levelNumber);
+    
+    // TODO: edit the function later, has temporary side effect: sets the swap button to be down (since player always gets sword) ...
+    _gameRenderer.setSwapButtonCallback([this](){
+        _level->getPlayer()->swapWeapon();
+        _input.swapControlMode();
+    });
 }
 
 std::string GameScene::getLevelKey(int level){
@@ -440,7 +452,11 @@ void GameScene::preUpdate(float dt) {
             }
         }
     }
+    
+    // disable the swap button based on player state
+    _gameRenderer.setSwapButtonActive(player->_state == Player::state::IDLE || player->_state == Player::state::DODGE);
 
+    // TODO: could remove, this is PC-only
     if (_input.didSwap()){
         if (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE){
             //other states are weapon-dependent, so don't allow swapping while in them
@@ -515,16 +531,22 @@ void GameScene::preUpdate(float dt) {
         upgradeScreenActive =_level->getRelic()->getTouched();
     }
 #pragma mark - Component Updates
-    player->update(dt); // updates animations, counters, hitboxes
+    
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
-        (*it)->updateAnimation(dt);
     }
     std::vector<std::shared_ptr<Projectile>> projs = _level->getProjectiles();
     for (auto it = projs.begin(); it != projs.end(); ++it) {
         (*it)->updateAnimation(dt);
         if ((*it)->isCompleted()) _level->delProjectile((*it));
     }
+    
+    // update every animation in game objects
+    for (auto& gameobject : _level->getDynamicObjects()){
+        gameobject->updateAnimation(dt);
+    }
+    
+    player->update(dt); // updates counters, hitboxes
     _areaClearEffect->update(dt); // does nothing when not active
     _levelTransition.update(dt); // also does nothing when not active
 }

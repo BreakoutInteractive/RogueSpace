@@ -175,6 +175,11 @@
             },
          "properties":[
                 {
+                 "name":"animation",
+                 "type":"int",
+                 "value":6
+                }, 
+                {
                  "name":"tall",
                  "type":"bool",
                  "value":true
@@ -389,6 +394,11 @@
             },
          "properties":[
                 {
+                 "name":"animation",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
                  "name":"tall",
                  "type":"bool",
                  "value":true
@@ -566,6 +576,11 @@
              "y":0
             },
          "properties":[
+                {
+                 "name":"animation",
+                 "type":"int",
+                 "value":4
+                }, 
                 {
                  "name":"tall",
                  "type":"bool",
@@ -928,7 +943,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

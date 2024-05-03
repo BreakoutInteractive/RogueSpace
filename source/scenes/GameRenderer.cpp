@@ -46,11 +46,13 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
         }
     });
     
-    _joystickRing = _assets->get<scene2::SceneNode>("HUD_js-ring");
-    _joystickMoveButton = _assets->get<scene2::SceneNode>("HUD_js-button");
-    _joystickAimRing =  _assets->get<scene2::SceneNode>("HUD_aim-ring");;
-    _joystickAimButton = _assets->get<scene2::SceneNode>("HUD_aim-button");
+    _joystickRing = _assets->get<scene2::SceneNode>("HUD_js_ring");
+    _joystickMoveButton = _assets->get<scene2::SceneNode>("HUD_js_button");
+    _joystickAimRing =  _assets->get<scene2::SceneNode>("HUD_aim_ring");;
+    _joystickAimButton = _assets->get<scene2::SceneNode>("HUD_js_aim");
     
+    _swapButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HUD_swap"));
+    _swapButton->setToggle(true);
     
     _stamina = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_cooldown"));
     _stamina->setVisible(true);
@@ -63,6 +65,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     
     // activate UI
     _pauseButton->activate();
+    _swapButton->activate();
     hideJoysticks();
     
     addChild(scene);
@@ -141,11 +144,34 @@ void GameRenderer::setActivated(bool value) {
         _pauseButton->setDown(false);
         _pauseButton->setVisible(true);
         _pauseButton->activate();
+        _swapButton->setVisible(true);
+        _swapButton->activate();
         _paused = false;
     } else{
         _pauseButton->setVisible(false);
         _pauseButton->deactivate();
+        _swapButton->setVisible(false);
+        _swapButton->deactivate();
     }
+}
+
+void GameRenderer::setSwapButtonActive(bool value){
+    if (value){
+        _swapButton->activate();
+        _swapButton->setColor(Color4::WHITE);
+    }
+    else {
+        _swapButton->deactivate();
+        _swapButton->setColor(Color4::GRAY);
+    }
+}
+
+void GameRenderer::setSwapButtonCallback(std::function<void()> callback){
+    _swapButton->clearListeners();
+    _swapButton->setDown(true);
+    _swapButton->addListener([callback](const std::string name, bool down){
+        callback();
+    });
 }
 
 void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){

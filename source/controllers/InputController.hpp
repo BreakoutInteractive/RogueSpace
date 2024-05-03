@@ -105,6 +105,9 @@ private:
      */
     void touchMotionCB(const TouchEvent& event, const Vec2 previous, bool focus);
     
+    /** a function to execute to determine whether to skip the touch input (begin touch)*/
+    std::function<bool(Vec2)> preprocesser;
+    
 #pragma mark -
 #pragma mark Internal Data
     
@@ -223,9 +226,10 @@ public:
      * This method works like a proper constructor, initializing the input
      * controller and allocating memory.
      *
+     * @param preprocessor a function determining whether the new touch inputs received has already been processed.
      * @return true if the controller was initialized successfully
      */
-    bool init();
+    bool init(std::function<bool(Vec2)> preprocessor);
     
 #pragma mark -
 #pragma mark Input Detection

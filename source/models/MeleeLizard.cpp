@@ -57,6 +57,8 @@ void MeleeLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_pt
 
 void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _enemyTexture = assets->get<Texture>("lizard-idle");
+    _healthBG =  assets->get<Texture>("hp_back");
+    _healthFG =  assets->get<Texture>("hp");
     auto walkTexture = assets->get<Texture>("lizard-walk");
     auto attackTexture = assets->get<Texture>("lizard-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");

@@ -221,23 +221,35 @@ public:
     /**
      * @return the enemies in this game level
      */
-    const std::vector<std::shared_ptr<Enemy>> getEnemies() { return _enemies; }
+    const std::vector<std::shared_ptr<Enemy>>& getEnemies() { return _enemies; }
 
     /**
      * @return the walls in this game level
      */
-    const std::vector<std::shared_ptr<Wall>> getWalls() { return _walls; }
+    const std::vector<std::shared_ptr<Wall>>& getWalls() { return _walls; }
     
     /**
      * @return the energy walls in this game level
      */
-    const std::vector<std::shared_ptr<EnergyWall>> getEnergyWalls() { return _energyWalls; }
+    const std::vector<std::shared_ptr<EnergyWall>>& getEnergyWalls() { return _energyWalls; }
 
     /** add a projectile to this level */
     void addProjectile(std::shared_ptr<Projectile> p);
     /** remove the given projectile from this level and from the physics world (if present) */
     void delProjectile(std::shared_ptr<Projectile> p);
-    const std::vector<std::shared_ptr<Projectile>> getProjectiles() { return _projectiles; }
+    
+    /**
+     * @return reference to list of all projectiles
+     */
+    const std::vector<std::shared_ptr<Projectile>>& getProjectiles() { return _projectiles; }
+    
+    /**
+     * @note WARNING: temporarily excludes the list of projectiles.
+     * @return reference to all dynamic objects
+     */
+    const std::vector<std::shared_ptr<GameObject>>& getDynamicObjects() {
+        return _dynamicObjects;
+    }
 
 #pragma mark Physics Attributes
     /** 

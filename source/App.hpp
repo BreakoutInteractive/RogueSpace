@@ -12,6 +12,7 @@
 #include "scenes/LoadingScene.hpp"
 #include "scenes/PauseScene.hpp"
 #include "scenes/UpgradesScene.hpp"
+#include "scenes/TitleScene.hpp"
 
 /**
  * This class represents the application root for the ship demo.
@@ -23,7 +24,7 @@ protected:
         /** The loading scene */
         LOAD,
         /** The main menu scene */
-        MENU,
+        TITLE,
         /** The pause scene */
         PAUSE,
         /** The upgrades scene */
@@ -46,6 +47,8 @@ protected:
     PauseScene _pause;
     /** The controller for the upgrades screen */
     UpgradesScene _upgrades;
+    /** The title and menu  scene */
+    TitleScene _title;
     /** The current active scene */
     State _scene;
         
@@ -221,12 +224,13 @@ public:
      * at all. The default implmentation does nothing.
      */
     virtual void draw() override;
+
 private:
     /**
      * Inidividualized update method for the pause scene.
      *
      * This method keeps the primary {@link #update} from being a mess of switch
-     * statements. It also handles the transition logic from the loading scene.
+     * statements.
      *
      * @param dt  The amount of time (in seconds) since the last frame
      */
@@ -236,20 +240,20 @@ private:
      * Inidividualized update method for the upgrades scene.
      *
      * This method keeps the primary {@link #update} from being a mess of switch
-     * statements. It also handles the transition logic from the loading scene.
+     * statements.
      *
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateUpgradesScene(float dt);
     
     /**
-     * Inidividualized update method for the loading scene.
+     * Inidividualized update method for the title/menu scene.
      *
      * This method keeps the primary {@link #update} from being a mess of switch
-     * statements. It also handles the transition logic from the loading scene.
+     * statements.
      *
      * @param dt  The amount of time (in seconds) since the last frame
      */
-    void updateLoadingScene(float dt);
+    void updateTitleScene(float dt);
 };
 #endif /* __APP_H__ */

@@ -61,6 +61,21 @@ void Wall::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
 #pragma mark -
 
 EnergyWall::EnergyWall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin) : Wall(data, poly, origin){
+    animationIndex = data->getInt("animation");
+}
+
+void EnergyWall::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
+    auto energyWallSheet = SpriteSheet::alloc(assets->get<Texture>("energy-wall"), 8, 6);
+    _currAnimation = Animation::alloc(energyWallSheet, 1.0f, true, animationIndex * 6, (animationIndex+2) * 6 - 1);
+}
+
+void EnergyWall::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
+    if (_currAnimation != nullptr){
+        auto spriteSheet = _currAnimation->getSpriteSheet();
+        Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
+        Affine2 transform = Affine2::createTranslation(_position * _drawScale);
+        spriteSheet->draw(batch, _tint, origin, transform);
+    }
 }
 
 void EnergyWall::deactivate(){

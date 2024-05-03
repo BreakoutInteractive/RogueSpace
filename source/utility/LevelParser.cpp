@@ -405,7 +405,14 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
 #pragma mark Parsing Objects
 
 const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<JsonValue>& json){
-    auto data = parsePhysicsObject(json, true, true, false);
+    
+    bool parseAsset = true;
+    std::shared_ptr<JsonValue> animationProperty = getPropertyValueByName(json->get("properties"), "animation"); // only for energy walls
+    if (animationProperty != nullptr){
+        parseAsset = false;
+    }
+    
+    auto data = parsePhysicsObject(json, parseAsset, true, false);
     data->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_WALL)));
     std::shared_ptr<JsonValue> heightProperty = getPropertyValueByName(json->get("properties"), "tall");
     if (heightProperty != nullptr) {
@@ -413,6 +420,9 @@ const std::shared_ptr<JsonValue> LevelParser::parseWall(const std::shared_ptr<Js
     }
     else {
         data->appendChild("tall", JsonValue::alloc(true));
+    }
+    if (animationProperty != nullptr){
+        data->appendChild("animation", JsonValue::alloc(animationProperty->asLong()));
     }
     return data;
 }

@@ -749,7 +749,6 @@
                         {
                          "draworder":"topdown",
                          "id":189,
-                         "locked":true,
                          "name":"rocks",
                          "objects":[
                                 {
@@ -992,7 +991,6 @@
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"terrain_3",
                  "opacity":1,
                  "type":"group",
@@ -1605,7 +1603,6 @@
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"terrain_1",
                  "opacity":1,
                  "type":"group",
@@ -2386,7 +2383,6 @@
         {
          "draworder":"topdown",
          "id":201,
-         "locked":true,
          "name":"other_enemy_path",
          "objects":[
                 {
@@ -2534,6 +2530,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2551,6 +2552,11 @@
                  "id":824,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2570,6 +2576,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2587,6 +2598,11 @@
                  "id":826,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2606,6 +2622,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2623,6 +2644,11 @@
                  "id":828,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2642,6 +2668,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2659,6 +2690,11 @@
                  "id":830,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2678,6 +2714,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2695,6 +2736,11 @@
                  "id":832,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2714,6 +2760,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2731,6 +2782,11 @@
                  "id":836,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2750,6 +2806,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2767,6 +2828,11 @@
                  "id":838,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2786,6 +2852,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2803,6 +2874,11 @@
                  "id":840,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2822,6 +2898,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2839,6 +2920,11 @@
                  "id":842,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2858,6 +2944,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2875,6 +2966,11 @@
                  "id":844,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2894,6 +2990,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2911,6 +3012,11 @@
                  "id":860,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2930,6 +3036,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2947,6 +3058,11 @@
                  "id":866,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -2966,6 +3082,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -2983,6 +3104,11 @@
                  "id":868,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3002,6 +3128,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3019,6 +3150,11 @@
                  "id":870,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3039,6 +3175,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3056,6 +3197,11 @@
                  "id":872,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3075,6 +3221,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3092,6 +3243,11 @@
                  "id":874,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3111,6 +3267,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3128,6 +3289,11 @@
                  "id":881,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3147,6 +3313,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3164,6 +3335,11 @@
                  "id":883,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3183,6 +3359,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3200,6 +3381,11 @@
                  "id":885,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3219,6 +3405,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3236,6 +3427,11 @@
                  "id":887,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3255,6 +3451,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3272,6 +3473,11 @@
                  "id":889,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3291,6 +3497,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
+                        {
                          "name":"tall",
                          "type":"bool",
                          "value":true
@@ -3308,6 +3519,11 @@
                  "id":891,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"animation",
+                         "type":"int",
+                         "value":6
+                        }, 
                         {
                          "name":"tall",
                          "type":"bool",
@@ -3591,8 +3807,7 @@
                  "x":0,
                  "y":0
                 }],
-         "locked":true,
-         "name":"spawn_tank_1",
+         "name":"spawn_tank",
          "opacity":1,
          "properties":[
                 {
@@ -3601,23 +3816,23 @@
                  "value":1
                 }],
          "type":"group",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
         {
          "class":"Random",
-         "id":205,
+         "id":200,
          "layers":[
                 {
                  "draworder":"topdown",
-                 "id":206,
-                 "name":"tank_1",
+                 "id":202,
+                 "name":"1",
                  "objects":[
                         {
-                         "gid":252,
+                         "gid":251,
                          "height":128,
-                         "id":1694,
+                         "id":1691,
                          "name":"",
                          "properties":[
                                 {
@@ -3628,37 +3843,19 @@
                                 {
                                  "name":"hp",
                                  "type":"float",
-                                 "value":3
+                                 "value":5
                                 }, 
                                 {
                                  "name":"path",
                                  "type":"object",
-                                 "value":1695
+                                 "value":1684
                                 }],
                          "rotation":0,
-                         "type":"Caster",
+                         "type":"Lizard",
                          "visible":true,
-                         "width":128,
-                         "x":1920,
-                         "y":992
-                        }, 
-                        {
-                         "height":0,
-                         "id":1695,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":0
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":1600,
-                         "y":800
+                         "width":64,
+                         "x":1792,
+                         "y":1024
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -3668,13 +3865,13 @@
                 }, 
                 {
                  "draworder":"topdown",
-                 "id":207,
-                 "name":"tank_2",
+                 "id":203,
+                 "name":"2",
                  "objects":[
                         {
-                         "gid":252,
+                         "gid":254,
                          "height":128,
-                         "id":1696,
+                         "id":1693,
                          "name":"",
                          "properties":[
                                 {
@@ -3685,184 +3882,19 @@
                                 {
                                  "name":"hp",
                                  "type":"float",
-                                 "value":3
+                                 "value":5
                                 }, 
                                 {
                                  "name":"path",
                                  "type":"object",
-                                 "value":1697
+                                 "value":1684
                                 }],
                          "rotation":0,
-                         "type":"Caster",
+                         "type":"RangedLizard",
                          "visible":true,
-                         "width":128,
-                         "x":1984,
-                         "y":1024
-                        }, 
-                        {
-                         "height":0,
-                         "id":1697,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":1698
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":1856,
-                         "y":992
-                        }, 
-                        {
-                         "height":0,
-                         "id":1698,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":1699
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
+                         "width":64,
                          "x":1792,
-                         "y":864
-                        }, 
-                        {
-                         "height":0,
-                         "id":1699,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":0
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":1984,
-                         "y":928
-                        }],
-                 "opacity":1,
-                 "type":"objectgroup",
-                 "visible":true,
-                 "x":0,
-                 "y":0
-                }, 
-                {
-                 "draworder":"topdown",
-                 "id":208,
-                 "name":"tank_3",
-                 "objects":[
-                        {
-                         "gid":252,
-                         "height":128,
-                         "id":1700,
-                         "name":"",
-                         "properties":[
-                                {
-                                 "name":"damage",
-                                 "type":"float",
-                                 "value":1
-                                }, 
-                                {
-                                 "name":"hp",
-                                 "type":"float",
-                                 "value":3
-                                }, 
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":1701
-                                }],
-                         "rotation":0,
-                         "type":"Caster",
-                         "visible":true,
-                         "width":128,
-                         "x":2176,
-                         "y":1056
-                        }, 
-                        {
-                         "height":0,
-                         "id":1701,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":1702
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":2112,
                          "y":992
-                        }, 
-                        {
-                         "height":0,
-                         "id":1702,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":1703
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":2240,
-                         "y":896
-                        }, 
-                        {
-                         "height":0,
-                         "id":1703,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":1704
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":2112,
-                         "y":864
-                        }, 
-                        {
-                         "height":0,
-                         "id":1704,
-                         "name":"",
-                         "point":true,
-                         "properties":[
-                                {
-                                 "name":"path",
-                                 "type":"object",
-                                 "value":0
-                                }],
-                         "rotation":0,
-                         "type":"Path",
-                         "visible":true,
-                         "width":0,
-                         "x":1792,
-                         "y":1024
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -3870,7 +3902,7 @@
                  "x":0,
                  "y":0
                 }],
-         "name":"spawn_tank_2",
+         "name":"spawn_other",
          "opacity":1,
          "properties":[
                 {
@@ -4574,7 +4606,7 @@
                          "visible":true,
                          "width":128,
                          "x":1280,
-                         "y":960
+                         "y":896
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -4596,8 +4628,8 @@
                          "type":"Player",
                          "visible":true,
                          "width":128,
-                         "x":1408,
-                         "y":896
+                         "x":1792,
+                         "y":736
                         }],
                  "opacity":1,
                  "type":"objectgroup",
@@ -4627,6 +4659,29 @@
                  "visible":true,
                  "x":0,
                  "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":31,
+                 "name":"right",
+                 "objects":[
+                        {
+                         "gid":250,
+                         "height":128,
+                         "id":895,
+                         "name":"",
+                         "rotation":0,
+                         "type":"Player",
+                         "visible":true,
+                         "width":128,
+                         "x":2304,
+                         "y":960
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
                 }],
          "name":"player-spawn-locations",
          "opacity":1,
@@ -4641,8 +4696,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":209,
- "nextobjectid":1705,
+ "nextlayerid":205,
+ "nextobjectid":1694,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

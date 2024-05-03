@@ -47,7 +47,7 @@ public:
     /**
      * retrieves the texture necessary for rendering
      */
-    void loadAssets(const std::shared_ptr<AssetManager> &assets);
+    virtual void loadAssets(const std::shared_ptr<AssetManager> &assets);
     
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
@@ -56,7 +56,11 @@ public:
 #pragma mark -
 
 class EnergyWall : public Wall {
-
+protected:
+    
+    /** the starting row of the animation */
+    int animationIndex;
+    
 public:
 #pragma mark Constructors
     /**
@@ -66,6 +70,11 @@ public:
      */
     EnergyWall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin);
 
+#pragma mark Animation
+    
+    void loadAssets(const std::shared_ptr<AssetManager> &assets) override;
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
 
 #pragma mark Physics
 

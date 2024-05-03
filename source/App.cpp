@@ -35,6 +35,7 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
@@ -84,7 +85,10 @@ void App::update(float dt){
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
         _upgrades.init(_assets);
-        _scene = State::GAME;
+        _title.init(_assets);
+        // finish loading -> go to title/main menu
+        _scene = State::TITLE;
+        _title.setActive(true);
         setDeterministic(true);
     }
 }
@@ -94,7 +98,8 @@ void App::preUpdate(float dt) {
         case LOAD:
             // only for intermediate loading screens
             break;
-        case MENU:
+        case TITLE:
+            updateTitleScene(dt);
             break;
         case UPGRADE:
             _upgrades.setActive(true);
@@ -105,13 +110,12 @@ void App::preUpdate(float dt) {
             break;
         case PAUSE:
             _pause.setActive(true);
-//            AudioEngine::get()->getMusicQueue()->advance();
             updatePauseScene(dt);
             break;
         case GAME:
             if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
-                _gameplay.activateInputs(false); // this cancels some inputs but will still follow up on the already active gestsures to see if they're lifted from the screen.
+                _gameplay.activateInputs(false);
                 _gameplay.getRenderer().setActivated(false);
             } else if (_gameplay.upgradeScreenActive){
                 _upgrades.setActive(false);
@@ -219,6 +223,24 @@ void App::updateUpgradesScene(float dt){
     }
 }
 
+void App::updateTitleScene(float dt){
+    switch (_title.getChoice()){
+        case TitleScene::NONE:
+            break;
+        case TitleScene::NEW:
+            // TODO: check if there is an existing run, confirm user wants to start a new game
+            // TODO: if there is no exisitng run, the below code is okay.
+            _title.setActive(false);
+            _gameplay.setActive(true);
+            _gameplay.setLevel(1);
+            _scene = GAME; // switch to game scene
+            break;
+        case TitleScene::CONTINUE: case TitleScene::SETTINGS:
+            CUAssertLog(false, "unimplemented");
+            break;
+    }
+}
+
 
 void App::draw() {
     switch (_scene) {
@@ -236,6 +258,8 @@ void App::draw() {
             _gameplay.render(_batch);
             _upgrades.render(_batch);
             break;
+        case TITLE:
+            _title.render(_batch);
         default:
             break;
     }

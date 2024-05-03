@@ -12,6 +12,7 @@ Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue){
     _maxLevel = maxLevel;
     _currLevel = 0;
     _maxValue = maxValue;
+    _initialValue = baseValue;
     _currValue = baseValue;
     _stepAmt = (_maxValue-_currValue)/_maxLevel;
 }
@@ -23,9 +24,6 @@ void Upgradeable::levelUp(){
     }
 }
 
-/**
- * Decreases the current level and updates
- */
 void Upgradeable::levelDown(){
     if (_currLevel>0) {
         _currLevel-=1;
@@ -33,8 +31,14 @@ void Upgradeable::levelDown(){
     }
 }
 
+void Upgradeable::resetUpgrade(){
+    _currValue = _initialValue;
+    _currLevel = 0;
+}
+
+
 void Upgradeable::boostStat(float boostValue){
-        _currValue += boostValue;
+    _currValue += boostValue;
     
 }
 
