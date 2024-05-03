@@ -240,7 +240,6 @@ public:
      */
     void setComplete(bool value) {
         _complete = value;
-        //_winNode->setVisible(value);
     }
 
     /**

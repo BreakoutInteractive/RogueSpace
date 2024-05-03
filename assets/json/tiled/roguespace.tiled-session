@@ -1,8 +1,9 @@
 {
-    "activeFile": "",
+    "activeFile": "working/ob_lvl_00.json",
     "expandedProjectPaths": [
-        "tilesets",
         ".",
+        "tilesets",
+        "exports",
         "working"
     ],
     "fileStates": {
@@ -227,11 +228,11 @@
             "expandedObjectLayers": [
                 27
             ],
-            "scale": 0.7392,
+            "scale": 0.2987,
             "selectedLayer": 43,
             "viewCenter": {
-                "x": 2309.9296536796537,
-                "y": 1017.3160173160175
+                "x": 1163.3746233679276,
+                "y": 1292.2664881151657
             }
         },
         "working/ob_lvl_01.json": {
@@ -294,17 +295,18 @@
     "last.objectTypesPath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/custom/propertytypes.json",
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "openFiles": [
+        "working/ob_lvl_00.json"
     ],
     "project": "roguespace.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "working/ob_lvl_00.json",
         "exports/ob_lvl_00.json",
         "working/ob_lvl_05.json",
         "working/ob_lvl_upgrades.json",
         "working/ob_lvl_04.json",
         "working/ob_lvl_03.json",
         "working/ob_lvl_02.json",
-        "working/ob_lvl_00.json",
         "working/ob_lvl_01.json",
         "working/cb_lvl_01.json",
         "exports/ob_lvl_01.json",
