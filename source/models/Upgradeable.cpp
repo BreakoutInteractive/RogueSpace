@@ -33,7 +33,7 @@ void Upgradeable::levelDown(){
 
 void Upgradeable::resetUpgrade(){
     _currValue = _initialValue;
-    _currLevel = 1;
+    _currLevel = 0;
 }
 
 
