@@ -152,10 +152,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     });
   
 #pragma mark - Game State Initialization
-    setActive(true);
+    setActive(false);
     _complete = false;
     _defeat = false;
-    setLevel(_levelNumber);         // load initial level/hub
     hitPauseCounter.setMaxCount(GameConstants::HIT_PAUSE_FRAMES + 3);
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;

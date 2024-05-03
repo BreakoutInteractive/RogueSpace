@@ -156,7 +156,7 @@ void MageAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }
     Affine2 t = Affine2::createRotation(ang);
     t.scale(_drawScale/32);
-    t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
+    t.translate((_position + Vec2(0, 64 / getDrawScale().y)) * _drawScale);
     if (_chargingAnimation->isActive()) sheet->draw(batch, o, t);
 }
 
