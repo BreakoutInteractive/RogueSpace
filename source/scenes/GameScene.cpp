@@ -51,6 +51,8 @@ using namespace cugl;
 /** The message to display on a level reset */
 #define RESET_MESSAGE       "Resetting"
 
+#define NUM_LEVELS_TO_UPGRADE       3
+
 #pragma mark -
 #pragma mark Constructors
 
@@ -87,7 +89,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
     
-    _lvlsToUpgrade.setMaxCount(3);
+    _lvlsToUpgrade.setMaxCount(NUM_LEVELS_TO_UPGRADE);
     _lvlsToUpgrade.reset();
     upgradeScreenActive=false;
     upgradeChosen=false;
