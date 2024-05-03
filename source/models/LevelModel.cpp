@@ -391,6 +391,7 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
     enemyCollider->setDebugColor(parseColor(constants->getString(DEBUG_COLOR_FIELD)));
     
     enemy->setHealth(json->getFloat(ENEMY_HP_FIELD));
+    enemy->setMaxHealth(json->getFloat(ENEMY_HP_FIELD));
     enemy->setDefaultState(json->getString("defaultstate"));
     std::vector<Vec2> path;
     std::vector<float> vertices = json->get("path")->asFloatArray();

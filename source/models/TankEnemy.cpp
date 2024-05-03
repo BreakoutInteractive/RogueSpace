@@ -57,6 +57,8 @@ void TankEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 
 void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     _enemyTexture = assets->get<Texture>("tank-idle");
+    _healthBG =  assets->get<Texture>("hp_back");
+    _healthFG =  assets->get<Texture>("hp");
     //TODO: real animations
     auto walkTexture = assets->get<Texture>("tank-idle");
     auto attackTexture = assets->get<Texture>("tank-attack");
