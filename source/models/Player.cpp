@@ -122,10 +122,10 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
     Affine2 t = Affine2::createRotation(ang);
     t.scale(_drawScale);
     t.translate(getPosition() * _drawScale);
-    float rayLength = GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P + GameConstants::PROJ_SIZE_P_HALF;
+    float rayLength = GameConstants::PROJ_DIST_P + GameConstants::PROJ_SIZE_P_HALF;
     Vec2 rayEnd = getPosition() + rayLength * getFacingDir();
     float frac = 1;
-    Vec2 loc;
+    Vec2 loc = rayEnd;
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
         if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && !fixture->IsSensor()) {
@@ -155,9 +155,9 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
         std::vector<Vec2> vec = std::vector<Vec2>();
         vec.push_back(Vec2(0, GameConstants::PROJ_SIZE_P_HALF / 2));
         vec.push_back(Vec2(0, -GameConstants::PROJ_SIZE_P_HALF / 2));
-        vec.push_back(Vec2(GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P, -GameConstants::PROJ_SIZE_P_HALF / 2));
-        vec.push_back(Vec2(GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P + GameConstants::PROJ_SIZE_P_HALF, 0));
-        vec.push_back(Vec2(GameConstants::PROJ_SPEED_P * GameConstants::PROJ_TIME_P, GameConstants::PROJ_SIZE_P_HALF / 2));
+        vec.push_back(Vec2(GameConstants::PROJ_DIST_P, -GameConstants::PROJ_SIZE_P_HALF / 2));
+        vec.push_back(Vec2(GameConstants::PROJ_DIST_P + GameConstants::PROJ_SIZE_P_HALF, 0));
+        vec.push_back(Vec2(GameConstants::PROJ_DIST_P, GameConstants::PROJ_SIZE_P_HALF / 2));
         EarclipTriangulator et = EarclipTriangulator(vec);
         et.calculate();
         Poly2 poly = et.getPolygon();

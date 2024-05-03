@@ -16,6 +16,7 @@ private:
 	enum state { FLYING, EXPLODING };
 	state _state;
 	int _damage;
+	Vec2 _initPos;
 public:
 
 	/**
