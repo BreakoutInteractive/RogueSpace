@@ -18,6 +18,8 @@ protected:
     int _currLevel;
     /** maximum level stat can reach on 0 based number scale */
     int _maxLevel;
+    /** initial value of stat */
+    float _initialValue;
     /** current value of stat */
     float _currValue;
     /** maximum value stat can reach */
@@ -31,6 +33,7 @@ public:
     Upgradeable(){
         _maxLevel=0;
         _currLevel=0;
+        _initialValue=0;
         _currValue=0;
         _maxValue=0;
         _stepAmt=0;
