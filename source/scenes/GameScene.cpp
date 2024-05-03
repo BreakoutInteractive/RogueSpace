@@ -178,6 +178,9 @@ void GameScene::dispose() {
 void GameScene::restart(){
     _winNode->setVisible(false);
     _lvlsToUpgrade.reset();
+    for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
+        (*it)->resetUpgrade();
+    }
     setLevel(1); // reload the first level
     _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
 }
