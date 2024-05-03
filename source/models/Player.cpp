@@ -148,7 +148,7 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
             EarclipTriangulator et = EarclipTriangulator(vec);
             et.calculate();
             Poly2 poly = et.getPolygon();
-            batch->draw(nullptr, Color4(0, 0, 0, 150), poly, Vec2::ZERO, t);
+            batch->draw(nullptr, Color4(0, 0, 0, 90), poly, Vec2::ZERO, t);
         }
     }
     else {
@@ -161,7 +161,7 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
         EarclipTriangulator et = EarclipTriangulator(vec);
         et.calculate();
         Poly2 poly = et.getPolygon();
-        batch->draw(nullptr, Color4(0, 0, 0, 150), poly, Vec2::ZERO, t);
+        batch->draw(nullptr, Color4(0, 0, 0, 90), poly, Vec2::ZERO, t);
     }
 }
 
@@ -246,8 +246,6 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if ((isAttacking() && _directionIndex >= 3 && _directionIndex <= 5)){
         spriteSheet->draw(batch, _tint, origin, transform);
     }
-
-    if (_state == CHARGING || _state == CHARGED) drawRangeIndicator(batch);
 
     // this is always drawn on top of player
     if (_parryEffect->isActive()) {
