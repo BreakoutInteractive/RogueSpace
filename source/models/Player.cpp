@@ -129,14 +129,16 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
         if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && !fixture->IsSensor()) {
-            frac = fraction;
-            loc = point;
-            return 1.0f;
+            if (fraction < frac){
+                frac = fraction;
+                loc = point;
+            }
+            return fraction;
         }
         else return -1.0f;
         };
     _world->rayCast(callback, getPosition(), rayEnd);
-    if (abs(frac-1)<0.001) {
+    if (abs(frac-1)>0.001) {
         float dist = getPosition().distance(loc);
         if (dist >= GameConstants::PROJ_SIZE_P_HALF) {
             std::vector<Vec2> vec = std::vector<Vec2>();
