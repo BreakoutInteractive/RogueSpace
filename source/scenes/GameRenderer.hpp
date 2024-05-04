@@ -37,27 +37,19 @@ private:
     std::shared_ptr<scene2::Button> _pauseButton;
     
     std::shared_ptr<scene2::ProgressBar> _hpBar;
+    std::shared_ptr<scene2::ProgressBar> _stamina;
     
     std::shared_ptr<scene2::SceneNode> _joystickRing;
-    
     std::shared_ptr<scene2::SceneNode> _joystickMoveButton;
-    
     std::shared_ptr<scene2::SceneNode> _joystickAimRing;
-    
     std::shared_ptr<scene2::SceneNode> _joystickAimButton;
-    /** swap weapon button */
-    std::shared_ptr<scene2::Button> _swapButton;
-    
     /** frames of holding the move stick */
     int _moveHoldCounter;
-    
     /** frames of holding the aim stick */
     int _aimHoldCounter;
     
-    std::shared_ptr<scene2::ProgressBar> _stamina;
-
-    /** the background behind the game*/
-    std::shared_ptr<Texture> _backgroundTexture;
+    /** swap weapon button */
+    std::shared_ptr<scene2::Button> _swapButton;
     
 #pragma mark -
 #pragma mark Game Components

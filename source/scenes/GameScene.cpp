@@ -21,14 +21,6 @@
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
 #include "../models/Wall.hpp"
-#include <box2d/b2_world.h>
-#include <box2d/b2_contact.h>
-#include <box2d/b2_collision.h>
-
-#include <ctime>
-#include <string>
-#include <iostream>
-#include <sstream>
 #include "../components/Animation.hpp"
 
 using namespace cugl;
@@ -39,11 +31,6 @@ using namespace cugl;
 /** This is the size of the active portion of the screen */
 #define SCENE_WIDTH 1024
 #define SCENE_HEIGHT 576
-
-/** Color to outline the physics nodes */
-#define STATIC_COLOR    Color4::YELLOW
-/** Opacity of the physics outlines */
-#define DYNAMIC_COLOR   Color4::GREEN
 
 /** The key for the font reference */
 #define PRIMARY_FONT        "retro"
@@ -57,8 +44,7 @@ using namespace cugl;
 #pragma mark Constructors
 
 GameScene::GameScene() : Scene2(),
-_complete(false), _defeat(false),
-_debug(false){}
+_complete(false), _defeat(false), _debug(false){}
 
 
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
@@ -80,14 +66,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return _gameRenderer.isInputProcessed(pos);
     });
     _audioController = std::make_shared<AudioController>();
+    _audioController->init(_assets);
+    _collisionController.setAssets(_assets, _audioController);
+    
     CameraController::CameraConfig config;
     config.speed = GameConstants::GAME_CAMERA_SPEED;
     config.minSpeed = GameConstants::GAME_CAMERA_SPEED;
     config.maxSpeed = GameConstants::GAME_CAMERA_MAX_SPEED;
     config.maxZoom = GameConstants::GAME_CAMERA_MAX_ZOOM_OUT;
     _camController.init(getCamera(), config);
-    _audioController->init(_assets);
-    _collisionController.setAssets(_assets, _audioController);
     
     _lvlsToUpgrade.setMaxCount(NUM_LEVELS_TO_UPGRADE);
     _lvlsToUpgrade.reset();
@@ -100,7 +87,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     std::shared_ptr<Upgradeable> meleeSpeedUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
     std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(5, 30, GameConstants::PLAYER_DODGE_COOLDOWN);
     std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PROJ_DAMAGE_P);
-    
     
     availableUpgrades.push_back(std::move(meleeUpgrade));
     availableUpgrades.push_back(std::move(parryUpgrade));
@@ -124,22 +110,28 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _winNode = scene2::Label::allocWithText("VICTORY!",_assets->get<Font>(PRIMARY_FONT));
     _winNode->setAnchor(Vec2::ANCHOR_CENTER);
     _winNode->setPosition(dimen/2.0f);
-    _winNode->setForeground(STATIC_COLOR);
+    _winNode->setForeground(Color4::YELLOW);
     _winNode->setVisible(false);
-
-    _loseNode = scene2::Label::allocWithText("GAME OVER", _assets->get<Font>(PRIMARY_FONT));
-    _loseNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _loseNode->setPosition(dimen / 2.0f);
-    _loseNode->setForeground(Color4::RED);
-    _loseNode->setVisible(false);
       
     addChild(_debugNode);  //this we keep
     addChild(_winNode);   //TODO: remove
-    addChild(_loseNode); //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     
-    _areaClearEffect = Animation::alloc(SpriteSheet::alloc(assets->get<Texture>("area-clear"), 5, 2), 1.0f, false);
+    // set up the effects scene for large effects (eg. level clear/death)
+    Size size = Application::get()->getDisplaySize();
+    if (!_effectsScene.init(Size(720 * size.width/size.height, 720))){
+        return false;
+    }
+    std::shared_ptr<scene2::SceneNode> effectsNode = _assets->get<scene2::SceneNode>("gameplay");
+    effectsNode->setContentSize(_effectsScene.getSize());
+    effectsNode->doLayout();
+    _effectsScene.addChild(effectsNode);
+    
+    _areaClearNode = std::dynamic_pointer_cast<scene2::SpriteNode>(_assets->get<scene2::SceneNode>("gameplay_area_clear_effect"));
+    _areaClearAnimation = scene2::Animate::alloc(0, _areaClearNode->getSpan()-1, 1.2f);
+    _deadEffectNode = std::dynamic_pointer_cast<scene2::SpriteNode>(_assets->get<scene2::SceneNode>("gameplay_dead_effect"));
+    _deadEffectAnimation = scene2::Animate::alloc(0,_deadEffectNode->getSpan()-1, 1.2f);
     
     _levelTransition.init(assets);
     _levelTransition.setInitialColor(Color4(255, 255, 255, 0));
@@ -150,11 +142,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         this->setLevel(_levelNumber);
         this->upgradeChosen=false;
     });
+    
   
 #pragma mark - Game State Initialization
     setActive(false);
-    _complete = false;
-    _defeat = false;
+    setComplete(false);
+    setDefeat(false);
     hitPauseCounter.setMaxCount(GameConstants::HIT_PAUSE_FRAMES + 3);
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
@@ -165,7 +158,6 @@ void GameScene::dispose() {
         _input.dispose();
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
-        _loseNode = nullptr; //TODO: remove
         _level = nullptr;
         _complete = false;
         _defeat = false;
@@ -252,6 +244,10 @@ void GameScene::setLevel(int level){
         _level->getPlayer()->swapWeapon();
         _input.swapControlMode();
     });
+    
+    // hide effect nodes
+    _areaClearNode->setVisible(false);
+    _deadEffectNode->setVisible(false);
 }
 
 std::string GameScene::getLevelKey(int level){
@@ -295,6 +291,10 @@ void GameScene::preUpdate(float dt) {
         return;
     }
     
+    _actionManager.update(dt);
+    _areaClearNode->setVisible(_actionManager.isActive(AREA_CLEAR_KEY));
+    _deadEffectNode->setVisible(_actionManager.isActive(DEAD_EFFECT_KEY));
+    
     if (!isComplete() && !isDefeat()){
         // game not won, check if any enemies active
         int activeCount = 0;
@@ -304,7 +304,15 @@ void GameScene::preUpdate(float dt) {
                 activeCount += 1;
             }
         }
-        if (activeCount == 0){
+        // player dies
+        if (_level->getPlayer()->_hp == 0){
+            setDefeat(true);
+            // start playing dead effect
+            _actionManager.remove(DEAD_EFFECT_KEY);
+            _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
+        }
+        // player finishes current level
+        else if (activeCount == 0){
             setComplete(true);
             auto energyWalls = _level->getEnergyWalls();
             for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
@@ -312,12 +320,10 @@ void GameScene::preUpdate(float dt) {
             }
             if (_level->getEnemies().size() > 0){
                 // no more enemies remain, but there were enemies initially
-                _areaClearEffect->reset();
-                _areaClearEffect->start();
+                _actionManager.remove(AREA_CLEAR_KEY);
+                _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
             }
         }
-
-        if (_level->getPlayer()->_hp == 0) setDefeat(true);
     }
     
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
@@ -547,7 +553,6 @@ void GameScene::preUpdate(float dt) {
     }
     
     player->update(dt); // updates counters, hitboxes
-    _areaClearEffect->update(dt); // does nothing when not active
     _levelTransition.update(dt); // also does nothing when not active
 }
 
@@ -573,7 +578,6 @@ void GameScene::fixedUpdate(float step) {
         
         _camController.update(step);
         _winNode->setPosition(_camController.getPosition());
-        _loseNode->setPosition(_camController.getPosition());
         
         if (!hitPauseCounter.isZero()){
             if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
@@ -672,20 +676,9 @@ Size GameScene::computeActiveSize() const {
 
 void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
     _gameRenderer.render(batch);
-    if (_areaClearEffect->isActive()){
-        batch->begin(_camera->getCombined());
-        auto sheet = _areaClearEffect->getSpriteSheet();
-        Size frameSize = sheet->getFrameSize();
-        // take up around half the screen height
-        float verticalScale = 0.35f * Application::get()->getDisplaySize().height / frameSize.height;
-        float horizontalScale = 0.35f * Application::get()->getDisplaySize().width / frameSize.width;
-        Affine2 transform = Affine2::createScale(std::min(horizontalScale, verticalScale));
-        transform.translate(_camera->getPosition());
-        sheet->draw(batch, frameSize/2, transform);
-        batch->end();
-    }
-    Scene2::render(batch);
+    _effectsScene.render(batch);
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
     }
+    Scene2::render(batch); // this is mainly for the debug
 }
