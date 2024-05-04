@@ -83,7 +83,7 @@ float GameConstants::PLAYER_ATK_DAMAGE = 1;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
 
-float GameConstants::PLAYER_BOW_DAMAGE = 1;
+float GameConstants::PLAYER_BOW_DAMAGE = 1.0f;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 

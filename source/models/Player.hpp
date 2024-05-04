@@ -223,6 +223,15 @@ public:
     float atkSpeed = 1; //unimplemented
     /** bow strength stat*/
     float bowDamage = GameConstants::PROJ_DAMAGE_P;
+    /** 
+     * Damage of the ranged attack. It is 0.5x the bow strength stat at 
+     * minimum charge and 1.5x the bow strength stat at maximum charge. The
+     * damage is linearly interpolated between these two extremes. If called
+     * when the player is not in the CHARGING or CHARGED states, it returns
+     * the bow damage stat.
+     * @return the damage of the ranged attack
+     */
+    float getBowDamage();
     
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
 #pragma mark -

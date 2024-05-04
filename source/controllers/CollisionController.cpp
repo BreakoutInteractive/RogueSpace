@@ -87,7 +87,6 @@ void CollisionController::beginContact(b2Contact* contact){
                 intptr_t projptr = reinterpret_cast<intptr_t>(p.get());
                 if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
-                    //TODO: give projectiles a modifiable damage value
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());

@@ -575,6 +575,12 @@ void Player::update(float dt) {
     }
 }
 
+float Player::getBowDamage() {
+    if (_state == CHARGING) return bowDamage * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
+    else if (_state == CHARGED) return bowDamage * 1.5f;
+    else return bowDamage;
+}
+
 #pragma mark -
 #pragma mark Physics
 
