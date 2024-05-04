@@ -70,8 +70,10 @@ public:
     static float PROJ_RADIUS_LIZARD;
     /** the radius of a mage enemy projectile */
     static float PROJ_RADIUS_MAGE;
-    /** how many seconds the enemy projectile lasts, not including the explosion animation */
-    static float PROJ_TIME_E;
+    /** the square of the distance the enemy projectile travels, not including the explosion animation */
+    static float PROJ_DIST_E_SQ;
+    /** the distance the enemy projectile travels, not including the explosion animation */
+    static float PROJ_DIST_E;
     /** the fraction of damage the tank enemy takes when not stunned */
     static float TANK_ENEMY_DR;
 
@@ -121,8 +123,10 @@ public:
     static float PROJ_SPEED_P;
     /** half of the size of a player projectile */
     static float PROJ_SIZE_P_HALF;
-    /** how many seconds the player projectile lasts, not including the explosion animation */
-    static float PROJ_TIME_P;
+    /** the square of the distance the player projectile travels, not including the explosion animation */
+    static float PROJ_DIST_P_SQ;
+    /** the distance the player projectile travels, not including the explosion animation */
+    static float PROJ_DIST_P;
     /** player initial projectile damage */
     static float PROJ_DAMAGE_P;
     /** how many seconds it takes for the player to charge the ranged attack */

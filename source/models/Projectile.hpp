@@ -15,7 +15,8 @@ private:
 	std::shared_ptr<Animation> _explodingAnimation;
 	enum state { FLYING, EXPLODING };
 	state _state;
-	int _damage;
+	float _damage;
+	Vec2 _initPos;
 public:
 
 	/**

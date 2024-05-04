@@ -428,8 +428,7 @@ void GameScene::preUpdate(float dt) {
                 Vec2 direction = Vec2::ZERO;
                 float ang = 0;
                 if (player->_weapon == Player::weapon::RANGED) {
-                    //only shoot when fully charged
-                    if (player->_state == Player::state::CHARGED) {
+                    if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING) {
                         //ranged attack
                         direction = _input.getAttackDirection(player->getFacingDir());
                         ang = acos(direction.dot(Vec2::UNIT_X));
@@ -437,7 +436,7 @@ void GameScene::preUpdate(float dt) {
                             // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                             ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                         }
-                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->bowDamage, ang, _assets);
+                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), ang, _assets);
                         p->setDrawScale(Vec2(_scale, _scale));
                         _level->addProjectile(p);
                         player->animateShot();

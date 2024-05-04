@@ -52,7 +52,9 @@ float GameConstants::PROJ_RADIUS_LIZARD = 0.5f;
 
 float GameConstants::PROJ_RADIUS_MAGE = 0.75f; 
 
-float GameConstants::PROJ_TIME_E = 1.5f;
+float GameConstants::PROJ_DIST_E = 9.0f;
+
+float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
@@ -81,13 +83,15 @@ float GameConstants::PLAYER_ATK_DAMAGE = 1;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
 
-float GameConstants::PLAYER_BOW_DAMAGE = 1;
+float GameConstants::PLAYER_BOW_DAMAGE = 1.0f;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 
 float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
-float GameConstants::PROJ_TIME_P = 1.0f;
+float GameConstants::PROJ_DIST_P_SQ = 100.0f;
+
+float GameConstants::PROJ_DIST_P = 10.0f;
 
 float GameConstants::PROJ_DAMAGE_P = 1.0f;
 
