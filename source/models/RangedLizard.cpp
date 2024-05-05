@@ -58,8 +58,7 @@ void RangedLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_p
 
 void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _enemyTexture = assets->get<Texture>("lizard-ranged-idle");
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    _healthFG =  assets->get<cugl::Texture>("hp_foreground");;
     auto walkTexture = assets->get<Texture>("lizard-ranged-walk");
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
@@ -127,13 +126,12 @@ void RangedLizard::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     spriteSheet->draw(batch, _tint, origin, transform);
     
     //enemy health bar
-    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
-    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
+    Vec2 idleOrigin = Vec2(HEALTHBARWIDTH/ 2, 0);
     
-    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
-    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
-
-    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
+    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, HEALTHBARWIDTH, 5);
+    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, HEALTHBARWIDTH*(_health/_maxHealth), 5);
+    
+    batch->draw(nullptr, Color4("#603c46"), healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
 
     if (_hitEffect->isActive()) {

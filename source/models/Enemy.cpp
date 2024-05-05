@@ -115,13 +115,12 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     spriteSheet->draw(batch, _tint, origin, transform);
     
     //enemy health bar
-    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
-    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
+    Vec2 idleOrigin = Vec2(HEALTHBARWIDTH/ 2, 0);
     
-    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
-    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
-
-    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
+    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, HEALTHBARWIDTH, 5);
+    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, HEALTHBARWIDTH*(_health/_maxHealth), 5);
+    
+    batch->draw(nullptr, Color4("#603c46"), healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
     
     if (_hitEffect->isActive()) {

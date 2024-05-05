@@ -14,6 +14,8 @@
 #include "LevelModel.hpp"
 #include "GameConstants.hpp"
 
+#define HEALTHBARWIDTH 50
+
 class Animation;
 
 /**
@@ -37,9 +39,6 @@ protected:
     
     /** The enemy texture*/
     std::shared_ptr<cugl::Texture> _enemyTexture;
-    
-    /** The enemy health bar background */
-    std::shared_ptr<cugl::Texture> _healthBG;
     
     /** The enemy health bar foreground */
     std::shared_ptr<cugl::Texture> _healthFG;
