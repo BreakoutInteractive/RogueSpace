@@ -58,6 +58,8 @@ float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
+float GameConstants::STUN_DMG_BONUS = 2.0f;
+
 
 #pragma mark -
 #pragma mark Player
