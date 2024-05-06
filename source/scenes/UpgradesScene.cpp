@@ -238,7 +238,7 @@ void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
     
 }
 
-void UpgradesScene::updateScene(std::vector<int> attributes, std::vector<std::shared_ptr<Upgradeable>> availableUpgrades){
+void UpgradesScene::updateScene(std::array<int,2> attributes, std::vector<std::shared_ptr<Upgradeable>> availableUpgrades){
 
     setButtonText(attributes.at(0),availableUpgrades.at(attributes.at(0))->getCurrentLevel()+1,0);
     setButtonText(attributes.at(1),availableUpgrades.at(attributes.at(1))->getCurrentLevel()+1,1);

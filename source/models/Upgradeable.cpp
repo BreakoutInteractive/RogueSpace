@@ -17,6 +17,15 @@ Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue){
     _stepAmt = (_maxValue-_currValue)/_maxLevel;
 }
 
+Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue, float stepAmt){
+    _maxLevel = maxLevel;
+    _currLevel = 0;
+    _maxValue = maxValue;
+    _initialValue = baseValue;
+    _currValue = baseValue;
+    _stepAmt = stepAmt;
+}
+
 void Upgradeable::levelUp(){
     if (_currLevel<_maxLevel){
         _currLevel+=1;

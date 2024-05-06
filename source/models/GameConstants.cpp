@@ -32,7 +32,7 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 50;
 
-int GameConstants::ENEMY_STUN_COOLDOWN = 100;
+int GameConstants::ENEMY_STUN_COOLDOWN = 80;
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 120;
 
@@ -66,7 +66,7 @@ int GameConstants::PLAYER_ATTACK_COOLDOWN = 16;
 
 float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
-int GameConstants::PLAYER_DODGE_COOLDOWN = 50;
+int GameConstants::PLAYER_DODGE_COOLDOWN = 120;
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
 float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 

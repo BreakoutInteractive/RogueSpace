@@ -50,7 +50,18 @@ public:
      */
     Upgradeable(int maxLevel, float maxValue, float baseValue);
     
-    
+    /**
+     * Initializes an upgrade at level 0 and increments by stepAmt up to max level
+     *
+     * @param maxLevel maximum amount of levels on 0 based number scale
+     * @param maxValue maximum value the stat can reach
+     * @param baseValue starting value of stat
+     * @param type  category of stat
+     * @param stepAmt  category of stat
+     *
+     */
+    Upgradeable(int maxLevel, float maxValue, float baseValue, float stepAmt);
+
     /**
      * Increases the current level and updates stat
      */

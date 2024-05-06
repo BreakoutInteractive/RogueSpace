@@ -139,7 +139,7 @@ public:
      *
      * @param attributes available payer upgrades
      */
-    void updateScene(std::vector<int> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
+    void updateScene(std::array<int,2> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
     
     void setButtonText(int upgrade, int buttonType, int level);
 

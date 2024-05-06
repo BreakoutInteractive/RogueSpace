@@ -104,17 +104,18 @@ protected:
     void setPlayerAttributes(float hp);
     
     /** upgrades generated for level*/
-    std::vector<int> upgradesForLevel;
+    std::array<int,2> upgradesForLevel;
     
     /** all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
+    std::array<std::shared_ptr<Upgradeable>,6> playerUpgrades;
     
 public:
     /** Returns all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
     
     /** Returns upgradeable stats to be displayed for level*/
-    std::vector<int> getDisplayedUpgrades(){return upgradesForLevel;}
+    std::array<int,2> getDisplayedUpgrades(){return upgradesForLevel;}
     
     /** whether the upgrades screen should be active*/
     bool upgradeScreenActive;

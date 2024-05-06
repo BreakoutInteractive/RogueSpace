@@ -147,6 +147,19 @@ public:
     state _state;
     
     float _hp;
+    
+    struct stats{
+        /** damage done by melee*/
+        float meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
+        /** percentage of how much damage gets taken  */
+        float defense = GameConstants::PLAYER_DEFENSE;
+        /** size of parry window*/
+        float parryWindow = GameConstants::ENEMY_STUN_COOLDOWN;
+        /** speed of melee attack  */
+        float atkSpeed = 1; //unimplemented
+        /** bow strength stat*/
+        float bowDamage = GameConstants::PROJ_DAMAGE_P;
+    };
 
 #pragma mark Counters
 
