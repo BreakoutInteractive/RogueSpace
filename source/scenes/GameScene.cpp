@@ -354,12 +354,6 @@ void GameScene::preUpdate(float dt) {
     
 #ifdef CU_TOUCH_SCREEN
     
-    // if player just got hit, cancel any combat requiring hold-times
-    if (player->hitCounter.isMaximum()){
-        _input.clearHeldGesture();
-        _gameRenderer.updateAimJoystick(false, _input.getInitCombatLocation(), _input.getCombatTouchLocation());
-    }
-    
     if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING){
         _gameRenderer.updateAimJoystick(_input.isCombatActive(), _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
@@ -473,7 +467,7 @@ void GameScene::preUpdate(float dt) {
     //only move if we're not parrying or dodging or recovering
     if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
         && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
-        && (player->hitCounter.getCount() < player->hitCounter.getMaxCount() - 5)) {
+        && (player->hitCounter.getCount() < player->hitCounter.getMaxCount() - 10)) {
         switch (player->_weapon) {
         case Player::weapon::MELEE:
             if (player->isAttacking()){

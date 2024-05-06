@@ -70,7 +70,8 @@ protected:
 
     /** previous animation (animation state tracker) */
     std::shared_ptr<Animation> _prevAnimation;
-    //TODO: there are a lot of these, maybe put them in a hash table with key = animation name
+
+    
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
     /** The animation to use during parry startup */
@@ -151,7 +152,7 @@ public:
 #pragma mark Counters
 
     /** attack cooldown counter*/
-    Counter atkCD; //TODO: possibly deprecated
+    Counter atkCD;
     /** dodge cooldown counter*/
     Counter dodgeCD;
     /** counter that is active while the player takes damage */

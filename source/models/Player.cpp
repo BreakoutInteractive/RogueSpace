@@ -67,7 +67,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::p
     
     // set the counter properties
     hitCounter.setMaxCount(GameConstants::PLAYER_IFRAME);
-    // TODO: possibly deprecated, remove.
+
     atkCD.setMaxCount(GameConstants::PLAYER_ATTACK_COOLDOWN);
     dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
     _hp = GameConstants::PLAYER_MAX_HP;
@@ -138,7 +138,7 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
         else return -1.0f;
         };
     _world->rayCast(callback, getPosition(), rayEnd);
-    if (abs(frac-1)>0.001) {
+    if (abs(frac-1)>0.01) {
         float dist = getPosition().distance(loc);
         if (dist >= GameConstants::PROJ_SIZE_P_HALF) {
             std::vector<Vec2> vec = std::vector<Vec2>();
@@ -528,7 +528,6 @@ void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
             _swipeEffect->reset();
             _comboSwipeEffect->reset();
         }
-        _state = IDLE; //TODO: hit state ???
     }
 }
 
