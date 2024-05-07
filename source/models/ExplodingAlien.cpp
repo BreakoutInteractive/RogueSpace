@@ -18,7 +18,7 @@ bool ExplodingAlien::init(std::shared_ptr<JsonValue> data) {
     Enemy::init(data);
     _attackRange = GameConstants::EXPLODE_PROX_RANGE;
     _windupCD.setMaxCount(GameConstants::EXPLODE_TIMER);
-
+    _windupCD.setCount(GameConstants::EXPLODE_TIMER);
     return true;
 }
 

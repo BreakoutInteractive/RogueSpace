@@ -498,7 +498,6 @@ void GameScene::preUpdate(float dt) {
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
-        CULog("%f", enemy->getHealth());
         if (enemy->getHealth() <= 0) {
             if (enemy->getType() == "exploding alien" && !enemy->getCharged()) {
                 enemy->setAttacking();
@@ -515,11 +514,18 @@ void GameScene::preUpdate(float dt) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
             bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
-                if (enemy->getType() == "melee lizard") {
-                    enemy->attack(_level, _assets);
+                if (enemy->getType() == "exploding alien" && !enemy->_windupCD.isZero()) {
+                    enemy->updateWindup(true);
+                } else {
+                    if (enemy->getType() == "melee lizard") {
+                        enemy->attack(_level, _assets);
+                    }
+                    enemy->setAttacking();
                 }
-                enemy->setAttacking();
+            } else {
+                enemy->updateWindup(false);
             }
+            // handle attacking outcome
             if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
                 if (enemy->getType() == "ranged lizard" || 
                     enemy->getType() == "mage alien" ) {

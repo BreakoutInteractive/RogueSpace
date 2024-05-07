@@ -60,7 +60,7 @@ float GameConstants::TANK_ENEMY_DR = 0.1f;
 
 float GameConstants::STUN_DMG_BONUS = 2.0f;
 
-float GameConstants::EXPLODE_TIMER = 100;
+float GameConstants::EXPLODE_TIMER = 60;
 
 float GameConstants::EXPLODE_RADIUS = 0.75f;  // to balance
 

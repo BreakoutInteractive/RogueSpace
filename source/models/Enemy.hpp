@@ -528,6 +528,8 @@ public:
 #pragma mark -
 #pragma mark State Update
     void updateCounters();
+    
+    void updateWindup(bool down);
 };
 
 #endif /* Enemy_hpp */

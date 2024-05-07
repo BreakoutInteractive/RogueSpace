@@ -59,6 +59,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
     _stunCD.setMaxCount(GameConstants::ENEMY_STUN_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
+    _windupCD.setMaxCount(1);
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -239,6 +240,14 @@ void Enemy::updateCounters() {
     _stunCD.decrement();
     _atkCD.decrement();
     _hitCounter.decrement();
+}
+
+void Enemy::updateWindup(bool down) {
+    if (down) {
+        _windupCD.decrement();
+    } else {
+        _windupCD.increment();
+    }
 }
 
 void Enemy::setFacingDir(cugl::Vec2 dir) {
