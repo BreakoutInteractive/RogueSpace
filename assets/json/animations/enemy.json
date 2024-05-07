@@ -1,5 +1,14 @@
 {
     "textures": {
+        "explode-walk": {
+            "file":     "textures/sprites/explode/explode_walk.png"
+        },
+        "explode-idle": {
+            "file":     "textures/sprites/explode/explode_idle.png"
+        },
+        "explode-attack": {
+            "file":     "textures/sprites/explode/explosion.png"
+        },
         "lizard-walk": {
             "file":     "textures/sprites/lizard/lizard_walk.png"
         },

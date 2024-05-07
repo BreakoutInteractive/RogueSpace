@@ -78,6 +78,17 @@ public:
     static float TANK_ENEMY_DR;
     /** the bonus damage multiplier applied to stunned enemies */
     static float STUN_DMG_BONUS;
+    
+#pragma mark -
+#pragma mark Slime Constants
+    /** time before explosion for slime */
+    static float EXPLODE_TIMER;
+    
+    /** size of explosion */
+    static float EXPLODE_RADIUS;
+    
+    /** range of detection from slime */
+    static float EXPLODE_PROX_RANGE;
 
 #pragma mark -
 #pragma mark Player Constants

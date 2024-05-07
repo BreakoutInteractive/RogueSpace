@@ -193,6 +193,7 @@ void Enemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
         _hitCounter.reset();
         if (_state == EnemyState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
         setHealth(getHealth()-damage);
+        CULog("%f", getHealth());
         _hitEffect->reset();
         _hitEffect->start();
         _collider->setLinearVelocity(atkDir * knockback_scl);

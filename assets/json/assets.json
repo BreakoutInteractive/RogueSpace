@@ -2,6 +2,7 @@
     "jsons": {
         "constants": "json/level.json",
         "upgrades": "json/tiled/exports/ob_lvl_upgrades.json",
+        "level0": "json/tiled/exports/cb_lvl_01.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
         "level3": "json/tiled/exports/sc_lvl_02.json",

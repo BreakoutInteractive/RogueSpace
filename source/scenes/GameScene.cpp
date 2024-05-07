@@ -59,7 +59,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // initalize controllers with the assets
     _assets = assets;
     _parser.loadTilesets(assets);
-    _levelNumber = 1;
+    _levelNumber = 0;
     _upgradeLevelActive = false;
     _gameRenderer.init(_assets);
     _input.init([this](Vec2 pos){
@@ -172,7 +172,7 @@ void GameScene::restart(){
     for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
         (*it)->resetUpgrade();
     }
-    setLevel(1); // reload the first level
+    setLevel(0); // reload the first level
     _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
 }
 
@@ -498,9 +498,14 @@ void GameScene::preUpdate(float dt) {
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
+        CULog("%f", enemy->getHealth());
         if (enemy->getHealth() <= 0) {
-            enemy->setEnabled(false);
-            enemy->getAttack()->setEnabled(false);
+            if (enemy->getType() == "exploding alien" && !enemy->getCharged()) {
+                enemy->setAttacking();
+            } else {
+                enemy->setEnabled(false);
+                enemy->getAttack()->setEnabled(false);
+            }
         }
         if (!enemy->_stunCD.isZero()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
@@ -517,10 +522,15 @@ void GameScene::preUpdate(float dt) {
             }
             if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
                 if (enemy->getType() == "ranged lizard" || 
-                    enemy->getType() == "mage alien") {
+                    enemy->getType() == "mage alien" ) {
                     if (enemy->getCharged()) {
                         enemy->attack(_level, _assets);
                     }
+                }
+            }
+            if (enemy->getType() == "exploding alien") {
+                if (enemy->getCharged()) {
+                    enemy->setHealth(0);
                 }
             }
         }

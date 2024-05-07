@@ -41,6 +41,7 @@
 #define CLASS_TILELAYER     "TileLayer"
 #define CLASS_LIZARD        "Lizard"
 #define CLASS_RANGEDLIZARD  "RangedLizard"
+#define CLASS_EXPLODE       "Explode"
 #define CLASS_CASTER        "Caster"
 #define CLASS_TANK			"TankEnemy"
 #define CLASS_RELIC         "Relic"

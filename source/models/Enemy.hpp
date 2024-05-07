@@ -131,6 +131,8 @@ public:
     Counter _stunCD; //todo: if stun animation exists, remove counter.
     
     Counter _sentryCD;
+    
+    Counter _windupCD;
 
     Counter _hitCounter;
     
