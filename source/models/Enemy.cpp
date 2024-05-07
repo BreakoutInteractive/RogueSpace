@@ -191,6 +191,7 @@ void Enemy::setStunned() {
 void Enemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
     if (!_hitEffect->isActive()) {
         _hitCounter.reset();
+        if (_state == EnemyState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
         setHealth(getHealth()-damage);
         _hitEffect->reset();
         _hitEffect->start();

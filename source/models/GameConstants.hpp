@@ -75,6 +75,8 @@ public:
     static float PROJ_DIST_E;
     /** the fraction of damage the tank enemy takes when not stunned */
     static float TANK_ENEMY_DR;
+    /** the bonus damage multiplier applied to stunned enemies */
+    static float STUN_DMG_BONUS;
 
 #pragma mark -
 #pragma mark Player Upgradeable Stat Constants
