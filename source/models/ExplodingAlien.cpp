@@ -41,29 +41,24 @@ void ExplodingAlien::dispose() {
 #pragma mark Animation
 
 void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
-//    _enemyTexture = assets->get<Texture>("explode-idle");
-//    auto walkTexture = assets->get<Texture>("explode-walk");
-//    auto attackTexture = assets->get<Texture>("explode-attack");
-    _enemyTexture = assets->get<Texture>("lizard-idle");
-    auto walkTexture = assets->get<Texture>("lizard-walk");
-    auto attackTexture = assets->get<Texture>("lizard-attack");
+    _enemyTexture = assets->get<Texture>("explode-idle");
+    auto walkTexture = assets->get<Texture>("explode-walk");
+    auto attackTexture = assets->get<Texture>("explode-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
     
-//    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 4);
-//    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
-//    auto attackSheet = SpriteSheet::alloc(attackTexture, 1, 6);
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
-    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
-    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15); // TODO: edit
+    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 4);
+    auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
+    auto attackSheet = SpriteSheet::alloc(attackTexture, 1, 6);
+    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15); // TODO: remove safely
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
-    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
-    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 17);
+    CULog("%d", idleSheet->getSize());
+    _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 3);
+    _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
+    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 5);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
@@ -115,9 +110,9 @@ void ExplodingAlien::setFacingDir(cugl::Vec2 dir) {
     _facingDirection = dir;
 
     if (prevDirection != _directionIndex){
-        _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
-        _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
-        _attackAnimation->setFrameRange(18 * _directionIndex, 18 * _directionIndex + 17);
+        _idleAnimation->setFrameRange(4 * _directionIndex, 4 * _directionIndex + 3);
+        _walkAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
+        _attackAnimation->setFrameRange(0, 5);
         _stunAnimation->setFrameRange(15 * _directionIndex, 15 * _directionIndex + 14);
     }
 }

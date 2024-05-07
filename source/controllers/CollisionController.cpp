@@ -126,7 +126,9 @@ void CollisionController::beginContact(b2Contact* contact){
                 }
                 else {
                     //successful parry
-                    (*it)->setStunned();
+                    if ((*it)->getType() != "exploding alien") {
+                        (*it)->setStunned();
+                    }
                     player->playParryEffect();
                 }
             }
