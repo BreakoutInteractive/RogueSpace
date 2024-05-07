@@ -62,21 +62,24 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto walkTexture = assets->get<Texture>("lizard-walk");
     auto attackTexture = assets->get<Texture>("lizard-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
-    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
+    auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 18);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
-    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
+    auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 17);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
-    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
+    _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     
     _currAnimation = _idleAnimation; // set runnning
@@ -102,8 +105,11 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     setAnimation(_idleAnimation);
 
-    _hitEffect->onComplete([this]() {
-        _hitEffect->reset();
+    _meleeHitEffect->onComplete([this]() {
+        _meleeHitEffect->reset();
+    });
+    _bowHitEffect->onComplete([this]() {
+        _bowHitEffect->reset();
     });
 }
 

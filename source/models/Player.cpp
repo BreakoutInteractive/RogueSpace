@@ -233,7 +233,13 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         effSheet->draw(batch, origin, transform); 
     }
     
-
+    if (_hitEffect->isActive()) {
+        auto effSheet = _hitEffect->getSpriteSheet();
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //32 is half of player pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -246,6 +252,9 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto bowIdleSheet = SpriteSheet::alloc(assets->get<Texture>("player-bow-idle"), 8, 8);
     auto bowRunSheet = SpriteSheet::alloc(assets->get<Texture>("player-bow-run"), 8, 16);
     auto projEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-projectile"), 4, 4);
+    auto hitSheet = SpriteSheet::alloc(assets->get<Texture>("hit-effect"), 2, 3);
+
+    // pass to animations
     _parryStartAnimation = Animation::alloc(parrySheet, 0.1f, false, 0, 1);
     _parryStanceAnimation = Animation::alloc(parrySheet, 0.5f, true, 2, 9);
     _parryAnimation = Animation::alloc(parrySheet, GameConstants::PLAYER_PARRY_TIME, false, 10, 15);
@@ -271,6 +280,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _parryEffect = Animation::alloc(parryEffectSheet, 0.4f, false);
     _swipeEffect = Animation::alloc(swipeEffectSheet, 0.4f, false); // tries to match attack 1 and 2, but played a bit faster
     _comboSwipeEffect = Animation::alloc(comboSwipeEffectSheet, 0.4f, false);
+    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     
     // add callbacks
     _attackAnimation1->onComplete([this](){
@@ -321,6 +331,9 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _chargingEffect->reset();
         _chargedEffect->start();
         _state = CHARGED;
+        });
+    _hitEffect->onComplete([this]() {
+        _hitEffect->reset();
         });
 
     setAnimation(_idleAnimation);
@@ -429,6 +442,10 @@ void Player::updateAnimation(float dt){
     _parryEffect->update(dt);
     _swipeEffect->update(dt);
     _comboSwipeEffect->update(dt);
+    _hitEffect->update(dt);
+    if (_hitEffect->isActive()) {
+        _tint = Color4::RED;
+    }
 }
 
 #pragma mark -
@@ -480,12 +497,18 @@ void Player::setFacingDir(cugl::Vec2 dir){
 
 void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
-    if (_iframeCounter.isZero() && _state != DODGE) {
-        _iframeCounter.reset();
+    if (!_hitEffect->isActive() && _state != DODGE) {
         float reduction = _damageReduction + (isBlocking() ? _blockReduction : 0);
-        _hp = std::fmax(0, (_hp - damage* (1 - reduction)));
+        _hp = std::fmax(0, (_hp - damage * (1 - reduction)));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);
+        _hitEffect->start();
+        if (_state == ATTACK){
+            // previously attacking, got interrupted
+            _comboTimer = 0;    // equivalent to a "normal" termination of an attack
+            _swipeEffect->reset();
+            _comboSwipeEffect->reset();
+        }
     }
 }
 

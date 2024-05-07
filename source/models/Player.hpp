@@ -117,6 +117,8 @@ protected:
     std::shared_ptr<Animation> _shotEffect;
     /** The effect to use upon successfully parrying */
     std::shared_ptr<Animation> _parryEffect;
+    /** The effect to use when hit */
+    std::shared_ptr<Animation> _hitEffect;
     
 #pragma mark -
 #pragma mark Player Internal State

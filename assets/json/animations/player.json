@@ -32,6 +32,9 @@
         },
         "player-swipe-combo": {
             "file":     "textures/sprites/player/player_swipe_02.png"
+        },
+        "hit-effect": {
+            "file":     "textures/sprites/player/effect_hit_player.png"
         }
     }
 }

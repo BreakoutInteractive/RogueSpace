@@ -36,8 +36,11 @@
         "mage-projectile": {
             "file":     "textures/sprites/caster/spelleffect_spritesheet.png"
         },
-        "enemy-hit-effect": {
-            "file":     "textures/sprites/hit.png"
+        "melee-hit-effect": {
+            "file":     "textures/sprites/effect_hit_sword.png"
+        },
+        "bow-hit-effect": {
+            "file":     "textures/sprites/effect_hit_bow.png"
         },
         "enemy-swipe": {
             "file":     "textures/sprites/swipe.png"

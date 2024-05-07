@@ -58,8 +58,10 @@ protected:
     /** The animation to use while stunned */
     std::shared_ptr<Animation> _stunAnimation;
 
-    /** The hit effect animation */
-    std::shared_ptr<Animation> _hitEffect;
+    /** The hit effect animation when hit by the melee attack */
+    std::shared_ptr<Animation> _meleeHitEffect;
+    /** The hit effect animation when hit by the ranged attack */
+    std::shared_ptr<Animation> _bowHitEffect;
     /** The stun effect animation */
     std::shared_ptr<Animation> _stunEffect;
     
@@ -497,10 +499,11 @@ public:
     /**
      * Method to call when an enemy is hit by an attack
      * @param atkDir the normal vector of the direction of the attack that hit this enemy
+     * @param ranged whether the attack that hit this enemy was a ranged attack
      * @param damage how much damage this enemy takes
      * @param knockback_scl the factor to multiply the direction by for applying knockback
      */
-    virtual void hit(cugl::Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
+    virtual void hit(cugl::Vec2 atkDir, bool ranged, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
 
     /**
      * Method to call when an enemy is stunned, e.g. when parried

@@ -107,10 +107,11 @@ public:
     /**
      * Method to call when an enemy is hit by an attack
      * @param atkDir the normal vector of the direction of the attack that hit this enemy
+     * @param ranged whether the attack that hit this enemy was ranged
      * @param damage how much damage this enemy takes
      * @param knockback_scl the factor to multiply the direction by for applying knockback
      */
-    void hit(cugl::Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK) override;
+    void hit(cugl::Vec2 atkDir, bool ranged, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK) override;
 
 };
 
