@@ -80,8 +80,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }
     
     // indicators should be drawn between tile layers and objects
-    if (_player->_state == Player::state::CHARGING || _player->_state == Player::state::CHARGED){
-        _player->drawRangeIndicator(batch);
+    if (_player->isRangedAttackActive()){
+        _player->drawRangeIndicator(batch, _world);
     }
     
     // sort elements to be drawn

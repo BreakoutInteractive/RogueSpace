@@ -32,6 +32,7 @@ void App::onStartup() {
     // Queue the other assets
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadDirectoryAsync("json/scenes/gameplay.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);

@@ -68,14 +68,14 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 5);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 8);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 7);
+    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 6);
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
 
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 4);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 7);
-    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 6);
+    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 5);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
 
@@ -128,12 +128,13 @@ void TankEnemy::setFacingDir(cugl::Vec2 dir) {
         _idleAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _walkAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _attackAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
-        _stunAnimation->setFrameRange(7 * _directionIndex, 7 * _directionIndex + 6);
+        _stunAnimation->setFrameRange(6 * _directionIndex, 6 * _directionIndex + 5);
     }
 }
 
 void TankEnemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
     //this enemy type takes much less damage when not stunned
-    if (isStunned()) Enemy::hit(atkDir, damage, knockback_scl);
+    //need to scale down by the stun damage bonus so that it's not doubly applied
+    if (isStunned()) Enemy::hit(atkDir, damage/GameConstants::STUN_DMG_BONUS, knockback_scl);
     else Enemy::hit(atkDir, damage*GameConstants::TANK_ENEMY_DR, knockback_scl);
 };

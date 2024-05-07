@@ -1,0 +1,94 @@
+{
+    "textures": {
+        "area_clear_effect": {
+            "file":      "textures/gameplay/area_clear.png"
+        },
+        "dead_effect": {
+            "file":     "textures/gameplay/effect_dead.png"   
+        }
+    },
+    "scene2s": {
+        "gameplay": {
+            "type": "Node",
+            "format": {
+                "type": "Anchored"
+            },
+            "data": {
+                "anchor": [
+                    0,
+                    0
+                ],
+                "size": [
+                    1280,
+                    720
+                ],
+                "angle": 0,
+                "position": [
+                    0,
+                    0
+                ],
+                "visible": true
+            },
+            "children": {
+                "area_clear_effect": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "area_clear_effect",
+                        "anchor": [
+                            0.5,
+                            0.5
+                        ],
+                        "polygon": [
+                            0,0, 613,0, 613,153, 0,153
+                        ],
+                        "angle": 0,
+                        "position": [
+                            365,
+                            283
+                        ],
+                        "visible": false,
+                        "span": 10,
+                        "cols": 2,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "middle",
+                        "absolute": false,
+                        "x_offset": 0.02,
+                        "y_offset": 0
+                    }
+                },
+                "dead_effect": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "dead_effect",
+                        "anchor": [
+                            0.5,
+                            0.5
+                        ],
+                        "polygon": [
+                            0,0, 504,0, 504,113, 0,113
+                        ],
+                        "angle": 0,
+                        "position": [
+                            414,
+                            303
+                        ],
+                        "visible": false,
+                        "span": 10,
+                        "cols": 2,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "middle",
+                        "absolute": false,
+                        "x_offset": 0.02,
+                        "y_offset": 0
+                    }
+                }
+            }
+        }
+    }
+}

@@ -8,6 +8,7 @@ bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared
     _drawScale.set(1.0f, 1.0f);
     _damage = damage;
     _state = FLYING;
+    _initPos = Vec2(pos.x, pos.y);
 
     //init hitbox
     std::vector<Vec2> v;
@@ -73,6 +74,7 @@ bool Projectile::lizardInit(Vec2 pos, float damage, float ang, const std::shared
     _drawScale.set(1.0f, 1.0f);
     _damage = damage;
     _state = FLYING;
+    _initPos = Vec2(pos.x, pos.y);
 
     //init hitbox
     //TODO: modify shape and size
@@ -120,6 +122,7 @@ bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_p
     _drawScale.set(1.0f, 1.0f);
     _damage = damage;
     _state = FLYING;
+    _initPos = Vec2(pos.x, pos.y);
 
     //init hitbox
     //TODO: modify shape and size
@@ -188,10 +191,10 @@ bool Projectile::isCompleted() {
     if (_state == FLYING) {
         if ((_collider->getFilterData().maskBits & CATEGORY_PLAYER) == CATEGORY_PLAYER)
             //if this can hit the player, it belongs to an enemy
-            return _currAnimation->elapsed() >= GameConstants::PROJ_TIME_E;
+            return _position.distanceSquared(_initPos) >= GameConstants::PROJ_DIST_E_SQ;
         else if ((_collider->getFilterData().maskBits & CATEGORY_ENEMY) == CATEGORY_ENEMY)
             //if this can hit enemies, it belongs to the player
-            return _currAnimation->elapsed() >= GameConstants::PROJ_TIME_P;
+            return _position.distanceSquared(_initPos) >= GameConstants::PROJ_DIST_P_SQ;
 
         // impossible path
         return false;
