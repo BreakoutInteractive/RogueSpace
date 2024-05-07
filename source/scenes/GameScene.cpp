@@ -83,10 +83,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE);
     std::shared_ptr<Upgradeable> parryUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> defenseUpgrade =  std::make_shared<Upgradeable>(5, .5, GameConstants::PLAYER_DEFENSE);
+    std::shared_ptr<Upgradeable> defenseUpgrade =  std::make_shared<Upgradeable>(5, .5, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
     std::shared_ptr<Upgradeable> meleeSpeedUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(5, 30, GameConstants::PLAYER_DODGE_COOLDOWN);
-    std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PROJ_DAMAGE_P);
+    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(5, 1/6, 1); // temporary to illustrate 1 dash to 6 dash.
+    std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_BOW_DAMAGE);
     
     availableUpgrades.push_back(std::move(meleeUpgrade));
     availableUpgrades.push_back(std::move(parryUpgrade));
@@ -173,7 +173,8 @@ void GameScene::restart(){
         (*it)->resetUpgrade();
     }
     setLevel(1); // reload the first level
-    _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
+    auto player = _level->getPlayer();
+    player->setHP(player->getMaxHP());
 }
 
 void GameScene::setLevel(int level){
@@ -182,7 +183,7 @@ void GameScene::setLevel(int level){
     std::string levelToParse = "";
     
     if (_level!=nullptr) {
-        currentHp = _level->getPlayer()->_hp;
+        currentHp = _level->getPlayer()->getHP();
     }
     
     if (_upgradeLevelActive){
@@ -212,12 +213,9 @@ void GameScene::setLevel(int level){
 
     _level = LevelModel::alloc(_assets->get<JsonValue>("constants"), parsed);
     _level->setAssets(_assets);
-        
-    // IMPORTANT: SCALING MUST BE UNIFORM
-    // This means that we cannot change the aspect ratio of the physics world
-    // Shift to center if a bad fit
-    _scale = dimen.width == SCENE_WIDTH ? dimen.width/_level->getViewBounds().width :
-                                              dimen.height/_level->getViewBounds().height;
+    
+    auto scales = dimen/_level->getViewBounds();
+    _scale = dimen.width == SCENE_WIDTH ? scales.width : scales.height;
     _level->setDrawScale(Vec2(_scale, _scale));
     _level->setDebugNode(_debugNode);
     setDebug(isDebug());
@@ -231,7 +229,7 @@ void GameScene::setLevel(int level){
     
     setComplete(false);
     setDefeat(false);
-    _input.activateMeleeControls();
+    _input.activateMeleeControls(); // TODO: use the active weapon
     _input.setActive(true);
 
     auto p = _level->getPlayer();
@@ -304,15 +302,8 @@ void GameScene::preUpdate(float dt) {
                 activeCount += 1;
             }
         }
-        // player dies
-        if (_level->getPlayer()->_hp == 0){
-            setDefeat(true);
-            // start playing dead effect
-            _actionManager.remove(DEAD_EFFECT_KEY);
-            _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
-        }
         // player finishes current level
-        else if (activeCount == 0){
+        if (activeCount == 0){
             setComplete(true);
             auto energyWalls = _level->getEnergyWalls();
             for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
@@ -323,6 +314,17 @@ void GameScene::preUpdate(float dt) {
                 _actionManager.remove(AREA_CLEAR_KEY);
                 _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
             }
+        }
+    }
+    
+    if (!isDefeat()){
+        // player dies
+        if (_level->getPlayer()->getHP() == 0){
+            setDefeat(true);
+            // start playing dead effect, stop the area clear if we happen to have cleared the room and got killed by a flying projectile
+            _actionManager.remove(AREA_CLEAR_KEY);
+            _actionManager.remove(DEAD_EFFECT_KEY);
+            _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
         }
     }
     
@@ -354,96 +356,94 @@ void GameScene::preUpdate(float dt) {
     
 #ifdef CU_TOUCH_SCREEN
     
-    if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING){
+    if (player->isRangedAttackActive()){
         _gameRenderer.updateAimJoystick(_input.isCombatActive(), _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
     _gameRenderer.updateMoveJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
     
 #endif
     
-    if (player->_state != Player::state::DODGE && player->getCollider()->isBullet()){
+    if (player->isDodging() && player->getCollider()->isBullet()){
         player->getCollider()->setBullet(false);
     }
     
     // set player direction
-    if (moveForce.length() > 0 && player->_state != Player::state::DODGE && !player->isAttacking()){
+    if (moveForce.length() > 0 && !player->isDodging() && !player->isAttacking()){
         player->setFacingDir(moveForce);
     }
 
-    // Priority order: Dodge, Attack/Shoot,  Parry
-    if (player->_state == Player::state::IDLE || player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED
-        || player->_state == Player::state::PARRYSTART || player->_state == Player::state::PARRYSTANCE) {
-        //for now, give highest precedence to dodge
-        if (_input.didDodge() && player->dodgeCD.isZero()) {
-            player->dodgeCD.reset(); // reset cooldown
+    // Priority order: Dodge, Attack/Shoot, Parry
+    // Only read inputs when player is idle, preparing a shot or waiting to parry
+    if (player->isIdle() || player->isRangedAttackActive() || player->isBlocking()) {
+        if (_input.didDodge() && player->canDodge()) {
+            // player->dodgeCD.reset(); // reset cooldown
             //dodge
             auto force = _input.getDodgeDirection(player->getFacingDir());
-            if (force.length() == 0) {
-                // dodge in the direction currently facing. normalize so that the dodge is constant speed
-                force = player->getFacingDir().getNormalization();
-            }
+            if (force.length() == 0) force = player->getFacingDir().getNormalization();
             Vec2 velocity = force * GameConstants::PLAYER_DODGE_SPEED;
             player->getCollider()->setLinearVelocity(velocity);
             player->getCollider()->setBullet(true);
             player->setFacingDir(force);
-            player->_state = Player::state::DODGE;
+            player->setDodging();
+            player->reduceStamina();
         }
-        else if (player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY) { //not dodging or recovering
+        else if (!player->isRecovering()){
             //for now, give middle precedence to attack
             if (_input.didAttack()) {
                 Vec2 direction = Vec2::ZERO;
                 float ang = 0;
-                switch(player->_weapon){
-                case Player::weapon::MELEE:
+                switch(player->getWeapon()){
+                case Player::Weapon::MELEE:
+                        if (player->canMeleeAttack()){
+                            direction = _input.getAttackDirection(player->getFacingDir());
+                            ang = acos(direction.dot(Vec2::UNIT_X));
+                            if (direction.y < 0) {
+                                // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+                                ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+                            }
+                            player->enableMeleeAttack(ang);
+                            player->animateAttack();
+                            player->resetAttackCooldown();
+                        }
+                        break;
+                case Player::Weapon::RANGED:
+                        player->animateCharge();
+                        player->getCollider()->setLinearVelocity(Vec2::ZERO);
+                        break;
+                }
+            }
+            else if (_input.didCharge()) {
+                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
+                if (player->getWeapon() == Player::Weapon::RANGED && player->isRangedAttackActive()) {
+                    // this lets you rotate the player while holding the bow in charge mode
+                    player->setFacingDir(direction);
+                }
+            }
+            else if (_input.didShoot() && player->getWeapon() == Player::Weapon::RANGED) {
+                Vec2 direction = Vec2::ZERO;
+                float ang = 0;
+                if (player->isRangedAttackActive()) {
+                    //ranged attack
                     direction = _input.getAttackDirection(player->getFacingDir());
                     ang = acos(direction.dot(Vec2::UNIT_X));
                     if (direction.y < 0) {
                         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                     }
-                    player->enableMeleeAttack(ang);
-                    player->animateAttack();
-                    player->atkCD.reset();
-                    break;
-                case Player::weapon::RANGED:
-                    player->animateCharge();
-                    player->getCollider()->setLinearVelocity(Vec2::ZERO);
-                    break;
+                    std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), ang, _assets);
+                    p->setDrawScale(Vec2(_scale, _scale));
+                    _level->addProjectile(p);
+                    player->animateShot();
                 }
+                else player->animateDefault();
+
             }
-            else if (_input.didCharge()) {
-                Vec2 direction = _input.getAttackDirection(player->getFacingDir());
-                if (player->_weapon == Player::weapon::RANGED && (player->_state == Player::state::CHARGING || player->_state == Player::state::CHARGED)) {
-                    // this lets you rotate the player while holding the bow in charge mode
-                    player->setFacingDir(direction);
-                }
-            }
-            else if (_input.didShoot()) {
-                Vec2 direction = Vec2::ZERO;
-                float ang = 0;
-                if (player->_weapon == Player::weapon::RANGED) {
-                    if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING) {
-                        //ranged attack
-                        direction = _input.getAttackDirection(player->getFacingDir());
-                        ang = acos(direction.dot(Vec2::UNIT_X));
-                        if (direction.y < 0) {
-                            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-                            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-                        }
-                        std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), ang, _assets);
-                        p->setDrawScale(Vec2(_scale, _scale));
-                        _level->addProjectile(p);
-                        player->animateShot();
-                    }
-                    else player->animateDefault();
-                }
-            }
-            //for now, give lowest precendence to parry. only allow it with the melee weapon
-            else if (_input.didParry() && player->_weapon == Player::weapon::MELEE) {
+            //give lowest precendence to parry. only allow it with the melee weapon
+            else if (_input.didParry() && player->getWeapon() == Player::Weapon::MELEE) {
                 player->animateParryStart();
             }
-            else if (_input.didParryRelease() && player->_weapon == Player::weapon::MELEE) {
-                if (player->_state == Player::state::PARRYSTANCE) { //maybe allow parry during PARRYSTART state?
+            else if (_input.didParryRelease() && player->getWeapon() == Player::Weapon::MELEE) {
+                if (player->isBlocking()) {
                     CULog("parried");
                     player->animateParry();
                 }
@@ -452,44 +452,41 @@ void GameScene::preUpdate(float dt) {
         }
     }
     
-    // disable the swap button based on player state
-    _gameRenderer.setSwapButtonActive(player->_state == Player::state::IDLE || player->_state == Player::state::DODGE);
-
+    // disable the swap button based on player state (for anything requiring the weapon to maintain the same)
+    if (!player->isMeleeAttacking()){
+        // melee attack is usually fast, does not require visual button lock
+        _gameRenderer.setSwapButtonActive(player->isIdle() || player->isDodging());
+    }
+    
+    // the duration of the knockback applied onto the player is part of the iframe counter.
+    // only allow the player to change their velocity after the knockback frames
+    if (player->getIframes() < GameConstants::PLAYER_IFRAME - GameConstants::PLAYER_INCOMING_KB_FRAMES){
+        //stay still while parrying or blocking or recovering
+        if (player->isParrying() || player->isBlocking() || player->isRecovering()){
+            player->getCollider()->setLinearVelocity(Vec2::ZERO);
+        }
+        else if (!player->isDodging()){
+            switch (player->getWeapon()) {
+                case Player::Weapon::MELEE:
+                    if (player->isAttacking()) player->getCollider()->setLinearVelocity(moveForce * GameConstants::PLAYER_ATK_MOVE_SPEED);
+                    else player->getCollider()->setLinearVelocity(moveForce * GameConstants::PLAYER_MOVE_SPEED);
+                    break;
+                case Player::Weapon::RANGED:
+                    //with the ranged weapon, dont move while attacking
+                    if (player->isAttacking()) player->getCollider()->setLinearVelocity(Vec2::ZERO);
+                    else player->getCollider()->setLinearVelocity(moveForce * GameConstants::PLAYER_MOVE_SPEED);
+                    break;
+            }
+        }
+    }
+    
     // TODO: could remove, this is PC-only
     if (_input.didSwap()){
-        if (player->_state == Player::state::IDLE || player->_state == Player::state::DODGE){
+        if (player->isIdle() || player->isDodging()){
             //other states are weapon-dependent, so don't allow swapping while in them
             player->swapWeapon();
             _input.swapControlMode(); // must do for mobile controls
         }
-    }
-    
-    //only move if we're not parrying or dodging or recovering
-    if (player->_state != Player::state::PARRY && player->_state != Player::state::PARRYSTART && player->_state != Player::state::PARRYSTANCE
-        && player->_state != Player::state::DODGE && player->_state != Player::state::RECOVERY
-        && (player->hitCounter.getCount() < player->hitCounter.getMaxCount() - 10)) {
-        switch (player->_weapon) {
-        case Player::weapon::MELEE:
-            if (player->isAttacking()){
-                player->getCollider()->setLinearVelocity(moveForce * GameConstants::PLAYER_ATK_MOVE_SPEED);
-            }
-            else {
-                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
-            }
-            break;
-        case Player::weapon::RANGED:
-            //with the ranged weapon, dont move while attacking
-            if (!player->isAttacking()){
-                player->getCollider()->setLinearVelocity(moveForce * player->getMoveScale());
-            }
-            else {
-                player->getCollider()->setLinearVelocity(Vec2::ZERO);
-            }
-            break;
-        }
-        
-    } else if (player->_state != Player::state::DODGE && (player->hitCounter.getCount() < player->hitCounter.getMaxCount() - 5)) {
-        player->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
 
 #pragma mark - Enemy movement
@@ -553,21 +550,12 @@ void GameScene::preUpdate(float dt) {
 void GameScene::fixedUpdate(float step) {
     if (_level != nullptr){
         auto player = _level->getPlayer();
-        if (player->_state == Player::state::DODGE){
-            _camController.setAcceleration(GameConstants::GAME_CAMERA_ACCEL);
-        }
-        else {
-            _camController.setAcceleration(GameConstants::GAME_CAMERA_DECEL);
-        }
+        if (player->isDodging()) _camController.setAcceleration(GameConstants::GAME_CAMERA_ACCEL);
+        else _camController.setAcceleration(GameConstants::GAME_CAMERA_DECEL);
         _camController.setTarget(player->getPosition() * player->getDrawScale());
         
-        // use conditional if (player->_state == Player::state::CHARGED || player->_state == Player::state::CHARGING) in the event of restricted zoom
-        if (player->_weapon == Player::weapon::RANGED){
-            _camController.setZoomSpeed(GameConstants::GAME_CAMERA_ZOOM_SPEED);
-        }
-        else {
-            _camController.setZoomSpeed(-GameConstants::GAME_CAMERA_ZOOM_SPEED);
-        }
+        if (player->getWeapon() == Player::Weapon::RANGED) _camController.setZoomSpeed(GameConstants::GAME_CAMERA_ZOOM_SPEED);
+        else _camController.setZoomSpeed(-GameConstants::GAME_CAMERA_ZOOM_SPEED);
         
         _camController.update(step);
         _winNode->setPosition(_camController.getPosition());
@@ -604,10 +592,11 @@ void GameScene::generateRandomUpgrades(){
 }
 
 void GameScene::updatePlayerAttributes(int selectedAttribute){
+    auto player = _level->getPlayer();
     switch (selectedAttribute) {
         case SWORD:
             availableUpgrades.at(selectedAttribute)->levelUp();
-            _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
+            player->setMeleeDamage(availableUpgrades.at(selectedAttribute)->getCurrentValue());
             break;
         case PARRY: //unimplemented
 //            availableUpgrades.at(selectedAttribute)->levelUp();
@@ -615,7 +604,7 @@ void GameScene::updatePlayerAttributes(int selectedAttribute){
             break;
         case SHIELD:
             availableUpgrades.at(selectedAttribute)->levelUp();
-            _level->getPlayer()->defense = availableUpgrades.at(selectedAttribute)->getCurrentValue();
+//            player->setDefense(availableUpgrades.at(selectedAttribute)->getCurrentValue());
             break;
         case ATK_SPEED: //unimplemented
 //            availableUpgrades.at(selectedAttribute)->levelUp();
@@ -623,25 +612,27 @@ void GameScene::updatePlayerAttributes(int selectedAttribute){
             break;
         case DASH:
             availableUpgrades.at(selectedAttribute)->levelUp();
-            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+            //_level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
             break;
         case BOW:
             availableUpgrades.at(selectedAttribute)->levelUp();
-            _level->getPlayer()->bowDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
+            player->setBaseBowDamage(availableUpgrades.at(selectedAttribute)->getCurrentValue());
             break;
         default:
-            _level->getPlayer()->_hp = _level->getPlayer()->getMaxHP();
+            // this case for full restore, subject to removal;
+            player->setHP(player->getMaxHP());
     }
 }
 
 void GameScene::setPlayerAttributes(float hp){
-    _level->getPlayer()->_hp = hp;
-    _level->getPlayer()->meleeDamage = availableUpgrades.at(SWORD)->getCurrentValue();
-    _level->getPlayer()->parryWindow = availableUpgrades.at(PARRY)->getCurrentValue(); //unimplemented
-    _level->getPlayer()->defense = availableUpgrades.at(SHIELD)->getCurrentValue();
-    _level->getPlayer()->atkSpeed = (availableUpgrades.at(ATK_SPEED)->getCurrentValue()); //unimplemented
-    _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
-    _level->getPlayer()->bowDamage = availableUpgrades.at(BOW)->getCurrentValue(); 
+    auto player = _level->getPlayer();
+    player->setHP(hp);
+    player->setMeleeDamage(availableUpgrades.at(SWORD)->getCurrentValue());
+//    player->setDefense(availableUpgrades.at(SHIELD)->getCurrentValue());
+    player->setBaseBowDamage(availableUpgrades.at(BOW)->getCurrentValue());
+    //_level->getPlayer()->parryWindow = availableUpgrades.at(PARRY)->getCurrentValue(); //unimplemented
+    //_level->getPlayer()->atkSpeed = (availableUpgrades.at(ATK_SPEED)->getCurrentValue()); //unimplemented
+    //_level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
 }
 
 void GameScene::postUpdate(float remain) {

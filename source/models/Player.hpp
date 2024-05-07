@@ -57,20 +57,23 @@ public:
         WheelObstacle::setEnabled(value);
         hitFlag = false; // clear the flag
     }
-    
 };
 
 /**
  * This class is the player object in this game.
  */
 class Player : public GameObject {
+    
+public:
+    enum Weapon { MELEE, RANGED };
+    enum State {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE};
 
 protected:
-#pragma mark Player Animation States
+#pragma mark -
+#pragma mark Player Animation Assets
 
     /** previous animation (animation state tracker) */
     std::shared_ptr<Animation> _prevAnimation;
-
     
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
@@ -100,7 +103,7 @@ protected:
     std::shared_ptr<Animation> _recoveryAnimation;
     /** The animation to use while running and using the bow*/
     std::shared_ptr<Animation> _bowRunAnimation;
-    
+
 #pragma mark Effects
     /** The effect to use while performing combo melee attack */
     std::shared_ptr<Animation> _comboSwipeEffect;
@@ -115,54 +118,63 @@ protected:
     /** The effect to use upon successfully parrying */
     std::shared_ptr<Animation> _parryEffect;
     
-#pragma mark Misc Internal State
-
+#pragma mark -
+#pragma mark Player Internal State
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     Vec2 _directions[8];
     /** The direction that the player is currently facing */
     Vec2 _facingDirection;
     /** the index of the 8-cardinal directions that most closely matches the direction the player faces*/
     int _directionIndex;
-
-    /** accumulated move buff*/
-    double _moveScale;
     
     /** how long we have been dodging for */
-    float _dodge;
+    float _dodgeDuration;
+    /** how long before the next melee attack is enabled*/
+    float _attackActiveCooldown;
+    /** the current accumulated stamina */
+    float _stamina;
     
-#pragma mark Melee Attack State
+    /** player's active weapon */
+    Weapon _weapon;
+    /** player state */
+    State _state;
 
-    /**time since the last attack*/
+    /** counter that is active while the player takes damage */
+    Counter _iframeCounter;
+    /** decrement all counters */
+    void updateCounters();
+    
+#pragma mark Player Stats
+    /** player's maximum health*/
+    float _maxHP = GameConstants::PLAYER_MAX_HP;
+    /** player health */
+    float _hp = GameConstants::PLAYER_MAX_HP;
+    /** damage done by melee */
+    float _meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
+    /** passive damage reduction */
+    float _damageReduction = GameConstants::PLAYER_PASSIVE_REDUCTION;
+    /** block-mode damage reduction */
+    float _blockReduction = GameConstants::PLAYER_BLOCKING_REDUCTION;
+    /** duration of parry stun */
+    float _parryWindow = GameConstants::PLAYER_STUN_DURATION;
+    /** bow strength stat */
+    float _bowDamage = GameConstants::PLAYER_BOW_DAMAGE;
+    /** number of repeated dodges available */
+    float _dodgeCount = GameConstants::PLAYER_DODGE_COUNT;
+    /** delay between each melee attack */
+    float _attackCooldown = GameConstants::PLAYER_ATTACK_COOLDOWN;
+    
+#pragma mark Melee Attack
+
+    /** time since the last attack*/
     float _comboTimer;
     /** which step in the melee combo we are in */
     int _combo;
     /** player melee hitbox (semi-circle) */
     std::shared_ptr<PlayerHitbox> _meleeHitbox;
-    
+
 public:
-#pragma mark Player States
-
-    enum weapon { MELEE, RANGED };
-    enum state {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE};
-    weapon _weapon;
-    state _state;
-    
-    float _hp;
-
-#pragma mark Counters
-
-    /** attack cooldown counter*/
-    Counter atkCD;
-    /** dodge cooldown counter*/
-    Counter dodgeCD;
-    /** counter that is active while the player takes damage */
-    Counter hitCounter;
-    
-    /**
-     * decrement all counters
-     */
-    void updateCounters();
-
+#pragma mark -
 #pragma mark Constructors
 
     /**
@@ -187,7 +199,7 @@ public:
      * @param playerData  the structured json with player collision, hitbox, position data
      * @return true if the player is initialized properly, false otherwise.
      */
-    virtual bool init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::physics2::ObstacleWorld> world);
+    virtual bool init(std::shared_ptr<JsonValue> playerData);
     
     /**
      * Returns a newly allocated player
@@ -196,36 +208,58 @@ public:
      *
      * @return a newly allocated player
      */
-    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::physics2::ObstacleWorld> world) {
+    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData, std::shared_ptr<physics2::ObstacleWorld> world) {
         std::shared_ptr<Player> result = std::make_shared<Player>();
-        return (result->init(playerData, world) ? result : nullptr);
+        return (result->init(playerData) ? result : nullptr);
+    }
+
+#pragma mark -
+    
+#pragma mark Player Stats
+    /** @return the maximum HP of the player */
+    float getMaxHP(){ return _maxHP; }
+    void setMaxHP(float hp){
+        CUAssertLog(hp >= 0, "max hp cannot be negative");
+        _maxHP = hp;
     }
     
-#pragma mark -
-#pragma mark Player Stats Accessors
+    /** @return player current HP */
+    float getHP() { return _hp; }
+    void setHP(float hp){
+        CUAssertLog(hp >= 0, "hp cannot be negative");
+        _hp = hp;
+    }
+    
+    /** @return player passive damage reduction */
+    float getDamageReduction(){ return _damageReduction; }
+    void setDamageReduction(float dr){
+        CUAssertLog(dr >= 0 && dr <= 1, "damage reduction must be within [0,1]");
+        _damageReduction = dr;
+    }
+    
+    /** @return player passive damage reduction */
+    float getBlockingDamageReduction(){ return _blockReduction; }
+    void setBlockingReduction(float dr){
+        CUAssertLog(dr >= 0 && dr <= 1, "damage reduction must be within [0,1]");
+        _blockReduction = dr;
+    }
+    
+    /** @return number of allowed consecutive dodges */
+    int getDodgeCounts(){ return _dodgeCount; }
+    void setDodgeCounts(int count){
+        CUAssertLog(count >= 1, "count cannot be 1 or more");
+        _dodgeCount = count;
+    }
+    
+    /** @return the damage dealt by the player's sword */
+    float getMeleeDamage(){ return _meleeDamage; }
+    void setMeleeDamage(float dmg){
+        CUAssertLog(dmg >= 0, "damage cannot be negative or zero");
+        _meleeDamage = dmg;
+    }
     
     /**
-    * Gets the movement boost accumulated by this player.
-    *
-    */
-    int getMoveScale();
-    /**
-     * @return the maximum HP of the player
-     */
-    int getMaxHP();
-
-    /** damage done by melee*/
-    float meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
-    /** percentage of how much damage gets taken  */
-    float defense = GameConstants::PLAYER_DEFENSE;
-    /** size of parry window*/
-    float parryWindow = 1; //unimplemented
-    /** speed of melee attack  */
-    float atkSpeed = 1; //unimplemented
-    /** bow strength stat*/
-    float bowDamage = GameConstants::PROJ_DAMAGE_P;
-    /** 
-     * Damage of the ranged attack. It is 0.5x the bow strength stat at 
+     * Damage of the ranged attack. It is 0.5x the bow strength stat at
      * minimum charge and 1.5x the bow strength stat at maximum charge. The
      * damage is linearly interpolated between these two extremes. If called
      * when the player is not in the CHARGING or CHARGED states, it returns
@@ -233,49 +267,79 @@ public:
      * @return the damage of the ranged attack
      */
     float getBowDamage();
+    /** sets the bow damage stat */
+    void setBaseBowDamage(float dmg ){
+        CUAssertLog(dmg >= 0, "damage cannot be negative or zero");
+        _bowDamage = dmg;
+    }
+
     
-    std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
-#pragma mark -
-#pragma mark Player Game State Accessors
+    int getIframes(){ return _iframeCounter.getCount(); }
+    
+    /** @return whether the player can start a new melee attack (implies no cooldown active and weapon is sword)*/
+    bool canMeleeAttack(){ return _weapon == MELEE && _attackActiveCooldown == 0;}
+    /** resets the melee attack cooldown  */
+    void resetAttackCooldown(){ _attackActiveCooldown = _attackCooldown; }
+    
+    /** @return player stamina (integer count) */
+    float getStamina(){ return _stamina; }
+    /** @return whether this player has enough stamina to activate dodge */
+    bool canDodge(){ return _stamina >= 1.0/_dodgeCount * GameConstants::PLAYER_STAMINA; }
     /**
-     * @return the unit vector direction that the player is facing towards
+     * reduces the player stamina by the equivalence of one single dodge
+     * @pre `canDodge()` must return true.
      */
+    void reduceStamina(){ _stamina -= 1.0/_dodgeCount * GameConstants::PLAYER_STAMINA; }
+    
+    
+#pragma mark Player Animation State
+    /** @return the unit vector direction that the player is facing towards */
     Vec2 getFacingDir(){ return _facingDirection; }
-    
-    /**
-     * Sets the direction that the player is currently facing
-     */
+    /** Sets the direction that the player is currently facing */
     void setFacingDir(Vec2 dir);
+    
+    bool isIdle(){ return _state == IDLE; }
+    bool isMeleeAttacking(){ return _state == ATTACK; }
+    bool isRecovering(){ return _state == RECOVERY; }
+    bool isParrying(){ return _state == PARRY; }
+    bool isDodging(){ return _state == DODGE; }
+    void setDodging(){ _state = DODGE; }
     
     /**
      * To be explicit, player is attacking when charging a bow / having charged a bow / striking with melee / firing
      * @return whether the player is attacking, includes preparing an attack.
      */
-    bool isAttacking();
-
-    /**
-     * switches the weapon of the player from melee to range or vice versa.
-     */
-    void swapWeapon() { _weapon = static_cast<weapon>((_weapon + 1) % 2); }
+    bool isAttacking(){
+        return _state == CHARGING || _state == CHARGED || _state == SHOT || _state == ATTACK;
+    }
     
+    /** @return whether the player has started to get into parry stance or in a parry stance BEFORE releasing the parry */
+    bool isBlocking(){ return _state == PARRYSTART || _state == PARRYSTANCE; }
+    
+    /** @return whether the player is charging or have charged the bow */
+    bool isRangedAttackActive(){ return _state == CHARGING || _state == CHARGED; }
+
+#pragma mark Player Combat State
+    
+    Weapon getWeapon(){ return _weapon; }
+    
+    /** switches the weapon of the player from melee to range or vice versa.  */
+    void swapWeapon() { _weapon = static_cast<Weapon>((_weapon + 1) % 2); }
     /**
      * resets the combo hit to be the first hit
      */
     void resetCombo() { _combo = 1; }
-    
     /**
      * advance combo by 1 (if at end of combo, this resets)
      */
     void accumulateCombo() { _combo += 1; if (_combo > 3){ _combo = 1;} }
-    
     /**
      * @return whether the current melee attack is a combo hit
      */
     bool isComboStrike() const { return _combo == 3; }
 
 #pragma mark -
-#pragma mark Animation
- 
+#pragma mark Animation Functions
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
@@ -303,11 +367,14 @@ public:
     * @param knockback_scl the factor to multiply the direction by for applying knockback
     */
     void hit(Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
-    void drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch);
+    void drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<cugl::physics2::ObstacleWorld>& world);
     void draw(const std::shared_ptr<SpriteBatch>& batch) override;
     void setAnimation(std::shared_ptr<Animation> animation) override;
     void updateAnimation(float dt) override;
     
+    /**
+     * updates internal player states (eg. timers) and switches player out of time-dependent states (eg. dodging).
+     */
     void update(float dt);
     
 #pragma mark -
@@ -338,7 +405,5 @@ public:
     
     void syncPositions() override;
 };
-
-    
 
 #endif /* Player_hpp */

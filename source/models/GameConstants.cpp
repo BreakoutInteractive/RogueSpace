@@ -58,32 +58,45 @@ float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
+#pragma mark -
+#pragma mark Player Upgradeable Stat Constants
+
+float GameConstants::PLAYER_MAX_HP = 3;
+
+float GameConstants::PLAYER_ATK_DAMAGE = 1.0f;
+
+float GameConstants::PLAYER_BOW_DAMAGE = 1.0f;
+
+float GameConstants::PLAYER_PASSIVE_REDUCTION = 0; // initially no defense
+
+float GameConstants::PLAYER_BLOCKING_REDUCTION = 0.1; // initially 10% damage reduction while blocking
+
+float GameConstants::PLAYER_DODGE_COUNT = 1;    // could technically be a floating point to imply something like you have 1/3 dash energy remaining if dash count per full-charge is 1.5
+
+float GameConstants::PLAYER_STUN_DURATION = 1.0f;
+
+float GameConstants::PLAYER_ATTACK_COOLDOWN = 0; // disabled cooldown
 
 #pragma mark -
 #pragma mark Player
 
 int GameConstants::PLAYER_IFRAME = 16;
-
-int GameConstants::PLAYER_ATTACK_COOLDOWN = 16;
+int GameConstants::PLAYER_INCOMING_KB_FRAMES = 5;
 
 float GameConstants::PLAYER_PARRY_TIME = 0.5f;
 
-int GameConstants::PLAYER_DODGE_COOLDOWN = 50;
+int GameConstants::PLAYER_STAMINA = 240; // should be a multiple of 3,4,5,6 to accomodate for evenly divisible by number of dashes
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
 float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
-float GameConstants::PLAYER_MAX_HP = 3;
+
 
 float GameConstants::PLAYER_MOVE_SPEED = 4.6;
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
 
-float GameConstants::PLAYER_DEFENSE = 1;
 
-float GameConstants::PLAYER_ATK_DAMAGE = 1;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
-
-float GameConstants::PLAYER_BOW_DAMAGE = 1.0f;
 
 float GameConstants::PROJ_SPEED_P = 10.0f;
 
@@ -92,8 +105,6 @@ float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 float GameConstants::PROJ_DIST_P_SQ = 100.0f;
 
 float GameConstants::PROJ_DIST_P = 10.0f;
-
-float GameConstants::PROJ_DAMAGE_P = 1.0f;
 
 float GameConstants::CHARGE_TIME = 0.3f;
 

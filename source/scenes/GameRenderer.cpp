@@ -174,8 +174,8 @@ void GameRenderer::setSwapButtonCallback(std::function<void()> callback){
 
 void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
     auto player = _level->getPlayer();
-    _hpBar->setProgress(player->_hp / (float) player->getMaxHP());
-    _stamina->setProgress(1-(player->dodgeCD.getCount()/(float) player->dodgeCD.getMaxCount()));
+    _hpBar->setProgress(player->getHP() / (float) player->getMaxHP());
+    _stamina->setProgress(player->getStamina() / GameConstants::PLAYER_STAMINA);
     
     // using game camera, render the game
     if (_gameCam != nullptr){
