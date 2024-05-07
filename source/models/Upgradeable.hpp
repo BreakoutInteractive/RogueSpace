@@ -16,51 +16,42 @@ class Upgradeable {
 protected:
     /** current level of stat on 0 based number scale*/
     int _currLevel;
-    /** maximum level stat can reach on 0 based number scale */
-    int _maxLevel;
     /** initial value of stat */
-    float _initialValue;
-    /** current value of stat */
-    float _currValue;
-    /** maximum value stat can reach */
-    float _maxValue;
+    float _tierValues[6];
     
 private:
     /** amount gained between levels */
-    float _stepAmt;
+    float _stepAmt=0;
 
 public:
     Upgradeable(){
-        _maxLevel=0;
         _currLevel=0;
-        _initialValue=0;
-        _currValue=0;
-        _maxValue=0;
         _stepAmt=0;
     }
     
     /**
-     * Initializes an upgrade at level 0 and increments evenly by level up to max level
+     * Initializes an upgrade at level 0 and values at each tier evenly by stepAmt
      *
-     * @param maxLevel maximum amount of levels on 0 based number scale
-     * @param maxValue maximum value the stat can reach
-     * @param baseValue starting value of stat
-     * @param type  category of stat
+     * @param stepAmt  amount gained per level
+     * @param initialVal  value of first level
      *
      */
-    Upgradeable(int maxLevel, float maxValue, float baseValue);
+    Upgradeable(float initialVal, float stepAmt);
     
     /**
-     * Initializes an upgrade at level 0 and increments by stepAmt up to max level
+     * Initializes an upgrade at level 0
      *
-     * @param maxLevel maximum amount of levels on 0 based number scale
-     * @param maxValue maximum value the stat can reach
-     * @param baseValue starting value of stat
-     * @param type  category of stat
-     * @param stepAmt  category of stat
+     * @param stepAmt  amount gained per level
+     * @param initialVal  value of first level
      *
      */
-    Upgradeable(int maxLevel, float maxValue, float baseValue, float stepAmt);
+    Upgradeable(float tiers[6]);
+        
+    /**
+     * Initializes an upgrade based on data with default values set for currentLevel and stepAmt
+     *
+     */
+    Upgradeable(std::shared_ptr<cugl::JsonValue> data);
 
     /**
      * Increases the current level and updates stat
@@ -86,6 +77,10 @@ public:
      */
     void debuffStat(float debuffValue);
     
+    /**
+     * Resets upgrade data
+     *
+     */
     void resetUpgrade();
     
     /**
@@ -96,27 +91,22 @@ public:
     /**
      * Returns max level of stat
      */
-    int getMaxLevel(){return _maxLevel;}
+    int getMaxLevel(){return 6;}
     
     /**
-     * Returns max level of stat
+     * Returns max value of stat
      */
-    float getMaxValue(){return _maxValue;}
-    
-    /**
-     * Returns current percentage of stat in terms of percentage until its maximum Value is reached
-     */
-    float getCurrentPercentage(){return _currValue/_maxValue;}
-    
+    float getMaxValue(){return _tierValues[5];}
+        
     /**
      * Returns the value of stat after level up
      */
-    float getNextValue(){return _currValue+_stepAmt;}
+    float getNextValue(){return _tierValues[_currLevel+1];}
     
     /**
      * Returns current value of stat
      */
-    float getCurrentValue(){return _currValue;}
+    float getCurrentValue(){return _tierValues[_currLevel];}
     
 };
 
