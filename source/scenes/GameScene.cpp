@@ -60,7 +60,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     _parser.loadTilesets(assets);
     _levelNumber = 1;
-    _upgradeLevelActive = false;
     _gameRenderer.init(_assets);
     _input.init([this](Vec2 pos){
         return _gameRenderer.isInputProcessed(pos);
@@ -76,8 +75,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     config.maxZoom = GameConstants::GAME_CAMERA_MAX_ZOOM_OUT;
     _camController.init(getCamera(), config);
     
-    _lvlsToUpgrade.setMaxCount(NUM_LEVELS_TO_UPGRADE);
-    _lvlsToUpgrade.reset();
+    // TODO: revisit
     upgradeScreenActive=false;
     upgradeChosen=false;
 
@@ -138,9 +136,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelTransition.setFadeIn(GameConstants::TRANSITION_FADE_IN_TIME);
     _levelTransition.setFadeOut(GameConstants::TRANSITION_FADE_OUT_TIME, Color4(255, 255, 255, 0));
     _levelTransition.setFadeInCallBack([this](){
-        this->_levelNumber+=1;
-        this->setLevel(_levelNumber);
         this->upgradeChosen=false;
+        if (_isUpgradeRoom){
+            // current room was upgrades, just go to the current level number
+            _isUpgradeRoom = false;
+        }
+        else {
+            this->_levelNumber+=1;
+            this->_isUpgradeRoom = _levelNumber % 3 == 1; // check if an upgrades room should be offered before the next level
+        }
+        this->setLevel(_levelNumber);
     });
     
   
@@ -168,11 +173,13 @@ void GameScene::dispose() {
 
 void GameScene::restart(){
     _winNode->setVisible(false);
-    _lvlsToUpgrade.reset();
     for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
         (*it)->resetUpgrade();
     }
-    setLevel(1); // reload the first level
+    upgradeChosen=false;
+    _isUpgradeRoom = true;  // first level is always upgrades
+    _levelNumber = 1;
+    setLevel(_levelNumber);
     auto player = _level->getPlayer();
     player->setHP(player->getMaxHP());
 }
@@ -180,32 +187,20 @@ void GameScene::restart(){
 void GameScene::setLevel(int level){
     _debugNode->removeAllChildren();
     float currentHp = GameConstants::PLAYER_MAX_HP;
-    std::string levelToParse = "";
+    std::string levelToParse;
     
     if (_level!=nullptr) {
         currentHp = _level->getPlayer()->getHP();
     }
     
-    if (_upgradeLevelActive){
-        _levelNumber-=1;
-        levelToParse = getLevelKey(_levelNumber);
-        _lvlsToUpgrade.reset();
-        upgradesForLevel.clear();
-        _upgradeLevelActive=false;
-        upgradeChosen=false;
-        
-    }
-    else if (_lvlsToUpgrade.isZero()){
+    if (_isUpgradeRoom){
         levelToParse = "upgrades";
         generateRandomUpgrades();
-        _upgradeLevelActive=true;
     }
     else{
         _levelNumber = level;
         levelToParse = getLevelKey(_levelNumber);
     }
-    
-    _lvlsToUpgrade.decrement();
     
     CULog("currLevel %d", _levelNumber);
     auto parsed = _parser.parseTiled(_assets->get<JsonValue>(levelToParse));
@@ -223,7 +218,7 @@ void GameScene::setLevel(int level){
     _collisionController.setLevel(_level);
     _gameRenderer.setGameElements(getCamera(), _level);
     
-    if (_upgradeLevelActive) {
+    if (_isUpgradeRoom) {
         _level->getRelic()->setActive(true);
     }
     
@@ -235,7 +230,6 @@ void GameScene::setLevel(int level){
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     setPlayerAttributes(currentHp);
-    CULog("level %d", _levelNumber);
     
     // TODO: edit the function later, has temporary side effect: sets the swap button to be down (since player always gets sword) ...
     _gameRenderer.setSwapButtonCallback([this](){
@@ -337,13 +331,7 @@ void GameScene::preUpdate(float dt) {
                 _levelTransition.setActive(true);
             }
         }
-        else {
-            if (_upgradeLevelActive) {
-                _levelNumber+=1;
-                setLevel(_levelNumber);
-                upgradeChosen=false;
-                return;
-            }
+        else{
             _winNode->setVisible(true); // for now
         }
     }
