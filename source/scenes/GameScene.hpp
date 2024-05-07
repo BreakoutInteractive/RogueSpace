@@ -91,6 +91,8 @@ protected:
     LevelParser _parser;
     /** the current level to load */
     int _levelNumber;
+    /** whether the current level to load is an upgrade room */
+    bool _isUpgradeRoom;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
     /** The level model */
@@ -101,12 +103,8 @@ protected:
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
-    /** whether active level is upgrades*/
-    bool _upgradeLevelActive;
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
-    /** a counter for the number levels until player earns upgrade */
-    Counter _lvlsToUpgrade;
 
     
 #pragma mark Player Upgrades

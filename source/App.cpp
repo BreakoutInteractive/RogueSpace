@@ -233,7 +233,7 @@ void App::updateTitleScene(float dt){
             // TODO: if there is no exisitng run, the below code is okay.
             _title.setActive(false);
             _gameplay.setActive(true);
-            _gameplay.setLevel(1);
+            _gameplay.restart();
             _scene = GAME; // switch to game scene
             break;
         case TitleScene::CONTINUE: case TitleScene::SETTINGS:
