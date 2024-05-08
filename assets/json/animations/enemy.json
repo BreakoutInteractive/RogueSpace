@@ -10,13 +10,13 @@
             "file":     "textures/sprites/lizard/lizard_atk.png"
         },
         "lizard-ranged-walk": {
-            "file":     "textures/sprites/lizard/lizard_ranged_walk.png"
+            "file":     "textures/sprites/lizard/blue_lizard_ranged_walk.png"
         },
         "lizard-ranged-idle": {
-            "file":     "textures/sprites/lizard/lizard_ranged_idle.png"
+            "file":     "textures/sprites/lizard/blue_lizard_ranged_idle.png"
         },
         "lizard-ranged-attack": {
-            "file":     "textures/sprites/lizard/lizard_ranged_atk.png"
+            "file":     "textures/sprites/lizard/blue_lizard_ranged_atk.png"
         },
         "lizard-stun": {
             "file":     "textures/sprites/lizard/lizard_stun.png"
