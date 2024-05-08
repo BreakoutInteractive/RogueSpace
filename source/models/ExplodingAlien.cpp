@@ -69,7 +69,7 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     // add callbacks
     _attackAnimation->onComplete([this](){
         _attackAnimation->reset();
-        _hitboxAnimation->reset();
+//        _hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
         _attack->setEnabled(false);
         setCharged(true); // TODO: take out overloaded functionality?
@@ -79,7 +79,7 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         if (isEnabled()) {
             _attackRange = GameConstants::EXPLODE_RADIUS;
             _attack->setEnabled(true);
-            _hitboxAnimation->start();
+//            _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
             _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
