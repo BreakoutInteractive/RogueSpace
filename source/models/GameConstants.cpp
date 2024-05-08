@@ -64,7 +64,7 @@ float GameConstants::EXPLODE_TIMER = 60;
 
 float GameConstants::EXPLODE_RADIUS = 0.75f;  // to balance
 
-float GameConstants::EXPLODE_PROX_RANGE = 1.5f;
+float GameConstants::EXPLODE_PROX_RANGE = 2.0f;
 
 
 #pragma mark -

@@ -85,6 +85,11 @@ public:
     std::string getType() override { return "exploding alien"; }
     
 #pragma mark -
+#pragma mark Physics
+    
+    void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) override;
+    
+#pragma mark -
 #pragma mark Animation and State
     
     /**
@@ -96,6 +101,8 @@ public:
      * Sets the direction that the enemy is currently facing
      */
     void setFacingDir(cugl::Vec2 dir) override;
+    
+    void updateAnimation(float dt) override;
     
 };
 

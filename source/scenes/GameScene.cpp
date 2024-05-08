@@ -513,17 +513,29 @@ void GameScene::preUpdate(float dt) {
         if (enemy->isEnabled()) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
             bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
-            if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
-                if (enemy->getType() == "exploding alien" && !enemy->_windupCD.isZero()) {
-                    enemy->updateWindup(true);
-                } else {
-                    if (enemy->getType() == "melee lizard") {
-                        enemy->attack(_level, _assets);
+            // special logic because exploding alien works differently
+            if (enemy->getType() == "exploding alien") {
+                if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                    if (enemy->_windupCD.isZero()) {
+                        enemy->setAttacking();
+                    } else {
+                        enemy->updateWindup(true);
                     }
-                    enemy->setAttacking();
+                } else {
+                    enemy->updateWindup(false);
                 }
-            } else {
-                enemy->updateWindup(false);
+                if (enemy->getCharged()) {
+                    enemy->attack(_level, _assets);
+                    enemy->setHealth(0);
+                }
+                continue;
+            }
+            // other mobs
+            if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                if (enemy->getType() == "melee lizard") {
+                    enemy->attack(_level, _assets);
+                }
+                enemy->setAttacking();
             }
             // handle attacking outcome
             if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
@@ -532,11 +544,6 @@ void GameScene::preUpdate(float dt) {
                     if (enemy->getCharged()) {
                         enemy->attack(_level, _assets);
                     }
-                }
-            }
-            if (enemy->getType() == "exploding alien") {
-                if (enemy->getCharged()) {
-                    enemy->setHealth(0);
                 }
             }
         }

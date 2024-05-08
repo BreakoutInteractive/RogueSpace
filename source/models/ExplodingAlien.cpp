@@ -7,6 +7,8 @@
 #include "CollisionConstants.hpp"
 #include "../components/Animation.hpp"
 #include "GameConstants.hpp"
+#include "Player.hpp"
+
 
 using namespace cugl;
 
@@ -55,10 +57,9 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
-    CULog("%d", idleSheet->getSize());
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 3);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 5);
+    _attackAnimation = Animation::alloc(attackSheet, 1.0f, false, 0, 5);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
@@ -71,16 +72,16 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
         _attack->setEnabled(false);
-        setCharged(true); // TODO: take out overloaded functionality
+        setCharged(true); // TODO: take out overloaded functionality?
     });
     
     _attackAnimation->addCallback(0.75f, [this](){
         if (isEnabled()) {
+            _attackRange = GameConstants::EXPLODE_RADIUS;
             _attack->setEnabled(true);
             _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
-            // TODO: clean this code
             _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
         }
     });
@@ -115,4 +116,39 @@ void ExplodingAlien::setFacingDir(cugl::Vec2 dir) {
         _attackAnimation->setFrameRange(0, 5);
         _stunAnimation->setFrameRange(15 * _directionIndex, 15 * _directionIndex + 14);
     }
+}
+
+void ExplodingAlien::updateAnimation(float dt){
+    GameObject::updateAnimation(dt);
+    // attack animation must play to completion, as long as enemy is alive.
+    if (!_attackAnimation->isActive()) {
+        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
+            setIdling();
+        }
+        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
+            setMoving();
+        }
+    }
+    _hitEffect->update(dt);
+    if (_hitEffect->isActive()){
+        _tint = Color4::RED;
+    }
+    else {
+        _tint = Color4::WHITE;
+    }
+//    _stunEffect->update(dt);
+//    _hitboxAnimation->update(dt);
+}
+
+void ExplodingAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
+    Vec2 direction = level->getPlayer()->getPosition() * level->getPlayer()->getDrawScale() - getPosition() * getDrawScale();
+    direction.normalize();
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0){
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    
+    _attack->setPosition(_attack->getPosition().add(0, 64 / _drawScale.y)); //64 is half of the pixel height of the enemy
+    _attack->setAngle(ang);
 }
