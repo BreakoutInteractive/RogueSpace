@@ -1,0 +1,4 @@
+22-30fps
+8 Frames, 2 rows
+
+directly overlaps the upgrade tile (aka artifact)

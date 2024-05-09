@@ -13,22 +13,25 @@
          "file": "textures/pause/setting.png"
       },
       "upgrade-sword": {
-         "file": "textures/upgrades-screen/upgrade-sword.png"
+          "file": "textures/upgrades-screen/upgrade_atk.png"
       },
       "upgrade-bow": {
-         "file": "textures/upgrades-screen/upgrade-bow.png"
+          "file": "textures/upgrades-screen/upgrade_bow.png"
       },
       "upgrade-dash": {
-         "file": "textures/upgrades-screen/upgrade-dash.png"
+          "file": "textures/upgrades-screen/upgrade_dash.png"
       },
       "upgrade-parry": {
-         "file": "textures/upgrades-screen/upgrade-parry.png"
+          "file": "textures/upgrades-screen/upgrade_parry.png"
       },
       "upgrade-shield": {
-         "file": "textures/upgrades-screen/upgrade-shield.png"
+          "file": "textures/upgrades-screen/upgrade_shield.png"
       },
       "upgrade-speed": {
-         "file": "textures/upgrades-screen/upgrade-atkspeed.png"
+          "file": "textures/upgrades-screen/upgrade_atk_speed.png"
+      },
+      "upgrade-health": {
+          "file": "textures/upgrades-screen/upgrade_max_health.png"
       }
    },
    "scene2s": {
