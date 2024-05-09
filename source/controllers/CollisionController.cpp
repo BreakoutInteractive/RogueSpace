@@ -162,6 +162,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
                     CULog("Player got shot!");
                 }
+                else player->playParryEffect();
             }
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
