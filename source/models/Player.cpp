@@ -35,7 +35,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::p
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
-    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC;
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC | CATEGORY_HEALTHPACK;
     collider->setFilterData(filter);
     _collider = collider;                   // attach Component
     
@@ -52,7 +52,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::p
     std::shared_ptr<JsonValue> hitboxData = playerData->get("hitbox");
     auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "player-hitbox", true);
     filter.categoryBits = CATEGORY_PLAYER_HITBOX;
-    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_HEALTHPACK;
     hitbox->setFilterData(filter);
     _sensor = hitbox;
     _sensor->setDebugColor(Color4::RED);
@@ -97,11 +97,11 @@ void Player::dispose() {
 #pragma mark -
 #pragma mark Properties
 
-int Player::getMaxHP(){
+float Player::getMaxHP(){
     return GameConstants::PLAYER_MAX_HP;
 }
 
-int Player::getMoveScale(){
+float Player::getMoveScale(){
     return GameConstants::PLAYER_MOVE_SPEED;
 }
 

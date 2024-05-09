@@ -99,6 +99,10 @@ float GameConstants::CHARGE_TIME = 0.3f;
 
 float GameConstants::COMBO_TIME = 1.0f;
 
+float GameConstants::HEALTHPACK_DROP_RATE = 25.0f;
+
+float GameConstants::HEALTHPACK_HEAL_AMT = 0.25f;
+
 float GameConstants::KNOCKBACK = 1.6f; // previously 10
 
 float GameConstants::KNOCKBACK_PWR_ATK = 4.0f; // previously 20

@@ -133,6 +133,12 @@ public:
     static float CHARGE_TIME;
     /** the maximum time before restting the combo */
     static float COMBO_TIME;
+    /** The chance (out of 100) for a health pack to drop when defeating an enemy.
+     *  If the value is <0, the health pack will never drop. If it is >=99, it will always drop.
+     */
+    static float HEALTHPACK_DROP_RATE;
+    /** the proportion of the player's health that is restored when picking up a health pack */
+    static float HEALTHPACK_HEAL_AMT;
 
 #pragma mark -
 #pragma mark Universal Constants

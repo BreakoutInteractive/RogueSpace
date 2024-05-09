@@ -72,6 +72,7 @@ void LevelModel::setDrawScale(Vec2 scale) {
         _enemies[ii]->setDrawScale(scale);
     }
     for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->setDrawScale(scale);
+    for (int ii = 0; ii < _healthpacks.size(); ii++) _healthpacks[ii]->setDrawScale(scale);
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
@@ -106,14 +107,16 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
             sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
         }
     }
-
-    for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->draw(batch);
         
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
     }
     for (int ii = 0; ii < _projectiles.size(); ii++) {
+        _projectiles[ii]->draw(batch);
         _projectiles[ii]->getCollider()->getDebugNode()->setVisible(_projectiles[ii]->isEnabled());
+    }
+    for (int ii = 0; ii < _healthpacks.size(); ii++) {
+        _healthpacks[ii]->getCollider()->getDebugNode()->setVisible(_healthpacks[ii]->isEnabled());
     }
 }
 
@@ -163,6 +166,10 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _projectiles[ii]->setDebugNode(_debugNode);
         _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
         _projectiles[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
+    }
+    for (int ii = 0; ii < _healthpacks.size(); ii++) {
+        _healthpacks[ii]->setDebugNode(_debugNode);
+        _healthpacks[ii]->getCollider()->setDebugColor(Color4::RED);
     }
     if (_relic != nullptr){
         _relic->setDebugNode(_debugNode);
@@ -565,6 +572,25 @@ void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
             p->removeObstaclesFromWorld(_world);
             p->dispose();
             _projectiles.erase(it);
+            return;
+        }
+    }
+}
+
+void LevelModel::addHealthPack(std::shared_ptr<HealthPack> h) {
+    _healthpacks.push_back(h);
+    h->addObstaclesToWorld(_world);
+    h->setDebugNode(_debugNode);
+    h->getCollider()->setDebugColor(Color4::RED);
+    _dynamicObjects.push_back(h);
+}
+
+void LevelModel::delHealthPack(std::shared_ptr<HealthPack> h) {
+    for (auto it = _healthpacks.begin(); it != _healthpacks.end(); ++it) {
+        if ((*it) == h) {
+            h->removeObstaclesFromWorld(_world);
+            h->dispose();
+            _healthpacks.erase(it);
             return;
         }
     }

@@ -2,6 +2,7 @@
 #include "../models/LevelModel.hpp"
 #include "CollisionController.hpp"
 #include "../models/LevelConstants.hpp"
+#include "../models/CollisionConstants.hpp"
 #include "../models/Enemy.hpp"
 #include "../models/MeleeEnemy.hpp"
 #include "../models/RangedEnemy.hpp"
@@ -95,6 +96,21 @@ void CollisionController::beginContact(b2Contact* contact){
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
                     }
                 }
+            }
+        }
+    }
+    //health packs
+    for (std::shared_ptr<HealthPack> h : _level->getHealthPacks()) {
+        intptr_t hptr = reinterpret_cast<intptr_t>(h.get());
+        if ((body1->GetUserData().pointer == hptr && body2->GetUserData().pointer == pptr) ||
+            (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == hptr)) {
+            //don't pick up the health pack if at full hp
+            if (player->getHP() < player->getMaxHP()) {
+                float maxHP = player->getMaxHP();
+                float newHP = player->getHP() + maxHP * GameConstants::HEALTHPACK_HEAL_AMT;
+                if (newHP > maxHP) newHP = maxHP;
+                player->_hp = newHP;
+                h->_delMark = true;
             }
         }
     }

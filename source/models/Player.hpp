@@ -207,12 +207,13 @@ public:
     * Gets the movement boost accumulated by this player.
     *
     */
-    int getMoveScale();
+    float getMoveScale();
     /**
      * @return the maximum HP of the player
      */
-    int getMaxHP();
-
+    float getMaxHP();
+    /** current player hp*/
+    float getHP() const { return _hp; };
     /** damage done by melee*/
     float meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
     /** percentage of how much damage gets taken  */
