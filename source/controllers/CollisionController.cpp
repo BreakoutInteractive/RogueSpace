@@ -156,10 +156,12 @@ void CollisionController::beginContact(b2Contact* contact){
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
             if (!p->isExploding() && !player->isDodging()) {
-                player->hit(dir, p->getDamage());
                 p->setExploding();
-                //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
-                CULog("Player got shot!");
+                if (!player->isParrying()) {
+                    player->hit(dir, p->getDamage());
+                    //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
+                    CULog("Player got shot!");
+                }
             }
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
