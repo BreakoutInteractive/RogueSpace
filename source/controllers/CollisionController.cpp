@@ -68,7 +68,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 float hitboxAngle = player->getMeleeHitbox()->getAngle();
                 if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, player->meleeDamage, !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
                     _audioController->playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
                     // record the hit
@@ -90,7 +90,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
@@ -127,7 +127,12 @@ void CollisionController::beginContact(b2Contact* contact){
                 (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
             if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
                 || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                if (player->_state != Player::state::PARRY) {
+                if (player->isParrying()) {
+                    //successful parry
+                    (*it)->setStunned();
+                    player->playParryEffect();
+                }
+                else {
                     if (body1->GetUserData().pointer == aptr) {
                         physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
                         _audioController->playEnemyFX("attackHit", data1->getName());
@@ -140,11 +145,6 @@ void CollisionController::beginContact(b2Contact* contact){
                     player->hit(dir);
                     CULog("Player took damage!");
                 }
-                else {
-                    //successful parry
-                    (*it)->setStunned();
-                    player->playParryEffect();
-                }
             }
         }
     }
@@ -155,7 +155,7 @@ void CollisionController::beginContact(b2Contact* contact){
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
-            if (!p->isExploding() && player->_state != Player::state::DODGE) {
+            if (!p->isExploding() && !player->isDodging()) {
                 player->hit(dir, p->getDamage());
                 p->setExploding();
                 //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
@@ -223,7 +223,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
             //phase through enemies while dodging
-            if (_level->getPlayer()->_state == Player::state::DODGE) contact->SetEnabled(false);
+            if (_level->getPlayer()->isDodging()) contact->SetEnabled(false);
         }
         for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
             intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());
@@ -243,7 +243,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             // ignore projectile-player collision when player is dodging
-            if (_level->getPlayer()->_state == Player::state::DODGE) {
+            if (_level->getPlayer()->isDodging()) {
                 contact->SetEnabled(false);
             }
         }

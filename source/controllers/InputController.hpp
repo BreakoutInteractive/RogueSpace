@@ -392,16 +392,6 @@ public:
      * @return the current location of the touch event associated with the combat gesture
      */
     Vec2 getCombatTouchLocation() const {return _combatGesture.curPos; }
-    
-    /**
-     * Inactivates the combat gesture if it has been on hold.
-     */
-    void clearHeldGesture() {
-        if (_combatGestureHeld){
-            _combatGesture.active = false;
-            _combatGestureHeld = false;
-        }
-    }
 
 };
 

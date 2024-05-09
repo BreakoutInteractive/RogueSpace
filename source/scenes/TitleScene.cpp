@@ -23,9 +23,9 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _backgroundTexture = assets->get<Texture>("title_background");
     _backgroundScale = std::max(dimen.width / _backgroundTexture->getWidth(), dimen.height/_backgroundTexture->getHeight());
     
-    _continue = std::reinterpret_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("title_scene_title_selection_continue"));
-    _newGame = std::reinterpret_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("title_scene_title_selection_new"));
-    _settings = std::reinterpret_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("title_scene_title_selection_setting"));
+    _continue = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("title_scene_title_selection_continue"));
+    _newGame = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("title_scene_title_selection_new"));
+    _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("title_scene_title_selection_setting"));
     _continue->setColor(Color4::GRAY);
     _settings->setColor(Color4::GRAY);
     // TODO: add listeners to other buttons once finalized layout

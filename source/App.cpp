@@ -32,6 +32,7 @@ void App::onStartup() {
     // Queue the other assets
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadDirectoryAsync("json/scenes/gameplay.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
@@ -232,7 +233,7 @@ void App::updateTitleScene(float dt){
             // TODO: if there is no exisitng run, the below code is okay.
             _title.setActive(false);
             _gameplay.setActive(true);
-            _gameplay.setLevel(1);
+            _gameplay.restart();
             _scene = GAME; // switch to game scene
             break;
         case TitleScene::CONTINUE: case TitleScene::SETTINGS:

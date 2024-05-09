@@ -39,12 +39,7 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
-    /** tiled parser */
-    LevelParser _parser;
-    
-    int _levelNumber;
-    
-    // CONTROLLERS
+#pragma mark Controllers
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
     /** Engine to process mob movement */
@@ -56,59 +51,74 @@ protected:
     /** Controller to play sounds */
     std::shared_ptr<AudioController> _audioController;
     
-    // VIEW
+
+#pragma mark Scenes
+    /** custom renderer for this scene */
+    GameRenderer _gameRenderer;
+    /** the pop up effects scene (locked to 720p)*/
+    Scene2 _effectsScene;
+    /** The inner transition between levels (fading in and out) */
+    TransitionScene _levelTransition;
+    
+
+#pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
     /** Reference to the win message label */
     std::shared_ptr<cugl::scene2::Label> _winNode;
-    /** Reference to the lose message label */
-    std::shared_ptr<cugl::scene2::Label> _loseNode;
 
-    /** content offset to prevent displays on notch/adjusting aspect ratios*/
-    //cugl::Vec2 _offset;
-    /** custom renderer for this scene */
-    GameRenderer _gameRenderer;
-    /** the animation played to signal area is cleared */
-    std::shared_ptr<Animation> _areaClearEffect;
+    /** the node which renders the area clear sprite */
+    std::shared_ptr<scene2::SpriteNode> _areaClearNode;
+    /** the node which renders the dead effect */
+    std::shared_ptr<scene2::SpriteNode> _deadEffectNode;
+
+
+#pragma mark Scene Animation
+    /** animation manager */
+    scene2::ActionManager _actionManager;
+    /** the key to the area clear effect to monitor updates */
+    const std::string AREA_CLEAR_KEY = "area_clear";
+    /** the action corresponding to the area clear animation*/
+    std::shared_ptr<scene2::Animate> _areaClearAnimation;
+    /** the key to the dead  effect to monitor updates */
+    const std::string DEAD_EFFECT_KEY = "dead_effect";
+    /** the action corresponding to the dead effect pop-up animation*/
+    std::shared_ptr<scene2::Animate> _deadEffectAnimation;
+
     
-    TransitionScene _levelTransition;
-
-    // MODEL
-
+#pragma mark State and Model
+    /** tiled parser */
+    LevelParser _parser;
+    /** the current level to load */
+    int _levelNumber;
+    /** whether the current level to load is an upgrade room */
+    bool _isUpgradeRoom;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
-
     /** The level model */
     std::shared_ptr<LevelModel> _level;
-
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether we got defeated */
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
-    /** whether active level is upgrades*/
-    bool _upgradeLevelActive;
-    
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
-    /** a counter for the number levels until player earns upgrade */
-    Counter _lvlsToUpgrade;
+
     
 #pragma mark Player Upgrades
     
     /** classification of the different upgrade types*/
     enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
-    
     /** sets the player attributes of the crrent level's player*/
     void setPlayerAttributes(float hp);
-    
     /** upgrades generated for level*/
     std::vector<int> upgradesForLevel;
-    
     /** all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
     
+
 public:
     /** Returns all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
@@ -124,8 +134,6 @@ public:
     
     /**
      * Chooses random upgrades
-     *
-     *
      * @param size length of attribute array
      */
     void generateRandomUpgrades();
@@ -249,7 +257,7 @@ public:
      *
      * @param value whether the player was defeated
      */
-    void setDefeat(bool value) { _defeat = value; _loseNode->setVisible(value); }
+    void setDefeat(bool value) { _defeat = value; }
     
     
 #pragma mark -
