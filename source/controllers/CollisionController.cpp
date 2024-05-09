@@ -109,7 +109,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 float maxHP = player->getMaxHP();
                 float newHP = player->getHP() + maxHP * GameConstants::HEALTHPACK_HEAL_AMT;
                 if (newHP > maxHP) newHP = maxHP;
-                player->_hp = newHP;
+                player->setHP(newHP);
                 h->_delMark = true;
             }
         }
