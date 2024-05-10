@@ -44,7 +44,6 @@ bool CollisionController::isComboContact(){
 }
 
 
-
 #pragma mark -
 #pragma mark Collision Handling
 void CollisionController::beginContact(b2Contact* contact){
@@ -68,16 +67,20 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 float hitboxAngle = player->getMeleeHitbox()->getAngle();
                 if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
-                    _audioController->playPlayerFX("attackHit");
-                    CULog("Hit an enemy!");
-                    // record the hit
-                    if (!meleeHitbox->hitFlag){
-                        // the hitbox is active and this is the first hit of the frame
-                        meleeHitbox->hitFlag = true;
-                        if (player->isComboStrike()){
-                            // set flag to request "hit pause" effect
-                            _comboStriked = true;
+                    
+                    // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
+                    if (player->getMeleeHitbox()->hits(eptr)){
+                        (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                        _audioController->playPlayerFX("attackHit");
+                        CULog("Hit an enemy!");
+                        // record the hit
+                        if (!meleeHitbox->hitFlag){
+                            // the hitbox is active and this is the first hit of the frame
+                            meleeHitbox->hitFlag = true;
+                            if (player->isComboStrike()){
+                                // set flag to request "hit pause" effect
+                                _comboStriked = true;
+                            }
                         }
                     }
                 }

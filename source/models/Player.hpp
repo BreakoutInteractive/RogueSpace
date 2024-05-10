@@ -23,6 +23,10 @@ class Animation;
  * This is a separate component attached to the player and the player model is responsible for its physics.
  */
 class PlayerHitbox : public physics2::WheelObstacle {
+
+private:
+    /** the set of entities (their pointers) that the hitbox damaged*/
+    std::unordered_set<intptr_t> hitSet;
     
 public:
     
@@ -53,10 +57,12 @@ public:
      *
      * @param value whether the body is enabled
      */
-    void setEnabled(bool value) override {
-        WheelObstacle::setEnabled(value);
-        hitFlag = false; // clear the flag
-    }
+    void setEnabled(bool value);
+    
+    /**
+     * @return whether to handle the collision between this hitbox and the target
+     */
+    bool hits(intptr_t enemyPtr);
 };
 
 /**

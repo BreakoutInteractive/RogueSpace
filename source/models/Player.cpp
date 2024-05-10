@@ -17,6 +17,20 @@
 
 using namespace cugl;
 
+void PlayerHitbox::setEnabled(bool value){
+    WheelObstacle::setEnabled(value);
+    hitFlag = false; // clear the flag
+    hitSet.clear();
+}
+
+bool PlayerHitbox::hits(intptr_t enemyPtr){
+    if (hitSet.find(enemyPtr) != hitSet.end()){
+        return false;
+    }
+    hitSet.insert(enemyPtr);
+    return true;
+}
+
 #pragma mark -
 #pragma mark Constructors
 
