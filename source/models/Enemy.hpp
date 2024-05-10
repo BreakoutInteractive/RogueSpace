@@ -130,8 +130,6 @@ public:
     
     Counter _atkCD;
     
-    Counter _stunCD; //todo: if stun animation exists, remove counter.
-    
     Counter _sentryCD;
 
     Counter _hitCounter;

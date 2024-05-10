@@ -505,13 +505,13 @@ void GameScene::preUpdate(float dt) {
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
         }
-        if (!enemy->_stunCD.isZero()){
+        if (enemy->isStunned()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
             enemy->getAttack()->setEnabled(false);
         }
         if (enemy->isEnabled()) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
-            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
+            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !enemy->isStunned();
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard") {
                     enemy->attack(_level, _assets);

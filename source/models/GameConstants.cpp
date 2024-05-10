@@ -32,7 +32,7 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 50;
 
-int GameConstants::ENEMY_STUN_COOLDOWN = 100;
+float GameConstants::ENEMY_STUN_DURATION = 1.0f;
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 120;
 
