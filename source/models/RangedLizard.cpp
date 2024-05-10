@@ -63,7 +63,8 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto walkTexture = assets->get<Texture>("lizard-ranged-walk");
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
-    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
+    auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("lizard-projectile");
     
@@ -71,7 +72,8 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 20);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
-    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
+    auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 5);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
@@ -79,7 +81,8 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 19);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
-    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
+    _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _chargingAnimation = Animation::alloc(projectileSheet, 0.28125f, false, 0, 4);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     
@@ -109,9 +112,12 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     setAnimation(_idleAnimation);
 
-    _hitEffect->onComplete([this]() {
-        _hitEffect->reset();
-    });
+    _meleeHitEffect->onComplete([this]() {
+        _meleeHitEffect->reset();
+        });
+    _bowHitEffect->onComplete([this]() {
+        _bowHitEffect->reset();
+        });
 }
 
 void RangedLizard::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
@@ -136,13 +142,19 @@ void RangedLizard::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
 
-    if (_hitEffect->isActive()) {
-        auto effSheet = _hitEffect->getSpriteSheet();
-        Affine2 effTrans = Affine2();
-        effTrans.scale(2);
-        effTrans.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        Vec2 effOrigin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, effOrigin, effTrans);
+    if (_meleeHitEffect->isActive()) {
+        auto effSheet = _meleeHitEffect->getSpriteSheet();
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
+    }
+    if (_bowHitEffect->isActive()) {
+        auto effSheet = _bowHitEffect->getSpriteSheet();
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
     }
     std::shared_ptr<SpriteSheet>sheet = _chargingAnimation->getSpriteSheet();
     Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
@@ -169,8 +181,9 @@ void RangedLizard::updateAnimation(float dt){
             setMoving();
         }
     }
-    _hitEffect->update(dt);
-    if (_hitEffect->isActive()){
+    _meleeHitEffect->update(dt);
+    _bowHitEffect->update(dt);
+    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()) {
         _tint = Color4::RED;
     }
     else if (getState() == EnemyState::STUNNED && _stunCD.isZero()) {

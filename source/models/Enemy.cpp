@@ -124,16 +124,23 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
     
-    if (_hitEffect->isActive()) {
-        auto effSheet = _hitEffect->getSpriteSheet();
+    if (_meleeHitEffect->isActive()) {
+        auto effSheet = _meleeHitEffect->getSpriteSheet();
         transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
+    }
+    if (_bowHitEffect->isActive()) {
+        auto effSheet = _bowHitEffect->getSpriteSheet();
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
         origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
         effSheet->draw(batch, origin, transform);
     }
     if (_state == EnemyState::STUNNED) {
         auto effSheet = _stunEffect->getSpriteSheet();
-        transform = Affine2::createTranslation(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        transform = Affine2::createTranslation(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
         origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
         effSheet->draw(batch, origin, transform);
     }
@@ -188,13 +195,16 @@ void Enemy::setStunned() {
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
-    if (!_hitEffect->isActive()) {
+void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
+    if (!_meleeHitEffect->isActive() && !_bowHitEffect->isActive()) {
         _hitCounter.reset();
         if (_state == EnemyState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
         setHealth(getHealth()-damage);
-        _hitEffect->reset();
-        _hitEffect->start();
+        _meleeHitEffect->reset();
+        _bowHitEffect->reset();
+        if (ranged) _bowHitEffect->start();
+        else _meleeHitEffect->start();
+        //_hitEffect->start();
         _collider->setLinearVelocity(atkDir * knockback_scl);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
@@ -214,8 +224,9 @@ void Enemy::updateAnimation(float dt){
             setMoving();
         }
     }
-    _hitEffect->update(dt);
-    if (_hitEffect->isActive()){
+    _meleeHitEffect->update(dt);
+    _bowHitEffect->update(dt);
+    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
     else if (_state == EnemyState::STUNNED && _stunCD.isZero()) {

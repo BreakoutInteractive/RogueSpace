@@ -67,7 +67,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 float hitboxAngle = player->getMeleeHitbox()->getAngle();
                 if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
                     _audioController->playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
                     // record the hit
@@ -89,7 +89,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx

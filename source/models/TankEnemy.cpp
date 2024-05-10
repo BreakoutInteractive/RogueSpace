@@ -63,21 +63,24 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     auto walkTexture = assets->get<Texture>("tank-idle");
     auto attackTexture = assets->get<Texture>("tank-attack");
     auto stunTexture = assets->get<Texture>("tank-stun");
-    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
+    auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
 
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 5);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 8);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 6);
-    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
+    auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
 
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 4);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 7);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 5);
-    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
+    _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
 
     _currAnimation = _idleAnimation; // set runnning
@@ -103,9 +106,12 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
 
     setAnimation(_idleAnimation);
 
-    _hitEffect->onComplete([this]() {
-        _hitEffect->reset();
-        });
+    _meleeHitEffect->onComplete([this]() {
+        _meleeHitEffect->reset();
+    });
+    _bowHitEffect->onComplete([this]() {
+        _bowHitEffect->reset();
+    });
 }
 
 
@@ -133,9 +139,9 @@ void TankEnemy::setFacingDir(cugl::Vec2 dir) {
     }
 }
 
-void TankEnemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
+void TankEnemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
     //this enemy type takes much less damage when not stunned
     //need to scale down by the stun damage bonus so that it's not doubly applied
-    if (isStunned()) Enemy::hit(atkDir, damage/GameConstants::STUN_DMG_BONUS, knockback_scl);
-    else Enemy::hit(atkDir, damage*GameConstants::TANK_ENEMY_DR, knockback_scl);
+    if (isStunned()) Enemy::hit(atkDir, ranged, damage/GameConstants::STUN_DMG_BONUS, knockback_scl);
+    else Enemy::hit(atkDir, ranged, damage*GameConstants::TANK_ENEMY_DR, knockback_scl);
 };
