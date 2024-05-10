@@ -246,6 +246,9 @@ private:
      */
     void updateUpgradesScene(float dt);
     
+    /** sets the state of the App to be in the Title Scene */
+    void setTitleScene();
+    
     /**
      * Inidividualized update method for the title/menu scene.
      *
