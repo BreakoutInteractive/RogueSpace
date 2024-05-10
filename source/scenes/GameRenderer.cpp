@@ -61,9 +61,6 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     
-    // activate UI
-    _pauseButton->activate();
-    _swapButton->activate();
     hideJoysticks();
     
     addChild(scene);
