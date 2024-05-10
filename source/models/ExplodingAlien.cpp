@@ -68,18 +68,15 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     // add callbacks
     _attackAnimation->onComplete([this](){
-        _attackAnimation->reset();
-//        _hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
         _attack->setEnabled(false);
         setCharged(true); // TODO: take out overloaded functionality?
     });
     
-    _attackAnimation->addCallback(0.75f, [this](){
+    _attackAnimation->addCallback(0.5f, [this](){
         if (isEnabled()) {
             _attackRange = GameConstants::EXPLODE_RADIUS;
             _attack->setEnabled(true);
-//            _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
             _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
@@ -114,21 +111,12 @@ void ExplodingAlien::setFacingDir(cugl::Vec2 dir) {
         _idleAnimation->setFrameRange(4 * _directionIndex, 4 * _directionIndex + 3);
         _walkAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _attackAnimation->setFrameRange(0, 5);
-        _stunAnimation->setFrameRange(15 * _directionIndex, 15 * _directionIndex + 14);
     }
 }
 
 void ExplodingAlien::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
-    if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
-            setIdling();
-        }
-        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
-            setMoving();
-        }
-    }
     _hitEffect->update(dt);
     if (_hitEffect->isActive()){
         _tint = Color4::RED;
@@ -136,8 +124,6 @@ void ExplodingAlien::updateAnimation(float dt){
     else {
         _tint = Color4::WHITE;
     }
-//    _stunEffect->update(dt);
-//    _hitboxAnimation->update(dt);
 }
 
 void ExplodingAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {

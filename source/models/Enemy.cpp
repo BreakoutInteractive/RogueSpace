@@ -60,6 +60,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _stunCD.setMaxCount(GameConstants::ENEMY_STUN_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
     _windupCD.setMaxCount(1);
+    _damage = data->getFloat("damage");
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down

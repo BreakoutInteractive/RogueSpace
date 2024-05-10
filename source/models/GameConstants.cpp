@@ -62,7 +62,7 @@ float GameConstants::STUN_DMG_BONUS = 2.0f;
 
 float GameConstants::EXPLODE_TIMER = 60;
 
-float GameConstants::EXPLODE_RADIUS = 0.75f;  // to balance
+float GameConstants::EXPLODE_RADIUS = 0.5f;  // to balance
 
 float GameConstants::EXPLODE_PROX_RANGE = 2.0f;
 

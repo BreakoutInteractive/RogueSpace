@@ -87,6 +87,8 @@ protected:
     float _health;
     /** The enemy's maximum health */
     float _maxHealth;
+    /** The enemy's maximum health */
+    float _damage;
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
@@ -310,6 +312,11 @@ public:
      * Sets the maximum health of this enemy.
      */
     void setMaxHealth(float value){ _maxHealth = value; }
+    
+    /**
+     * Gets the current damage of this enemy.
+     */
+    float getDamage() const { return _damage; }
     
     /**
      * Gets this enemy's attack hitbox.
