@@ -16,19 +16,16 @@ class Upgradeable {
 protected:
     /** current level of stat on 0 based number scale*/
     int _currLevel;
+    /** type of upgrade following upgrades enum*/
+    int _type;
     /** initial value of stat */
     float _tierValues[6];
     
-private:
-    /** amount gained between levels */
-    float _stepAmt=0;
-
 public:
     Upgradeable(){
         _currLevel=0;
-        _stepAmt=0;
     }
-    
+        
     /**
      * Initializes an upgrade at level 0 and values at each tier evenly by stepAmt
      *
@@ -36,7 +33,7 @@ public:
      * @param initialVal  value of first level
      *
      */
-    Upgradeable(float initialVal, float stepAmt);
+    Upgradeable(float initialVal, float maxValue, int type);
     
     /**
      * Initializes an upgrade at level 0
@@ -45,7 +42,7 @@ public:
      * @param initialVal  value of first level
      *
      */
-    Upgradeable(float tiers[6]);
+    Upgradeable(float tiers[6], int type);
         
     /**
      * Initializes an upgrade based on data with default values set for currentLevel and stepAmt
@@ -92,6 +89,8 @@ public:
      * Returns max level of stat
      */
     int getMaxLevel(){return 6;}
+    
+    int getType(){return _type;}
     
     /**
      * Returns max value of stat

@@ -312,6 +312,8 @@ public:
      * @param assets the loaded assets for this game level
      */
     void setAssets(const std::shared_ptr<AssetManager>& assets);
+    
+    void setEnemyStunCD(float multiplier);
 
     /**
      * Toggles whether to show the debug layer of this game world.

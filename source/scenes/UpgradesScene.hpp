@@ -37,18 +37,10 @@ public:
         /** User wants upgrade option 2 */
         UPGRADE_2
     };
-    
-    /**
-     * Stats that can be upgraded.
-     *
-     * Should be consistent with GameScene.
-     */
-    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
-    
+
     /**
      * Level classes of upgrades.
      *
-     * Should be consistent with GameScene.
      */
     enum upgradeLevel {NORMAL, RARE, EPIC, LEGENDARY, MAX};
     
@@ -67,7 +59,7 @@ protected:
     std::shared_ptr<scene2::Label> _option1Descrip;
     std::shared_ptr<scene2::Label> _option1Level;
     std::shared_ptr<scene2::TexturedNode> _option1Icon;
-    std::shared_ptr<Texture> _healTexture;
+    std::shared_ptr<Texture> _healthTexture;
     std::shared_ptr<Texture> _parryTexture;
     std::shared_ptr<Texture> _shieldTexture;
     std::shared_ptr<Texture> _atkSdTexture;
@@ -139,9 +131,9 @@ public:
      *
      * @param attributes available payer upgrades
      */
-    void updateScene(std::array<int,2> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
+    void updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes);
     
-    void setButtonText(int upgrade, int buttonType, int level);
+    void setButtonText(std::shared_ptr<Upgradeable> upgrade, int level, int buttonType);
 
     /**
      * Sets whether the scene is currently active

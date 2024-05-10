@@ -569,3 +569,10 @@ void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
         }
     }
 }
+
+void LevelModel::setEnemyStunCD(float multiplier){
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        float newStunCD = _enemies[ii]->_stunCD.getMaxCount()*multiplier;
+        _enemies[ii]->_stunCD.setMaxCount(newStunCD);
+    }
+}

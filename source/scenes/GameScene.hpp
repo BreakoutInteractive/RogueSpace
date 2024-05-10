@@ -26,6 +26,7 @@
 #include "../models/Counter.hpp"
 #include "../components/Animation.hpp"
 #include "TransitionScene.hpp"
+#include "UpgradesScene.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -59,6 +60,8 @@ protected:
     Scene2 _effectsScene;
     /** The inner transition between levels (fading in and out) */
     TransitionScene _levelTransition;
+    /** The controller for the upgrades screen */
+    UpgradesScene _upgradesScene;
     
 
 #pragma mark Scene Nodes
@@ -105,27 +108,19 @@ protected:
     bool _debug;
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
+    
+    Player::Weapon playerWeapon;
 
     
 #pragma mark Player Upgrades
     
-    /** classification of the different upgrade types*/
-    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
     /** sets the player attributes of the crrent level's player*/
-    void setPlayerAttributes(float hp);
+    void restorePlayerAttributes(float hp);
     /** upgrades generated for level*/
-    std::vector<int> upgradesForLevel;
-    /** all upgradeable stats for the player*/
-    std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
-    
+    std::vector<std::shared_ptr<Upgradeable>> upgradesForLevel;
+    std::vector<std::shared_ptr<Upgradeable>> currentPlayerStats;
 
 public:
-    /** Returns all upgradeable stats for the player*/
-    std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
-    
-    /** Returns upgradeable stats to be displayed for level*/
-    std::vector<int> getDisplayedUpgrades(){return upgradesForLevel;}
-    
     /** whether the upgrades screen should be active*/
     bool upgradeScreenActive;
     

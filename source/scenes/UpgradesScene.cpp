@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "UpgradesScene.hpp"
+#include "GameConstants.hpp"
 
 using namespace cugl;
 using namespace std;
@@ -136,90 +137,95 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     return true;
 }
 
-void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
+void UpgradesScene::setButtonText(std::shared_ptr<Upgradeable> upgrade, int level, int buttonType){
     std::string upgradeName;
     std::string upgradeDescription;
-    std::string upgradeType;
-    Color4 typeColor;
+//    std::string upgradeType;
+//    Color4 typeColor;
     std::shared_ptr<Texture> upgradeTexture;
-    switch (upgrade) {
-        case SWORD:
+    switch (upgrade->getType()) {
+        case upgrades_enum::SWORD:
             upgradeName = "SWORD";
             upgradeDescription = "Increases melee strength";
             upgradeTexture = _swordTexture;
             break;
-        case PARRY:
+        case upgrades_enum::PARRY:
             upgradeName = "PARRY";
             upgradeDescription = "Increases parry success rate";
             upgradeTexture = _parryTexture;
             break;
-        case SHIELD:
+        case upgrades_enum::SHIELD:
             upgradeName = "SHIELD";
             upgradeDescription = "Decreases damage taken";
             upgradeTexture = _shieldTexture;
             break;
-        case ATK_SPEED:
+        case upgrades_enum::ATK_SPEED:
             upgradeName = "SPEED";
             upgradeDescription = "Increases melee speed";
             upgradeTexture = _atkSdTexture;
             break;
-        case BOW:
+        case upgrades_enum::BOW:
             upgradeName = "BOW";
             upgradeDescription = "Increases ranged strength";
             upgradeTexture = _bowTexture;
             break;
-        case DASH:
+        case upgrades_enum::DASH:
             upgradeName = "DASH";
             upgradeDescription = "Increases energy regeneration";
             upgradeTexture = _dashTexture;
+            break;
+        case upgrades_enum::HEALTH:
+            upgradeName = "HEALTH";
+            upgradeDescription = "Increases max HP";
+            upgradeTexture = _healthTexture;
             break;
         default:
             break;
             
     }
-    switch (level) {
-        case RARE:
-            upgradeType = "RARE";
-            typeColor = Color4("#438EFF");
-            break;
-        case EPIC:
-            upgradeType = "EPIC";
-            typeColor = Color4("#AC43FF");
-            break;
-        case LEGENDARY:
-            upgradeType = "LEGENDARY";
-            typeColor = Color4("#FFE37E");
-            break;
-        case MAX:
-            upgradeType = "ULTIMATE";
-            typeColor = Color4("#E91818");
-            break;
-        default:
-            break;
-    }
+//    switch (level) {
+//        case RARE:
+//            upgradeType = "RARE";
+//            typeColor = Color4("#438EFF");
+//            break;
+//        case EPIC:
+//            upgradeType = "EPIC";
+//            typeColor = Color4("#AC43FF");
+//            break;
+//        case LEGENDARY:
+//            upgradeType = "LEGENDARY";
+//            typeColor = Color4("#FFE37E");
+//            break;
+//        case MAX:
+//            upgradeType = "ULTIMATE";
+//            typeColor = Color4("#E91818");
+//            break;
+//        default:
+//            break;
+//    }
     if (buttonType==0) {
         _option1Name->setText(upgradeName);
         _option1Descrip->setText(upgradeDescription);
-        _option1Level->setText(upgradeType);
-        _option1Level->setForeground(typeColor);
+        _option1Level->setText("LEVEL " + std::to_string(upgrade->getCurrentLevel()+1));
+        _option1Level->setForeground(Color4::WHITE);
         _option1Icon->setTexture(upgradeTexture);
     } else{
         _option2Name->setText(upgradeName);
         _option2Descrip->setText(upgradeDescription);
-        _option2Level->setText(upgradeType);
-        _option2Level->setForeground(typeColor);
+        _option2Level->setText("LEVEL " + std::to_string(upgrade->getCurrentLevel()+1));
+        _option2Level->setForeground(Color4::WHITE);
         _option2Icon->setTexture(upgradeTexture);
     }
     
 }
 
-void UpgradesScene::updateScene(std::array<int,2> attributes, std::vector<std::shared_ptr<Upgradeable>> availableUpgrades){
+void UpgradesScene::updateScene(std::vector<std::shared_ptr<Upgradeable>> attributes){
 
-    setButtonText(attributes.at(0),availableUpgrades.at(attributes.at(0))->getCurrentLevel()+1,0);
-    setButtonText(attributes.at(1),availableUpgrades.at(attributes.at(1))->getCurrentLevel()+1,1);
+    setButtonText(attributes.at(0),attributes.at(0)->getCurrentLevel()+1,0);
+    setButtonText(attributes.at(1),attributes.at(1)->getCurrentLevel()+1,1);
     
-    _displayedAttribute1 = attributes.at(0);
-    _displayedAttribute2  =attributes.at(1);
+    _displayedAttribute1 = attributes.at(0)->getType();
+    _displayedAttribute2 = attributes.at(1)->getType();
 }
 
 /**

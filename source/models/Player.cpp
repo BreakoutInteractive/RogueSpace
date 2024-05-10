@@ -79,6 +79,32 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     }
     _directionIndex = 0;
     _facingDirection = _directions[0];
+    
+    std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(_meleeDamage, _meleeDamage*2, upgrades_enum::SWORD);
+    std::shared_ptr<Upgradeable> parryUpgrade = std::make_shared<Upgradeable>(_parryWindow, _parryWindow*2, upgrades_enum::PARRY); //placeholder
+    std::shared_ptr<Upgradeable> meleeSpeedUpgrade = std::make_shared<Upgradeable>(GameConstants::PLAYER_ATK_DAMAGE, 5, upgrades_enum::ATK_SPEED); //need to adjust animations
+    std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(_bowDamage, _bowDamage*2, upgrades_enum::BOW);
+    std::shared_ptr<Upgradeable> healthUpgrade = std::make_shared<Upgradeable>(_maxHP, 8, upgrades_enum::HEALTH);
+
+    
+    float dodgeTiers[6] = {_dodgeCount, 2.0, 3.0, 4.0, 5.0, 6.0};
+    float armorTiers[6] = {_damageReduction, .1, .1, .15, .15, .20};
+    
+    float blockTiers[6] = {_blockReduction, .15, .25, .4, .5, .55};
+    
+    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(dodgeTiers, upgrades_enum::DASH); // temporary to illustrate 1 dash to 6 dash.
+    std::shared_ptr<Upgradeable> passiveDUpgrade =  std::make_shared<Upgradeable>(armorTiers, upgrades_enum::SHIELD); //placeholder
+    std::shared_ptr<Upgradeable> activeDUpgrade =  std::make_shared<Upgradeable>(blockTiers, upgrades_enum::BLOCK); //placeholder
+    
+    _playerUpgrades.push_back(std::move(meleeUpgrade));
+    _playerUpgrades.push_back(std::move(parryUpgrade));
+    _playerUpgrades.push_back(std::move(meleeSpeedUpgrade));
+    _playerUpgrades.push_back(std::move(dodgeCDUpgrade));
+    _playerUpgrades.push_back(std::move(bowUpgrade));
+    _playerUpgrades.push_back(std::move(healthUpgrade));
+    _playerUpgrades.push_back(std::move(passiveDUpgrade));
+    _playerUpgrades.push_back(std::move(activeDUpgrade));
+
     return true;
 }
 
@@ -552,6 +578,62 @@ float Player::getBowDamage() {
     else if (_state == CHARGED) return _bowDamage * 1.5f;
     else return _bowDamage;
 }
+
+//void Player::generateRandomUpgrades(){
+//    levelUpgrades.clear();
+////    int displayedAttribute1 = upgrades_enum::HEALTH;
+//    int displayedAttribute1 = std::rand()%_playerUpgrades.size()-1;
+//    while (displayedAttribute1==upgrades_enum::ATK_SPEED){
+//        displayedAttribute1 =std::rand()%_playerUpgrades.size()-1;
+//    }
+//    levelUpgrades.push_back(_playerUpgrades[displayedAttribute1]);
+//    
+//    int displayedAttribute2 = std::rand()%_playerUpgrades.size()-1;
+//    while (displayedAttribute2==displayedAttribute1 || displayedAttribute2==upgrades_enum::ATK_SPEED){
+//        displayedAttribute2 =std::rand()%_playerUpgrades.size()-1;
+//    }
+//    levelUpgrades.push_back(_playerUpgrades[displayedAttribute2]);
+//}
+
+//void Player::updateAttributes(int selectedAttribute){
+//    switch (selectedAttribute) {
+//        case upgrades_enum::SWORD:
+//            _playerUpgrades[selectedAttribute]->levelUp();
+//            _meleeDamage= _playerUpgrades[selectedAttribute]->getCurrentValue();
+//            break;
+//        case upgrades_enum::PARRY:
+//            _playerUpgrades[selectedAttribute]->levelUp();
+//            _parryWindow = _playerUpgrades[selectedAttribute]->getCurrentValue();
+//            break;
+//        case upgrades_enum::SHIELD:
+//            _playerUpgrades[selectedAttribute]->levelUp();
+//            _playerUpgrades[upgrades_enum::BLOCK]->levelUp();
+//            _damageReduction=_playerUpgrades[selectedAttribute]->getCurrentValue();
+//            _blockReduction = _playerUpgrades[upgrades_enum::BLOCK]->getCurrentValue();
+//            break;
+//        case upgrades_enum::ATK_SPEED: //unimplemented
+////            _playerUpgrades[selectedAttribute]->levelUp();
+////            availableUpgrades.at(selectedAttribute)->levelUp();
+////            _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
+//            break;
+//        case upgrades_enum::DASH:
+//            _playerUpgrades[selectedAttribute]->levelUp();
+//            _dodgeCount = _playerUpgrades[selectedAttribute]->getCurrentValue();
+//            break;
+//        case upgrades_enum::BOW:
+//            _playerUpgrades[selectedAttribute]->levelUp();
+//            _bowDamage = _playerUpgrades[selectedAttribute]->getCurrentValue();
+//            break;
+//        case upgrades_enum::HEALTH:
+//            _playerUpgrades[selectedAttribute]->levelUp();
+//            _maxHP = _playerUpgrades[selectedAttribute]->getCurrentValue();
+//            _hp += 1;
+//            break;
+//        default:
+//            CUAssertLog(selectedAttribute<8, "impossible upgrade case");
+//    }
+//}
+
 
 #pragma mark -
 #pragma mark Physics

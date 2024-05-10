@@ -74,7 +74,6 @@ protected:
 
     /** previous animation (animation state tracker) */
     std::shared_ptr<Animation> _prevAnimation;
-    
     /** The animaton to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
     /** The animation to use during parry startup */
@@ -163,6 +162,8 @@ protected:
     float _dodgeCount = GameConstants::PLAYER_DODGE_COUNT;
     /** delay between each melee attack */
     float _attackCooldown = GameConstants::PLAYER_ATTACK_COOLDOWN;
+    /** all upgradeable stats for the player*/
+    std::vector<std::shared_ptr<Upgradeable>> _playerUpgrades;
     
 #pragma mark Melee Attack
 
@@ -258,6 +259,13 @@ public:
         _meleeDamage = dmg;
     }
     
+    /** @return the parry stun window dealt */
+    float getParryWindow(){ return _parryWindow; }
+    void setParryWindow(float stunTime){
+        CUAssertLog(stunTime >= 0, "damage cannot be negative or zero");
+        _parryWindow = stunTime;
+    }
+    
     /**
      * Damage of the ranged attack. It is 0.5x the bow strength stat at
      * minimum charge and 1.5x the bow strength stat at maximum charge. The
@@ -272,7 +280,6 @@ public:
         CUAssertLog(dmg >= 0, "damage cannot be negative or zero");
         _bowDamage = dmg;
     }
-
     
     int getIframes(){ return _iframeCounter.getCount(); }
     
@@ -291,6 +298,14 @@ public:
      */
     void reduceStamina(){ _stamina -= 1.0/_dodgeCount * GameConstants::PLAYER_STAMINA; }
     
+    /**
+     * Chooses random upgrades
+     * @param size length of attribute array
+     */
+    void generateRandomUpgrades();
+    
+    std::vector<std::shared_ptr<Upgradeable>> getPlayerUpgrades(){ return _playerUpgrades;}
+    void setPlayerUpgrades(std::vector<std::shared_ptr<Upgradeable>> upgrades){ _playerUpgrades = upgrades;}
     
 #pragma mark Player Animation State
     /** @return the unit vector direction that the player is facing towards */
@@ -322,6 +337,9 @@ public:
 #pragma mark Player Combat State
     
     Weapon getWeapon(){ return _weapon; }
+    
+    /** switches the weapon of the player from melee to range or vice versa.  */
+    void setWeapon(Weapon w) { _weapon = w; }
     
     /** switches the weapon of the player from melee to range or vice versa.  */
     void swapWeapon() { _weapon = static_cast<Weapon>((_weapon + 1) % 2); }

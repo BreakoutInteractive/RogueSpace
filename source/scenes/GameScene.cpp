@@ -1,4 +1,4 @@
-/  GameScene.cpp
+//  GameScene.cpp
 //
 //  WARNING: There are a lot of shortcuts in this design that will do not adapt
 //  well to data driven design.  This demo has a lot of simplifications to make
@@ -76,23 +76,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.init(getCamera(), config);
     
     // TODO: revisit
-    upgradeScreenActive=false;
     upgradeChosen=false;
-
-    std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE);
-    std::shared_ptr<Upgradeable> parryUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> defenseUpgrade =  std::make_shared<Upgradeable>(5, .5, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> meleeSpeedUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(5, 1/6, 1); // temporary to illustrate 1 dash to 6 dash.
-    std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_BOW_DAMAGE);
-    
-    availableUpgrades.push_back(std::move(meleeUpgrade));
-    availableUpgrades.push_back(std::move(parryUpgrade));
-    availableUpgrades.push_back(std::move(defenseUpgrade));
-    availableUpgrades.push_back(std::move(meleeSpeedUpgrade));
-    availableUpgrades.push_back(std::move(dodgeCDUpgrade));
-    availableUpgrades.push_back(std::move(bowUpgrade));
-
+    _upgradesScene.init(assets);
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -143,7 +128,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         }
         else {
             this->_levelNumber+=1;
-            this->_isUpgradeRoom = _levelNumber % 3 == 1; // check if an upgrades room should be offered before the next level
+            this->_isUpgradeRoom = _levelNumber % 2 == 1; // check if an upgrades room should be offered before the next level
         }
         this->setLevel(_levelNumber);
     });
@@ -161,6 +146,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 void GameScene::dispose() {
     if (isActive()) {
         _input.dispose();
+        _upgradesScene.dispose();
         _debugNode = nullptr;
         _winNode = nullptr; // TODO: remove
         _level = nullptr;
@@ -173,14 +159,16 @@ void GameScene::dispose() {
 
 void GameScene::restart(){
     _winNode->setVisible(false);
-    for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
-        (*it)->resetUpgrade();
-    }
     upgradeChosen=false;
     _isUpgradeRoom = true;  // first level is always upgrades
     _levelNumber = 1;
     setLevel(_levelNumber);
     auto player = _level->getPlayer();
+    auto upgrades = player->getPlayerUpgrades();
+    for (auto it = upgrades.begin(); it != upgrades.end(); ++it){
+        (*it)->resetUpgrade();
+    }
+    player->setMaxHP(upgrades[upgrades_enum::HEALTH]->getCurrentValue());
     player->setHP(player->getMaxHP());
 }
 
@@ -189,13 +177,18 @@ void GameScene::setLevel(int level){
     float currentHp = GameConstants::PLAYER_MAX_HP;
     std::string levelToParse;
     
+    bool restorePlayer = false;
+    
     if (_level!=nullptr) {
-        currentHp = _level->getPlayer()->getHP();
+        auto player = _level->getPlayer();
+        currentHp = player->getHP();
+        currentPlayerStats = player->getPlayerUpgrades();
+        playerWeapon = player->getWeapon();
+        restorePlayer = true;
     }
     
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
-        generateRandomUpgrades();
     }
     else{
         _levelNumber = level;
@@ -220,16 +213,25 @@ void GameScene::setLevel(int level){
     
     if (_isUpgradeRoom) {
         _level->getRelic()->setActive(true);
+        generateRandomUpgrades();
     }
     
     setComplete(false);
     setDefeat(false);
-    _input.activateMeleeControls(); // TODO: use the active weapon
     _input.setActive(true);
 
     auto p = _level->getPlayer();
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
-    setPlayerAttributes(currentHp);
+    if (restorePlayer){
+        restorePlayerAttributes(currentHp);
+        _level->setEnemyStunCD(currentPlayerStats[upgrades_enum::PARRY]->getCurrentValue());
+        if (_level->getPlayer()->getWeapon() == Player::Weapon::RANGED) {
+            _input.activateRangeControls(true);
+        } else{
+            _input.activateRangeControls(false);
+        }
+    }
+    
     
     // TODO: edit the function later, has temporary side effect: sets the swap button to be down (since player always gets sword) ...
     _gameRenderer.setSwapButtonCallback([this](){
@@ -512,7 +514,18 @@ void GameScene::preUpdate(float dt) {
         
     }
     if (_level->getRelic()!=nullptr && !upgradeChosen){
-        upgradeScreenActive =_level->getRelic()->getTouched();
+        bool relicContact = _level->getRelic()->getTouched();
+        _upgradesScene.setActive(relicContact);
+        if (relicContact){
+            _upgradesScene.updateScene(upgradesForLevel);
+        }
+    }
+    if (_upgradesScene.getChoice()!=UpgradesScene::NONE) {
+        upgradeChosen = true;
+        updatePlayerAttributes(_upgradesScene._selectedUpgrade);
+//        currentPlayerStats = _level->getPlayer()->getPlayerUpgrades();
+        //save upgrades
+        _upgradesScene.setActive(false);
     }
 #pragma mark - Component Updates
     
@@ -569,58 +582,76 @@ void GameScene::fixedUpdate(float step) {
 }
 
 void GameScene::generateRandomUpgrades(){
-    int displayedAttribute1 = std::rand()%availableUpgrades.size();
-    upgradesForLevel.push_back(displayedAttribute1);
+    upgradesForLevel.clear();
+    auto upgrades = _level->getPlayer()->getPlayerUpgrades();
+    int displayedAttribute1 = std::rand()%upgrades.size()-1;
+//    int displayedAttribute1 = upgrades_enum::PARRY;
+    upgradesForLevel.push_back(upgrades[displayedAttribute1]);
 
-    int displayedAttribute2 = std::rand()%availableUpgrades.size();
+    int displayedAttribute2 = std::rand()%upgrades.size()-1;
     while (displayedAttribute2==displayedAttribute1){
-        displayedAttribute2 =std::rand()%availableUpgrades.size();
+        displayedAttribute2 =std::rand()%upgrades.size();
     }
-    upgradesForLevel.push_back(displayedAttribute2);
+    upgradesForLevel.push_back(upgrades[displayedAttribute2]);    //_healthTexture
 }
 
 void GameScene::updatePlayerAttributes(int selectedAttribute){
     auto player = _level->getPlayer();
+    auto upgrades = player->getPlayerUpgrades();
     switch (selectedAttribute) {
-        case SWORD:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            player->setMeleeDamage(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+        case upgrades_enum::SWORD:
+            upgrades[selectedAttribute]->levelUp();
+            player->setMeleeDamage(upgrades[selectedAttribute]->getCurrentValue());
             break;
-        case PARRY: //unimplemented
-//            availableUpgrades.at(selectedAttribute)->levelUp();
-//            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+        case upgrades_enum::PARRY:
+            upgrades[selectedAttribute]->levelUp();
+            player->setParryWindow(upgrades[selectedAttribute]->getCurrentValue());
             break;
-        case SHIELD:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-//            player->setDefense(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+        case upgrades_enum::SHIELD:
+            upgrades[selectedAttribute]->levelUp();
+            upgrades[upgrades_enum::BLOCK]->levelUp();
+            player->setDamageReduction(upgrades[selectedAttribute]->getCurrentValue());
+            player->setBlockingReduction(upgrades[upgrades_enum::BLOCK]->getCurrentValue());
             break;
-        case ATK_SPEED: //unimplemented
+        case upgrades_enum::ATK_SPEED: //unimplemented
+            upgrades[selectedAttribute]->levelUp();
 //            availableUpgrades.at(selectedAttribute)->levelUp();
 //            _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
             break;
-        case DASH:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            //_level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+        case upgrades_enum::DASH:
+            upgrades[selectedAttribute]->levelUp();     
+            player->setDodgeCounts(upgrades[selectedAttribute]->getCurrentValue());
             break;
-        case BOW:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            player->setBaseBowDamage(availableUpgrades.at(selectedAttribute)->getCurrentValue());
+        case upgrades_enum::BOW:
+            upgrades[selectedAttribute]->levelUp();
+            player->setBaseBowDamage(upgrades[selectedAttribute]->getCurrentValue());
+            break;
+        case upgrades_enum::HEALTH:
+            upgrades[selectedAttribute]->levelUp();
+            player->setMaxHP(upgrades[selectedAttribute]->getCurrentValue());
+            player->setHP(player->getHP()+1);
             break;
         default:
-            // this case for full restore, subject to removal;
-            player->setHP(player->getMaxHP());
+            CUAssertLog(selectedAttribute<8, "impossible upgrade case");
     }
 }
 
-void GameScene::setPlayerAttributes(float hp){
+void GameScene::restorePlayerAttributes(float hp){
     auto player = _level->getPlayer();
     player->setHP(hp);
-    player->setMeleeDamage(availableUpgrades.at(SWORD)->getCurrentValue());
-//    player->setDefense(availableUpgrades.at(SHIELD)->getCurrentValue());
-    player->setBaseBowDamage(availableUpgrades.at(BOW)->getCurrentValue());
-    //_level->getPlayer()->parryWindow = availableUpgrades.at(PARRY)->getCurrentValue(); //unimplemented
-    //_level->getPlayer()->atkSpeed = (availableUpgrades.at(ATK_SPEED)->getCurrentValue()); //unimplemented
-    //_level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
+    player->setWeapon(playerWeapon);
+    player->setPlayerUpgrades(currentPlayerStats);
+    
+    player->setMeleeDamage(currentPlayerStats.at(upgrades_enum::SWORD)->getCurrentValue());
+    player->setParryWindow(currentPlayerStats.at(upgrades_enum::PARRY)->getCurrentValue());
+    
+//    player->setMeleeDamage(currentPlayerStats[upgrades_enum::ATK_SPEED]->getCurrentValue());
+    
+    player->setDodgeCounts(currentPlayerStats.at(upgrades_enum::DASH)->getCurrentValue());
+    player->setBaseBowDamage(currentPlayerStats.at(upgrades_enum::BOW)->getCurrentValue());
+    player->setMaxHP(currentPlayerStats.at(upgrades_enum::HEALTH)->getCurrentValue());
+    player->setDamageReduction(currentPlayerStats.at(upgrades_enum::SHIELD)->getCurrentValue());
+    player->setBlockingReduction(currentPlayerStats.at(upgrades_enum::BLOCK)->getCurrentValue());
 }
 
 void GameScene::postUpdate(float remain) {
@@ -651,6 +682,9 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
     _effectsScene.render(batch);
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
+    }
+    if (_upgradesScene.isActive()){
+        _upgradesScene.render(batch);
     }
     Scene2::render(batch); // this is mainly for the debug
 }

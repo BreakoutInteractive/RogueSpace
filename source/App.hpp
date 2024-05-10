@@ -27,8 +27,6 @@ protected:
         TITLE,
         /** The pause scene */
         PAUSE,
-        /** The upgrades scene */
-        UPGRADE,
         /** The scene to play the game */
         GAME
     };
@@ -45,8 +43,6 @@ protected:
     LoadingScene _loading;
     /** The controller for the pause screen */
     PauseScene _pause;
-    /** The controller for the upgrades screen */
-    UpgradesScene _upgrades;
     /** The title and menu  scene */
     TitleScene _title;
     /** The current active scene */

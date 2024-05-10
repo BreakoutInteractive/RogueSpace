@@ -8,10 +8,20 @@
 #ifndef GameConstants_hpp
 #define GameConstants_hpp
 
+#ifndef upgrades_Enum
+#define upgrades_Enum
+namespace upgrades_enum
+{
+/** classification of the different upgrade types*/
+enum upgrades {SWORD, PARRY, ATK_SPEED, DASH, BOW, HEALTH, SHIELD, BLOCK};
+}
+#endif
+
+
 #include <cugl/cugl.h>
 
 /**
- Wrapper class to host many game constants used by the game entities.
+ Wrapper class to host many game constants used by the gaeme entities.
  */
 class GameConstants {
     
@@ -99,7 +109,6 @@ public:
     // TODO: pending further discussion
     /** the time in seconds for which a player cannot start a new melee attack AFTER the end of such attack */
     static float PLAYER_ATTACK_COOLDOWN;
-    
     
 #pragma mark -
 #pragma mark Remaining Player Constants

@@ -7,16 +7,20 @@
 
 #include "Upgradeable.hpp"
 
-Upgradeable::Upgradeable(float initialVal, float stepAmt){
+Upgradeable::Upgradeable(float initialVal, float maxValue, int type){
     _currLevel = 0;
+    _type = type;
     _tierValues[_currLevel] = initialVal;
+    float stepAmt = (maxValue-initialVal)/5;
     for (int idx = 1; idx < 6; idx++) {
         _tierValues[idx] = _tierValues[idx-1]+stepAmt;
     }
 }
-Upgradeable::Upgradeable(float tiers[6]){
+Upgradeable::Upgradeable(float tiers[6], int type){
     _currLevel = 0;
-    for (int idx = 1; idx < 5; idx++) {
+    _type = type;
+    _tierValues[_currLevel] = tiers[_currLevel];
+    for (int idx = 1; idx < 6; idx++) {
         _tierValues[idx] = tiers[idx];
     }
 }

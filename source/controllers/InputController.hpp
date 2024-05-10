@@ -264,8 +264,8 @@ public:
      */
     void clear();
     
-    void activateRangeControls(){ rangedMode = true; }
-    void activateMeleeControls(){ rangedMode = false; }
+    void activateRangeControls(bool active){ rangedMode = active; }
+//    void activateMeleeControls(){ rangedMode = false; }
     /**
      * swaps the active control mode
      */
