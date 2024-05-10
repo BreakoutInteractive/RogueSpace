@@ -161,6 +161,8 @@ private:
     bool reversedGestures;
     /** whether the range controls are active */
     bool rangedMode;
+    /** whether player is using slingshot shoot mechanism*/
+    bool inverted;
 
 protected:
     
@@ -270,6 +272,11 @@ public:
      * swaps the active control mode
      */
     void swapControlMode() { rangedMode = !rangedMode;}
+    
+    /**
+     * sets the shooting direction control scheme. An inverted system is equivalent to a slingshot system.
+     */
+    void setInverted(bool value){ inverted = value; }
     
 #pragma mark -
 #pragma mark Input Results
