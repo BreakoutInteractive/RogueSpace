@@ -36,7 +36,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
-    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC;
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC | CATEGORY_HEALTHPACK;
     collider->setFilterData(filter);
     _collider = collider;                   // attach Component
     
@@ -53,7 +53,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
     std::shared_ptr<JsonValue> hitboxData = playerData->get("hitbox");
     auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "player-hitbox", true);
     filter.categoryBits = CATEGORY_PLAYER_HITBOX;
-    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_HEALTHPACK;
     hitbox->setFilterData(filter);
     _sensor = hitbox;
     _sensor->setDebugColor(Color4::RED);
@@ -85,7 +85,6 @@ bool Player::init(std::shared_ptr<JsonValue> playerData) {
 void Player::dispose() {
     // nothing to clean
 }
-
 
 #pragma mark -
 #pragma mark Animation
@@ -145,6 +144,17 @@ void Player::drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const
     }
 }
 
+void Player::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float ang, float scale) {
+    auto sheet = effect->getSpriteSheet();
+    Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
+    Vec2 direction = getFacingDir();
+    
+    Affine2 t = Affine2::createRotation(ang);
+    t.scale(scale);
+    t.translate((_position+Vec2(0, 64 / scale / getDrawScale().y)) * _drawScale);
+    sheet->draw(batch, o, t);
+}
+
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     auto spriteSheet = _currAnimation->getSpriteSheet();
     
@@ -160,7 +170,11 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     Vec2 o = Vec2::ZERO;
     Affine2 t = Affine2::ZERO;
     Vec2 direction = Vec2::ZERO;
-    float ang = 0;
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0) {
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
     switch (_state) {
     case DODGE:
         // render player differently while dodging (add fading effect)
@@ -171,43 +185,13 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         }
         break;
     case CHARGED:
-        sheet = _chargedEffect->getSpriteSheet();
-        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        direction = getFacingDir();
-        ang = acos(direction.dot(Vec2::UNIT_X));
-        if (direction.y < 0) {
-            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        }
-        t = Affine2::createRotation(ang);
-        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
-        sheet->draw(batch, o, t);
+        drawEffect(batch, _chargedEffect, ang);
         break;
     case CHARGING:
-        sheet = _chargingEffect->getSpriteSheet();
-        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        direction = getFacingDir();
-        ang = acos(direction.dot(Vec2::UNIT_X));
-        if (direction.y < 0) {
-            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        }
-        t = Affine2::createRotation(ang);
-        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
-        sheet->draw(batch, o, t);
+        drawEffect(batch, _chargingEffect, ang);
         break;
     case SHOT:
-        sheet = _shotEffect->getSpriteSheet();
-        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        direction = getFacingDir();
-        ang = acos(direction.dot(Vec2::UNIT_X));
-        if (direction.y < 0) {
-            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        }
-        t = Affine2::createRotation(ang);
-        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
-        if (_shotEffect->isActive()) sheet->draw(batch, o, t);
+        if (_shotEffect->isActive()) drawEffect(batch, _shotEffect, ang);
         break;
     default:
         break;
@@ -227,18 +211,11 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 
     // this is always drawn on top of player
     if (_parryEffect->isActive()) {
-        std::shared_ptr<SpriteSheet> effSheet = _parryEffect->getSpriteSheet();
-        transform.translate(0, spriteSheet->getFrameSize().height/2);
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform); 
+        drawEffect(batch, _parryEffect, ang);
     }
     
     if (_hitEffect->isActive()) {
-        auto effSheet = _hitEffect->getSpriteSheet();
-        transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //32 is half of player pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
+        drawEffect(batch, _hitEffect, 0, 2);
     }
 }
 

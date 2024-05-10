@@ -509,6 +509,8 @@ public:
      * Method to call when an enemy is stunned, e.g. when parried
      */
     void stun();
+
+    virtual void drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float scale = 1);
     
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     

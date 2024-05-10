@@ -65,8 +65,6 @@ bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared
 }
 
 bool Projectile::lizardInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
-    //TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
-
     //init fields
     _enabled = true;
     _position = pos;
@@ -112,10 +110,7 @@ bool Projectile::lizardInit(Vec2 pos, float damage, float ang, const std::shared
     return true;
 }
 
-bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
-    //TODO: For now, the enemy and player have the same projectile. Change the enemy projectile once we have the final one
-
-    //init fields
+bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {//init fields
     _enabled = true;
     _position = pos;
     _tint = Color4::WHITE;
@@ -140,7 +135,7 @@ bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_p
     // obs->setBullet(true);
     _collider = obs;
 
-    std::shared_ptr<physics2::WheelObstacle> shadow = physics2::WheelObstacle::alloc(pos, GameConstants::PROJ_RADIUS_LIZARD * GameConstants::PROJ_SHADOW_SCALE);
+    std::shared_ptr<physics2::WheelObstacle> shadow = physics2::WheelObstacle::alloc(pos, GameConstants::PROJ_RADIUS_MAGE * GameConstants::PROJ_SHADOW_SCALE);
     shadow->setBodyType(b2_kinematicBody);
     shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
         + 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);

@@ -229,6 +229,7 @@ public:
     float getHP() { return _hp; }
     void setHP(float hp){
         CUAssertLog(hp >= 0, "hp cannot be negative");
+        CUAssertLog(hp <= _maxHP, "hp cannot be greater than max hp");
         _hp = hp;
     }
     
@@ -370,6 +371,7 @@ public:
     */
     void hit(Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
     void drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<cugl::physics2::ObstacleWorld>& world);
+    void drawEffect(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float ang = 0, float scale = 1);
     void draw(const std::shared_ptr<SpriteBatch>& batch) override;
     void setAnimation(std::shared_ptr<Animation> animation) override;
     void updateAnimation(float dt) override;

@@ -2,6 +2,7 @@
 #include "../models/LevelModel.hpp"
 #include "CollisionController.hpp"
 #include "../models/LevelConstants.hpp"
+#include "../models/CollisionConstants.hpp"
 #include "../models/Enemy.hpp"
 #include "../models/MeleeEnemy.hpp"
 #include "../models/RangedEnemy.hpp"
@@ -98,6 +99,21 @@ void CollisionController::beginContact(b2Contact* contact){
             }
         }
     }
+    //health packs
+    for (std::shared_ptr<HealthPack> h : _level->getHealthPacks()) {
+        intptr_t hptr = reinterpret_cast<intptr_t>(h.get());
+        if ((body1->GetUserData().pointer == hptr && body2->GetUserData().pointer == pptr) ||
+            (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == hptr)) {
+            //don't pick up the health pack if at full hp
+            if (player->getHP() < player->getMaxHP()) {
+                float maxHP = player->getMaxHP();
+                float newHP = player->getHP() + maxHP * GameConstants::HEALTHPACK_HEAL_AMT;
+                if (newHP > maxHP) newHP = maxHP;
+                player->setHP(newHP);
+                h->_delMark = true;
+            }
+        }
+    }
     // enemy attack
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         intptr_t aptr = reinterpret_cast<intptr_t>((*it)->getAttack().get());
@@ -140,10 +156,13 @@ void CollisionController::beginContact(b2Contact* contact){
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
             if (!p->isExploding() && !player->isDodging()) {
-                player->hit(dir, p->getDamage());
                 p->setExploding();
-                //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
-                CULog("Player got shot!");
+                if (!player->isParrying()) {
+                    player->hit(dir, p->getDamage());
+                    //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
+                    CULog("Player got shot!");
+                }
+                else player->playParryEffect();
             }
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {

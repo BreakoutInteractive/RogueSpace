@@ -21,6 +21,15 @@
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
 #include "../models/Wall.hpp"
+#include "../models/HealthPack.hpp"
+#include <box2d/b2_world.h>
+#include <box2d/b2_contact.h>
+#include <box2d/b2_collision.h>
+
+#include <ctime>
+#include <string>
+#include <iostream>
+#include <sstream>
 #include "../components/Animation.hpp"
 #include "../utility/SaveData.hpp"
 using namespace cugl;
@@ -56,6 +65,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
+    srand(time(NULL));
+
     // initalize controllers with the assets
     _assets = assets;
     _parser.loadTilesets(assets);
@@ -501,6 +512,13 @@ void GameScene::preUpdate(float dt) {
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
         if (enemy->getHealth() <= 0) {
+            //drop health pack
+            if (enemy->isEnabled() && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
+                auto healthpack = HealthPack::alloc(enemy->getPosition(), _assets);
+                healthpack->setDrawScale(Vec2(_scale, _scale));
+                _level->addHealthPack(healthpack);
+            }
+            //remove enemy
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
         }
@@ -540,6 +558,12 @@ void GameScene::preUpdate(float dt) {
     for (auto it = projs.begin(); it != projs.end(); ++it) {
         (*it)->updateAnimation(dt);
         if ((*it)->isCompleted()) _level->delProjectile((*it));
+    }
+
+    std::vector<std::shared_ptr<HealthPack>> hps = _level->getHealthPacks();
+    for (auto it = hps.begin(); it != hps.end(); ++it) {
+        (*it)->updateAnimation(dt);
+        if ((*it)->_delMark) _level->delHealthPack((*it));
     }
     
     // update every animation in game objects

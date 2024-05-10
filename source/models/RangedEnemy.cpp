@@ -33,3 +33,19 @@ void RangedEnemy::dispose() {
     _enemyTextureKey = "";
     _enemyTexture = nullptr;
 }
+
+void RangedEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
+    Enemy::draw(batch);
+    std::shared_ptr<SpriteSheet>sheet = _chargingAnimation->getSpriteSheet();
+    Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
+    Vec2 dir = getFacingDir();
+    float ang = acos(dir.dot(Vec2::UNIT_X));
+    if (dir.y < 0) {
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(dir.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
+    Affine2 t = Affine2::createRotation(ang);
+    t.scale(_drawScale / 32);
+    t.translate((_position + Vec2(0, 64 / getDrawScale().y)) * _drawScale);
+    if (_chargingAnimation->isActive()) sheet->draw(batch, o, t);
+}
