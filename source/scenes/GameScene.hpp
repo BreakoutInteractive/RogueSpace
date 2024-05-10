@@ -26,6 +26,7 @@
 #include "../models/Counter.hpp"
 #include "../components/Animation.hpp"
 #include "TransitionScene.hpp"
+#include "../utility/SaveData.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -342,9 +343,9 @@ public:
     void restart();
     
     /**
-     * sets the active level to load
+     * sets the active level to load with the given save data
      */
-    void setLevel(int level);
+    void setLevel(SaveData::Data saveData);
     
     /**
      * returns the asset key for the given level
@@ -362,6 +363,12 @@ public:
      */
     virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
+    void setActive(bool value) override {
+        Scene2::setActive(value);
+        _gameRenderer.setActivated(value);
+        _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
+    }
+    
 protected:
 #pragma mark -
 #pragma mark Helpers

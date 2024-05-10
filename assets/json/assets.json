@@ -149,6 +149,14 @@
             "file": "fonts/Roboto-Bold.ttf",
             "size": 24
         },
+        "robotoBold28": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 28
+        },
+        "robotoBold36": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 36
+        },
         "robotoBold40": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 40
@@ -166,8 +174,8 @@
             "size": 32
         },
         "robotoRegular16": {
-        "file": "fonts/Roboto-Regular.ttf",
-        "size": 16
+            "file": "fonts/Roboto-Regular.ttf",
+            "size": 16
         }
 	}
 }

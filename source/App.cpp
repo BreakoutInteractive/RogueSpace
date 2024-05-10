@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "models/LevelConstants.hpp"
+#include "utility/SaveData.hpp"
 
 using namespace cugl;
 
@@ -89,7 +90,7 @@ void App::update(float dt){
         _title.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
-        _title.setActive(true);
+        setTitleScene();
         setDeterministic(true);
     }
 }
@@ -224,20 +225,33 @@ void App::updateUpgradesScene(float dt){
     }
 }
 
+void App::setTitleScene(){
+    bool hasSave = SaveData::hasGameSave();
+    CULog("previous save available: %s", (hasSave ? "true" : "false"));
+    auto sceneType = hasSave ? TitleScene::SceneType::WITH_CONTINUE : TitleScene::SceneType::WITHOUT_CONTINUE;
+    _title.setSceneType(sceneType);
+    _title.setActive(true);
+}
+
 void App::updateTitleScene(float dt){
+    auto save = SaveData::getGameSave();
     switch (_title.getChoice()){
         case TitleScene::NONE:
             break;
         case TitleScene::NEW:
-            // TODO: check if there is an existing run, confirm user wants to start a new game
-            // TODO: if there is no exisitng run, the below code is okay.
             _title.setActive(false);
             _gameplay.setActive(true);
             _gameplay.restart();
             _scene = GAME; // switch to game scene
             break;
-        case TitleScene::CONTINUE: case TitleScene::SETTINGS:
-            CUAssertLog(false, "unimplemented");
+        case TitleScene::CONTINUE:
+            _title.setActive(false);
+            _gameplay.setActive(true);
+            CULog("loading lv %d", save.level);
+            _gameplay.setLevel(save);
+            _scene = GAME;
+            break;
+        case TitleScene::SETTINGS: case TitleScene::TUTORIAL:
             break;
     }
 }

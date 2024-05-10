@@ -22,7 +22,7 @@
 #include "../models/MageAlien.hpp"
 #include "../models/Wall.hpp"
 #include "../components/Animation.hpp"
-
+#include "../utility/SaveData.hpp"
 using namespace cugl;
 
 #pragma mark -
@@ -64,6 +64,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _input.init([this](Vec2 pos){
         return _gameRenderer.isInputProcessed(pos);
     });
+    activateInputs(false);
     _audioController = std::make_shared<AudioController>();
     _audioController->init(_assets);
     _collisionController.setAssets(_assets, _audioController);
@@ -78,6 +79,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // TODO: revisit
     upgradeScreenActive=false;
     upgradeChosen=false;
+    _isUpgradeRoom = false;   // necessary
 
     std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE);
     std::shared_ptr<Upgradeable> parryUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
@@ -145,7 +147,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
             this->_levelNumber+=1;
             this->_isUpgradeRoom = _levelNumber % 3 == 1; // check if an upgrades room should be offered before the next level
         }
-        this->setLevel(_levelNumber);
+        
+        // save game data as level ends
+        SaveData::Data data;
+        data.level = _levelNumber;
+        data.hp = _level->getPlayer()->getHP();
+        // TODO: set other data attributes to save
+        SaveData::makeSave(data);
+        // load the next level
+        this->setLevel(data);
     });
     
   
@@ -176,29 +186,29 @@ void GameScene::restart(){
     for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
         (*it)->resetUpgrade();
     }
+    _levelTransition.setActive(false);
     upgradeChosen=false;
     _isUpgradeRoom = true;  // first level is always upgrades
-    _levelNumber = 1;
-    setLevel(_levelNumber);
+    SaveData::removeSave();
+    SaveData::Data data;
+    data.level = 1;
+    data.hp = GameConstants::PLAYER_MAX_HP;
+    setLevel(data);
     auto player = _level->getPlayer();
     player->setHP(player->getMaxHP());
 }
 
-void GameScene::setLevel(int level){
+void GameScene::setLevel(SaveData::Data saveData){
     _debugNode->removeAllChildren();
-    float currentHp = GameConstants::PLAYER_MAX_HP;
+    float currentHp = saveData.hp;
     std::string levelToParse;
-    
-    if (_level!=nullptr) {
-        currentHp = _level->getPlayer()->getHP();
-    }
-    
+    auto level = saveData.level;
+    _levelNumber = level;
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
         generateRandomUpgrades();
     }
     else{
-        _levelNumber = level;
         levelToParse = getLevelKey(_levelNumber);
     }
     
@@ -220,6 +230,11 @@ void GameScene::setLevel(int level){
     
     if (_isUpgradeRoom) {
         _level->getRelic()->setActive(true);
+        // turn off the energy walls first
+        auto energyWalls = _level->getEnergyWalls();
+        for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
+            (*it)->deactivate();
+        }
     }
     
     setComplete(false);
@@ -314,6 +329,7 @@ void GameScene::preUpdate(float dt) {
     if (!isDefeat()){
         // player dies
         if (_level->getPlayer()->getHP() == 0){
+            SaveData::removeSave();
             setDefeat(true);
             // start playing dead effect, stop the area clear if we happen to have cleared the room and got killed by a flying projectile
             _actionManager.remove(AREA_CLEAR_KEY);
@@ -333,6 +349,7 @@ void GameScene::preUpdate(float dt) {
         }
         else{
             _winNode->setVisible(true); // for now
+            // TODO: save data: save game is won by setting level to be greater than max level?
         }
     }
 
@@ -531,7 +548,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     player->update(dt); // updates counters, hitboxes
-    _levelTransition.update(dt); // also does nothing when not active
+    _levelTransition.update(dt); // does nothing when not active
 }
 
 
@@ -569,6 +586,7 @@ void GameScene::fixedUpdate(float step) {
 }
 
 void GameScene::generateRandomUpgrades(){
+    upgradesForLevel.clear();
     int displayedAttribute1 = std::rand()%availableUpgrades.size();
     upgradesForLevel.push_back(displayedAttribute1);
 
