@@ -102,6 +102,14 @@ void Enemy::setDrawScale(Vec2 scale) {
     _drawScale = scale;
 }
 
+void Enemy::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float scale) {    
+    auto effSheet = effect->getSpriteSheet();
+    Affine2 transform = Affine2::createScale(scale);
+    transform.translate((_position + Vec2(0, 64 / scale / _drawScale.y)) * _drawScale); //64 is half of enemy pixel height
+    Vec2 origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+    effSheet->draw(batch, origin, transform);
+}
+
 void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     // TODO: render enemy with appropriate scales
     // batch draw(texture, color, origin, scale, angle, offset)
@@ -125,24 +133,13 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
     
     if (_meleeHitEffect->isActive()) {
-        auto effSheet = _meleeHitEffect->getSpriteSheet();
-        transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
+        drawEffect(batch, _meleeHitEffect, 2);
     }
     if (_bowHitEffect->isActive()) {
-        auto effSheet = _bowHitEffect->getSpriteSheet();
-        transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
+        drawEffect(batch, _bowHitEffect, 2);
     }
     if (_state == EnemyState::STUNNED) {
-        auto effSheet = _stunEffect->getSpriteSheet();
-        transform = Affine2::createTranslation(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
+        drawEffect(batch, _stunEffect);
     }
 }
 

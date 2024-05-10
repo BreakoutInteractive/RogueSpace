@@ -32,8 +32,14 @@ protected:
     
     /** The enemy projectile speed*/
     float _projectileSpeed;
+
+    /** The animation to use while charging attack */
+    std::shared_ptr<Animation> _chargingAnimation;
     
 public:
+
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+
 #pragma mark -
 #pragma mark Constructors
     /**

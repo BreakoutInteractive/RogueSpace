@@ -122,56 +122,6 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     });
 }
 
-void MageAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    // TODO: render enemy with appropriate scales
-    // batch draw(texture, color, origin, scale, angle, offset)
-    auto spriteSheet = _currAnimation->getSpriteSheet();
-    
-    Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
-    Affine2 transform = Affine2();
-    // transform.scale(0.5);
-    transform.translate(getPosition() * _drawScale);
-    
-    spriteSheet->draw(batch, _tint, origin, transform);
-    
-    //enemy health bar
-    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
-    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
-    
-    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
-    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
-
-    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
-    batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
-
-    if (_meleeHitEffect->isActive()) {
-        auto effSheet = _meleeHitEffect->getSpriteSheet();
-        transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
-    }
-    if (_bowHitEffect->isActive()) {
-        auto effSheet = _bowHitEffect->getSpriteSheet();
-        transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 32 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
-    }
-    std::shared_ptr<SpriteSheet>sheet = _chargingAnimation->getSpriteSheet();
-    Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-    Vec2 dir = getFacingDir();
-    float ang = acos(dir.dot(Vec2::UNIT_X));
-    if (dir.y < 0) {
-        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-        ang = M_PI + acos(dir.rotate(M_PI).dot(Vec2::UNIT_X));
-    }
-    Affine2 t = Affine2::createRotation(ang);
-    t.scale(_drawScale/32);
-    t.translate((_position + Vec2(0, 64 / getDrawScale().y)) * _drawScale);
-    if (_chargingAnimation->isActive()) sheet->draw(batch, o, t);
-}
-
 void MageAlien::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
