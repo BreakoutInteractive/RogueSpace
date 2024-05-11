@@ -23,6 +23,10 @@ class Animation;
  * This is a separate component attached to the player and the player model is responsible for its physics.
  */
 class PlayerHitbox : public physics2::WheelObstacle {
+
+private:
+    /** the set of entities (their pointers) that the hitbox damaged*/
+    std::unordered_set<intptr_t> hitSet;
     
 public:
     
@@ -53,10 +57,12 @@ public:
      *
      * @param value whether the body is enabled
      */
-    void setEnabled(bool value) override {
-        WheelObstacle::setEnabled(value);
-        hitFlag = false; // clear the flag
-    }
+    void setEnabled(bool value);
+    
+    /**
+     * @return whether to handle the collision between this hitbox and the target
+     */
+    bool hits(intptr_t enemyPtr);
 };
 
 /**
@@ -135,6 +141,8 @@ protected:
     float _attackActiveCooldown;
     /** the current accumulated stamina */
     float _stamina;
+    /** player health */
+    float _hp = GameConstants::PLAYER_MAX_HP;
     
     /** player's active weapon */
     Weapon _weapon;
@@ -149,8 +157,6 @@ protected:
 #pragma mark Player Stats
     /** player's maximum health*/
     float _maxHP = GameConstants::PLAYER_MAX_HP;
-    /** player health */
-    float _hp = GameConstants::PLAYER_MAX_HP;
     /** damage done by melee */
     float _meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
     /** passive damage reduction */
@@ -201,7 +207,7 @@ public:
      * @param playerData  the structured json with player collision, hitbox, position data
      * @return true if the player is initialized properly, false otherwise.
      */
-    virtual bool init(std::shared_ptr<JsonValue> playerData);
+    virtual bool init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonValue> upgradesJson);
     
     /**
      * Returns a newly allocated player
@@ -210,9 +216,9 @@ public:
      *
      * @return a newly allocated player
      */
-    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData, std::shared_ptr<physics2::ObstacleWorld> world) {
+    static std::shared_ptr<Player> alloc(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonValue> upgradeJson) {
         std::shared_ptr<Player> result = std::make_shared<Player>();
-        return (result->init(playerData) ? result : nullptr);
+        return (result->init(playerData, upgradeJson) ? result : nullptr);
     }
 
 #pragma mark -

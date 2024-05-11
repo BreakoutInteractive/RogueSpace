@@ -10,7 +10,12 @@
         "texture":       "player-idle",
         "parry":         "parry",
         "attack":        "attack",
-        "debugcolor":    "blue"
+        "debugcolor":    "blue",
+        "upgrades": {
+            "melee" : [1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
+            "range" : [1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
+            "hp" : [3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+        }
     },
     "enemy": {
         "bodytype":     "dynamic",

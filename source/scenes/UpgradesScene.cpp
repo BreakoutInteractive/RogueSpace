@@ -179,7 +179,7 @@ void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
             upgradeTexture = _parryTexture;
             break;
         case SHIELD:
-            upgradeName = "SHIELD";
+            upgradeName = "DEFENSE";
             upgradeDescription = "Decreases damage taken";
             upgradeTexture = _shieldTexture;
             break;

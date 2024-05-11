@@ -46,11 +46,11 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
-    _isDefault = true;
     _isAiming = false; // will always be false for melee enemies
     _isCharged = false; // will always be false for melee enemies
-    _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
+    _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
+    _state = BehaviorState::DEFAULT;
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
     _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
@@ -137,7 +137,7 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_bowHitEffect->isActive()) {
         drawEffect(batch, _bowHitEffect, 2);
     }
-    if (_state == EnemyState::STUNNED) {
+    if (_state == BehaviorState::STUNNED) {
         drawEffect(batch, _stunEffect);
     }
 }
@@ -152,8 +152,6 @@ void Enemy::setIdling() {
     _walkAnimation->reset();
     _attackAnimation->reset();
     _stunAnimation->reset();
-    _state = EnemyState::IDLE;
-    
 }
 
 void Enemy::setMoving() {
@@ -162,7 +160,6 @@ void Enemy::setMoving() {
     _idleAnimation->reset();
     _attackAnimation->reset();
     _stunAnimation->reset();
-    _state = EnemyState::MOVING;
 }
 
 void Enemy::setAttacking() {
@@ -171,35 +168,46 @@ void Enemy::setAttacking() {
     _idleAnimation->reset();
     _walkAnimation->reset();
     _stunAnimation->reset();
-    _state = EnemyState::ATTACKING;
+    _state = BehaviorState::ATTACKING;
 }
 
 void Enemy::setStunned() {
-    if (_state == EnemyState::STUNNED) {
+    if (_state == BehaviorState::STUNNED) {
         return;
     }
     setAnimation(_stunAnimation);
     _atkCD.reset(); // stunning should reset attack
-    // MAYBE, we don't want to reset ?? (tweening unsure)
     _attackAnimation->reset();
     _hitboxAnimation->reset();
     _idleAnimation->reset();
     _walkAnimation->reset();
-    _state = EnemyState::STUNNED;
+    _state = BehaviorState::STUNNED;
     _stunEffect->start();
+    _stunAnimation->start();
+}
+
+void Enemy::setDefault() {
+    _state = BehaviorState::DEFAULT;
+}
+
+void Enemy::setSeeking() {
+    _state = BehaviorState::SEEKING;
+}
+
+void Enemy::setChasing() {
+    _state = BehaviorState::CHASING;
 }
 
 
 void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
     if (!_meleeHitEffect->isActive() && !_bowHitEffect->isActive()) {
         _hitCounter.reset();
-        if (_state == EnemyState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
+        if (_state == BehaviorState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
         setHealth(getHealth()-damage);
         _meleeHitEffect->reset();
         _bowHitEffect->reset();
         if (ranged) _bowHitEffect->start();
         else _meleeHitEffect->start();
-        //_hitEffect->start();
         _collider->setLinearVelocity(atkDir * knockback_scl);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
@@ -224,13 +232,9 @@ void Enemy::updateAnimation(float dt){
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
-    else if (_state == EnemyState::STUNNED && !_stunAnimation->isActive()) {
+    else if (_state == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
         _tint = Color4::WHITE;
         setIdling();
-    }
-    else if (_state == EnemyState::STUNNED){
-        // TODO: could possibly use stunned animation and remove this state altogether
-        //_tint = Color4::YELLOW;
     }
     else {
         _tint = Color4::WHITE;

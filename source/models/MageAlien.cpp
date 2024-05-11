@@ -138,14 +138,6 @@ void MageAlien::updateAnimation(float dt){
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()) {
         _tint = Color4::RED;
     }
-    else if (getState() == EnemyState::STUNNED && !_stunAnimation->isActive()) {
-        _tint = Color4::WHITE;
-        setIdling();
-    }
-    else if (getState() == EnemyState::STUNNED){
-        // TODO: could possibly use stunned animation and remove this state altogether
-        _tint = Color4::YELLOW;
-    }
     else {
         _tint = Color4::WHITE;
     }

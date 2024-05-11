@@ -36,21 +36,21 @@ float GameConstants::ENEMY_STUN_DURATION = 1.0f;
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 120;
 
-float GameConstants::ENEMY_SIGHT_RANGE = 8;
+float GameConstants::ENEMY_SIGHT_RANGE = 10;
 
-float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
+float GameConstants::ENEMY_PROXIMITY_RANGE = 6;
 
-float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.6f; // previously 2
+float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
-float GameConstants::ENEMY_RANGED_ATK_RANGE = 6;
+float GameConstants::ENEMY_RANGED_ATK_RANGE = 7;
 
 float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
-float GameConstants::PROJ_SPEED_E = 6.0f;
+float GameConstants::PROJ_SPEED_E = 5.5f; // previously 6.0
 
-float GameConstants::PROJ_RADIUS_LIZARD = 0.5f;
+float GameConstants::PROJ_RADIUS_LIZARD = 0.4f;
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.75f; 
+float GameConstants::PROJ_RADIUS_MAGE = 0.65f; 
 
 float GameConstants::PROJ_DIST_E = 9.0f;
 
@@ -58,7 +58,7 @@ float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
-float GameConstants::STUN_DMG_BONUS = 2.0f;
+float GameConstants::STUN_DMG_BONUS = 1.5f; // previously 2.0
 
 #pragma mark -
 #pragma mark Player Upgradeable Stat Constants
@@ -93,8 +93,8 @@ float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 
 
-float GameConstants::PLAYER_MOVE_SPEED = 4.6;
-float GameConstants::PLAYER_ATK_MOVE_SPEED = 0.5f;
+float GameConstants::PLAYER_MOVE_SPEED = 4.7; //previously 4.6
+float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.7f; //previously 0.5
 
 
 
@@ -112,12 +112,12 @@ float GameConstants::CHARGE_TIME = 0.3f;
 
 float GameConstants::COMBO_TIME = 1.0f;
 
-float GameConstants::HEALTHPACK_DROP_RATE = 25.0f;
+float GameConstants::HEALTHPACK_DROP_RATE = 34.0f;
 
 float GameConstants::HEALTHPACK_HEAL_AMT = 0.25f;
 
-float GameConstants::KNOCKBACK = 1.6f; // previously 10
+float GameConstants::KNOCKBACK = 1.8f; // previously 1.6
 
-float GameConstants::KNOCKBACK_PWR_ATK = 4.0f; // previously 20
+float GameConstants::KNOCKBACK_PWR_ATK = 4.7f; // previously 4.0
 
 float GameConstants::PROJ_SHADOW_SCALE = 0.25f;

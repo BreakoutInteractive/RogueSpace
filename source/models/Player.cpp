@@ -17,11 +17,28 @@
 
 using namespace cugl;
 
+void PlayerHitbox::setEnabled(bool value){
+    WheelObstacle::setEnabled(value);
+    hitFlag = false; // clear the flag
+    hitSet.clear();
+}
+
+bool PlayerHitbox::hits(intptr_t enemyPtr){
+    if (hitSet.find(enemyPtr) != hitSet.end()){
+        return false;
+    }
+    hitSet.insert(enemyPtr);
+    return true;
+}
+
 #pragma mark -
 #pragma mark Constructors
 
 
-bool Player::init(std::shared_ptr<JsonValue> playerData) {
+bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonValue> upgradesJson) {
+    
+//    auto meleeStats = upgradesJson->get("melee")->asFloatArray();
+    
     _weapon = MELEE;
     _state = IDLE;
     _dodgeDuration = 0;
