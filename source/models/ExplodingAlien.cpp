@@ -46,12 +46,16 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _enemyTexture = assets->get<Texture>("explode-idle");
     auto walkTexture = assets->get<Texture>("explode-walk");
     auto attackTexture = assets->get<Texture>("explode-attack");
+    auto walkTextureWhite = assets->get<Texture>("explode-walk-white");
+    auto idleTextureWhite = assets->get<Texture>("explode-idle-white");
     auto stunTexture = assets->get<Texture>("lizard-stun");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 4);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
+    auto idleSheetWhite = SpriteSheet::alloc(idleTextureWhite, 8, 4);
+    auto walkSheetWhite = SpriteSheet::alloc(walkTextureWhite, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 1, 6);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15); // TODO: remove safely
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
@@ -59,6 +63,8 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 3);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
+    _idleAnimationWhite = Animation::alloc(idleSheetWhite, 1.0f, true, 0, 3);
+    _walkAnimationWhite = Animation::alloc(walkSheetWhite, 1.0f, true, 0, 4);
     _attackAnimation = Animation::alloc(attackSheet, 1.0f, false, 0, 5);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
@@ -110,12 +116,33 @@ void ExplodingAlien::setFacingDir(cugl::Vec2 dir) {
     if (prevDirection != _directionIndex){
         _idleAnimation->setFrameRange(4 * _directionIndex, 4 * _directionIndex + 3);
         _walkAnimation->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
+        _idleAnimationWhite->setFrameRange(4 * _directionIndex, 4 * _directionIndex + 3);
+        _walkAnimationWhite->setFrameRange(5 * _directionIndex, 5 * _directionIndex + 4);
         _attackAnimation->setFrameRange(0, 5);
     }
 }
 
 void ExplodingAlien::updateAnimation(float dt){
-    GameObject::updateAnimation(dt);
+    if (_enabled){
+        if (_currAnimation != nullptr){
+            if (_currAnimation->isStarted()) {
+                _currAnimation->update(dt);
+                if (_currAnimation == _idleAnimation) {
+                    _idleAnimationWhite->update(dt);
+                } else if (_currAnimation == _walkAnimation) {
+                    _walkAnimationWhite->update(dt);
+                }
+            }
+            else {
+                _currAnimation->start();
+                if (_currAnimation == _idleAnimation) {
+                    _idleAnimationWhite->start();
+                } else if (_currAnimation == _walkAnimation) {
+                    _walkAnimationWhite->start();
+                }
+            }
+        }
+    }
     // attack animation must play to completion, as long as enemy is alive.
     _hitEffect->update(dt);
     if (_hitEffect->isActive()){
@@ -137,4 +164,44 @@ void ExplodingAlien::attack(std::shared_ptr<LevelModel> level, const std::shared
     
     _attack->setPosition(_attack->getPosition().add(0, 64 / _drawScale.y)); //64 is half of the pixel height of the enemy
     _attack->setAngle(ang);
+}
+
+void ExplodingAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+    // TODO: render enemy with appropriate scales
+    // batch draw(texture, color, origin, scale, angle, offset)
+    
+    std::shared_ptr<Animation> glowup = _currAnimation;
+    if (_windupCD.getCount() % 20 > 12) {
+        if (glowup == _idleAnimation) {
+            glowup = _idleAnimationWhite;
+        } else if (glowup == _walkAnimation) {
+            glowup = _walkAnimationWhite;
+        }
+    }
+    auto spriteSheet = glowup->getSpriteSheet();
+    
+    Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
+    Affine2 transform = Affine2();
+    // transform.scale(0.5);
+    transform.translate(_position * _drawScale); // previously using getPosition()
+    
+    spriteSheet->draw(batch, _tint, origin, transform);
+    
+    //enemy health bar
+    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
+    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
+    
+    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
+    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
+
+    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
+    batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
+    
+    if (_hitEffect->isActive()) {
+        auto effSheet = _hitEffect->getSpriteSheet();
+        transform = Affine2::createScale(2);
+        transform.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
+        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+        effSheet->draw(batch, origin, transform);
+    }
 }

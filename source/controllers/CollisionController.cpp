@@ -218,8 +218,9 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            //phase through enemies while dodging
+            // phase through enemies while dodging
             if (_level->getPlayer()->_state == Player::state::DODGE) contact->SetEnabled(false);
+            if ((*it)->getType() == "exploding alien" && (*it)->getState() == Enemy::EnemyState::ATTACKING) contact->SetEnabled(false);
         }
         for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
             intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());

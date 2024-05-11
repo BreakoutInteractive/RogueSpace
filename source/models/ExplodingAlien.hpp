@@ -22,7 +22,11 @@ private:
     CU_DISALLOW_COPY_AND_ASSIGN(ExplodingAlien);
     
 protected:
-    // std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
+    /** The animation to use while idle */
+    std::shared_ptr<Animation> _idleAnimationWhite;
+    
+    /** The animation to use while walking */
+    std::shared_ptr<Animation> _walkAnimationWhite;
     
 public:
 #pragma mark -
@@ -103,6 +107,8 @@ public:
     void setFacingDir(cugl::Vec2 dir) override;
     
     void updateAnimation(float dt) override;
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
 };
 
