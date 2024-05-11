@@ -8,6 +8,16 @@
 #ifndef GameConstants_hpp
 #define GameConstants_hpp
 
+#ifndef upgrades_Enum
+#define upgrades_Enum
+namespace upgrades_enum
+{
+/** classification of the different upgrade types*/
+enum upgrades {SWORD, PARRY, ATK_SPEED, DASH, BOW, HEALTH, SHIELD, BLOCK};
+}
+#endif
+
+
 #include <cugl/cugl.h>
 
 /**
