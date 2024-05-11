@@ -19,7 +19,7 @@
             "file":        "textures/gameplay/energy_wall.png"
         },
         "health-pack":{
-            "file":     "textures/upgrades-screen/upgrade_healthDrop.png"
+            "file":     "textures/sprites/sprite_healthdrop.png"
         }
 	},
     
