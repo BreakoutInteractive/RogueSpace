@@ -362,7 +362,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
     bool success = true;
 
     // Get the object, which is automatically retained
-    _player = Player::alloc(json, _world);
+    _player = Player::alloc(json, constants->get("upgrades"));
     auto playerCollider = _player->getCollider();
     playerCollider->setDensity(constants->getDouble(DENSITY_FIELD));
     playerCollider->setFriction(constants->getDouble(FRICTION_FIELD));
