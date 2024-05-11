@@ -443,7 +443,7 @@ public:
      */
     bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
     /** whether enemy is stunned */
-    bool isStunned(){ return !_stunCD.isZero() && _state == BehaviorState::STUNNED; }
+    bool isStunned(){ return _stunAnimation->isActive() && _state == BehaviorState::STUNNED; }
     
  
     /**
