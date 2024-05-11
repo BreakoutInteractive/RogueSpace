@@ -76,8 +76,8 @@ protected:
     /** Whether this enemy can currently see the player */
     bool _playerInSight;
     
-    /** The player's last seen location */
-    cugl::Vec2 _playerLoc;
+    /** The location this enemy will aggro to */
+    cugl::Vec2 _aggroLoc;
     
     /** Enemy's attack range */
     float _attackRange;
@@ -101,9 +101,6 @@ protected:
     
     /** The enemy's default state */
     std::string _defaultState;
-    
-    /** Whether the enemy is currently in its default state */
-    bool _isDefault;
     
     /** Whether the enemy is aiming its ranged attack */
     bool _isAiming;
@@ -143,10 +140,21 @@ public:
         STUNNED = 4
     };
     
+    enum class BehaviorState: int {
+        DEFAULT = 1,
+        SEEKING = 2,
+        CHASING = 3,
+        ATTACKING = 4,
+        STUNNED = 5
+    };
+    
 private:
     
     /** internal enemy state (for animation and triggering events) */
     EnemyState _state;
+    
+    /** internal enemy state (for pathfinding and triggering events) */
+    BehaviorState _behaviorState;
 
 public:    
 #pragma mark -
@@ -212,14 +220,14 @@ public:
     const float getProximityRange() const { return _proximityRange; }
     
     /**
-     * Returns this enemy's last known location of the player.
+     * Returns this enemy's aggro location.
      */
-    const cugl::Vec2 getPlayerLoc() const { return _playerLoc; }
+    const cugl::Vec2 getAggroLoc() const { return _aggroLoc; }
     
     /**
-     * Sets this enemy's last known location of the player.
+     * Sets this enemy's aggro location.
      */
-    void setPlayerLoc(cugl::Vec2 value) { _playerLoc = value; }
+    void setAggroLoc(cugl::Vec2 value) { _aggroLoc = value; }
     
     /**
      * Returns the attack range applied to this enemy.
@@ -332,16 +340,6 @@ public:
     void setDefaultState(std::string value) { _defaultState = value; }
     
     /**
-     * Gets whether this enemy is in its default state
-     */
-    bool isDefault() const { return _isDefault; }
-    
-    /**
-     * Sets whether this enemy is in its default state
-     */
-    void setDefault(bool value) { _isDefault = value; }
-    
-    /**
      * Gets whether this enemy's ranged attack is charged
      */
     bool getCharged() const { return _isCharged; }
@@ -442,6 +440,9 @@ public:
     /** current enemy state  */
     EnemyState getState() { return _state;}
     
+    /** get current enemy behavior state */
+    BehaviorState getBehaviorState() { return _behaviorState; }
+    
     /** Set idle state and change to using the idle animation */
     void setIdling();
     
@@ -453,6 +454,15 @@ public:
     
     /** Set stunned state and change to using the stunned animation */
     void setStunned();
+    
+    /** Set default state */
+    void setDefault();
+    
+    /** Set seeking state */
+    void setSeeking();
+    
+    /** Set chasing state */
+    void setChasing();
     
     /**
      * whether enemy is attacking

@@ -77,6 +77,11 @@ public:
     cugl::Vec2 moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal);
     
     /**
+     * Changes an enemy's behavior state
+     */
+    void changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p);
+    
+    /**
      * TODO: document this function
      * Updates locations and states for all enemies
     */

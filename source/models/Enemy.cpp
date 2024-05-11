@@ -46,11 +46,11 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
-    _isDefault = true;
     _isAiming = false; // will always be false for melee enemies
     _isCharged = false; // will always be false for melee enemies
-    _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
+    _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
+    _behaviorState = BehaviorState::DEFAULT;
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
     _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
@@ -173,6 +173,7 @@ void Enemy::setAttacking() {
     _walkAnimation->reset();
     _stunAnimation->reset();
     _state = EnemyState::ATTACKING;
+    _behaviorState = BehaviorState::ATTACKING;
 }
 
 void Enemy::setStunned() {
@@ -188,7 +189,20 @@ void Enemy::setStunned() {
     _idleAnimation->reset();
     _walkAnimation->reset();
     _state = EnemyState::STUNNED;
+    _behaviorState = BehaviorState::STUNNED;
     _stunEffect->start();
+}
+
+void Enemy::setDefault() {
+    _behaviorState = BehaviorState::DEFAULT;
+}
+
+void Enemy::setSeeking() {
+    _behaviorState = BehaviorState::SEEKING;
+}
+
+void Enemy::setChasing() {
+    _behaviorState = BehaviorState::CHASING;
 }
 
 
