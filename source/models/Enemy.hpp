@@ -133,12 +133,6 @@ public:
 
     Counter _hitCounter;
     
-    enum class EnemyState : int {
-        IDLE = 1,
-        MOVING = 2,
-        ATTACKING = 3,
-        STUNNED = 4
-    };
     
     enum class BehaviorState: int {
         DEFAULT = 1,
@@ -150,11 +144,8 @@ public:
     
 private:
     
-    /** internal enemy state (for animation and triggering events) */
-    EnemyState _state;
-    
-    /** internal enemy state (for pathfinding and triggering events) */
-    BehaviorState _behaviorState;
+    /** internal enemy state (for animation, logic and triggering events) */
+    BehaviorState _state;
 
 public:    
 #pragma mark -
@@ -188,9 +179,7 @@ public:
 #pragma mark Static Constructors
     
     /**
-     * TODO: document this propertly
-     *
-     * @return a newly allocated player with the given position
+     * @return a newly allocated enemy with the given data
      */
     static std::shared_ptr<Enemy> alloc(std::shared_ptr<JsonValue> data) {
         auto result = std::make_shared<Enemy>();
@@ -200,22 +189,12 @@ public:
 #pragma mark -
 #pragma mark Accessors
     /**
-     * Returns the sight range applied to this enemy.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
+     * @return the sight range applied to this enemy
      */
     const float getSightRange() const { return _sightRange; }
     
     /**
-     * Returns the proximity range applied to this enemy.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
+     * @return the proximity range applied to this enemy.
      */
     const float getProximityRange() const { return _proximityRange; }
     
@@ -437,11 +416,8 @@ public:
     void setHitboxAnimation(std::shared_ptr<Animation> animation) { _hitboxAnimation = animation; }
     std::shared_ptr<Animation> getHitboxAnimation() const { return _hitboxAnimation; }
     
-    /** current enemy state  */
-    EnemyState getState() { return _state;}
-    
     /** get current enemy behavior state */
-    BehaviorState getBehaviorState() { return _behaviorState; }
+    BehaviorState getBehaviorState() { return _state; }
     
     /** Set idle state and change to using the idle animation */
     void setIdling();
@@ -467,9 +443,9 @@ public:
     /**
      * whether enemy is attacking
      */
-    bool isAttacking(){ return _state == EnemyState::ATTACKING; }
+    bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
     /** whether enemy is stunned */
-    bool isStunned(){ return _state == EnemyState::STUNNED; }
+    bool isStunned(){ return !_stunCD.isZero() && _state == BehaviorState::STUNNED; }
     
  
     /**
