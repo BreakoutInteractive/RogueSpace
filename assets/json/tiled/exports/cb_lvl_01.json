@@ -1037,7 +1037,7 @@
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":1
+                         "value":2
                         }, 
                         {
                          "name":"path",

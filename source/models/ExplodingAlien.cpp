@@ -51,13 +51,15 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto stunTexture = assets->get<Texture>("lizard-stun");
     auto hitEffect = assets->get<Texture>("enemy-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
+    _healthBG =  assets->get<Texture>("hp_back");
+    _healthFG =  assets->get<Texture>("hp");
     
     auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 4);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
     auto idleSheetWhite = SpriteSheet::alloc(idleTextureWhite, 8, 4);
     auto walkSheetWhite = SpriteSheet::alloc(walkTextureWhite, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 1, 6);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15); // TODO: remove safely
+    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15); // TODO: can't remove this because of base setAttacking()?
     auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
