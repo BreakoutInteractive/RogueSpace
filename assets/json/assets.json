@@ -7,7 +7,7 @@
         "level3": "json/tiled/exports/sc_lvl_02.json",
         "level4": "json/tiled/exports/sc_lvl_03.json",
         "level5": "json/tiled/exports/sc_lvl_04.json",
-        "level6": "json/tiled/exports/ob_lvl_05.json",
+        "level6": "json/tiled/exports/sc_lvl_04.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
@@ -19,7 +19,7 @@
             "file":        "textures/gameplay/energy_wall.png"
         },
         "health-pack":{
-            "file":     "textures/upgrades-screen/upgrade_healthDrop.png"
+            "file":     "textures/sprites/sprite_healthdrop.png"
         }
 	},
     

@@ -21,8 +21,6 @@ private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(HealthPack);
 
-    std::shared_ptr<Texture> _texture;
-
 public:
     /** flag that indicates whether this is marked for deletion */
     bool _delMark;

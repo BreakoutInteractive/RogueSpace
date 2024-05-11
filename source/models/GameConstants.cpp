@@ -112,7 +112,7 @@ float GameConstants::CHARGE_TIME = 0.3f;
 
 float GameConstants::COMBO_TIME = 1.0f;
 
-float GameConstants::HEALTHPACK_DROP_RATE = 25.0f;
+float GameConstants::HEALTHPACK_DROP_RATE = 100.0f;
 
 float GameConstants::HEALTHPACK_HEAL_AMT = 0.25f;
 

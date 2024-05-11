@@ -35,17 +35,20 @@ bool HealthPack::init(Vec2 pos, const std::shared_ptr<AssetManager>& assets) {
     collider->setName("health-pack-collider");
     _collider = collider;
 
-    _texture = assets->get<Texture>("health-pack");
+    auto sheet = SpriteSheet::alloc(assets->get<Texture>("health-pack"), 2, 9);
+    _currAnimation = Animation::alloc(sheet, 1.25f, true);
+    _currAnimation->start();
 	return true;
 }
 
 void HealthPack::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     // batch draw(texture, color, origin, scale, angle, offset)
+    auto spriteSheet = _currAnimation->getSpriteSheet();
 
-    Vec2 origin = Vec2(_texture->getWidth() / 2, _texture->getHeight() / 2);
-    Affine2 transform = Affine2::createScale(0.75f);
+    Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, spriteSheet->getFrameSize().height / 2);
+    Affine2 transform = Affine2::createScale(0.667f);
     transform.translate(_position * _drawScale);
-    batch->draw(_texture, origin, transform);
+    spriteSheet->draw(batch, origin, transform);
 }
 
 void HealthPack::dispose() {
