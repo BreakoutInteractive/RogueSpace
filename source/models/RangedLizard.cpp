@@ -22,17 +22,6 @@ bool RangedLizard::init(std::shared_ptr<JsonValue> data) {
     return true;
 }
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
-void RangedLizard::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
-}
-
 
 #pragma mark -
 #pragma mark Physics
@@ -57,9 +46,9 @@ void RangedLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_p
 #pragma mark Animation
 
 void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _enemyTexture = assets->get<Texture>("lizard-ranged-idle");
     _healthBG =  assets->get<Texture>("hp_back");
     _healthFG =  assets->get<Texture>("hp");
+    auto idleTexture = assets->get<Texture>("lizard-ranged-idle");
     auto walkTexture = assets->get<Texture>("lizard-ranged-walk");
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
     auto stunTexture = assets->get<Texture>("lizard-stun");
@@ -68,7 +57,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("lizard-projectile");
     
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 8);
+    auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 8);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 20);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);

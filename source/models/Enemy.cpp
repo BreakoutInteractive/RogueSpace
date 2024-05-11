@@ -74,15 +74,9 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
 }
 
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
 void Enemy::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
+    // nothing to do here
+    // deallocate anything not on shared_pointers
 }
 
 

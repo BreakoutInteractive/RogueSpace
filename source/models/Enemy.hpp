@@ -20,71 +20,51 @@ class Animation;
  *  This class represents an enemy in the game.
  */
 class Enemy : public GameObject {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(Enemy);
 
 protected:
-
-    /** The force applied to the player for general movement purposes */
-    cugl::Vec2 _force;
-
-    /** The texture key for the enemy*/
-    std::string _enemyTextureKey;
-    
-    /** The texture key for the walk animation*/
-    std::string _walkTextureKey;
-    
-    /** The enemy texture*/
-    std::shared_ptr<cugl::Texture> _enemyTexture;
-    
+#pragma mark - Health Bar Assets
     /** The enemy health bar background */
     std::shared_ptr<cugl::Texture> _healthBG;
     
     /** The enemy health bar foreground */
     std::shared_ptr<cugl::Texture> _healthFG;
     
+#pragma mark - Animation Assets
     /** The animation to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
-    
     /** The animation to use while walking */
     std::shared_ptr<Animation> _walkAnimation;
-    
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
+    // TODO: this is an effect, move to melee enemies
     /** The animation of the hitbox while attacking */
     std::shared_ptr<Animation> _hitboxAnimation;
-    
     /** The animation to use while stunned */
     std::shared_ptr<Animation> _stunAnimation;
+    /** The stun effect animation */
+    std::shared_ptr<Animation> _stunEffect;
 
+#pragma mark - Animation Effects
     /** The hit effect animation when hit by the melee attack */
     std::shared_ptr<Animation> _meleeHitEffect;
     /** The hit effect animation when hit by the ranged attack */
     std::shared_ptr<Animation> _bowHitEffect;
-    /** The stun effect animation */
-    std::shared_ptr<Animation> _stunEffect;
     
+    // TODO: this belongs to melee enemies
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
     float _sightRange;
-    
     /** Enemy's proximity range */
     float _proximityRange;
-    
     /** Whether this enemy can currently see the player */
     bool _playerInSight;
-    
     /** The location this enemy will aggro to */
     cugl::Vec2 _aggroLoc;
-    
     /** Enemy's attack range */
     float _attackRange;
-    
     /** Enemy's movement speed */
     float _moveSpeed;
-    
     /** The enemy's current health */
     float _health;
     /** The enemy's maximum health */
@@ -92,35 +72,25 @@ protected:
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
-    
     /** The current direction the enemy is facing */
     cugl::Vec2 _facingDirection;
-    
     /** the index of the 8-cardinal directions that most closely matches the direction the enemy faces*/
     int _directionIndex;
     
     /** The enemy's default state */
     std::string _defaultState;
-    
     /** Whether the enemy is aiming its ranged attack */
     bool _isAiming;
-    
     /** Whether the enemy's ranged attack is charged */
     bool _isCharged;
-    
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
-    
     /** The enemy's goal position */
     cugl::Vec2 _goal;
-    
     /** Whether the enemy is aligned with the level grid */
     bool _isAligned;
-    
     /** The enemy's goal path index */
     int _pathIndex;
-    
-    std::shared_ptr<Animation> _animation;
     
 public:
 #pragma mark Counters
@@ -217,66 +187,6 @@ public:
      * @return the force applied to this player.
      */
     const float getAttackRange() const { return _attackRange; }
-    
-    /**
-     * Returns the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
-     */
-    const cugl::Vec2 getForce() const { return _force; }
-
-    /**
-     * Sets the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value  the force applied to this player.
-     */
-    void setForce(const cugl::Vec2 value) { _force.set(value); }
-
-    /**
-     * Returns the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the x-component of the force applied to this player.
-     */
-    float getFX() const { return _force.x; }
-    
-    /**
-     * Sets the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this player.
-     */
-    void setFX(float value) { _force.x = value; }
-    
-    /**
-     * Returns the y-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the y-component of the force applied to this player.
-     */
-    float getFY() const { return _force.y; }
-    
-    /**
-     * Sets the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this player.
-     */
-    void setFY(float value) { _force.y = value; }
     
     /**
      * Gets the movement speed of this enemy.
@@ -447,27 +357,6 @@ public:
     /** whether enemy is stunned */
     bool isStunned(){ return !_stunCD.isZero() && _state == BehaviorState::STUNNED; }
     
- 
-    /**
-    * Returns the texture (key) for this player
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @return the texture (key) for this player
-    */
-    const std::string& getTextureKey() const { return _enemyTextureKey; }
-
-    /**
-    * Returns the texture (key) for this player
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @param  strip    the texture (key) for this player
-    */
-    void setTextureKey(const std::string& key) { _enemyTextureKey = key; }    
-    
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
@@ -503,16 +392,7 @@ public:
     void setDrawScale(cugl::Vec2 scale) override;
 
     void updateAnimation(float dt) override;
-    
-    
-#pragma mark -
-#pragma mark Physics
-//    /**
-//     * Applies the force to the body of this player
-//     *
-//     * This method should be called after the force attribute is set.
-//     */
-//    void applyForce();
+
 
 #pragma mark -
 #pragma mark State Update
