@@ -535,8 +535,8 @@ void GameScene::preUpdate(float dt) {
                 }
                 enemy->setAttacking();
             }
-            if (enemy->getState() == Enemy::EnemyState::ATTACKING) {
-                if (enemy->getType() == "ranged lizard" || 
+            if (enemy->isAttacking()) {
+                if (enemy->getType() == "ranged lizard" ||
                     enemy->getType() == "mage alien") {
                     if (enemy->getCharged()) {
                         enemy->attack(_level, _assets);
