@@ -14,11 +14,9 @@ using namespace cugl;
 
 void AIController::init(std::shared_ptr<LevelModel> level) {
     _world = level->getWorld();
-    _enemies = level->getEnemies(); // set enemies here ?
+    _enemies = level->getEnemies();
     _player = level->getPlayer();
     _grid = level->getGrid();
-    // will have to get set from level, need to change levelmodel interface.
-    
 }
 
 AIController::~AIController(){
@@ -244,156 +242,150 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
 
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
-        changeState((*it), _player);
+        std::shared_ptr<Enemy> enemy = *it;
+        changeState(enemy, _player);
         // pass while taking damage to allow for knockback
-        if (!(*it)->_hitCounter.isZero()) {
+        if (!enemy->_hitCounter.isZero()) {
             continue;
         }
         Vec2 goal;
         Vec2 dir;
-        switch ((*it)->getBehaviorState()) {
+        switch (enemy->getBehaviorState()) {
             case Enemy::BehaviorState::DEFAULT:
                 // make sentries rotate 45 degrees counterclockwise at set intervals
-                if ((*it)->getDefaultState() == "sentry") {
-                    if ((*it)->_sentryCD.isZero()) {
-                        (*it)->_sentryCD.reset();
-                        (*it)->setFacingDir((*it)->getFacingDir().rotate(M_PI_4));
+                if (enemy->getDefaultState() == "sentry") {
+                    if (enemy->_sentryCD.isZero()) {
+                        enemy->_sentryCD.reset();
+                        enemy->setFacingDir(enemy->getFacingDir().rotate(M_PI_4));
                     }
-                    if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                    if (enemy->_hitCounter.getCount() < enemy->_hitCounter.getMaxCount() - 5) enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                 }
                 // make patrolling enemies go to the next location on their patrol route
-                if ((*it)->getDefaultState() == "patrol") {
+                if (enemy->getDefaultState() == "patrol") {
                     // enemy is at the center of its tile — we can proceed as normal!
-                    if ((*it)->getAligned()) {
-                        if ((*it)->getPosition() == (*it)->getGoal()) {
-                            (*it)->setPathIndex(((*it)->getPathIndex() + 1) % (*it)->getPath().size());
-                            goal = moveToGoal((*it), (*it)->getPath()[(*it)->getPathIndex()]);
-                            (*it)->setGoal(goal);
-                            dir = (*it)->getGoal() - (*it)->getPosition();
+                    if (enemy->getAligned()) {
+                        if (enemy->getPosition() == enemy->getGoal()) {
+                            enemy->setPathIndex((enemy->getPathIndex() + 1) % enemy->getPath().size());
+                            goal = moveToGoal(enemy, enemy->getPath()[enemy->getPathIndex()]);
+                            enemy->setGoal(goal);
+                            dir = enemy->getGoal() - enemy->getPosition();
                             dir.normalize();
-                            (*it)->setFacingDir(dir);
-                            (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                            enemy->setFacingDir(dir);
+                            enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                         }
-                        else if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
-                            (*it)->getCollider()->setPosition((*it)->getGoal());
-                            (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                        else if (enemy->getPosition().distance(enemy->getGoal()) <= 0.1) {
+                            enemy->getCollider()->setPosition(enemy->getGoal());
+                            enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                         }
-                        else if ((*it)->_hitCounter.getCount() < (*it)->_hitCounter.getMaxCount() - 5) {
+                        else if (enemy->_hitCounter.getCount() < enemy->_hitCounter.getMaxCount() - 5) {
                             int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
                             if (newGoalChance == 1) {
-                                goal = moveToGoal((*it), (*it)->getPath()[(*it)->getPathIndex()]);
-                                (*it)->setGoal(goal);
+                                goal = moveToGoal(enemy, enemy->getPath()[enemy->getPathIndex()]);
+                                enemy->setGoal(goal);
                             }
                             else {
-                                goal = (*it)->getGoal();
+                                goal = enemy->getGoal();
                             }
-                            dir = goal - (*it)->getPosition();
+                            dir = goal - enemy->getPosition();
                             dir.normalize();
-                            (*it)->setFacingDir(dir);
-                            (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                            enemy->setFacingDir(dir);
+                            enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                         }
                     }
                     // enemy is not aligned — we have to fix that!
                     else {
-                        goal = moveToGoal((*it), (*it)->getPosition());
-                        (*it)->setGoal(goal);
-                        if ((*it)->getPosition().distance(goal) <= 0.1) {
-                            (*it)->setAligned(true);
-                            (*it)->getCollider()->setPosition(goal);
-                            (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
-                            (*it)->setGoal((*it)->getPath()[0]);
+                        goal = moveToGoal(enemy, enemy->getPosition());
+                        enemy->setGoal(goal);
+                        if (enemy->getPosition().distance(goal) <= 0.1) {
+                            enemy->setAligned(true);
+                            enemy->getCollider()->setPosition(goal);
+                            enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+                            enemy->setGoal(enemy->getPath()[0]);
                         }
                         else {
-                            dir = goal - (*it)->getPosition();
+                            dir = goal - enemy->getPosition();
                             dir.normalize();
-                            (*it)->setFacingDir(dir);
-                            (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                            enemy->setFacingDir(dir);
+                            enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                         }
                     }
                 }
                 break;
             case Enemy::BehaviorState::SEEKING:
-                if ((*it)->getPosition() == (*it)->getGoal()) {
-                    goal = moveToGoal((*it), (*it)->getAggroLoc());
-                    (*it)->setGoal(goal);
-                    dir = goal - (*it)->getPosition();
+                if (enemy->getPosition() == enemy->getGoal()) {
+                    goal = moveToGoal(enemy, enemy->getAggroLoc());
+                    enemy->setGoal(goal);
+                    dir = goal - enemy->getPosition();
                     dir.normalize();
-                    (*it)->setFacingDir(dir);
-                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                    enemy->setFacingDir(dir);
+                    enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                 }
-                if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
-                        (*it)->getCollider()->setPosition((*it)->getGoal());
-                        (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                if (enemy->getPosition().distance(enemy->getGoal()) <= 0.1) {
+                        enemy->getCollider()->setPosition(enemy->getGoal());
+                        enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                     }
                 else {
                     int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
                     if (newGoalChance == 1) {
-                        goal = moveToGoal((*it), (*it)->getAggroLoc());
-                        (*it)->setGoal(goal);
+                        goal = moveToGoal(enemy, enemy->getAggroLoc());
+                        enemy->setGoal(goal);
                     }
                     else {
-                        goal = (*it)->getGoal();
+                        goal = enemy->getGoal();
                     }
-                    dir = goal - (*it)->getPosition();
+                    dir = goal - enemy->getPosition();
                     dir.normalize();
-                    (*it)->setFacingDir(dir);
-                    (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                    enemy->setFacingDir(dir);
+                    enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                 }
                 break;
             case Enemy::BehaviorState::CHASING:
-                if ((*it)->getPosition().distance(_player->getPosition()) <= 1) {
-                    dir = _player->getPosition() - (*it)->getPosition();
+                if (enemy->getPosition().distance(_player->getPosition()) <= 1) {
+                    dir = _player->getPosition() - enemy->getPosition();
                     dir.normalize();
-                    (*it)->setFacingDir(dir);
-                    (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                    enemy->setFacingDir(dir);
+                    enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                 }
                 else {
-                    if ((*it)->getPosition() == (*it)->getGoal()) {
-                        goal = moveToGoal((*it), _player->getPosition());
-                        (*it)->setGoal(goal);
-                        dir = goal - (*it)->getPosition();
+                    if (enemy->getPosition() == enemy->getGoal()) {
+                        goal = moveToGoal(enemy, _player->getPosition());
+                        enemy->setGoal(goal);
+                        dir = goal - enemy->getPosition();
                         dir.normalize();
-                        (*it)->setFacingDir(dir);
-                        (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                        enemy->setFacingDir(dir);
+                        enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                     }
-                    if ((*it)->getPosition().distance((*it)->getGoal()) <= 0.1) {
-                        (*it)->getCollider()->setPosition((*it)->getGoal());
-                        (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                    if (enemy->getPosition().distance(enemy->getGoal()) <= 0.1) {
+                        enemy->getCollider()->setPosition(enemy->getGoal());
+                        enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                     }
                     else {
                         int newGoalChance = rand() % 10 + 1; // in case enemy gets stuck
                         if (newGoalChance == 1) {
-                            goal = moveToGoal((*it), _player->getPosition());
-                            (*it)->setGoal(goal);
+                            goal = moveToGoal(enemy, _player->getPosition());
+                            enemy->setGoal(goal);
                         }
                         else {
-                            goal = (*it)->getGoal();
+                            goal = enemy->getGoal();
                         }
-                        dir = goal - (*it)->getPosition();
+                        dir = goal - enemy->getPosition();
                         dir.normalize();
-                        (*it)->setFacingDir(dir);
-                        (*it)->getCollider()->setLinearVelocity((*it)->getMoveSpeed()*dir);
+                        enemy->setFacingDir(dir);
+                        enemy->getCollider()->setLinearVelocity(enemy->getMoveSpeed()*dir);
                     }
                 }
                 break;
             case Enemy::BehaviorState::ATTACKING:
-                if (((*it)->getType() == "ranged lizard" || (*it)->getType() == "mage alien") && (*it)->getAiming()) {
-                    dir = _player->getPosition() - (*it)->getPosition();
+                if ((enemy->getType() == "ranged lizard" || enemy->getType() == "mage alien") && enemy->getAiming()) {
+                    dir = _player->getPosition() - enemy->getPosition();
                     dir.normalize();
-                    (*it)->setFacingDir(dir);
+                    enemy->setFacingDir(dir);
                 }
-                (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                 break;
             case Enemy::BehaviorState::STUNNED:
-                (*it)->getCollider()->setLinearVelocity(Vec2::ZERO);
+                enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                 break;
         }
-        // TODO: implement the following
-        // if enemy has LOS of player
-        //      move along shortest path to player (determined by raycast)
-        // otherwise
-        //      move to the player's last seen position, stop, and look around for a bit (do we want this?) before either
-        //          moving back to default position (for sentries) or
-        //          moving back to the closest node on their patrol path (for patrol enemies)
     }
 }

@@ -27,8 +27,6 @@ class LevelGrid;
 
 class AIController {
 private:
-    
-    // TODO: maybe consider getting the entire level instead? but for steering/movement, the world should suffice.
     /** the game world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
 
@@ -63,7 +61,6 @@ public:
 #pragma mark -
 #pragma mark Enemy 
     
-    //TODO: this needs to be done with ObstacleWorld's raycast instead for accuracy.
     /**
      * Returns a 0,0 vector if the enemy does not have line of sight to the player.
      * Else, returns a unit vector from enemy to player.
