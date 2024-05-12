@@ -13,6 +13,7 @@
 #include "scenes/PauseScene.hpp"
 #include "scenes/UpgradesScene.hpp"
 #include "scenes/TitleScene.hpp"
+#include "scenes/DeathScene.hpp"
 
 /**
  * This class represents the application root for the ship demo.
@@ -30,7 +31,9 @@ protected:
         /** The upgrades scene */
         UPGRADE,
         /** The scene to play the game */
-        GAME
+        GAME,
+        /** The scene to show options when game over */
+        DEATH
     };
     
     /** The global sprite batch for drawing (only want one of these) */
@@ -49,6 +52,8 @@ protected:
     UpgradesScene _upgrades;
     /** The title and menu  scene */
     TitleScene _title;
+    /** The game over scene */
+    DeathScene _death;
     /** The current active scene */
     State _scene;
         
@@ -258,5 +263,11 @@ private:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateTitleScene(float dt);
+    
+    /**
+     * Inidividualized update method for the game over scene
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updateDeathScene(float dt);
 };
 #endif /* __APP_H__ */
