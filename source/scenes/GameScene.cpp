@@ -174,6 +174,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     setActive(false);
     setComplete(false);
     setDefeat(false);
+    _exitCode = NONE;
     hitPauseCounter.setMaxCount(GameConstants::HIT_PAUSE_FRAMES + 3);
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
@@ -281,16 +282,6 @@ void GameScene::preUpdate(float dt) {
         return;
     }
     
-    if (_collisionController.isComboContact() && hitPauseCounter.isZero()){
-        hitPauseCounter.reset();
-    }
-    if (!hitPauseCounter.isZero()){
-        hitPauseCounter.decrement();
-        if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
-            return; // this gives the vague "lag" effect
-        }
-    }
-    
     _input.update(dt);
     
     // Process the toggled key commands
@@ -301,6 +292,7 @@ void GameScene::preUpdate(float dt) {
     if (_input.didExit())  {
         CULog("Shutting down");
         Application::get()->quit();
+        // _level->getPlayer()->setHP(0); // could use as a toggle to auto-kill player
     }
     
     // TODO: can be removed, but for pc devs to quickly reset
@@ -309,16 +301,17 @@ void GameScene::preUpdate(float dt) {
         return;
     }
     
+    // update the effects that appears on screen for clearing room / dying
     _actionManager.update(dt);
     _areaClearNode->setVisible(_actionManager.isActive(AREA_CLEAR_KEY));
     _deadEffectNode->setVisible(_actionManager.isActive(DEAD_EFFECT_KEY));
     
     if (!isComplete() && !isDefeat()){
-        // game not won, check if any enemies active
+        // game not won or lost, check if any enemies active
         int activeCount = 0;
         auto enemies = _level->getEnemies();
         for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-            if ((*it)->getCollider()->isEnabled()) {
+            if ((*it)->isEnabled()) {
                 activeCount += 1;
             }
         }
@@ -342,6 +335,8 @@ void GameScene::preUpdate(float dt) {
         if (_level->getPlayer()->getHP() == 0){
             SaveData::removeSave();
             setDefeat(true);
+            setComplete(false);
+            _levelTransition.setActive(false);
             // start playing dead effect, stop the area clear if we happen to have cleared the room and got killed by a flying projectile
             _actionManager.remove(AREA_CLEAR_KEY);
             _actionManager.remove(DEAD_EFFECT_KEY);
@@ -349,9 +344,19 @@ void GameScene::preUpdate(float dt) {
         }
     }
     
+    // quit updating once player is dead.
+    // player sees dead effect and is then shown the dead screen when effect is finished
+    if (isDefeat()){
+        if (!_actionManager.isActive(DEAD_EFFECT_KEY)){
+            // the dead effect is no longer active, so send player to dead screen
+            _exitCode = DEATH;
+            return;
+        }
+    }
+    
     int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
     // level is completed when player successfully exits the room
-    if (_level->isCompleted()){
+    if (isComplete() && _level->isCompleted()){
         if (_levelNumber < MAX_LEVEL){
             // begin transitioning to next level
             if (!_levelTransition.isActive()){
@@ -361,6 +366,17 @@ void GameScene::preUpdate(float dt) {
         else{
             _winNode->setVisible(true); // for now
             // TODO: save data: save game is won by setting level to be greater than max level?
+        }
+    }
+    
+    
+    if (_collisionController.isComboContact() && hitPauseCounter.isZero()){
+        hitPauseCounter.reset();
+    }
+    if (!hitPauseCounter.isZero()){
+        hitPauseCounter.decrement();
+        if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
+            return; // this gives the vague "lag" effect
         }
     }
 
@@ -579,6 +595,10 @@ void GameScene::preUpdate(float dt) {
 void GameScene::fixedUpdate(float step) {
     if (_level != nullptr){
         auto player = _level->getPlayer();
+        if (player->getHP() == 0){
+            // do not update on death
+            return;
+        }
         if (player->isDodging()) _camController.setAcceleration(GameConstants::GAME_CAMERA_ACCEL);
         else _camController.setAcceleration(GameConstants::GAME_CAMERA_DECEL);
         _camController.setTarget(player->getPosition() * player->getDrawScale());
@@ -686,6 +706,16 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
+}
+
+void GameScene::setActive(bool value){
+    if (isActive() != value){
+        Scene2::setActive(value);
+        _exitCode = NONE;
+        _gameRenderer.setActivated(value);
+        activateInputs(value);
+        _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
+    }
 }
 
 void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){

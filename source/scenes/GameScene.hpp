@@ -36,6 +36,23 @@
  * so that we can have a separate mode for the loading screen.
  */
 class GameScene : public cugl::Scene2 {
+    
+public:
+    /**
+     * Unlike other scenes where the user has choices, the player's only choice is pausing
+     * the game. The other options are game-events.
+     */
+    enum ExitCode {
+        /** the player stays in the game */
+        NONE,
+        /** the player finishes the game */
+        VICTORY,
+        /** the player loses the game */
+        DEATH,
+        /** the player pauses the game*/
+        PAUSE
+    };
+    
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -106,7 +123,8 @@ protected:
     bool _debug;
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
-
+    /** The screen transitioning code */
+    ExitCode _exitCode;
     
 #pragma mark Player Upgrades
     
@@ -260,6 +278,10 @@ public:
      */
     void setDefeat(bool value) { _defeat = value; }
     
+    /**
+     * @return the screen exit code, `NONE` if the user stays in this game mode.
+     */
+    ExitCode getExitCode(){ return _exitCode; }
     
 #pragma mark -
 #pragma mark Gameplay Handling
@@ -363,11 +385,7 @@ public:
      */
     virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
-    void setActive(bool value) override {
-        Scene2::setActive(value);
-        _gameRenderer.setActivated(value);
-        _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
-    }
+    void setActive(bool value) override;
     
 protected:
 #pragma mark -
