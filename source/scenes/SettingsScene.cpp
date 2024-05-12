@@ -164,6 +164,10 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         CULog("swapping bow aiming mode (settings screen)");
     });
 
+    // add an overlay layer to separate game background from UI
+    auto overlay = scene2::PolygonNode::allocWithPoly(Rect(0, 0, dimen.width, dimen.height));
+    overlay->setColor(Color4(0, 0, 0, 128));
+    addChild(overlay);
     addChild(scene);
     setActive(false);
     return true;
