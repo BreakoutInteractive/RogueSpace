@@ -196,7 +196,7 @@
                                 "angle": 0,
                                 "visible": true,
                                 "font": "robotoBold36",
-                                "text": "Try Again",
+                                "text": "Restart",
                                 "foreground": "#ffffffff",
                                 "background": "#00000000",
                                 "padding": [
