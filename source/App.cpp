@@ -331,6 +331,17 @@ void App::draw() {
             _title.render(_batch);
             break;
         case SETTINGS:
+            switch (_prevScene) {
+            case PAUSE:
+                _gameplay.render(_batch);
+                _pause.render(_batch);
+                break;
+            case TITLE:
+                _title.render(_batch);
+                break;
+            default: //should never be here since you can only access settings from pause and title scenes
+                break;
+            }
             _settings.render(_batch);
             break;
         default:
