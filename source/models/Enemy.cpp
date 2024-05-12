@@ -46,8 +46,6 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
-    _isAiming = false; // will always be false for melee enemies
-    _isCharged = false; // will always be false for melee enemies
     _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
     _state = BehaviorState::DEFAULT;

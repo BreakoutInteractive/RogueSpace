@@ -79,10 +79,6 @@ protected:
     
     /** The enemy's default state */
     std::string _defaultState;
-    /** Whether the enemy is aiming its ranged attack */
-    bool _isAiming;
-    /** Whether the enemy's ranged attack is charged */
-    bool _isCharged;
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
     /** The enemy's goal position */
@@ -227,26 +223,6 @@ public:
      * Sets this enemy's default state.
      */
     void setDefaultState(std::string value) { _defaultState = value; }
-    
-    /**
-     * Gets whether this enemy's ranged attack is charged
-     */
-    bool getCharged() const { return _isCharged; }
-    
-    /**
-     * Sets whether this enemy's ranged attack is charged
-     */
-    void setCharged(bool value) { _isCharged = value; }
-    
-    /**
-     * Gets whether this enemy is aiming its ranged attack
-     */
-    bool getAiming() const { return _isAiming; }
-    
-    /**
-     * Sets whether this enemy is aiming its ranged attack
-     */
-    void setAiming(bool value) { _isAiming = value; }
     
     /**
      * Gets this enemy's patrol path.

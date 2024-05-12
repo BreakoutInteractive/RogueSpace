@@ -19,6 +19,8 @@ using namespace cugl;
 bool RangedEnemy::init(std::shared_ptr<JsonValue> data) {
     Enemy::init(data);
     _attackRange = GameConstants::ENEMY_RANGED_ATK_RANGE;
+    _isAiming = false;
+    _isCharged = false;
     
     return true;
 }

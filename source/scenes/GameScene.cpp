@@ -538,7 +538,8 @@ void GameScene::preUpdate(float dt) {
             if (enemy->isAttacking()) {
                 if (enemy->getType() == "ranged lizard" ||
                     enemy->getType() == "mage alien") {
-                    if (enemy->getCharged()) {
+                    std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
+                    if (r->getCharged()) {
                         enemy->attack(_level, _assets);
                     }
                 }

@@ -376,10 +376,13 @@ void AIController::update(float dt) {
                 }
                 break;
             case Enemy::BehaviorState::ATTACKING:
-                if ((enemy->getType() == "ranged lizard" || enemy->getType() == "mage alien") && enemy->getAiming()) {
-                    dir = _player->getPosition() - enemy->getPosition();
-                    dir.normalize();
-                    enemy->setFacingDir(dir);
+                if ((enemy->getType() == "ranged lizard" || enemy->getType() == "mage alien")) {
+                    std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
+                    if (r->getAiming()) {
+                        dir = _player->getPosition() - enemy->getPosition();
+                        dir.normalize();
+                        enemy->setFacingDir(dir);
+                    }
                 }
                 enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                 break;
