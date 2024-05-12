@@ -54,7 +54,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->setContentSize(dimen);
     scene->doLayout();
     
-    _healTexture = assets->get<Texture>("heal");
+    _healthTexture = assets->get<Texture>("upgrade-health");
     _parryTexture = assets->get<Texture>("upgrade-parry");
     _shieldTexture = assets->get<Texture>("upgrade-shield");
     _atkSdTexture = assets->get<Texture>("upgrade-speed");
@@ -77,7 +77,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _option2Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_tier"));
     _option2Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_upgrade-icon"));
     
-    _heal = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_heal"));
 
     _confirm1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm"));
     _confirm2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm-1"));
@@ -104,9 +103,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _confirm2->setVisible(false);
             _confirm2->deactivate();
             _confirm2->setDown(false);
-            
-            _heal->setDown(false);
-            _heal->setToggle(false);
 
             _option1->setToggle(true);
             _confirm1->setVisible(true);
@@ -122,9 +118,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _confirm1->setVisible(false);
             _confirm1->deactivate();
             _confirm1->setDown(false);
-            
-            _heal->setDown(false);
-            _heal->setToggle(false);
 
             _option2->setToggle(true);
             _confirm2->setVisible(true);
@@ -132,27 +125,6 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         } else{
             _confirm2->setVisible(false);
             _confirm2->deactivate();
-        }
-    });
-    
-    _heal->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _option1->setDown(false);
-            _confirm1->setVisible(false);
-            _confirm1->deactivate();
-            _confirm1->setDown(false);
-            
-            _option2->setDown(false);
-            _confirm2->setVisible(false);
-            _confirm2->deactivate();
-            _confirm2->setDown(false);
-
-            _heal->setToggle(true);
-        } else{
-            if (_heal->isToggle() && !_option1->isDown() && !_option2->isDown()) {
-                _choice = Choice::HEALTH;
-                _selectedUpgrade = -1;
-            }
         }
     });
 
@@ -170,16 +142,16 @@ void UpgradesScene::setButtonText(int upgrade, int level, int buttonType){
     switch (upgrade) {
         case SWORD:
             upgradeName = "SWORD";
-            upgradeDescription = "Increases melee strength";
+            upgradeDescription = "Increases melee attack strength";
             upgradeTexture = _swordTexture;
             break;
         case PARRY:
             upgradeName = "PARRY";
-            upgradeDescription = "Increases parry success rate";
+            upgradeDescription = "Increases enemy stun window";
             upgradeTexture = _parryTexture;
             break;
         case SHIELD:
-            upgradeName = "DEFENSE";
+            upgradeName = "SHIELD";
             upgradeDescription = "Decreases damage taken";
             upgradeTexture = _shieldTexture;
             break;
@@ -244,7 +216,7 @@ void UpgradesScene::updateScene(std::vector<int> attributes, std::vector<std::sh
     setButtonText(attributes.at(1),availableUpgrades.at(attributes.at(1))->getCurrentLevel()+1,1);
     
     _displayedAttribute1 = attributes.at(0);
-    _displayedAttribute2  =attributes.at(1);
+    _displayedAttribute2 = attributes.at(1);
 }
 
 /**
@@ -277,13 +249,11 @@ void UpgradesScene::setActive(bool value) {
         if (value) {
             _option1->activate();
             _option2->activate();
-            _heal->activate();
         } else {
             _option1->deactivate();
             _confirm1->deactivate();
             _option2->deactivate();
             _confirm2->deactivate();
-            _heal->deactivate();
             
             _displayedAttribute1 = -1;
             _displayedAttribute2 = -1;
@@ -293,10 +263,7 @@ void UpgradesScene::setActive(bool value) {
             _confirm1->setDown(false);
             _option2->setDown(false);
             _confirm2->setDown(false);
-            _heal->setToggle(false);
-            _heal->setDown(false);
             _choice = Choice::NONE;
-            
         }
     }
 }
