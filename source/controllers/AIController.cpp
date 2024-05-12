@@ -340,7 +340,7 @@ void AIController::update(float dt) {
                 }
                 break;
             case Enemy::BehaviorState::CHASING:
-                if (enemy->getPosition().distance(_player->getPosition()) <= 1) {
+                if (enemy->getPosition().distance(_player->getPosition()) <= enemy->getAttackRange()) {
                     dir = _player->getPosition() - enemy->getPosition();
                     dir.normalize();
                     enemy->setFacingDir(dir);
