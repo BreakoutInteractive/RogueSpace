@@ -68,7 +68,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
-    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
+    _stunAnimation = Animation::alloc(stunSheet, GameConstants::ENEMY_STUN_DURATION, false, 0, 8);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
@@ -114,7 +114,7 @@ void MageAlien::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
+        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
             setIdling();
         }
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {

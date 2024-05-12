@@ -2,10 +2,13 @@
     "textures": {
         "deadBody": {
             "file": "textures/gameplay/lose/deadBody.png"
+        },
+        "dead_animation": {
+            "file": "textures/gameplay/lose/dead_animation.png"
         }
     },
     "scene2s": {
-        "contents": {
+        "death": {
             "type": "Node",
             "format": {
                 "type": "Anchored"
@@ -27,60 +30,6 @@
                 "visible": true
             },
             "children": {
-                "deadBody": {
-                    "type": "Image",
-                    "data": {
-                        "texture": "deadBody",
-                        "anchor": [
-                            0.5,
-                            0
-                        ],
-                        "size": [
-                            425,
-                            105
-                        ],
-                        "angle": 0,
-                        "position": [
-                            453,
-                            -21
-                        ],
-                        "visible": true
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "bottom",
-                        "absolute": false,
-                        "x_offset": 0.02,
-                        "y_offset": -0.03
-                    }
-                },
-                "dead_animation": {
-                    "type": "Image",
-                    "data": {
-                        "texture": "dead_animation",
-                        "anchor": [
-                            0.5,
-                            0
-                        ],
-                        "size": [
-                            560,
-                            540
-                        ],
-                        "angle": 0,
-                        "position": [
-                            386,
-                            -60
-                        ],
-                        "visible": true
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "bottom",
-                        "absolute": false,
-                        "x_offset": 0.02,
-                        "y_offset": -0.08
-                    }
-                },
                 "main_menu": {
                     "type": "Button",
                     "format": {
@@ -275,6 +224,62 @@
                         "absolute": false,
                         "x_offset": -0.16,
                         "y_offset": 0.33
+                    }
+                },
+                "deadBody": {
+                    "type": "Image",
+                    "data": {
+                        "texture": "deadBody",
+                        "anchor": [
+                            0.5,
+                            0
+                        ],
+                        "size": [
+                            425,
+                            105
+                        ],
+                        "angle": 0,
+                        "position": [
+                            453,
+                            -21
+                        ],
+                        "visible": true
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0.02,
+                        "y_offset": -0.03
+                    }
+                },
+                "dead_animation": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "dead_animation",
+                        "anchor": [
+                            0.5,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 560,0, 560, 540, 0, 540
+                        ],
+                        "angle": 0,
+                        "position": [
+                            386,
+                            -60
+                        ],
+                        "visible": true,
+                        "span": 18,
+                        "cols": 6,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0.02,
+                        "y_offset": -0.08
                     }
                 }
             }

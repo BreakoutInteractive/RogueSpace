@@ -40,8 +40,14 @@ public:
     
     struct Preferences {
         // TODO: add other fields as needed
-        /** background music volume */
-        float BGMvol;
+        /** master volume level - 0-10 */
+        int vol = 5;
+        /** background music volume level - 0-10 */
+        int BGMvol = 10;
+        /** sfx volume level - 0-10 */
+        int SFXvol = 10;
+        /** bow aim control mode*/
+        bool inverted = true;
     };
     
 private:
@@ -52,6 +58,11 @@ private:
     static std::shared_ptr<JsonValue> saveJson;
     /** struct cache object for player information */
     static Data dataCache;
+
+    /** json cache object for player preferences */
+    static std::shared_ptr<JsonValue> prefsJson;
+    /** struct cache object for player preferences */
+    static Preferences prefsCache;
 
 public:
 #pragma mark - Game Related Saves
@@ -75,10 +86,15 @@ public:
     static void removeSave();
     
 #pragma mark - Settings Related Saves
+
+    static bool hasPreferences();
     
     static Preferences getPreferences();
     
-    static void setPreferences(Preferences prefs);
+    /**
+     * save the player's preferences
+     */
+    static void savePreferences(Preferences prefs);
     
 };
 

@@ -16,6 +16,8 @@ using namespace cugl;
 
 SaveData::Data SaveData::dataCache;
 std::shared_ptr<JsonValue> SaveData::saveJson = nullptr;
+SaveData::Preferences SaveData::prefsCache;
+std::shared_ptr<JsonValue> SaveData::prefsJson = nullptr;
 
 bool SaveData::hasGameSave(){
     auto path = Application::get()->getSaveDirectory() + SAVEFILE;
@@ -80,4 +82,43 @@ void SaveData::removeSave(){
     writer->writeJson(json);
     writer->flush();
     writer->close();
+}
+
+bool SaveData::hasPreferences() {
+    auto path = Application::get()->getSaveDirectory() + PREFS;
+    auto reader = JsonReader::alloc(path);
+    if (reader == nullptr) {
+        // no such file
+        prefsJson = JsonValue::allocObject();
+        return false;
+    }
+    std::shared_ptr<JsonValue> json = reader->readJson();
+    prefsJson = json;
+    
+    prefsCache.vol = json->getInt("volume", 5);
+    prefsCache.BGMvol = json->getInt("music", 10);
+    prefsCache.SFXvol = json->getInt("sfx", 10);
+    prefsCache.inverted = json->getBool("inverted", true);
+    reader->close();
+    return true;
+}
+
+SaveData::Preferences SaveData::getPreferences() {
+    return prefsCache;
+}
+
+void SaveData::savePreferences(Preferences prefs) {
+    auto json = JsonValue::allocObject();
+    json->appendChild("volume", JsonValue::alloc((long)prefs.vol));
+    json->appendChild("music", JsonValue::alloc((long)prefs.BGMvol));
+    json->appendChild("sfx", JsonValue::alloc((long)prefs.SFXvol));
+    json->appendChild("inverted", JsonValue::alloc(prefs.inverted));
+    auto path = Application::get()->getSaveDirectory() + PREFS;
+    CULog("prefsfile %s", std::string(path).c_str());
+    auto writer = JsonWriter::alloc(path);
+    writer->writeJson(json);
+    writer->flush();
+    writer->close();
+    prefsJson = json;
+    prefsCache = prefs;
 }
