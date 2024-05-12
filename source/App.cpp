@@ -39,6 +39,7 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/settings.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/death.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
@@ -90,6 +91,7 @@ void App::update(float dt){
         _upgrades.init(_assets);
         _settings.init(_assets);
         _title.init(_assets);
+        _death.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
         setTitleScene();
@@ -121,19 +123,26 @@ void App::preUpdate(float dt) {
             updateSettingsScene(dt);
             break;
         case GAME:
-            if(_gameplay.getRenderer().getPaused()){
+            if (_gameplay.getExitCode() == GameScene::ExitCode::DEATH){
+                _scene = State::DEATH;
+                _gameplay.setActive(false);
+                _death.setActive(true);
+            }
+            else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
-                _gameplay.activateInputs(false);
-                _gameplay.getRenderer().setActivated(false);
+                _gameplay.setActive(false);
             } else if (_gameplay.upgradeScreenActive){
                 _upgrades.setActive(false);
                 _scene = State::UPGRADE;
                 _upgrades.updateScene(_gameplay.getDisplayedUpgrades(), _gameplay.getAvailableUpgrades());
             }
             else{
-                _gameplay.activateInputs(true);
+                _gameplay.setActive(true);
                 _gameplay.preUpdate(dt);
             }
+            break;
+        case DEATH:
+            updateDeathScene(dt);
             break;
     }
 }
@@ -235,6 +244,7 @@ void App::updateUpgradesScene(float dt){
 }
 
 void App::setTitleScene(){
+    _scene = TITLE;
     bool hasSave = SaveData::hasGameSave();
     CULog("previous save available: %s", (hasSave ? "true" : "false"));
     auto sceneType = hasSave ? TitleScene::SceneType::WITH_CONTINUE : TitleScene::SceneType::WITHOUT_CONTINUE;
@@ -310,6 +320,24 @@ void App::updateSettingsScene(float dt) {
     }
 }
 
+void App::updateDeathScene(float dt){
+    _death.update(dt);
+    switch(_death.getChoice()){
+        case DeathScene::NONE:
+            break;
+        case DeathScene::RESTART:
+            _death.setActive(false);
+            _gameplay.setActive(true);
+            _gameplay.restart();
+            _scene = GAME;
+            break;
+        case DeathScene::MAIN_MENU:
+            _death.setActive(false);
+            setTitleScene();
+            break;
+    }
+}
+
 
 void App::draw() {
     switch (_scene) {
@@ -344,8 +372,9 @@ void App::draw() {
             }
             _settings.render(_batch);
             break;
-        default:
-            break;
+        case DEATH:
+            _gameplay.render(_batch);
+            _death.render(_batch);
     }
 }
 
