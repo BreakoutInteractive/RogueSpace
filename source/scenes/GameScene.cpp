@@ -71,6 +71,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     _parser.loadTilesets(assets);
     _levelNumber = 1;
+    MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
     _input.init([this](Vec2 pos){
         return _gameRenderer.isInputProcessed(pos);
@@ -174,6 +175,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     setActive(false);
     setComplete(false);
     setDefeat(false);
+    _exitCode = NONE;
     hitPauseCounter.setMaxCount(GameConstants::HIT_PAUSE_FRAMES + 3);
     Application::get()->setClearColor(Color4("#c9a68c"));
     return true;
@@ -276,107 +278,15 @@ std::string GameScene::getLevelKey(int level){
 #pragma mark -
 #pragma mark Physics Handling
 
-void GameScene::preUpdate(float dt) {
-    if (_level == nullptr) {
-        return;
-    }
-    
-    if (_collisionController.isComboContact() && hitPauseCounter.isZero()){
-        hitPauseCounter.reset();
-    }
-    if (!hitPauseCounter.isZero()){
-        hitPauseCounter.decrement();
-        if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
-            return; // this gives the vague "lag" effect
-        }
-    }
-    
-    _input.update(dt);
-    
-    // Process the toggled key commands
-    if (_input.didDebug()) {
-        CULog("debug toggled");
-        setDebug(!isDebug());
-    }
-    if (_input.didExit())  {
-        CULog("Shutting down");
-        Application::get()->quit();
-    }
-    
-    // TODO: can be removed, but for pc devs to quickly reset
-    if (_input.didReset()){
-        restart();
-        return;
-    }
-    
-    _actionManager.update(dt);
-    _areaClearNode->setVisible(_actionManager.isActive(AREA_CLEAR_KEY));
-    _deadEffectNode->setVisible(_actionManager.isActive(DEAD_EFFECT_KEY));
-    
-    if (!isComplete() && !isDefeat()){
-        // game not won, check if any enemies active
-        int activeCount = 0;
-        auto enemies = _level->getEnemies();
-        for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-            if ((*it)->getCollider()->isEnabled()) {
-                activeCount += 1;
-            }
-        }
-        // player finishes current level
-        if (activeCount == 0){
-            setComplete(true);
-            auto energyWalls = _level->getEnergyWalls();
-            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
-                (*it)->deactivate();
-            }
-            if (_level->getEnemies().size() > 0){
-                // no more enemies remain, but there were enemies initially
-                _actionManager.remove(AREA_CLEAR_KEY);
-                _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
-            }
-        }
-    }
-    
-    if (!isDefeat()){
-        // player dies
-        if (_level->getPlayer()->getHP() == 0){
-            SaveData::removeSave();
-            setDefeat(true);
-            // start playing dead effect, stop the area clear if we happen to have cleared the room and got killed by a flying projectile
-            _actionManager.remove(AREA_CLEAR_KEY);
-            _actionManager.remove(DEAD_EFFECT_KEY);
-            _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
-        }
-    }
-    
-    int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
-    // level is completed when player successfully exits the room
-    if (_level->isCompleted()){
-        if (_levelNumber < MAX_LEVEL){
-            // begin transitioning to next level
-            if (!_levelTransition.isActive()){
-                _levelTransition.setActive(true);
-            }
-        }
-        else{
-            _winNode->setVisible(true); // for now
-            // TODO: save data: save game is won by setting level to be greater than max level?
-        }
-    }
-
-#pragma mark - handle player input
-
+void GameScene::processPlayerInput(){
     std::shared_ptr<Player> player = _level->getPlayer();
     Vec2 moveForce = _input.getMoveDirection();
         
-    
 #ifdef CU_TOUCH_SCREEN
-    
     if (player->isRangedAttackActive()){
         _gameRenderer.updateAimJoystick(_input.isCombatActive(), _input.getInitCombatLocation(), _input.getCombatTouchLocation());
     }
     _gameRenderer.updateMoveJoystick(_input.isMotionActive(), _input.getInitTouchLocation(), _input.getTouchLocation());
-    
 #endif
     
     if (player->isDodging() && player->getCollider()->isBullet()){
@@ -504,8 +414,122 @@ void GameScene::preUpdate(float dt) {
             _input.swapControlMode(); // must do for mobile controls
         }
     }
+}
+
+void GameScene::preUpdate(float dt) {
+    if (_level == nullptr) {
+        return;
+    }
+    
+    _input.update(dt);
+    
+    // Process the toggled key commands
+    if (_input.didDebug()) {
+        CULog("debug toggled");
+        setDebug(!isDebug());
+    }
+    if (_input.didExit())  {
+        CULog("Shutting down");
+        Application::get()->quit();
+        // _level->getPlayer()->setHP(0); // could use as a toggle to auto-kill player
+    }
+    
+    // TODO: can be removed, but for pc devs to quickly reset
+    if (_input.didReset()){
+        restart();
+        return;
+    }
+    
+    // update the effects that appears on screen for clearing room / dying
+    _actionManager.update(dt);
+    _areaClearNode->setVisible(_actionManager.isActive(AREA_CLEAR_KEY));
+    _deadEffectNode->setVisible(_actionManager.isActive(DEAD_EFFECT_KEY));
+    
+    if (!isComplete() && !isDefeat()){
+        // game not won or lost, check if any enemies active
+        int activeCount = 0;
+        auto enemies = _level->getEnemies();
+        for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+            if ((*it)->isEnabled()) {
+                activeCount += 1;
+            }
+        }
+        // player finishes current level
+        if (activeCount == 0){
+            setComplete(true);
+            auto energyWalls = _level->getEnergyWalls();
+            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
+                (*it)->deactivate();
+            }
+            if (_level->getEnemies().size() > 0){
+                // no more enemies remain, but there were enemies initially
+                _actionManager.remove(AREA_CLEAR_KEY);
+                _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
+            }
+        }
+    }
+    
+    if (!isDefeat()){
+        // player dies
+        if (_level->getPlayer()->getHP() == 0){
+            SaveData::removeSave();
+            setDefeat(true);
+            setComplete(false);
+            _levelTransition.setActive(false);
+            // start playing dead effect, stop the area clear if we happen to have cleared the room and got killed by a flying projectile
+            _actionManager.remove(AREA_CLEAR_KEY);
+            _actionManager.remove(DEAD_EFFECT_KEY);
+            _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
+        }
+    }
+    
+    // player sees dead effect and is then shown the dead screen when effect is finished
+    if (isDefeat()){
+        if (!_actionManager.isActive(DEAD_EFFECT_KEY)){
+            // the dead effect is no longer active, so send player to dead screen (and disable player)
+            _level->getPlayer()->setEnabled(false);
+            _exitCode = DEATH;
+            return;
+        }
+    }
+    
+    // level is completed when player successfully exits the room
+    if (isComplete() && _level->isCompleted()){
+        if (_levelNumber < MAX_LEVEL){
+            // begin transitioning to next level
+            if (!_levelTransition.isActive()){
+                _levelTransition.setActive(true);
+            }
+        }
+        else{
+            _winNode->setVisible(true); // for now
+            // TODO: save data: save game is won by setting level to be greater than max level?
+        }
+    }
+    
+    
+    if (_collisionController.isComboContact() && hitPauseCounter.isZero()){
+        hitPauseCounter.reset();
+    }
+    if (!hitPauseCounter.isZero()){
+        hitPauseCounter.decrement();
+        if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
+            return; // this gives the vague "lag" effect
+        }
+    }
+
+#pragma mark - handle player input
+
+    if (!isDefeat()){
+        processPlayerInput();
+    }
+    else {
+        // make sure to stop player from moving
+        _level->getPlayer()->getCollider()->setLinearVelocity(Vec2::ZERO);
+    }
 
 #pragma mark - Enemy movement
+    auto player = _level->getPlayer();
     _AIController.update(dt);
     // enemy attacks
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
@@ -522,13 +546,13 @@ void GameScene::preUpdate(float dt) {
             enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
         }
-        if (!enemy->_stunCD.isZero()){
+        if (enemy->isStunned()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
             enemy->getAttack()->setEnabled(false);
         }
         if (enemy->isEnabled()) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
-            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && enemy->_stunCD.isZero();
+            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !enemy->isStunned();
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard") {
                     enemy->attack(_level, _assets);
@@ -580,6 +604,10 @@ void GameScene::preUpdate(float dt) {
 void GameScene::fixedUpdate(float step) {
     if (_level != nullptr){
         auto player = _level->getPlayer();
+        if (player->getHP() == 0){
+            // do not update on death
+            return;
+        }
         if (player->isDodging()) _camController.setAcceleration(GameConstants::GAME_CAMERA_ACCEL);
         else _camController.setAcceleration(GameConstants::GAME_CAMERA_DECEL);
         _camController.setTarget(player->getPosition() * player->getDrawScale());
@@ -687,6 +715,16 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
+}
+
+void GameScene::setActive(bool value){
+    if (isActive() != value){
+        Scene2::setActive(value);
+        _exitCode = NONE;
+        _gameRenderer.setActivated(value);
+        activateInputs(value);
+        _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
+    }
 }
 
 void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){

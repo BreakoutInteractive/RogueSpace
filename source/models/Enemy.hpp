@@ -93,8 +93,6 @@ public:
     
     Counter _atkCD;
     
-    Counter _stunCD; //todo: if stun animation exists, remove counter.
-    
     Counter _sentryCD;
 
     Counter _hitCounter;
@@ -331,7 +329,7 @@ public:
      */
     bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
     /** whether enemy is stunned */
-    bool isStunned(){ return !_stunCD.isZero() && _state == BehaviorState::STUNNED; }
+    bool isStunned(){ return _stunAnimation->isActive() && _state == BehaviorState::STUNNED; }
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.

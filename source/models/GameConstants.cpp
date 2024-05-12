@@ -30,11 +30,11 @@ float GameConstants::GAME_CAMERA_ZOOM_SPEED = 0.7f;
 
 int GameConstants::ENEMY_IFRAME = 16;
 
-int GameConstants::ENEMY_ATK_COOLDOWN = 50;
+int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attacks are less spammy
 
-int GameConstants::ENEMY_STUN_COOLDOWN = 100;
+float GameConstants::ENEMY_STUN_DURATION = 1.4f; //previously 1.0- Tank should be killed w/1parry
 
-int GameConstants::ENEMY_SENTRY_COOLDOWN = 120;
+int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
 
 float GameConstants::ENEMY_SIGHT_RANGE = 10;
 
@@ -62,7 +62,7 @@ float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
-float GameConstants::STUN_DMG_BONUS = 1.5f; // previously 2.0
+float GameConstants::STUN_DMG_BONUS = 1.6f; // previously 1.5
 
 #pragma mark -
 #pragma mark Player Upgradeable Stat Constants
@@ -102,15 +102,15 @@ float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.7f; //previously 0.5
 
 
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.3f; // previously 2
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.4f; // previously 1.3
 
-float GameConstants::PROJ_SPEED_P = 10.0f;
+float GameConstants::PROJ_SPEED_P = 9.0f;
 
 float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
 float GameConstants::PROJ_DIST_P_SQ = 100.0f;
 
-float GameConstants::PROJ_DIST_P = 10.0f;
+float GameConstants::PROJ_DIST_P = 7.0f;
 
 float GameConstants::CHARGE_TIME = 0.3f;
 

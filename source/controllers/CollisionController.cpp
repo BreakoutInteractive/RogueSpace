@@ -236,7 +236,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
                 (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
                 //enemies phase through each other if one is idle/stunned
-                if (!(*it)->_stunCD.isZero() || !(*iter)->_stunCD.isZero()
+                if ((*it)->isStunned() || (*iter)->isStunned()
                     || (*it)->getCollider()->getLinearVelocity().isZero()
                     || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
             }

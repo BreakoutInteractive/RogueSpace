@@ -36,9 +36,28 @@
  * so that we can have a separate mode for the loading screen.
  */
 class GameScene : public cugl::Scene2 {
+    
+public:
+    /**
+     * Unlike other scenes where the user has choices, the player's only choice is pausing
+     * the game. The other options are game-events.
+     */
+    enum ExitCode {
+        /** the player stays in the game */
+        NONE,
+        /** the player finishes the game */
+        VICTORY,
+        /** the player loses the game */
+        DEATH,
+        /** the player pauses the game*/
+        PAUSE
+    };
+    
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    /** The maximum level number to defeat for the game to end */
+    int MAX_LEVEL;
     
 #pragma mark Controllers
     /** Controller for abstracting out input across multiple platforms */
@@ -106,7 +125,8 @@ protected:
     bool _debug;
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
-
+    /** The screen transitioning code */
+    ExitCode _exitCode;
     
 #pragma mark Player Upgrades
     
@@ -119,7 +139,13 @@ protected:
     /** all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
     
-
+#pragma mark Internal Update Function Helpers
+    
+    /**
+     * handles player inputs and updates relevant HUD components.
+     */
+    void processPlayerInput();
+    
 public:
     /** Returns all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
@@ -218,6 +244,11 @@ public:
     GameRenderer& getRenderer(){return _gameRenderer;}
 
     /**
+     * Returns a reference to the input controller
+     */
+    InputController& getInput() { return _input; }
+
+    /**
      * toggle input devices
      */
     void activateInputs(bool value){ _input.setActive(value); }
@@ -260,6 +291,10 @@ public:
      */
     void setDefeat(bool value) { _defeat = value; }
     
+    /**
+     * @return the screen exit code, `NONE` if the user stays in this game mode.
+     */
+    ExitCode getExitCode(){ return _exitCode; }
     
 #pragma mark -
 #pragma mark Gameplay Handling
@@ -363,11 +398,7 @@ public:
      */
     virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
-    void setActive(bool value) override {
-        Scene2::setActive(value);
-        _gameRenderer.setActivated(value);
-        _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
-    }
+    void setActive(bool value) override;
     
 protected:
 #pragma mark -

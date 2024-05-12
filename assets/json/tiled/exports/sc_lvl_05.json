@@ -3847,6 +3847,7 @@
                  "id":259,
                  "layers":[
                         {
+                         "class":"Collection",
                          "draworder":"topdown",
                          "id":258,
                          "locked":true,
@@ -3909,12 +3910,19 @@
                                  "y":768
                                 }],
                          "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"weight",
+                                 "type":"int",
+                                 "value":2
+                                }],
                          "type":"objectgroup",
                          "visible":false,
                          "x":0,
                          "y":0
                         }, 
                         {
+                         "class":"Collection",
                          "draworder":"topdown",
                          "id":261,
                          "locked":true,
@@ -4005,12 +4013,19 @@
                                  "y":704
                                 }],
                          "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"weight",
+                                 "type":"int",
+                                 "value":2
+                                }],
                          "type":"objectgroup",
                          "visible":false,
                          "x":0,
                          "y":0
                         }, 
                         {
+                         "class":"Collection",
                          "draworder":"topdown",
                          "id":262,
                          "name":"2",
@@ -4072,8 +4087,236 @@
                                  "y":832
                                 }],
                          "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"weight",
+                                 "type":"int",
+                                 "value":1
+                                }],
                          "type":"objectgroup",
-                         "visible":true,
+                         "visible":false,
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "class":"Collection",
+                         "draworder":"topdown",
+                         "id":263,
+                         "name":"3",
+                         "objects":[
+                                {
+                                 "gid":251,
+                                 "height":128,
+                                 "id":2775,
+                                 "name":"",
+                                 "properties":[
+                                        {
+                                         "name":"damage",
+                                         "type":"float",
+                                         "value":1
+                                        }, 
+                                        {
+                                         "name":"hp",
+                                         "type":"float",
+                                         "value":5
+                                        }, 
+                                        {
+                                         "name":"path",
+                                         "type":"object",
+                                         "value":0
+                                        }],
+                                 "rotation":0,
+                                 "type":"Lizard",
+                                 "visible":true,
+                                 "width":64,
+                                 "x":1920,
+                                 "y":1056
+                                }, 
+                                {
+                                 "gid":253,
+                                 "height":128,
+                                 "id":2776,
+                                 "name":"",
+                                 "properties":[
+                                        {
+                                         "name":"damage",
+                                         "type":"float",
+                                         "value":1
+                                        }, 
+                                        {
+                                         "name":"hp",
+                                         "type":"float",
+                                         "value":2
+                                        }, 
+                                        {
+                                         "name":"path",
+                                         "type":"object",
+                                         "value":0
+                                        }],
+                                 "rotation":0,
+                                 "type":"TankEnemy",
+                                 "visible":true,
+                                 "width":128,
+                                 "x":1920,
+                                 "y":864
+                                }],
+                         "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"weight",
+                                 "type":"int",
+                                 "value":1
+                                }],
+                         "type":"objectgroup",
+                         "visible":false,
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "class":"Collection",
+                         "draworder":"topdown",
+                         "id":264,
+                         "name":"4",
+                         "objects":[
+                                {
+                                 "gid":253,
+                                 "height":128,
+                                 "id":2777,
+                                 "name":"",
+                                 "properties":[
+                                        {
+                                         "name":"damage",
+                                         "type":"float",
+                                         "value":1
+                                        }, 
+                                        {
+                                         "name":"hp",
+                                         "type":"float",
+                                         "value":2
+                                        }, 
+                                        {
+                                         "name":"path",
+                                         "type":"object",
+                                         "value":0
+                                        }],
+                                 "rotation":0,
+                                 "type":"TankEnemy",
+                                 "visible":true,
+                                 "width":128,
+                                 "x":1920,
+                                 "y":1056
+                                }, 
+                                {
+                                 "gid":254,
+                                 "height":128,
+                                 "id":2778,
+                                 "name":"",
+                                 "properties":[
+                                        {
+                                         "name":"damage",
+                                         "type":"float",
+                                         "value":1
+                                        }, 
+                                        {
+                                         "name":"hp",
+                                         "type":"float",
+                                         "value":3
+                                        }, 
+                                        {
+                                         "name":"path",
+                                         "type":"object",
+                                         "value":0
+                                        }],
+                                 "rotation":0,
+                                 "type":"RangedLizard",
+                                 "visible":true,
+                                 "width":64,
+                                 "x":1984,
+                                 "y":832
+                                }],
+                         "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"weight",
+                                 "type":"int",
+                                 "value":1
+                                }],
+                         "type":"objectgroup",
+                         "visible":false,
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "class":"Collection",
+                         "draworder":"topdown",
+                         "id":265,
+                         "name":"5",
+                         "objects":[
+                                {
+                                 "gid":253,
+                                 "height":128,
+                                 "id":2779,
+                                 "name":"",
+                                 "properties":[
+                                        {
+                                         "name":"damage",
+                                         "type":"float",
+                                         "value":1
+                                        }, 
+                                        {
+                                         "name":"hp",
+                                         "type":"float",
+                                         "value":2
+                                        }, 
+                                        {
+                                         "name":"path",
+                                         "type":"object",
+                                         "value":0
+                                        }],
+                                 "rotation":0,
+                                 "type":"TankEnemy",
+                                 "visible":true,
+                                 "width":128,
+                                 "x":1856,
+                                 "y":896
+                                }, 
+                                {
+                                 "gid":254,
+                                 "height":128,
+                                 "id":2780,
+                                 "name":"",
+                                 "properties":[
+                                        {
+                                         "name":"damage",
+                                         "type":"float",
+                                         "value":1
+                                        }, 
+                                        {
+                                         "name":"hp",
+                                         "type":"float",
+                                         "value":3
+                                        }, 
+                                        {
+                                         "name":"path",
+                                         "type":"object",
+                                         "value":0
+                                        }],
+                                 "rotation":0,
+                                 "type":"RangedLizard",
+                                 "visible":true,
+                                 "width":64,
+                                 "x":1920,
+                                 "y":1056
+                                }],
+                         "opacity":1,
+                         "properties":[
+                                {
+                                 "name":"weight",
+                                 "type":"int",
+                                 "value":1
+                                }],
+                         "type":"objectgroup",
+                         "visible":false,
                          "x":0,
                          "y":0
                         }],
@@ -4103,8 +4346,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":263,
- "nextobjectid":2774,
+ "nextlayerid":267,
+ "nextobjectid":2782,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

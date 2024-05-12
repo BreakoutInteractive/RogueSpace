@@ -55,7 +55,6 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _moveSpeed = GameConstants::ENEMY_MOVE_SPEED;
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
-    _stunCD.setMaxCount(GameConstants::ENEMY_STUN_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
     
     // initialize directions
@@ -169,7 +168,6 @@ void Enemy::setStunned() {
         return;
     }
     setAnimation(_stunAnimation);
-    _stunCD.reset();
     _atkCD.reset(); // stunning should reset attack
     _attackAnimation->reset();
     _hitboxAnimation->reset();
@@ -177,6 +175,7 @@ void Enemy::setStunned() {
     _walkAnimation->reset();
     _state = BehaviorState::STUNNED;
     _stunEffect->start();
+    _stunAnimation->start();
 }
 
 void Enemy::setDefault() {
@@ -213,7 +212,7 @@ void Enemy::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
+        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
             setIdling();
         }
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
@@ -225,7 +224,7 @@ void Enemy::updateAnimation(float dt){
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
-    else if (_state == BehaviorState::STUNNED && _stunCD.isZero()) {
+    else if (_state == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
         _tint = Color4::WHITE;
         setIdling();
     }
@@ -238,7 +237,6 @@ void Enemy::updateAnimation(float dt){
 
 void Enemy::updateCounters() {
     _sentryCD.decrement();
-    _stunCD.decrement();
     _atkCD.decrement();
     _hitCounter.decrement();
 }
