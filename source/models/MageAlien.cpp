@@ -67,12 +67,12 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
+    _attackAnimation = Animation::alloc(attackSheet, GameConstants::ENEMY_RANGED_ATK_SPEED, false, 0, 13);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
-    _chargingAnimation = Animation::alloc(projectileSheet, 0.5625f, false, 0, 13);
+    _chargingAnimation = Animation::alloc(projectileSheet, GameConstants::ENEMY_RANGED_ATK_SPEED / 2, false, 0, 13);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -91,7 +91,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         setAiming(true);
     });
     
-    _attackAnimation->addCallback(0.45f, [this](){
+    _attackAnimation->addCallback(GameConstants::ENEMY_RANGED_ATK_SPEED * 0.4f, [this](){
         setAiming(false);
     });
     

@@ -68,11 +68,11 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 19);
+    _attackAnimation = Animation::alloc(attackSheet, GameConstants::ENEMY_RANGED_ATK_SPEED, false, 0, 19);
     _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 14);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
-    _chargingAnimation = Animation::alloc(projectileSheet, 0.28125f, false, 0, 4);
+    _chargingAnimation = Animation::alloc(projectileSheet, GameConstants::ENEMY_RANGED_ATK_SPEED / 4, false, 0, 4);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     
     _currAnimation = _idleAnimation; // set runnning
@@ -89,7 +89,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         setAiming(true);
     });
     
-    _attackAnimation->addCallback(0.45f, [this](){
+    _attackAnimation->addCallback(GameConstants::ENEMY_RANGED_ATK_SPEED * 0.4f, [this](){
         _chargingAnimation->start();
         setAiming(false);
     });
