@@ -277,6 +277,11 @@ public:
      * sets the shooting direction control scheme. An inverted system is equivalent to a slingshot system.
      */
     void setInverted(bool value){ inverted = value; }
+
+    /**
+     * gets the shooting direction control scheme. An inverted system is equivalent to a slingshot system.
+     */
+    bool getInverted() const { return inverted; }
     
 #pragma mark -
 #pragma mark Input Results

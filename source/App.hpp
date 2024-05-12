@@ -13,6 +13,7 @@
 #include "scenes/PauseScene.hpp"
 #include "scenes/UpgradesScene.hpp"
 #include "scenes/TitleScene.hpp"
+#include "scenes/SettingsScene.hpp"
 #include "scenes/DeathScene.hpp"
 
 /**
@@ -32,6 +33,8 @@ protected:
         UPGRADE,
         /** The scene to play the game */
         GAME,
+        /** The settings scene */
+        SETTINGS,
         /** The scene to show options when game over */
         DEATH
     };
@@ -50,13 +53,18 @@ protected:
     PauseScene _pause;
     /** The controller for the upgrades screen */
     UpgradesScene _upgrades;
-    /** The title and menu  scene */
+    /** The title and menu scene */
     TitleScene _title;
+    /** the settings scene */
+    SettingsScene _settings;
     /** The game over scene */
     DeathScene _death;
     /** The current active scene */
     State _scene;
-        
+    /** The previously active scene - this is only used to know where 
+    to go if the user exits the settings scene */
+    State _prevScene;
+
     
 public:
 #pragma mark Constructors
@@ -263,6 +271,16 @@ private:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateTitleScene(float dt);
+
+    /**
+     * Inidividualized update method for the settings scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements.
+     *
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updateSettingsScene(float dt);
     
     /**
      * Inidividualized update method for the game over scene
