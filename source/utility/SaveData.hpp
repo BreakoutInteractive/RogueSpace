@@ -82,7 +82,7 @@ public:
      */
     static void makeSave(Data data);
     
-    /** deletes the previous] save of the Game */
+    /** deletes the previous save of the Game */
     static void removeSave();
     
 #pragma mark - Settings Related Saves
