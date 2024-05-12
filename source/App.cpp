@@ -38,6 +38,7 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/settings.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
@@ -87,6 +88,7 @@ void App::update(float dt){
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
         _upgrades.init(_assets);
+        _settings.init(_assets);
         _title.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
@@ -113,6 +115,10 @@ void App::preUpdate(float dt) {
         case PAUSE:
             _pause.setActive(true);
             updatePauseScene(dt);
+            break;
+        case SETTINGS:
+            _settings.setActive(true);
+            updateSettingsScene(dt);
             break;
         case GAME:
             if(_gameplay.getRenderer().getPaused()){
@@ -179,6 +185,9 @@ void App::updatePauseScene(float dt) {
             break;
         case PauseScene::Choice::SETTINGS:
             _pause.setActive(false);
+            _settings.setActive(true);
+            _scene = SETTINGS;
+            _prevScene = PAUSE;
             break;
         case PauseScene::Choice::NONE:
             break;
@@ -251,8 +260,53 @@ void App::updateTitleScene(float dt){
             _gameplay.setLevel(save);
             _scene = GAME;
             break;
-        case TitleScene::SETTINGS: case TitleScene::TUTORIAL:
+        case TitleScene::SETTINGS:
+            _title.setActive(false);
+            _settings.setActive(true);
+            _scene = SETTINGS; // switch to settings scene
+            _prevScene = TITLE;
             break;
+        case TitleScene::TUTORIAL:
+            break;
+    }
+}
+
+void App::updateSettingsScene(float dt) {
+    _settings.update(dt);
+    switch (_settings.getChoice()) {
+    case SettingsScene::Choice::CLOSE:
+        _settings.setActive(false);
+        switch (_prevScene) {
+        case PAUSE:
+            _pause.setActive(true);
+            _scene = PAUSE; // switch to pause scene
+            break;
+        case TITLE:
+            setTitleScene();
+            _scene = TITLE;
+            break;
+        default: //should never be here since you can only access settings from pause and title scenes
+            break;
+        }
+        break;
+    //TODO: control volume when music/sfx are implemented
+    case SettingsScene::Choice::VOLUP:
+        break;
+    case SettingsScene::Choice::VOLDOWN:
+        break;
+    case SettingsScene::Choice::SFXUP:
+        break;
+    case SettingsScene::Choice::SFXDOWN:
+        break;
+    case SettingsScene::Choice::MUSICUP:
+        break;
+    case SettingsScene::Choice::MUSICDOWN:
+        break;
+    case SettingsScene::Choice::INVERT:
+        _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
+        break;
+    case SettingsScene::Choice::NONE:
+        break;
     }
 }
 
@@ -275,6 +329,10 @@ void App::draw() {
             break;
         case TITLE:
             _title.render(_batch);
+            break;
+        case SETTINGS:
+            _settings.render(_batch);
+            break;
         default:
             break;
     }

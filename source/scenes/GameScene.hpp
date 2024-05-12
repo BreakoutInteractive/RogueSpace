@@ -218,6 +218,11 @@ public:
     GameRenderer& getRenderer(){return _gameRenderer;}
 
     /**
+     * Returns a reference to the input controller
+     */
+    InputController& getInput() { return _input; }
+
+    /**
      * toggle input devices
      */
     void activateInputs(bool value){ _input.setActive(value); }
