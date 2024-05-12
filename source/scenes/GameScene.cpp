@@ -291,8 +291,8 @@ void GameScene::preUpdate(float dt) {
     }
     if (_input.didExit())  {
         CULog("Shutting down");
-        //Application::get()->quit();
-        _level->getPlayer()->setHP(0);
+        Application::get()->quit();
+        // _level->getPlayer()->setHP(0); // could use as a toggle to auto-kill player
     }
     
     // TODO: can be removed, but for pc devs to quickly reset
