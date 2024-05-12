@@ -53,6 +53,9 @@ void App::onShutdown() {
     _gameplay.dispose();
     _pause.dispose();
     _upgrades.dispose();
+    _settings.dispose();
+    _title.dispose();
+    _death.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
