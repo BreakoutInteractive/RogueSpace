@@ -56,6 +56,8 @@ public:
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    /** The maximum level number to defeat for the game to end */
+    int MAX_LEVEL;
     
 #pragma mark Controllers
     /** Controller for abstracting out input across multiple platforms */

@@ -71,6 +71,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     _parser.loadTilesets(assets);
     _levelNumber = 1;
+    MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
     _input.init([this](Vec2 pos){
         return _gameRenderer.isInputProcessed(pos);
@@ -354,7 +355,6 @@ void GameScene::preUpdate(float dt) {
         }
     }
     
-    int MAX_LEVEL = 6; // TODO: what defines final victory of a run?
     // level is completed when player successfully exits the room
     if (isComplete() && _level->isCompleted()){
         if (_levelNumber < MAX_LEVEL){

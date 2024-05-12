@@ -1,4 +1,5 @@
 {
+    "max-level": 7,
     "view-width": 16.0,
     "view-height": 9.0,
     "player": {
@@ -7,9 +8,6 @@
         "friction":       0.1,
         "restitution":    0,
         "rotation":      false,
-        "texture":       "player-idle",
-        "parry":         "parry",
-        "attack":        "attack",
         "debugcolor":    "blue",
         "upgrades": {
             "melee" : [1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
