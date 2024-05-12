@@ -78,3 +78,9 @@ void Animation::runCallbacks(){
         _nextCallback = _callbacks.begin();
     }
 }
+
+void Animation::setDuration(float duration){
+    CUAssertLog(!_started, "It is unsafe to change animation duration after animation starts");
+    CUAssertLog(duration > 0, "an animation must last longer than 0 ms");
+    _duration = duration;
+}

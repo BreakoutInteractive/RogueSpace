@@ -22,14 +22,3 @@ bool MeleeEnemy::init(std::shared_ptr<JsonValue> data) {
     
     return true;
 }
-
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
-void MeleeEnemy::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
-}

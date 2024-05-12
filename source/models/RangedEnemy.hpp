@@ -53,14 +53,6 @@ public:
     virtual ~RangedEnemy(void) { dispose(); }
     
     /**
-     * Disposes all resources and assets
-     *
-     * Any assets owned by this object will be immediately released.
-     * Requires initialization before next use.
-     */
-    void dispose();
-    
-    /**
      * Initializes a new player with the given position and size.
      *
      * The player size is specified in world coordinates.

@@ -22,18 +22,6 @@ bool MageAlien::init(std::shared_ptr<JsonValue> data) {
     return true;
 }
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
-void MageAlien::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
-}
-
-
 #pragma mark -
 #pragma mark Physics
 
@@ -57,9 +45,9 @@ void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 #pragma mark Animation
 
 void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _enemyTexture = assets->get<Texture>("mage-idle");
     _healthBG =  assets->get<Texture>("hp_back");
     _healthFG =  assets->get<Texture>("hp");
+    auto idleTexture = assets->get<Texture>("mage-idle");
     auto walkTexture = assets->get<Texture>("mage-walk");
     auto attackTexture = assets->get<Texture>("mage-attack");
     auto stunTexture = assets->get<Texture>("mage-idle"); // use idle animation for now
@@ -68,7 +56,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("mage-projectile");
     
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 9);
+    auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 9);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 16);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 14);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);

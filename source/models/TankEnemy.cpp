@@ -23,17 +23,6 @@ bool TankEnemy::init(std::shared_ptr<JsonValue> data) {
     return true;
 }
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
-void TankEnemy::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
-}
-
 
 #pragma mark -
 #pragma mark Physics
@@ -56,10 +45,9 @@ void TankEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 #pragma mark Animation
 
 void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
-    _enemyTexture = assets->get<Texture>("tank-idle");
     _healthBG =  assets->get<Texture>("hp_back");
     _healthFG =  assets->get<Texture>("hp");
-    //TODO: real animations
+    auto idleTexture = assets->get<Texture>("tank-idle");
     auto walkTexture = assets->get<Texture>("tank-idle");
     auto attackTexture = assets->get<Texture>("tank-attack");
     auto stunTexture = assets->get<Texture>("tank-stun");
@@ -67,7 +55,7 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
 
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 5);
+    auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 5);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 8);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 6);

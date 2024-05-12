@@ -23,17 +23,6 @@ bool RangedEnemy::init(std::shared_ptr<JsonValue> data) {
     return true;
 }
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
-void RangedEnemy::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
-}
-
 void RangedEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     Enemy::draw(batch);
     std::shared_ptr<SpriteSheet>sheet = _chargingAnimation->getSpriteSheet();
