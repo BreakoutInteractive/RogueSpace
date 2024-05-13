@@ -59,12 +59,12 @@ void SaveData::makeSave(Data data){
     json->appendChild("level", JsonValue::alloc((long) data.level));
     json->appendChild("weapon", JsonValue::alloc((long)data.weapon));
     json->appendChild("hp", JsonValue::alloc(data.hp));
-    json->appendChild("hpLvl", JsonValue::alloc((long)data.weapon));
-    json->appendChild("atkLvl", JsonValue::alloc((long)data.weapon));
-    json->appendChild("rangedLvl", JsonValue::alloc((long)data.weapon));
-    json->appendChild("defLvl", JsonValue::alloc((long)data.weapon));
-    json->appendChild("parryLvl", JsonValue::alloc((long)data.weapon));
-    json->appendChild("dashLvl", JsonValue::alloc((long)data.weapon));
+    json->appendChild("hpLvl", JsonValue::alloc((long)data.hpLvl));
+    json->appendChild("atkLvl", JsonValue::alloc((long)data.atkLvl));
+    json->appendChild("rangedLvl", JsonValue::alloc((long)data.rangedLvl));
+    json->appendChild("defLvl", JsonValue::alloc((long)data.defLvl));
+    json->appendChild("parryLvl", JsonValue::alloc((long)data.parryLvl));
+    json->appendChild("dashLvl", JsonValue::alloc((long)data.dashLvl));
     auto path = Application::get()->getSaveDirectory() + SAVEFILE;
     CULog("savefile %s", std::string(path).c_str());
     auto writer = JsonWriter::alloc(path);

@@ -7,41 +7,33 @@
 
 #include "Upgradeable.hpp"
 
-
-Upgradeable::Upgradeable(int maxLevel, float maxValue, float baseValue){
-    _maxLevel = maxLevel;
+Upgradeable::Upgradeable(float initialVal, float maxValue, UpgradeType type){
     _currLevel = 0;
-    _maxValue = maxValue;
-    _initialValue = baseValue;
-    _currValue = baseValue;
-    _stepAmt = (_maxValue-_currValue)/_maxLevel;
+    _type = type;
+    _tierValues.push_back(initialVal);
+    float stepAmt = (maxValue-initialVal)/5;
+    for (int idx = 1; idx < 6; idx++) {
+        _tierValues.push_back(_tierValues.at(idx-1)+stepAmt);
+    }
+}
+Upgradeable::Upgradeable(std::vector<float> tiers, UpgradeType type){
+    _currLevel = 0;
+    _type = type;
+    _tierValues = tiers;
 }
 
 void Upgradeable::levelUp(){
-    if (_currLevel<_maxLevel){
+    if (_currLevel<_tierValues.size()-1){
         _currLevel+=1;
-        _currValue += _stepAmt;
     }
 }
 
 void Upgradeable::levelDown(){
     if (_currLevel>0) {
         _currLevel-=1;
-        _currValue -= _stepAmt;
     }
 }
 
 void Upgradeable::resetUpgrade(){
-    _currValue = _initialValue;
     _currLevel = 0;
-}
-
-
-void Upgradeable::boostStat(float boostValue){
-    _currValue += boostValue;
-    
-}
-
-void Upgradeable::debuffStat(float boostValue){
-    _currValue -= boostValue;
 }

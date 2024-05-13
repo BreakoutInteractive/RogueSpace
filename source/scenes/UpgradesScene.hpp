@@ -15,35 +15,12 @@
 
 
 using namespace cugl;
-using namespace std;
+
 /**
- *
+ * A pop-up menu scene that allows users to select upgrades
  */
 class UpgradesScene : public cugl::Scene2 {
 public:
-    /**
-     * The upgrade choice.
-     *
-     * This state allows the top level application to know what the user
-     * chose.
-     */
-    enum Choice {
-        /**User has made no choice**/
-        NONE,
-        /** User wants to heal */
-        HEALTH,
-        /** User wants upgrade option 1 */
-        UPGRADE_1,
-        /** User wants upgrade option 2 */
-        UPGRADE_2
-    };
-    
-    /**
-     * Stats that can be upgraded.
-     *
-     * Should be consistent with GameScene.
-     */
-    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
     
     /**
      * Level classes of upgrades.
@@ -56,18 +33,27 @@ protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+#pragma mark - Scene Nodes
     /** The button for upgrade option 1 */
     std::shared_ptr<cugl::scene2::Button> _option1;
     /** The button to confirm upgrade option 1*/
     std::shared_ptr<cugl::scene2::Button> _confirm1;
-    /** The button for upgrade option 1 */
-    std::shared_ptr<cugl::scene2::Button> _heal;
-    /** The button to confirm upgrade option 1*/
     std::shared_ptr<scene2::Label> _option1Name;
     std::shared_ptr<scene2::Label> _option1Descrip;
     std::shared_ptr<scene2::Label> _option1Level;
     std::shared_ptr<scene2::TexturedNode> _option1Icon;
-    std::shared_ptr<Texture> _healTexture;
+    
+    /** The button for upgrade option 2 */
+    std::shared_ptr<cugl::scene2::Button> _option2;
+    /** The button to confirm upgrade option 2*/
+    std::shared_ptr<cugl::scene2::Button> _confirm2;
+    std::shared_ptr<scene2::Label> _option2Name;
+    std::shared_ptr<scene2::Label> _option2Descrip;
+    std::shared_ptr<scene2::Label> _option2Level;
+    std::shared_ptr<scene2::TexturedNode> _option2Icon;
+    
+#pragma mark - Icon Textures
+    std::shared_ptr<Texture> _healthTexture;
     std::shared_ptr<Texture> _parryTexture;
     std::shared_ptr<Texture> _shieldTexture;
     std::shared_ptr<Texture> _atkSdTexture;
@@ -75,27 +61,20 @@ protected:
     std::shared_ptr<Texture> _bowTexture;
     std::shared_ptr<Texture> _swordTexture;
     
+#pragma mark - Scene State
+    std::pair<UpgradeType, int> _displayedAttribute1;
+    std::pair<UpgradeType, int> _displayedAttribute2;
+    int _level;
+    bool _selectedUpgrade;
+    UpgradeType _upgrade;
     
-    /** The button for upgrade option 2 */
-    std::shared_ptr<cugl::scene2::Button> _option2;
-    /** The button to confirm upgrade option 2*/
-    std::shared_ptr<cugl::scene2::Button> _confirm2;
-    shared_ptr<scene2::Label> _option2Name;
-    shared_ptr<scene2::Label> _option2Descrip;
-    shared_ptr<scene2::Label> _option2Level;
-    std::shared_ptr<scene2::TexturedNode> _option2Icon;
-    
-    int _displayedAttribute1;
-    int _displayedAttribute2;
-    /** The player choice */
-    Choice _choice;
-    bool _active;
+    /**
+     * sets the corresponding set of buttons with the upgrade information
+     */
+    void setButtonText(UpgradeType upgrade, int level, int button);
     
 public:
 #pragma mark -
-    
-    /** enum number of selcted upgrade */
-    int _selectedUpgrade;
 #pragma mark Constructors
     /**
      * Creates a new  menu scene with the default values.
@@ -133,15 +112,14 @@ public:
      * @return true if the controller is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    
+#pragma mark Scene Configuration
     /**
      * Updates button infomartionon on scene
      *
-     *
      * @param attributes available payer upgrades
      */
-    void updateScene(std::vector<int> attributes,std::vector<std::shared_ptr<Upgradeable>> availableUpgrades);
-    
-    void setButtonText(int upgrade, int buttonType, int level);
+    void updateScene(std::pair<Upgradeable, Upgradeable> upgradeOptions);
 
     /**
      * Sets whether the scene is currently active
@@ -154,15 +132,28 @@ public:
      */
     virtual void setActive(bool value) override;
     
+#pragma mark Scene Selection
     /**
-     * Returns a random Upgrade
-     *
-     * This will make sure upgrades returned are .
-     *
-     * @return the user's menu choice.
+     * @return whether an upgrade has been chosen
      */
-    Choice getChoice() const { return _choice; }
-        
+    bool hasSelectedUpgrade() const { return _selectedUpgrade;}
+    
+    /**
+     * @return the selected upgrade, if chosen.
+     */
+    UpgradeType getChoice()  { return _upgrade; }
+    
+    /**
+     * @return the level of the selected upgrade, if chosen.
+     */
+    int getUpgradeLevel(){ return _level; }
+    
+    /**
+     * Input can be viewed as being processed simultaneously but only one UI element across different active screen components should be processing the user input.
+     *
+     * @return whether an event with the given position will be processed by the Upgrades Menu
+     */
+    bool isInputProcessed(Vec2 pos);
 
 };
 

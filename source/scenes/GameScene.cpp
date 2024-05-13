@@ -65,7 +65,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
-    srand(time(NULL));
+    srand((uint) time(NULL));
 
     // initalize controllers with the assets
     _assets = assets;
@@ -73,9 +73,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
-    _input.init([this](Vec2 pos){
-        return _gameRenderer.isInputProcessed(pos);
-    });
+    auto preprocessor = [this](Vec2 pos){
+        return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
+    };
+    _input.init(preprocessor);
     activateInputs(false);
     _audioController = std::make_shared<AudioController>();
     _audioController->init(_assets);
@@ -88,25 +89,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     config.maxZoom = GameConstants::GAME_CAMERA_MAX_ZOOM_OUT;
     _camController.init(getCamera(), config);
     
-    // TODO: revisit
-    upgradeScreenActive=false;
-    upgradeChosen=false;
-    _isUpgradeRoom = false;   // necessary
-
-    std::shared_ptr<Upgradeable> meleeUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE);
-    std::shared_ptr<Upgradeable> parryUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> defenseUpgrade =  std::make_shared<Upgradeable>(5, .5, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> meleeSpeedUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_ATK_DAMAGE); //placeholder
-    std::shared_ptr<Upgradeable> dodgeCDUpgrade = std::make_shared<Upgradeable>(5, 1/6, 1); // temporary to illustrate 1 dash to 6 dash.
-    std::shared_ptr<Upgradeable> bowUpgrade = std::make_shared<Upgradeable>(5, 2, GameConstants::PLAYER_BOW_DAMAGE);
-    
-    availableUpgrades.push_back(std::move(meleeUpgrade));
-    availableUpgrades.push_back(std::move(parryUpgrade));
-    availableUpgrades.push_back(std::move(defenseUpgrade));
-    availableUpgrades.push_back(std::move(meleeSpeedUpgrade));
-    availableUpgrades.push_back(std::move(dodgeCDUpgrade));
-    availableUpgrades.push_back(std::move(bowUpgrade));
-
+    // necessary (starting at any actual level implies it is not an upgrade room)
+    _isUpgradeRoom = false;
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -150,7 +134,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelTransition.setFadeIn(GameConstants::TRANSITION_FADE_IN_TIME);
     _levelTransition.setFadeOut(GameConstants::TRANSITION_FADE_OUT_TIME, Color4(255, 255, 255, 0));
     _levelTransition.setFadeInCallBack([this](){
-        this->upgradeChosen=false;
         if (_isUpgradeRoom){
             // current room was upgrades, just go to the current level number
             _isUpgradeRoom = false;
@@ -161,15 +144,23 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         }
         
         // save game data as level ends
+        auto p = _level->getPlayer();
         SaveData::Data data;
         data.level = _levelNumber;
-        data.hp = _level->getPlayer()->getHP();
-        // TODO: set other data attributes to save
+        data.hp = p->getHP();
+        data.atkLvl = p->getMeleeUpgrade().getCurrentLevel();
+        data.dashLvl = p->getDodgeUpgrade().getCurrentLevel();
+        data.defLvl = p->getDamageReductionUpgrade().getCurrentLevel();
+        data.hpLvl = p->getHPUpgrade().getCurrentLevel();
+        data.parryLvl = p->getStunUpgrade().getCurrentLevel();
+        data.rangedLvl = p->getBowUpgrade().getCurrentLevel();
+        data.weapon = p->getWeapon();
         SaveData::makeSave(data);
         // load the next level
         this->setLevel(data);
     });
     
+    _upgrades.init(assets);
   
 #pragma mark - Game State Initialization
     setActive(false);
@@ -196,11 +187,7 @@ void GameScene::dispose() {
 
 void GameScene::restart(){
     _winNode->setVisible(false);
-    for (auto it = availableUpgrades.begin(); it != availableUpgrades.end(); ++it){
-        (*it)->resetUpgrade();
-    }
     _levelTransition.setActive(false);
-    upgradeChosen=false;
     _isUpgradeRoom = true;  // first level is always upgrades
     SaveData::removeSave();
     SaveData::Data data;
@@ -213,13 +200,11 @@ void GameScene::restart(){
 
 void GameScene::setLevel(SaveData::Data saveData){
     _debugNode->removeAllChildren();
-    float currentHp = saveData.hp;
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
-        generateRandomUpgrades();
     }
     else{
         levelToParse = getLevelKey(_levelNumber);
@@ -241,6 +226,19 @@ void GameScene::setLevel(SaveData::Data saveData){
     _collisionController.setLevel(_level);
     _gameRenderer.setGameElements(getCamera(), _level);
     
+    auto p = _level->getPlayer();
+    p->setMaxHPLevel(saveData.hpLvl);
+    p->setMeleeLevel(saveData.atkLvl);
+    p->setBowLevel(saveData.rangedLvl);
+    p->setBlockLevel(saveData.defLvl);
+    p->setArmorLevel(saveData.defLvl);
+    p->setStunLevel(saveData.parryLvl);
+    p->setDodgeLevel(saveData.dashLvl);
+    p->setHP(saveData.hp);
+    auto weapon = static_cast<Player::Weapon>(saveData.weapon);
+    p->setWeapon(weapon);
+    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
+    
     if (_isUpgradeRoom) {
         _level->getRelic()->setActive(true);
         // turn off the energy walls first
@@ -248,19 +246,17 @@ void GameScene::setLevel(SaveData::Data saveData){
         for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
             (*it)->deactivate();
         }
+        configureUpgradeMenu(p);
     }
     
     setComplete(false);
     setDefeat(false);
-    _input.activateMeleeControls(); // TODO: use the active weapon
+    bool usingMelee = weapon == Player::Weapon::MELEE;
+    if (usingMelee) _input.activateMeleeControls();
+    else _input.activateRangeControls();
     _input.setActive(true);
 
-    auto p = _level->getPlayer();
-    _camController.setCamPosition(p->getPosition() * p->getDrawScale());
-    setPlayerAttributes(currentHp);
-    
-    // TODO: edit the function later, has temporary side effect: sets the swap button to be down (since player always gets sword) ...
-    _gameRenderer.setSwapButtonCallback([this](){
+    _gameRenderer.configureSwapButton(usingMelee, [this](){
         _level->getPlayer()->swapWeapon();
         _input.swapControlMode();
     });
@@ -268,6 +264,25 @@ void GameScene::setLevel(SaveData::Data saveData){
     // hide effect nodes
     _areaClearNode->setVisible(false);
     _deadEffectNode->setVisible(false);
+}
+
+void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
+    // first find the stats that can be upgraded
+    std::array<Upgradeable, 6> all = {
+        player->getMeleeUpgrade(), player->getBowUpgrade(), player->getHPUpgrade(), player->getStunUpgrade(), player->getDodgeUpgrade(), player->getDamageReductionUpgrade()};
+    std::vector<Upgradeable> options;
+    for (Upgradeable& upgrade : all){
+        if (!upgrade.isMaxLevel()){
+            options.push_back(upgrade);
+        }
+    }
+    int opt1 = std::rand() % options.size();
+    int opt2 = std::rand() % options.size();
+    while (opt2==opt1){
+        opt2 = std::rand() % options.size();
+    }
+    std::pair<Upgradeable, Upgradeable> randomOptions(options[opt1], options[opt2]);
+    _upgrades.updateScene(randomOptions);
 }
 
 std::string GameScene::getLevelKey(int level){
@@ -569,11 +584,8 @@ void GameScene::preUpdate(float dt) {
                 }
             }
         }
-        
     }
-    if (_level->getRelic()!=nullptr && !upgradeChosen){
-        upgradeScreenActive =_level->getRelic()->getTouched();
-    }
+
 #pragma mark - Component Updates
     
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
@@ -598,6 +610,44 @@ void GameScene::preUpdate(float dt) {
     
     player->update(dt); // updates counters, hitboxes
     _levelTransition.update(dt); // does nothing when not active
+    
+#pragma mark - Upgrade System
+    
+    if (_isUpgradeRoom && _level->getRelic() != nullptr){
+        auto relic = _level->getRelic();
+        _upgrades.setActive(relic->getTouched() && relic->getActive());
+        if (_upgrades.isActive() && _upgrades.hasSelectedUpgrade()){
+            // get the selected upgrade, apply to player
+            float prevMaxHP = player->getMaxHP();
+            switch (_upgrades.getChoice()) {
+                case UpgradeType::SWORD:
+                    player->setMeleeLevel(_upgrades.getUpgradeLevel());
+                    break;
+                case PARRY:
+                    player->setStunLevel(_upgrades.getUpgradeLevel());
+                    break;
+                case ATK_SPEED:
+                    CULog("atk spd");
+                    break;
+                case DASH:
+                    player->setDodgeLevel(_upgrades.getUpgradeLevel());
+                    break;
+                case UpgradeType::BOW:
+                    player->setBowLevel(_upgrades.getUpgradeLevel());
+                    break;
+                case HEALTH:
+                    player->setMaxHPLevel(_upgrades.getUpgradeLevel());
+                    player->setHP(player->getHP() + player->getMaxHP() - prevMaxHP);
+                    break;
+                case SHIELD: case BLOCK:
+                    player->setArmorLevel(_upgrades.getUpgradeLevel());
+                    player->setBlockLevel(_upgrades.getUpgradeLevel());
+                    break;
+            }
+            // turn off relic
+            relic->setActive(false);
+        }
+    }
 }
 
 
@@ -638,61 +688,6 @@ void GameScene::fixedUpdate(float step) {
     }
 }
 
-void GameScene::generateRandomUpgrades(){
-    upgradesForLevel.clear();
-    int displayedAttribute1 = std::rand()%availableUpgrades.size();
-    upgradesForLevel.push_back(displayedAttribute1);
-
-    int displayedAttribute2 = std::rand()%availableUpgrades.size();
-    while (displayedAttribute2==displayedAttribute1){
-        displayedAttribute2 =std::rand()%availableUpgrades.size();
-    }
-    upgradesForLevel.push_back(displayedAttribute2);
-}
-
-void GameScene::updatePlayerAttributes(int selectedAttribute){
-    auto player = _level->getPlayer();
-    switch (selectedAttribute) {
-        case SWORD:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            player->setMeleeDamage(availableUpgrades.at(selectedAttribute)->getCurrentValue());
-            break;
-        case PARRY: //unimplemented
-//            availableUpgrades.at(selectedAttribute)->levelUp();
-//            _level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
-            break;
-        case SHIELD:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-//            player->setDefense(availableUpgrades.at(selectedAttribute)->getCurrentValue());
-            break;
-        case ATK_SPEED: //unimplemented
-//            availableUpgrades.at(selectedAttribute)->levelUp();
-//            _level->getPlayer()->meleeDamage = availableUpgrades.at(selectedAttribute)->getCurrentValue();
-            break;
-        case DASH:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            //_level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(selectedAttribute)->getCurrentValue());
-            break;
-        case BOW:
-            availableUpgrades.at(selectedAttribute)->levelUp();
-            player->setBaseBowDamage(availableUpgrades.at(selectedAttribute)->getCurrentValue());
-            break;
-        default:
-            // this case for full restore, subject to removal;
-            player->setHP(player->getMaxHP());
-    }
-}
-
-void GameScene::setPlayerAttributes(float hp){
-    auto player = _level->getPlayer();
-    player->setHP(hp);
-    player->setMeleeDamage(availableUpgrades.at(SWORD)->getCurrentValue());
-//    player->setDefense(availableUpgrades.at(SHIELD)->getCurrentValue());
-    player->setBaseBowDamage(availableUpgrades.at(BOW)->getCurrentValue());
-    //_level->getPlayer()->parryWindow = availableUpgrades.at(PARRY)->getCurrentValue(); //unimplemented
-    //_level->getPlayer()->atkSpeed = (availableUpgrades.at(ATK_SPEED)->getCurrentValue()); //unimplemented
-    //_level->getPlayer()->dodgeCD.setMaxCount(availableUpgrades.at(DASH)->getCurrentValue());
-}
 
 void GameScene::postUpdate(float remain) {
     // TODO: possibly apply interpolation.
@@ -724,14 +719,19 @@ void GameScene::setActive(bool value){
         _gameRenderer.setActivated(value);
         activateInputs(value);
         _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
+        _upgrades.setActive(false); // upgrades is only on by interaction
     }
 }
 
 void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
+    Scene2::render(batch); // this is mainly for the debug
     _gameRenderer.render(batch);
     _effectsScene.render(batch);
+    if (_upgrades.isActive()){
+        _upgrades.render(batch);
+    }
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
     }
-    Scene2::render(batch); // this is mainly for the debug
+
 }
