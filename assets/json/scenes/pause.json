@@ -12,23 +12,26 @@
       "setting": {
          "file": "textures/pause/setting.png"
       },
-      "upgrade-sword": {
-         "file": "textures/upgrades-screen/upgrade-sword.png"
+      "sword": {
+          "file": "textures/upgrades-screen/upgrade_atk.png"
       },
-      "upgrade-bow": {
-         "file": "textures/upgrades-screen/upgrade-bow.png"
+      "bow": {
+          "file": "textures/upgrades-screen/upgrade_bow.png"
       },
-      "upgrade-dash": {
-         "file": "textures/upgrades-screen/upgrade-dash.png"
+      "dash": {
+          "file": "textures/upgrades-screen/upgrade_dash.png"
       },
-      "upgrade-parry": {
-         "file": "textures/upgrades-screen/upgrade-parry.png"
+      "parry": {
+          "file": "textures/upgrades-screen/upgrade_parry.png"
       },
-      "upgrade-shield": {
-         "file": "textures/upgrades-screen/upgrade-shield.png"
+      "shield": {
+          "file": "textures/upgrades-screen/upgrade_shield.png"
       },
-      "upgrade-speed": {
-         "file": "textures/upgrades-screen/upgrade-atkspeed.png"
+      "speed": {
+          "file": "textures/upgrades-screen/upgrade_atk_speed.png"
+      },
+      "health": {
+          "file": "textures/upgrades-screen/upgrade_max_health.png"
       }
    },
    "scene2s": {
@@ -388,13 +391,13 @@
                      328
                   ],
                   "visible": true,
-                  "upnode": "upgrade-parry"
+                  "upnode": "parry"
                },
                "children": {
-                  "upgrade-parry": {
+                  "parry": {
                      "type": "Image",
                      "data": {
-                        "texture": "upgrade-parry",
+                        "texture": "parry",
                         "anchor": [
                            0.5,
                            0.5
@@ -447,13 +450,13 @@
                      460
                   ],
                   "visible": true,
-                  "upnode": "upgrade-sword"
+                  "upnode": "sword"
                },
                "children": {
-                  "upgrade-sword": {
+                  "sword": {
                      "type": "Image",
                      "data": {
-                        "texture": "upgrade-sword",
+                        "texture": "sword",
                         "anchor": [
                            0.5,
                            0.5
@@ -506,13 +509,13 @@
                      206
                   ],
                   "visible": true,
-                  "upnode": "upgrade-shield"
+                  "upnode": "shield"
                },
                "children": {
-                  "upgrade-shield": {
+                  "shield": {
                      "type": "Image",
                      "data": {
-                        "texture": "upgrade-shield",
+                        "texture": "shield",
                         "anchor": [
                            0.5,
                            0.5
@@ -565,13 +568,13 @@
                      460
                   ],
                   "visible": true,
-                  "upnode": "upgrade-bow"
+                  "upnode": "bow"
                },
                "children": {
-                  "upgrade-bow": {
+                  "bow": {
                      "type": "Image",
                      "data": {
-                        "texture": "upgrade-bow",
+                        "texture": "bow",
                         "anchor": [
                            0.5,
                            0.5
@@ -624,13 +627,13 @@
                      328
                   ],
                   "visible": true,
-                  "upnode": "upgrade-dash"
+                  "upnode": "dash"
                },
                "children": {
-                  "upgrade-dash": {
+                  "dash": {
                      "type": "Image",
                      "data": {
-                        "texture": "upgrade-dash",
+                        "texture": "dash",
                         "anchor": [
                            0.5,
                            0.5
@@ -683,13 +686,13 @@
                      207
                   ],
                   "visible": true,
-                  "upnode": "upgrade-speed"
+                  "upnode": "speed"
                },
                "children": {
-                  "upgrade-speed": {
+                  "speed": {
                      "type": "Image",
                      "data": {
-                        "texture": "upgrade-speed",
+                        "texture": "speed",
                         "anchor": [
                            0.5,
                            0.5
@@ -726,3 +729,4 @@
       }
    }
 }
+

@@ -53,7 +53,6 @@ void App::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
     _pause.dispose();
-    _upgrades.dispose();
     _settings.dispose();
     _title.dispose();
     _death.dispose();
@@ -92,7 +91,6 @@ void App::update(float dt){
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
-        _upgrades.init(_assets);
         _settings.init(_assets);
         _title.init(_assets);
         _death.init(_assets);
@@ -111,13 +109,6 @@ void App::preUpdate(float dt) {
             break;
         case TITLE:
             updateTitleScene(dt);
-            break;
-        case UPGRADE:
-            _upgrades.setActive(true);
-            _gameplay.activateInputs(true);
-            _gameplay.getRenderer().setActivated(false);
-            _gameplay.preUpdate(dt);
-            updateUpgradesScene(dt);
             break;
         case PAUSE:
             _pause.setActive(true);
@@ -140,10 +131,6 @@ void App::preUpdate(float dt) {
             else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
                 _gameplay.setActive(false);
-            } else if (_gameplay.upgradeScreenActive){
-                _upgrades.setActive(false);
-                _scene = State::UPGRADE;
-                _upgrades.updateScene(_gameplay.getDisplayedUpgrades(), _gameplay.getAvailableUpgrades());
             }
             else{
                 _gameplay.setActive(true);
@@ -163,9 +150,6 @@ void App::fixedUpdate() {
             // Compute time to report to game scene version of fixedUpdate
             _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
             break;
-        case UPGRADE:
-            _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
-            break;
         default:
             break;
     }
@@ -176,9 +160,6 @@ void App::postUpdate(float dt) {
     switch (_scene) {
         case GAME:
             // Compute time to report to game scene version of postUpdate
-            _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
-            break;
-        case UPGRADE:
             _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
             break;
         default:
@@ -209,46 +190,6 @@ void App::updatePauseScene(float dt) {
             break;
         case PauseScene::Choice::NONE:
             break;
-    }
-}
-
-void App::updateUpgradesScene(float dt){
-    _upgrades.update(dt);
-    if (!_gameplay.upgradeScreenActive){
-        _upgrades.setActive(false);
-        _gameplay.getRenderer().setActivated(true);
-        _scene = State::GAME;
-    } else{ 
-        switch (_upgrades.getChoice()) {
-            case UpgradesScene::HEALTH:
-                _upgrades.setActive(false);
-                _gameplay.getRenderer().setActivated(true);
-                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
-                _gameplay.upgradeScreenActive=false;
-                _gameplay.upgradeChosen = true;
-                _gameplay.setRelicActive(false);
-                _scene = State::GAME;
-            case UpgradesScene::Choice::UPGRADE_1:
-                _upgrades.setActive(false);
-                _gameplay.getRenderer().setActivated(true);
-                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
-                _gameplay.upgradeScreenActive=false;
-                _gameplay.upgradeChosen = true;
-                _gameplay.setRelicActive(false);
-                _scene = State::GAME;
-                break;
-            case UpgradesScene::Choice::UPGRADE_2:
-                _upgrades.setActive(false);
-                _gameplay.getRenderer().setActivated(true);
-                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
-                _gameplay.upgradeScreenActive=false;
-                _gameplay.upgradeChosen = true;
-                _gameplay.setRelicActive(false);
-                _scene = State::GAME;
-                break;
-            default:
-                break;
-        }
     }
 }
 
@@ -391,10 +332,6 @@ void App::draw() {
             break;
         case GAME:
             _gameplay.render(_batch);
-            break;
-        case UPGRADE:
-            _gameplay.render(_batch);
-            _upgrades.render(_batch);
             break;
         case TITLE:
             _title.render(_batch);

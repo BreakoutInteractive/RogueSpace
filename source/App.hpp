@@ -30,8 +30,6 @@ protected:
         TITLE,
         /** The pause scene */
         PAUSE,
-        /** The upgrades scene */
-        UPGRADE,
         /** The scene to play the game */
         GAME,
         /** The settings scene */
@@ -54,8 +52,6 @@ protected:
     LoadingScene _loading;
     /** The controller for the pause screen */
     PauseScene _pause;
-    /** The controller for the upgrades screen */
-    UpgradesScene _upgrades;
     /** The title and menu scene */
     TitleScene _title;
     /** The tutorial scene */
@@ -255,26 +251,8 @@ private:
     void updatePauseScene(float dt);
     
     /**
-     * Inidividualized update method for the upgrades scene.
-     *
-     * This method keeps the primary {@link #update} from being a mess of switch
-     * statements.
-     *
-     * @param dt  The amount of time (in seconds) since the last frame
+     * sets the state of the App to be in the Title Scene
      */
-    void updateUpgradesScene(float dt);
-    
-    /**
-     * Inidividualized update method for the tutorial scene.
-     *
-     * This method keeps the primary {@link #update} from being a mess of switch
-     * statements.
-     *
-     * @param dt  The amount of time (in seconds) since the last frame
-     */
-    void updateTutorialScene(float dt);
-    
-    /** sets the state of the App to be in the Title Scene */
     void setTitleScene();
     
     /**
@@ -286,6 +264,17 @@ private:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateTitleScene(float dt);
+    
+    /**
+     * Inidividualized update method for the tutorial scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements.
+     *
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updateTutorialScene(float dt);
+
 
     /**
      * Inidividualized update method for the settings scene.
