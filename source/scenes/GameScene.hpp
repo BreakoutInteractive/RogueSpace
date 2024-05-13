@@ -56,6 +56,8 @@ public:
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    /** The maximum level number to defeat for the game to end */
+    int MAX_LEVEL;
     
 #pragma mark Controllers
     /** Controller for abstracting out input across multiple platforms */
@@ -137,7 +139,13 @@ protected:
     /** all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
     
-
+#pragma mark Internal Update Function Helpers
+    
+    /**
+     * handles player inputs and updates relevant HUD components.
+     */
+    void processPlayerInput();
+    
 public:
     /** Returns all upgradeable stats for the player*/
     std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
