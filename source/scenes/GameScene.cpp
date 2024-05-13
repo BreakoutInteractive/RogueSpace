@@ -726,7 +726,6 @@ void GameScene::setActive(bool value){
 }
 
 void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
-    Scene2::render(batch); // this is mainly for the debug
     _gameRenderer.render(batch);
     _effectsScene.render(batch);
     if (_upgrades.isActive()){
@@ -735,5 +734,5 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
     }
-
+    Scene2::render(batch); // this is mainly for the debug
 }
