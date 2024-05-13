@@ -156,21 +156,21 @@ protected:
     
 #pragma mark Player Stats
     /** player's maximum health*/
-    float _maxHP = GameConstants::PLAYER_MAX_HP;
+    Upgradeable _maxHP;
     /** damage done by melee */
-    float _meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
+    Upgradeable _meleeDamage;
     /** passive damage reduction */
-    float _damageReduction = GameConstants::PLAYER_PASSIVE_REDUCTION;
+    Upgradeable _damageReduction;
     /** block-mode damage reduction */
-    float _blockReduction = GameConstants::PLAYER_BLOCKING_REDUCTION;
+    Upgradeable _blockReduction;
     /** duration of parry stun */
-    float _parryWindow = GameConstants::PLAYER_STUN_DURATION;
+    Upgradeable _stunWindow;
     /** bow strength stat */
-    float _bowDamage = GameConstants::PLAYER_BOW_DAMAGE;
+    Upgradeable _bowDamage;
     /** number of repeated dodges available */
-    float _dodgeCount = GameConstants::PLAYER_DODGE_COUNT;
+    Upgradeable _dodgeCount;
     /** delay between each melee attack */
-    float _attackCooldown = GameConstants::PLAYER_ATTACK_COOLDOWN;
+    Upgradeable _attackCooldown;
     
 #pragma mark Melee Attack
 
@@ -225,46 +225,51 @@ public:
     
 #pragma mark Player Stats
     /** @return the maximum HP of the player */
-    float getMaxHP(){ return _maxHP; }
-    void setMaxHP(float hp){
-        CUAssertLog(hp >= 0, "max hp cannot be negative");
-        _maxHP = hp;
+    float getMaxHP(){ return _maxHP.getCurrentValue(); }
+    Upgradeable getHPUpgrade(){ return _maxHP; }
+    void setMaxHPLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _maxHP.setCurrentLevel(level);
     }
     
     /** @return player current HP */
     float getHP() { return _hp; }
     void setHP(float hp){
         CUAssertLog(hp >= 0, "hp cannot be negative");
-        CUAssertLog(hp <= _maxHP, "hp cannot be greater than max hp");
+        CUAssertLog(hp <= _maxHP.getCurrentValue(), "hp cannot be greater than max hp");
         _hp = hp;
     }
     
     /** @return player passive damage reduction */
-    float getDamageReduction(){ return _damageReduction; }
-    void setDamageReduction(float dr){
-        CUAssertLog(dr >= 0 && dr <= 1, "damage reduction must be within [0,1]");
-        _damageReduction = dr;
+    float getDamageReduction(){ return _damageReduction.getCurrentValue(); }
+    Upgradeable getDamageReductionUpgrade(){ return _damageReduction; }
+    void setArmorLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _damageReduction.setCurrentLevel(level);
     }
     
     /** @return player passive damage reduction */
-    float getBlockingDamageReduction(){ return _blockReduction; }
-    void setBlockingReduction(float dr){
-        CUAssertLog(dr >= 0 && dr <= 1, "damage reduction must be within [0,1]");
-        _blockReduction = dr;
+    float getBlockingDamageReduction(){ return _blockReduction.getCurrentValue(); }
+    Upgradeable getBlockingUpgrade(){ return _blockReduction; }
+    void setBlockLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _blockReduction.setCurrentLevel(level);
     }
     
     /** @return number of allowed consecutive dodges */
-    int getDodgeCounts(){ return _dodgeCount; }
-    void setDodgeCounts(int count){
-        CUAssertLog(count >= 1, "count cannot be 1 or more");
-        _dodgeCount = count;
+    int getDodgeCounts(){ return _dodgeCount.getCurrentValue();}
+    Upgradeable getDodgeUpgrade(){ return _dodgeCount; }
+    void setDodgeLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _dodgeCount.setCurrentLevel(level);
     }
     
     /** @return the damage dealt by the player's sword */
-    float getMeleeDamage(){ return _meleeDamage; }
-    void setMeleeDamage(float dmg){
-        CUAssertLog(dmg >= 0, "damage cannot be negative or zero");
-        _meleeDamage = dmg;
+    float getMeleeDamage(){ return _meleeDamage.getCurrentValue();}
+    Upgradeable getMeleeUpgrade(){ return _meleeDamage; }
+    void setMeleeLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _meleeDamage.setCurrentLevel(level);
     }
     
     /**
@@ -276,11 +281,16 @@ public:
      * @return the damage of the ranged attack
      */
     float getBowDamage();
+    Upgradeable getBowUpgrade(){ return _bowDamage; }
     /** sets the bow damage stat */
-    void setBaseBowDamage(float dmg ){
-        CUAssertLog(dmg >= 0, "damage cannot be negative or zero");
-        _bowDamage = dmg;
+    void setBowLevel(int level ){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _bowDamage.setCurrentLevel(level);
     }
+    
+    float getStunWindow() { return _stunWindow.getCurrentValue(); }
+    Upgradeable getStunUpgrade() { return _stunWindow; }
+    void setStunLevel(int level){ _stunWindow.setCurrentLevel(level); }
 
     
     int getIframes(){ return _iframeCounter.getCount(); }
@@ -288,17 +298,17 @@ public:
     /** @return whether the player can start a new melee attack (implies no cooldown active and weapon is sword)*/
     bool canMeleeAttack(){ return _weapon == MELEE && _attackActiveCooldown == 0;}
     /** resets the melee attack cooldown  */
-    void resetAttackCooldown(){ _attackActiveCooldown = _attackCooldown; }
+    void resetAttackCooldown(){ _attackActiveCooldown = _attackCooldown.getCurrentValue(); }
     
     /** @return player stamina (integer count) */
     float getStamina(){ return _stamina; }
     /** @return whether this player has enough stamina to activate dodge */
-    bool canDodge(){ return _stamina >= 1.0/_dodgeCount * GameConstants::PLAYER_STAMINA; }
+    bool canDodge(){ return _stamina >= 1.0/_dodgeCount.getCurrentValue() * GameConstants::PLAYER_STAMINA; }
     /**
      * reduces the player stamina by the equivalence of one single dodge
      * @pre `canDodge()` must return true.
      */
-    void reduceStamina(){ _stamina -= 1.0/_dodgeCount * GameConstants::PLAYER_STAMINA; }
+    void reduceStamina(){ _stamina -= 1.0/_dodgeCount.getCurrentValue() * GameConstants::PLAYER_STAMINA; }
     
     
 #pragma mark Player Animation State
@@ -331,6 +341,7 @@ public:
 #pragma mark Player Combat State
     
     Weapon getWeapon(){ return _weapon; }
+    void setWeapon(Weapon weapon){ _weapon = weapon; }
     
     /** switches the weapon of the player from melee to range or vice versa.  */
     void swapWeapon() { _weapon = static_cast<Weapon>((_weapon + 1) % 2); }

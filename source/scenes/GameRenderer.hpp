@@ -120,6 +120,7 @@ public:
      * @return whether an event with the given position will be processed by the HUD elements.
      */
     bool isInputProcessed(Vec2 pos){
+        if (!isActive()){ return false; }
         return _pauseButton->inContentBounds(pos) || _swapButton->inContentBounds(pos);
     }
     
@@ -146,14 +147,18 @@ public:
     void setActivated(bool value);
     
     /**
-     * activates/deactivates the swap button. A deactivated swap button still renders but it is faded out.
+     * activates/deactivates the swap button.
      */
     void setSwapButtonActive(bool value);
     
     /** 
-     * sets the callback to execute when the swap button is toggled
+     * sets the callback to execute when the swap button is toggled and whether
+     * the button is down/up.
+     *
+     * @param down true when player is using sword
+     * @param callback game event to trigger when button is toggled
      */
-    void setSwapButtonCallback(std::function<void()> callback);
+    void configureSwapButton(bool down, std::function<void()> callback);
         
     /**
      * Draws the game scene with the given sprite batch.
