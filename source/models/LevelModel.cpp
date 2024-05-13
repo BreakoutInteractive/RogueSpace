@@ -94,18 +94,6 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if ((*it)->isEnabled()){
             (*it)->draw(batch);
         }
-    }    
-
-    for (int ii = 0; ii < _enemies.size(); ii++){
-        auto enemyAtk = _enemies[ii]->getAttack();
-        //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
-        if (enemyAtk->isEnabled()) {
-            auto sheet = _enemies[ii]->getHitboxAnimation()->getSpriteSheet();
-            Affine2 atkTrans = Affine2::createScale( GameConstants::ENEMY_MELEE_ATK_RANGE/ ((Vec2)sheet->getFrameSize() / 2) * _scale);
-            atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
-            atkTrans.translate(enemyAtk->getPosition() * _scale);
-            sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
-        }
     }
         
     for (int ii = 0; ii < _enemies.size(); ii++){

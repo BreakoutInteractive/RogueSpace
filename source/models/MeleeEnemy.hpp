@@ -72,6 +72,9 @@ public:
         auto result = std::make_shared<MeleeEnemy>();
         return (result->init(data) ? result : nullptr);
     }
+
+
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
 };
 
 #endif /* MeleeEnemy_hpp */
