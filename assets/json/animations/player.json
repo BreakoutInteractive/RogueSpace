@@ -28,10 +28,10 @@
             "file":     "textures/sprites/effect_parry.png"
         },
         "player-swipe": {
-            "file":     "textures/sprites/player/player_swipe_01.png"
+            "file":     "textures/sprites/effect_attack_player.png"
         },
         "player-swipe-combo": {
-            "file":     "textures/sprites/player/player_swipe_02.png"
+            "file":     "textures/sprites/effect_pwrattack_player.png"
         },
         "hit-effect": {
             "file":     "textures/sprites/player/effect_hit_player.png"

@@ -181,7 +181,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     }
     
     std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
-    std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 3);
+    std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 4);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);

@@ -288,8 +288,8 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     // make effect sheets and animation
     auto parryEffectSheet = SpriteSheet::alloc(assets->get<Texture>("parry-effect"), 2, 4);
-    auto swipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe"), 1, 6);
-    auto comboSwipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe-combo"), 1, 6);
+    auto swipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe"), 2, 4);
+    auto comboSwipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe-combo"), 2, 4);
     auto hitSheet = SpriteSheet::alloc(assets->get<Texture>("hit-effect"), 2, 3);
     auto deathSheet = SpriteSheet::alloc(assets->get<Texture>("player-death-effect"), 2, 4);
     _chargingEffect = Animation::alloc(projEffectSheet, GameConstants::CHARGE_TIME, false, 0, 3);

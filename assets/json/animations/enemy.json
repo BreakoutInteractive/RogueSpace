@@ -43,7 +43,7 @@
             "file":     "textures/sprites/effect_hit_bow.png"
         },
         "enemy-swipe": {
-            "file":     "textures/sprites/swipe.png"
+            "file":     "textures/sprites/effect_attack_alien1.png"
         },
         "stun-effect": {
             "file":     "textures/sprites/effect_stunned.png"
