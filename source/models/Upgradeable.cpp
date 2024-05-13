@@ -7,7 +7,7 @@
 
 #include "Upgradeable.hpp"
 
-Upgradeable::Upgradeable(float initialVal, float maxValue, int type){
+Upgradeable::Upgradeable(float initialVal, float maxValue, UpgradeType type){
     _currLevel = 0;
     _type = type;
     _tierValues.push_back(initialVal);
@@ -16,14 +16,14 @@ Upgradeable::Upgradeable(float initialVal, float maxValue, int type){
         _tierValues.push_back(_tierValues.at(idx-1)+stepAmt);
     }
 }
-Upgradeable::Upgradeable(std::vector<float> tiers, int type){
+Upgradeable::Upgradeable(std::vector<float> tiers, UpgradeType type){
     _currLevel = 0;
     _type = type;
     _tierValues = tiers;
 }
 
 void Upgradeable::levelUp(){
-    if (_currLevel<=5){
+    if (_currLevel<_tierValues.size()-1){
         _currLevel+=1;
     }
 }

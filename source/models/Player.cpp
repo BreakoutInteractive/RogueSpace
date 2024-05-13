@@ -45,14 +45,14 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     auto armorStats = upgradesJson->get("armor")->asFloatArray();
     auto blockStats = upgradesJson->get("block")->asFloatArray();
     
-    _meleeDamage = Upgradeable(meleeStats, upgrades_enum::SWORD);
-    _stunWindow = Upgradeable(parryStats, upgrades_enum::PARRY);
-    _attackCooldown = Upgradeable(meleeSpStats, upgrades_enum::ATK_SPEED);
-    _dodgeCount = Upgradeable(dodgeStats, upgrades_enum::DASH);
-    _bowDamage = Upgradeable(bowStats, upgrades_enum::BOW);
-    _maxHP = Upgradeable(healthStats, upgrades_enum::HEALTH);
-    _damageReduction = Upgradeable(armorStats, upgrades_enum::SHIELD);
-    _blockReduction = Upgradeable(blockStats, upgrades_enum::SHIELD);
+    _meleeDamage = Upgradeable(meleeStats, UpgradeType::SWORD);
+    _stunWindow = Upgradeable(parryStats, UpgradeType::PARRY);
+    _attackCooldown = Upgradeable(meleeSpStats, UpgradeType::ATK_SPEED);
+    _dodgeCount = Upgradeable(dodgeStats, UpgradeType::DASH);
+    _bowDamage = Upgradeable(bowStats, UpgradeType::BOW);
+    _maxHP = Upgradeable(healthStats, UpgradeType::HEALTH);
+    _damageReduction = Upgradeable(armorStats, UpgradeType::SHIELD);
+    _blockReduction = Upgradeable(blockStats, UpgradeType::SHIELD);
 
 
     _weapon = MELEE;

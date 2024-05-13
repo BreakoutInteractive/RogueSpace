@@ -153,17 +153,17 @@ void GameRenderer::setActivated(bool value) {
 void GameRenderer::setSwapButtonActive(bool value){
     if (value){
         _swapButton->activate();
-        _swapButton->setColor(Color4::WHITE);
+//        _swapButton->setColor(Color4::WHITE);
     }
     else {
         _swapButton->deactivate();
-        _swapButton->setColor(Color4::GRAY);
+//        _swapButton->setColor(Color4::GRAY);
     }
 }
 
-void GameRenderer::setSwapButtonCallback(std::function<void()> callback){
+void GameRenderer::configureSwapButton(bool down, std::function<void()> callback){
     _swapButton->clearListeners();
-    _swapButton->setDown(true);
+    _swapButton->setDown(down);
     _swapButton->addListener([callback](const std::string name, bool down){
         callback();
     });

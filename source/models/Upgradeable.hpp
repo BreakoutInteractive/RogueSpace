@@ -8,8 +8,9 @@
 #ifndef Upgradeable_hpp
 #define Upgradeable_hpp
 
-#include <stdio.h>
+#include "GameConstants.hpp"
 #include <cugl/cugl.h>
+
 
 class Upgradeable {
         
@@ -17,14 +18,13 @@ protected:
     /** current level of stat on 0 based number scale*/
     int _currLevel;
     /** type of upgrade following upgrades enum*/
-    int _type;
+    UpgradeType _type;
     /** initial value of stat */
     std::vector<float> _tierValues;
     
 public:
     Upgradeable(){
         _currLevel=0;
-        _type=0;
     }
         
     /**
@@ -34,7 +34,7 @@ public:
      * @param initialVal  value of first level
      *
      */
-    Upgradeable(float initialVal, float maxValue, int type);
+    Upgradeable(float initialVal, float maxValue, UpgradeType type);
     
     /**
      * Initializes an upgrade at level 0
@@ -43,7 +43,7 @@ public:
      * @param type  value of first level
      *
      */
-    Upgradeable(std::vector<float> tiers, int type);
+    Upgradeable(std::vector<float> tiers, UpgradeType type);
         
     /**
      * Initializes an upgrade based on data with default values set for currentLevel and stepAmt
@@ -94,9 +94,11 @@ public:
     /**
      * Returns max level of stat
      */
-    int getMaxLevel(){return _tierValues.size()-1;}
+    int getMaxLevel(){return (int)_tierValues.size()-1;}
     
-    int getType(){return _type;}
+    bool isMaxLevel(){ return _currLevel == getMaxLevel(); }
+    
+    UpgradeType getType(){return _type;}
     
     /**
      * Returns max value of stat

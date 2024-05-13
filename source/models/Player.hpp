@@ -226,6 +226,7 @@ public:
 #pragma mark Player Stats
     /** @return the maximum HP of the player */
     float getMaxHP(){ return _maxHP.getCurrentValue(); }
+    Upgradeable getHPUpgrade(){ return _maxHP; }
     void setMaxHPLevel(int level){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _maxHP.setCurrentLevel(level);
@@ -241,6 +242,7 @@ public:
     
     /** @return player passive damage reduction */
     float getDamageReduction(){ return _damageReduction.getCurrentValue(); }
+    Upgradeable getDamageReductionUpgrade(){ return _damageReduction; }
     void setArmorLevel(int level){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _damageReduction.setCurrentLevel(level);
@@ -248,6 +250,7 @@ public:
     
     /** @return player passive damage reduction */
     float getBlockingDamageReduction(){ return _blockReduction.getCurrentValue(); }
+    Upgradeable getBlockingUpgrade(){ return _blockReduction; }
     void setBlockLevel(int level){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _blockReduction.setCurrentLevel(level);
@@ -255,6 +258,7 @@ public:
     
     /** @return number of allowed consecutive dodges */
     int getDodgeCounts(){ return _dodgeCount.getCurrentValue();}
+    Upgradeable getDodgeUpgrade(){ return _dodgeCount; }
     void setDodgeLevel(int level){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _dodgeCount.setCurrentLevel(level);
@@ -262,7 +266,8 @@ public:
     
     /** @return the damage dealt by the player's sword */
     float getMeleeDamage(){ return _meleeDamage.getCurrentValue();}
-    void setMeleeDamage(int level){
+    Upgradeable getMeleeUpgrade(){ return _meleeDamage; }
+    void setMeleeLevel(int level){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _meleeDamage.setCurrentLevel(level);
     }
@@ -276,11 +281,16 @@ public:
      * @return the damage of the ranged attack
      */
     float getBowDamage();
+    Upgradeable getBowUpgrade(){ return _bowDamage; }
     /** sets the bow damage stat */
-    void setBaseBowDamage(int level ){
+    void setBowLevel(int level ){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _bowDamage.setCurrentLevel(level);
     }
+    
+    float getStunWindow() { return _stunWindow.getCurrentValue(); }
+    Upgradeable getStunUpgrade() { return _stunWindow; }
+    void setStunLevel(int level){ _stunWindow.setCurrentLevel(level); }
 
     
     int getIframes(){ return _iframeCounter.getCount(); }
@@ -331,6 +341,7 @@ public:
 #pragma mark Player Combat State
     
     Weapon getWeapon(){ return _weapon; }
+    void setWeapon(Weapon weapon){ _weapon = weapon; }
     
     /** switches the weapon of the player from melee to range or vice versa.  */
     void swapWeapon() { _weapon = static_cast<Weapon>((_weapon + 1) % 2); }
