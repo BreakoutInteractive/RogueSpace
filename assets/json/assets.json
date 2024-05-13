@@ -9,6 +9,7 @@
         "level5": "json/tiled/exports/sc_lvl_04.json",
         "level6": "json/tiled/exports/sc_lvl_05.json",
         "level7": "json/tiled/exports/sc_lvl_06.json",
+        "level8": "json/tiled/exports/sc_lvl_07.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     

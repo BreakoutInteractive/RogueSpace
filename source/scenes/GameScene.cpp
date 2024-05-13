@@ -25,6 +25,7 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
+#include <array>
 
 #include <ctime>
 #include <string>
@@ -65,7 +66,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
-    srand((uint) time(NULL));
+    srand((uint32)time(NULL));
 
     // initalize controllers with the assets
     _assets = assets;
