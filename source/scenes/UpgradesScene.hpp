@@ -60,14 +60,11 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _option1;
     /** The button to confirm upgrade option 1*/
     std::shared_ptr<cugl::scene2::Button> _confirm1;
-    /** The button for upgrade option 1 */
-    std::shared_ptr<cugl::scene2::Button> _heal;
-    /** The button to confirm upgrade option 1*/
     std::shared_ptr<scene2::Label> _option1Name;
     std::shared_ptr<scene2::Label> _option1Descrip;
     std::shared_ptr<scene2::Label> _option1Level;
     std::shared_ptr<scene2::TexturedNode> _option1Icon;
-    std::shared_ptr<Texture> _healTexture;
+    std::shared_ptr<Texture> _healthTexture;
     std::shared_ptr<Texture> _parryTexture;
     std::shared_ptr<Texture> _shieldTexture;
     std::shared_ptr<Texture> _atkSdTexture;

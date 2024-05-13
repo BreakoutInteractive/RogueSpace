@@ -36,9 +36,25 @@ bool PlayerHitbox::hits(intptr_t enemyPtr){
 
 
 bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonValue> upgradesJson) {
+    auto meleeStats = upgradesJson->get("melee")->asFloatArray();
+    auto parryStats = upgradesJson->get("parry")->asFloatArray();
+    auto meleeSpStats = upgradesJson->get("meleeSpeed")->asFloatArray();
+    auto dodgeStats = upgradesJson->get("dodge")->asFloatArray();
+    auto bowStats = upgradesJson->get("range")->asFloatArray();
+    auto healthStats = upgradesJson->get("health")->asFloatArray();
+    auto armorStats = upgradesJson->get("armor")->asFloatArray();
+    auto blockStats = upgradesJson->get("block")->asFloatArray();
     
-//    auto meleeStats = upgradesJson->get("melee")->asFloatArray();
-    
+    _meleeDamage = Upgradeable(meleeStats, upgrades_enum::SWORD);
+    _stunWindow = Upgradeable(parryStats, upgrades_enum::PARRY);
+    _attackCooldown = Upgradeable(meleeSpStats, upgrades_enum::ATK_SPEED);
+    _dodgeCount = Upgradeable(dodgeStats, upgrades_enum::DASH);
+    _bowDamage = Upgradeable(bowStats, upgrades_enum::BOW);
+    _maxHP = Upgradeable(healthStats, upgrades_enum::HEALTH);
+    _damageReduction = Upgradeable(armorStats, upgrades_enum::SHIELD);
+    _blockReduction = Upgradeable(blockStats, upgrades_enum::SHIELD);
+
+
     _weapon = MELEE;
     _state = IDLE;
     _dodgeDuration = 0;
@@ -492,7 +508,7 @@ void Player::setFacingDir(cugl::Vec2 dir){
 void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (!_hitEffect->isActive() && _state != DODGE) {
-        float reduction = _damageReduction + (isBlocking() ? _blockReduction : 0);
+        float reduction = _damageReduction.getCurrentValue() + (isBlocking() ? _blockReduction.getCurrentValue() : 0);
         _hp = std::fmax(0, (_hp - damage * (1 - reduction)));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);
@@ -565,9 +581,9 @@ void Player::update(float dt) {
 #pragma mark Stats and Properties
 
 float Player::getBowDamage() {
-    if (_state == CHARGING) return _bowDamage * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
-    else if (_state == CHARGED) return _bowDamage * 1.5f;
-    else return _bowDamage;
+    if (_state == CHARGING) return _bowDamage.getCurrentValue() * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
+    else if (_state == CHARGED) return _bowDamage.getCurrentValue() * 1.5f;
+    else return _bowDamage.getCurrentValue();
 }
 
 #pragma mark -
