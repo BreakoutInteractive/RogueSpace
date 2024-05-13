@@ -25,6 +25,7 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
+#include <array>
 
 #include <ctime>
 #include <string>
