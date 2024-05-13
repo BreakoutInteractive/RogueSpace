@@ -30,6 +30,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <array>
 #include "../components/Animation.hpp"
 #include "../utility/SaveData.hpp"
 using namespace cugl;
@@ -65,7 +66,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
-    srand((uint) time(NULL));
+    srand((uint32) time(NULL));
 
     // initalize controllers with the assets
     _assets = assets;
@@ -73,7 +74,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
-    auto preprocessor = [this](Vec2 pos){
+    std::function<bool (Vec2)> preprocessor = [this](Vec2 pos) {
         return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
     };
     _input.init(preprocessor);
