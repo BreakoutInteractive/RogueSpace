@@ -21,6 +21,12 @@
         },
         "health-pack":{
             "file":     "textures/sprites/sprite_healthdrop.png"
+        },
+        "artifact-glow":{
+            "file":     "textures/sprites/sprite_artifact_glow.png"
+        },
+        "artifact-chosen":{
+            "file":     "textures/sprites/sprite_artifact_chosen.png"
         }
 	},
     
