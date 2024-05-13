@@ -9,6 +9,7 @@
         "level5": "json/tiled/exports/sc_lvl_04.json",
         "level6": "json/tiled/exports/sc_lvl_05.json",
         "level7": "json/tiled/exports/sc_lvl_06.json",
+        "level8": "json/tiled/exports/sc_lvl_07.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
@@ -19,8 +20,17 @@
         "energy-wall": {
             "file":        "textures/gameplay/energy_wall.png"
         },
+        "floor-arrows": {
+            "file":        "textures/gameplay/floor_arrows.png"
+        },
         "health-pack":{
             "file":     "textures/sprites/sprite_healthdrop.png"
+        },
+        "artifact-glow":{
+            "file":     "textures/sprites/sprite_artifact_glow.png"
+        },
+        "artifact-chosen":{
+            "file":     "textures/sprites/sprite_artifact_chosen.png"
         }
 	},
     
@@ -148,6 +158,10 @@
         "robotoMedium16": {
             "file": "fonts/Roboto-Medium.ttf",
             "size": 16
+        },
+        "robotoMedium48": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 48
         },
         "robotoBold24": {
             "file": "fonts/Roboto-Bold.ttf",

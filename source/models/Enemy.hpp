@@ -41,14 +41,16 @@ protected:
     std::shared_ptr<Animation> _hitboxAnimation;
     /** The animation to use while stunned */
     std::shared_ptr<Animation> _stunAnimation;
-    /** The stun effect animation */
-    std::shared_ptr<Animation> _stunEffect;
 
 #pragma mark - Animation Effects
     /** The hit effect animation when hit by the melee attack */
     std::shared_ptr<Animation> _meleeHitEffect;
     /** The hit effect animation when hit by the ranged attack */
     std::shared_ptr<Animation> _bowHitEffect;
+    /** The stun effect animation */
+    std::shared_ptr<Animation> _stunEffect;
+    /** The death effect animation */
+    std::shared_ptr<Animation> _deathEffect;
     
     // TODO: this belongs to melee enemies
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
@@ -101,16 +103,19 @@ public:
 
     Counter _hitCounter;
     
+    /** whether this enemy has tried to drop a health pack */
+    bool _dropped;
     
     enum class BehaviorState: int {
         DEFAULT = 1,
         SEEKING = 2,
         CHASING = 3,
         ATTACKING = 4,
-        STUNNED = 5
+        STUNNED = 5,
+        DYING = 6
     };
     
-private:
+protected:
     
     /** internal enemy state (for animation, logic and triggering events) */
     BehaviorState _state;
@@ -347,6 +352,9 @@ public:
     
     /** Set chasing state */
     void setChasing();
+
+    /** Set dying state */
+    void setDying();
     
     /**
      * whether enemy is attacking
@@ -354,6 +362,8 @@ public:
     bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
     /** whether enemy is stunned */
     bool isStunned(){ return _stunAnimation->isActive() && _state == BehaviorState::STUNNED; }
+    /** whether enemy is dying */
+    bool isDying() { return _deathEffect->isActive() && _state == BehaviorState::DYING; }
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.

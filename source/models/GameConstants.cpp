@@ -73,7 +73,7 @@ float GameConstants::PLAYER_PASSIVE_REDUCTION = 0; // initially no defense
 
 float GameConstants::PLAYER_BLOCKING_REDUCTION = 0.1; // initially 10% damage reduction while blocking
 
-float GameConstants::PLAYER_DODGE_COUNT = 1;    // could technically be a floating point to imply something like you have 1/3 dash energy remaining if dash count per full-charge is 1.5
+float GameConstants::PLAYER_DODGE_COUNT = 1.0;    // could technically be a floating point to imply something like you have 1/3 dash energy remaining if dash count per full-charge is 1.5
 
 float GameConstants::PLAYER_STUN_DURATION = 1.0f;
 
@@ -94,11 +94,11 @@ float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 
 float GameConstants::PLAYER_MOVE_SPEED = 4.7; //previously 4.6
-float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.7f; //previously 0.5
+float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.8f; //previously 0.5
 
 
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.4f; // previously 1.3
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.35f; // previously 1.4
 
 float GameConstants::PROJ_SPEED_P = 9.0f;
 
@@ -116,7 +116,7 @@ float GameConstants::HEALTHPACK_DROP_RATE = 34.0f;
 
 float GameConstants::HEALTHPACK_HEAL_AMT = 0.25f;
 
-float GameConstants::KNOCKBACK = 1.8f; // previously 1.6
+float GameConstants::KNOCKBACK = 1.6f;
 
 float GameConstants::KNOCKBACK_PWR_ATK = 4.7f; // previously 4.0
 
