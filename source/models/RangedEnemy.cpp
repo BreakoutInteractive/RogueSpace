@@ -38,3 +38,28 @@ void RangedEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     t.translate((_position + Vec2(0, 64 / getDrawScale().y)) * _drawScale);
     if (_chargingAnimation->isActive()) sheet->draw(batch, o, t);
 }
+
+void RangedEnemy::updateAnimation(float dt) {
+    GameObject::updateAnimation(dt);
+    // attack animation must play to completion, as long as enemy is alive.
+    if (!_attackAnimation->isActive()) {
+        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
+            setIdling();
+        }
+        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
+            setMoving();
+        }
+    }
+    _meleeHitEffect->update(dt);
+    _bowHitEffect->update(dt);
+    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()) {
+        _tint = Color4::RED;
+    }
+    else {
+        _tint = Color4::WHITE;
+    }
+
+    _hitboxAnimation->update(dt);
+    _deathEffect->update(dt);
+    _chargingAnimation->update(dt);
+}

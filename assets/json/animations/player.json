@@ -35,6 +35,9 @@
         },
         "hit-effect": {
             "file":     "textures/sprites/player/effect_hit_player.png"
+        },
+        "player-death-effect": {
+            "file":     "textures/sprites/effect_death_player.png"
         }
     }
 }
