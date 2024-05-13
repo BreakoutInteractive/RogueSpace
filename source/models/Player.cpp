@@ -138,7 +138,8 @@ void Player::drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const
     Vec2 loc = rayEnd;
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
-        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && !fixture->IsSensor()) {
+        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE 
+            && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE_SHADOW && !fixture->IsSensor()) {
             if (fraction < frac){
                 frac = fraction;
                 loc = point;
@@ -189,6 +190,8 @@ void Player::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const s
 }
 
 void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+    if (_state == State::DEAD) return;
+    
     auto spriteSheet = _currAnimation->getSpriteSheet();
     
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
@@ -250,6 +253,10 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_hitEffect->isActive()) {
         drawEffect(batch, _hitEffect, 0, 2);
     }
+
+    if (_deathEffect->isActive()) {
+        drawEffect(batch, _deathEffect);
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -262,7 +269,6 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto bowIdleSheet = SpriteSheet::alloc(assets->get<Texture>("player-bow-idle"), 8, 8);
     auto bowRunSheet = SpriteSheet::alloc(assets->get<Texture>("player-bow-run"), 8, 16);
     auto projEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-projectile"), 4, 4);
-    auto hitSheet = SpriteSheet::alloc(assets->get<Texture>("hit-effect"), 2, 3);
 
     // pass to animations
     _parryStartAnimation = Animation::alloc(parrySheet, 0.1f, false, 0, 1);
@@ -282,8 +288,10 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     // make effect sheets and animation
     auto parryEffectSheet = SpriteSheet::alloc(assets->get<Texture>("parry-effect"), 2, 4);
-    auto swipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe"), 1, 6);
-    auto comboSwipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe-combo"), 1, 6);
+    auto swipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe"), 2, 4);
+    auto comboSwipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe-combo"), 2, 4);
+    auto hitSheet = SpriteSheet::alloc(assets->get<Texture>("hit-effect"), 2, 3);
+    auto deathSheet = SpriteSheet::alloc(assets->get<Texture>("player-death-effect"), 2, 4);
     _chargingEffect = Animation::alloc(projEffectSheet, GameConstants::CHARGE_TIME, false, 0, 3);
     _chargedEffect = Animation::alloc(projEffectSheet, 0.333f, true, 4, 7);
     _shotEffect = Animation::alloc(projEffectSheet, 1/24.0f, false, 8, 8);
@@ -291,6 +299,7 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _swipeEffect = Animation::alloc(swipeEffectSheet, 0.4f, false); // tries to match attack 1 and 2, but played a bit faster
     _comboSwipeEffect = Animation::alloc(comboSwipeEffectSheet, 0.4f, false);
     _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _deathEffect = Animation::alloc(deathSheet, 1.0f, false);
     
     // add callbacks
     _attackAnimation1->onComplete([this](){
@@ -344,6 +353,10 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
         });
     _hitEffect->onComplete([this]() {
         _hitEffect->reset();
+        });
+    _deathEffect->onComplete([this]() {
+        _deathEffect->reset();
+        _state = DEAD;
         });
 
     setAnimation(_idleAnimation);
@@ -408,6 +421,13 @@ void Player::animateShot() {
     _chargedEffect->reset();
     _shotEffect->start();
     _state = SHOT;
+}
+
+void Player::animateDying() {
+    _currAnimation->stopAnimation();
+    _hitEffect->reset();
+    _deathEffect->start();
+    _state = DYING;
 }
 
 void Player::setAnimation(std::shared_ptr<Animation> animation){
@@ -519,6 +539,7 @@ void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
             _swipeEffect->reset();
             _comboSwipeEffect->reset();
         }
+        if (_hp == 0) animateDying();
     }
 }
 
@@ -553,7 +574,11 @@ void Player::update(float dt) {
     case SHOT:
         _shotEffect->update(dt);
         break;
-    case IDLE: case ATTACK: case RECOVERY: case PARRYSTART: case PARRYSTANCE: case PARRY:
+    case DYING:
+        _deathEffect->update(dt);
+        _meleeHitbox->setEnabled(false);
+        break;
+    case IDLE: case ATTACK: case RECOVERY: case PARRYSTART: case PARRYSTANCE: case PARRY: case DEAD:
         // no additional updates
         break;
     }

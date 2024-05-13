@@ -72,7 +72,7 @@ class Player : public GameObject {
     
 public:
     enum Weapon { MELEE, RANGED };
-    enum State {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE};
+    enum State {IDLE, ATTACK, CHARGING, CHARGED, SHOT, RECOVERY, PARRYSTART, PARRYSTANCE, PARRY, DODGE, DYING, DEAD};
 
 protected:
 #pragma mark -
@@ -125,6 +125,8 @@ protected:
     std::shared_ptr<Animation> _parryEffect;
     /** The effect to use when hit */
     std::shared_ptr<Animation> _hitEffect;
+    /** The effect to use when dead */
+    std::shared_ptr<Animation> _deathEffect;
     
 #pragma mark -
 #pragma mark Player Internal State
@@ -377,6 +379,8 @@ public:
     void animateCharge();
     /** Change to using the shooting animation and change state to SHOT */
     void animateShot();
+    /** Play the death effect and change state to DYING */
+    void animateDying();
     /** Start playing the parry effect. Should only be called when the player successfully parries */
     void playParryEffect();
 

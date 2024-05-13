@@ -66,7 +66,9 @@ EnergyWall::EnergyWall(std::shared_ptr<JsonValue> data, const Poly2& poly, const
 
 void EnergyWall::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
     auto energyWallSheet = SpriteSheet::alloc(assets->get<Texture>("energy-wall"), 8, 6);
+    auto floorArrowSheet = SpriteSheet::alloc(assets->get<Texture>("floor-arrows"), 8, 4);
     _currAnimation = Animation::alloc(energyWallSheet, 1.0f, true, animationIndex * 6, (animationIndex+2) * 6 - 1);
+    _arrowAnimation = Animation::alloc(floorArrowSheet, 1.5f, true, animationIndex * 4, (animationIndex + 2) * 4 - 1);
 }
 
 void EnergyWall::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
@@ -79,8 +81,14 @@ void EnergyWall::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
 }
 
 void EnergyWall::deactivate(){
-    if (_enabled){
+    /*if (_enabled){
         _enabled = false;
+        getCollider()->setSensor(true);
+    }*/
+    if (!getCollider()->isSensor()) {
+        _currAnimation->reset();
+        _currAnimation = _arrowAnimation;
+        _currAnimation->start();
         getCollider()->setSensor(true);
     }
 }
