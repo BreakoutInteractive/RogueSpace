@@ -44,11 +44,33 @@ void Relic::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
     float maxS = region[2] / _texture->getWidth();
     float maxT = region[3] / _texture->getHeight();
     _texture = _texture->getSubTexture(minS, maxS, minT, maxT);
+    
+    auto activeSheet = SpriteSheet::alloc(assets->get<Texture>("artifact-glow"), 2, 4);
+    auto chosenSheet = SpriteSheet::alloc(assets->get<Texture>("artifact-chosen"), 2, 5);
+    _activeAnimation = Animation::alloc(activeSheet, 1.0f, true);
+    _chosenAnimation = Animation::alloc(chosenSheet, 1.0f, false);
 }
 
+void Relic::setActive(bool active) {
+    _active = active;
+    if (active){
+        setAnimation(_activeAnimation);
+    }
+    else{
+        setAnimation(_chosenAnimation);
+    }
+    _currAnimation->start();
+}
 void Relic::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
     if (_texture != nullptr){
         Vec2 origin(_texture->getWidth()/2, 0);
+        auto spriteSheet = _currAnimation->getSpriteSheet();
+        Affine2 aniTransform = Affine2::createTranslation(_position * _drawScale);
+        
         batch->draw(_texture, origin, _size * _drawScale / _texture->getSize(), 0, _position * _drawScale);
+        
+        if (!_currAnimation->isCompleted()){
+            spriteSheet->draw(batch, origin, aniTransform);
+        }
     }
 }
