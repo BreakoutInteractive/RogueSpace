@@ -88,8 +88,6 @@ public:
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
     
-    void updateAnimation(float dt) override;
-    
     /**
      * Sets the direction that the enemy is currently facing
      */

@@ -527,22 +527,23 @@ void GameScene::preUpdate(float dt) {
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
+        if (!enemy->isEnabled() || enemy->isDying()) continue;
         if (enemy->getHealth() <= 0) {
             //drop health pack
-            if (enemy->isEnabled() && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
+            if (!enemy->_dropped && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
                 auto healthpack = HealthPack::alloc(enemy->getPosition(), _assets);
                 healthpack->setDrawScale(Vec2(_scale, _scale));
                 _level->addHealthPack(healthpack);
             }
-            //remove enemy
-            enemy->setEnabled(false);
             enemy->getAttack()->setEnabled(false);
+            if (enemy->isEnabled() && !enemy->isDying()) enemy->setDying();
+            enemy->_dropped = true;
         }
         if (enemy->isStunned()){
             enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
             enemy->getAttack()->setEnabled(false);
         }
-        if (enemy->isEnabled()) {
+        if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
             bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !enemy->isStunned();
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {

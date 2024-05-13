@@ -39,6 +39,7 @@ protected:
 public:
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    void updateAnimation(float dt) override;
 
 #pragma mark -
 #pragma mark Constructors

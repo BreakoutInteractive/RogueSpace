@@ -54,6 +54,7 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
+    auto deathEffect = assets->get<Texture>("enemy-death-effect");
 
     auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 5);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 5);
@@ -62,6 +63,7 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
+    auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
 
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 4);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
@@ -70,6 +72,7 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
+    _deathEffect = Animation::alloc(deathEffectSheet, 1.0f, false);
 
     _currAnimation = _idleAnimation; // set runnning
 
@@ -100,6 +103,10 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
     _bowHitEffect->onComplete([this]() {
         _bowHitEffect->reset();
     });
+    _deathEffect->onComplete([this]() {
+        _deathEffect->reset();
+        setEnabled(false);
+    });
 }
 
 
@@ -128,8 +135,8 @@ void TankEnemy::setFacingDir(cugl::Vec2 dir) {
 }
 
 void TankEnemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
-    //this enemy type takes much less damage when not stunned
+    //this enemy type takes much less damage and no knockback when not stunned
     //need to scale down by the stun damage bonus so that it's not doubly applied
     if (isStunned()) Enemy::hit(atkDir, ranged, damage/GameConstants::STUN_DMG_BONUS, knockback_scl);
-    else Enemy::hit(atkDir, ranged, damage*GameConstants::TANK_ENEMY_DR, knockback_scl);
+    else Enemy::hit(atkDir, ranged, damage*GameConstants::TANK_ENEMY_DR, 0);
 };

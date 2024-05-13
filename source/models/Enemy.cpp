@@ -58,6 +58,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
+    _dropped = false;
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -131,8 +132,11 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_bowHitEffect->isActive()) {
         drawEffect(batch, _bowHitEffect, 2);
     }
-    if (_state == BehaviorState::STUNNED) {
+    if (_stunEffect->isActive()) {
         drawEffect(batch, _stunEffect);
+    }
+    if (_deathEffect->isActive()) {
+        drawEffect(batch, _deathEffect);
     }
 }
 
@@ -146,6 +150,7 @@ void Enemy::setIdling() {
     _walkAnimation->reset();
     _attackAnimation->reset();
     _stunAnimation->reset();
+    _stunEffect->reset();
 }
 
 void Enemy::setMoving() {
@@ -154,6 +159,7 @@ void Enemy::setMoving() {
     _idleAnimation->reset();
     _attackAnimation->reset();
     _stunAnimation->reset();
+    _stunEffect->reset();
 }
 
 void Enemy::setAttacking() {
@@ -162,6 +168,7 @@ void Enemy::setAttacking() {
     _idleAnimation->reset();
     _walkAnimation->reset();
     _stunAnimation->reset();
+    _stunEffect->reset();
     _state = BehaviorState::ATTACKING;
 }
 
@@ -175,6 +182,8 @@ void Enemy::setStunned() {
     _hitboxAnimation->reset();
     _idleAnimation->reset();
     _walkAnimation->reset();
+    _meleeHitEffect->reset();
+    _bowHitEffect->reset();
     _state = BehaviorState::STUNNED;
     _stunEffect->start();
     _stunAnimation->start();
@@ -192,12 +201,26 @@ void Enemy::setChasing() {
     _state = BehaviorState::CHASING;
 }
 
+void Enemy::setDying() {
+    _state = BehaviorState::DYING;
+    _currAnimation->stopAnimation();
+    _attackAnimation->reset();
+    _hitboxAnimation->reset();
+    _idleAnimation->reset();
+    _walkAnimation->reset();
+    _stunEffect->reset();
+    _meleeHitEffect->reset();
+    _bowHitEffect->reset();
+    _collider->setLinearVelocity(Vec2::ZERO);
+    _deathEffect->start();
+}
+
 
 void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
     if (!_meleeHitEffect->isActive() && !_bowHitEffect->isActive()) {
         _hitCounter.reset();
         if (_state == BehaviorState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
-        setHealth(getHealth()-damage);
+        setHealth(std::fmax(0, getHealth() - damage));
         _meleeHitEffect->reset();
         _bowHitEffect->reset();
         if (ranged) _bowHitEffect->start();
@@ -234,6 +257,7 @@ void Enemy::updateAnimation(float dt){
         _tint = Color4::WHITE;
     }
     _stunEffect->update(dt);
+    _deathEffect->update(dt);
     _hitboxAnimation->update(dt);
 }
 
