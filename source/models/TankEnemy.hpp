@@ -10,7 +10,7 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
-#include "Enemy.hpp"
+#include "MeleeEnemy.hpp"
 #include "GameObject.hpp"
 
 class Animation;
@@ -18,7 +18,7 @@ class Animation;
 /**
  *  This class represents a melee enemy in the game. It can only be damaged while stunned
  */
-class TankEnemy : public Enemy {
+class TankEnemy : public MeleeEnemy {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(TankEnemy);
@@ -32,7 +32,7 @@ public:
     /**
      * Creates a new enemy at the origin.
      */
-    TankEnemy(void) : Enemy() { }
+    TankEnemy(void) : MeleeEnemy() { }
 
     /**
      * Destroys this player, releasing all resources.

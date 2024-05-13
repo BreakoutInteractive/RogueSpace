@@ -36,22 +36,12 @@ protected:
     std::shared_ptr<Animation> _walkAnimation;
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
-    // TODO: this is an effect, move to melee enemies
-    /** The animation of the hitbox while attacking */
-    std::shared_ptr<Animation> _hitboxAnimation;
-    /** The animation to use while stunned */
-    std::shared_ptr<Animation> _stunAnimation;
-    /** The stun effect animation */
-    std::shared_ptr<Animation> _stunEffect;
 
 #pragma mark - Animation Effects
     /** The hit effect animation when hit by the melee attack */
     std::shared_ptr<Animation> _meleeHitEffect;
     /** The hit effect animation when hit by the ranged attack */
     std::shared_ptr<Animation> _bowHitEffect;
-    
-    // TODO: this belongs to melee enemies
-    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
     float _sightRange;
@@ -203,16 +193,6 @@ public:
     void setMaxHealth(float value){ _maxHealth = value; }
     
     /**
-     * Gets this enemy's attack hitbox.
-     */
-    std::shared_ptr<cugl::physics2::WheelObstacle> getAttack() const { return _attack; }
-    
-    /**
-     * Sets this enemy's attack hitbox.
-     */
-    void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
-    
-    /**
      * Gets this enemy's default state.
      */
     std::string getDefaultState() const { return _defaultState; }
@@ -296,9 +276,6 @@ public:
     
 #pragma mark -
 #pragma mark Animation and State
-
-    void setHitboxAnimation(std::shared_ptr<Animation> animation) { _hitboxAnimation = animation; }
-    std::shared_ptr<Animation> getHitboxAnimation() const { return _hitboxAnimation; }
     
     /** get current enemy behavior state */
     BehaviorState getBehaviorState() { return _state; }
@@ -312,7 +289,7 @@ public:
     /** Set attack state and change to using the attack animation */
     void setAttacking();
     
-    /** Set stunned state and change to using the stunned animation */
+    /** Set stunned state */
     void setStunned();
     
     /** Set default state */
@@ -328,8 +305,6 @@ public:
      * whether enemy is attacking
      */
     bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
-    /** whether enemy is stunned */
-    bool isStunned(){ return _stunAnimation->isActive() && _state == BehaviorState::STUNNED; }
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.

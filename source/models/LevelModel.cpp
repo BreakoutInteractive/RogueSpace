@@ -97,19 +97,27 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }    
 
     for (int ii = 0; ii < _enemies.size(); ii++){
-        auto enemyAtk = _enemies[ii]->getAttack();
-        //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
-        if (enemyAtk->isEnabled()) {
-            auto sheet = _enemies[ii]->getHitboxAnimation()->getSpriteSheet();
-            Affine2 atkTrans = Affine2::createScale( GameConstants::ENEMY_MELEE_ATK_RANGE/ ((Vec2)sheet->getFrameSize() / 2) * _scale);
-            atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
-            atkTrans.translate(enemyAtk->getPosition() * _scale);
-            sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
+        if (_enemies[ii]->getType() == "melee lizard"
+            || _enemies[ii]->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
+            auto enemyAtk = m->getAttack();
+            //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
+            if (enemyAtk->isEnabled()) {
+                auto sheet = m->getHitboxAnimation()->getSpriteSheet();
+                Affine2 atkTrans = Affine2::createScale( GameConstants::ENEMY_MELEE_ATK_RANGE/ ((Vec2)sheet->getFrameSize() / 2) * _scale);
+                atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
+                atkTrans.translate(enemyAtk->getPosition() * _scale);
+                sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
+            }
         }
     }
         
     for (int ii = 0; ii < _enemies.size(); ii++){
-        _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
+        if (_enemies[ii]->getType() == "melee lizard"
+            || _enemies[ii]->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
+            m->getAttack()->getDebugNode()->setVisible(m->getAttack()->isEnabled());
+        }
     }
     for (int ii = 0; ii < _projectiles.size(); ii++) {
         _projectiles[ii]->draw(batch);
@@ -146,8 +154,12 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
     _player->setDebugNode(_debugNode);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
-        _enemies[ii]->getAttack()->setDebugScene(_debugNode);
-        _enemies[ii]->getAttack()->setDebugColor(Color4::RED);
+        if (_enemies[ii]->getType() == "melee lizard"
+            || _enemies[ii]->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
+            m->getAttack()->setDebugScene(_debugNode);
+            m->getAttack()->setDebugColor(Color4::RED);
+        }
         _enemies[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
         _enemies[ii]->setDebugNode(_debugNode);
     }
@@ -197,7 +209,11 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
-        _enemies[ii]->setHitboxAnimation(Animation::alloc(s2, GameConstants::ENEMY_MELEE_ATK_SPEED / 3, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
+        if (_enemies[ii]->getType() == "melee lizard" ||
+            _enemies[ii]->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
+            m->setHitboxAnimation(Animation::alloc(s2, GameConstants::ENEMY_MELEE_ATK_SPEED / 3, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
+        }
     }
 }
 
@@ -255,8 +271,12 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
     
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->addObstaclesToWorld(_world);
-        addObstacle(_enemies[ii]->getAttack());
-        _enemies[ii]->getAttack()->setEnabled(false);
+        if (_enemies[ii]->getType() == "melee lizard"
+            || _enemies[ii]->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
+            addObstacle(m->getAttack());
+            m->getAttack()->setEnabled(false);
+        }
         
         _dynamicObjects.push_back(_enemies[ii]); // add the enemies to sorting layer
     }
@@ -420,16 +440,19 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
     
     // attack setup
     b2Filter filter;
-    auto attack = physics2::WheelObstacle::alloc(enemyCollider->getPosition(), GameConstants::ENEMY_MELEE_ATK_RANGE);
-    attack->setSensor(true);
-    attack->setName("enemy-attack");
-    attack->setBodyType(b2_dynamicBody);
-    // this is an attack
-    filter.categoryBits = CATEGORY_ATTACK;
-    // since it is an enemy's attack, it can collide with the player
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
-    attack->setFilterData(filter);
-    enemy->setAttack(attack);
+    if (enemyType == CLASS_LIZARD || enemyType == CLASS_TANK) {
+        std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
+        auto attack = physics2::WheelObstacle::alloc(enemyCollider->getPosition(), GameConstants::ENEMY_MELEE_ATK_RANGE);
+        attack->setSensor(true);
+        attack->setName("enemy-attack");
+        attack->setBodyType(b2_dynamicBody);
+        // this is an attack
+        filter.categoryBits = CATEGORY_ATTACK;
+        // since it is an enemy's attack, it can collide with the player
+        filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
+        attack->setFilterData(filter);
+        m->setAttack(attack);
+    }
     return true;
 }
 

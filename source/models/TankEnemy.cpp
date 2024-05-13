@@ -18,7 +18,7 @@ using namespace cugl;
 
 
 bool TankEnemy::init(std::shared_ptr<JsonValue> data) {
-    Enemy::init(data);
+    MeleeEnemy::init(data);
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE*0.8f;
     return true;
 }

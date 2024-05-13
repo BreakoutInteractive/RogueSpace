@@ -225,8 +225,9 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
             }
             break;
         case Enemy::BehaviorState::STUNNED:
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(e);
             // change state if we're no longer stunned
-            if (!e->isStunned()) {
+            if (!m->isStunned()) {
                 // if we're still close to the player, chase them
                 if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
                     e->setChasing();

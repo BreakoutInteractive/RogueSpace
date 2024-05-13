@@ -51,29 +51,23 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto idleTexture = assets->get<Texture>("lizard-ranged-idle");
     auto walkTexture = assets->get<Texture>("lizard-ranged-walk");
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
-    auto stunTexture = assets->get<Texture>("lizard-stun");
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
-    auto stunEffect = assets->get<Texture>("stun-effect");
     auto projectileTexture = assets->get<Texture>("lizard-projectile");
     
     auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 8);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 9);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 20);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 5);
-    auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
     _attackAnimation = Animation::alloc(attackSheet, GameConstants::ENEMY_RANGED_ATK_SPEED, false, 0, 19);
-    _stunAnimation = Animation::alloc(stunSheet, GameConstants::ENEMY_STUN_DURATION, false, 0, 14);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _chargingAnimation = Animation::alloc(projectileSheet, GameConstants::ENEMY_RANGED_ATK_SPEED / 4, false, 0, 4);
-    _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -82,7 +76,6 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attackAnimation->reset();
         //_hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
-        _attack->setEnabled(false);
     });
     
     _attackAnimation->addCallback(0.0f, [this](){
@@ -110,27 +103,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
 }
 
 void RangedLizard::updateAnimation(float dt){
-    GameObject::updateAnimation(dt);
-    // attack animation must play to completion, as long as enemy is alive.
-    if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
-            setIdling();
-        }
-        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
-            setMoving();
-        }
-    }
-    _meleeHitEffect->update(dt);
-    _bowHitEffect->update(dt);
-    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()) {
-        _tint = Color4::RED;
-    }
-    else {
-        _tint = Color4::WHITE;
-    }
-    
-    _hitboxAnimation->update(dt);
-    
+    Enemy::updateAnimation(dt);
     _chargingAnimation->update(dt);
 }
 
@@ -154,7 +127,6 @@ void RangedLizard::setFacingDir(cugl::Vec2 dir) {
         _idleAnimation->setFrameRange(8 * _directionIndex, 8 * _directionIndex + 7);
         _walkAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
         _attackAnimation->setFrameRange(20 * _directionIndex, 20 * _directionIndex + 19);
-        _stunAnimation->setFrameRange(15 * _directionIndex, 15 * _directionIndex + 14);
     }
 }
 

@@ -129,9 +129,6 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_bowHitEffect->isActive()) {
         drawEffect(batch, _bowHitEffect, 2);
     }
-    if (_state == BehaviorState::STUNNED) {
-        drawEffect(batch, _stunEffect);
-    }
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -143,7 +140,6 @@ void Enemy::setIdling() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _walkAnimation->reset();
     _attackAnimation->reset();
-    _stunAnimation->reset();
 }
 
 void Enemy::setMoving() {
@@ -151,7 +147,6 @@ void Enemy::setMoving() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _idleAnimation->reset();
     _attackAnimation->reset();
-    _stunAnimation->reset();
 }
 
 void Enemy::setAttacking() {
@@ -159,23 +154,11 @@ void Enemy::setAttacking() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _idleAnimation->reset();
     _walkAnimation->reset();
-    _stunAnimation->reset();
     _state = BehaviorState::ATTACKING;
 }
 
 void Enemy::setStunned() {
-    if (_state == BehaviorState::STUNNED) {
-        return;
-    }
-    setAnimation(_stunAnimation);
-    _atkCD.reset(); // stunning should reset attack
-    _attackAnimation->reset();
-    _hitboxAnimation->reset();
-    _idleAnimation->reset();
-    _walkAnimation->reset();
     _state = BehaviorState::STUNNED;
-    _stunEffect->start();
-    _stunAnimation->start();
 }
 
 void Enemy::setDefault() {
@@ -212,7 +195,7 @@ void Enemy::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
+        if (getCollider()->getLinearVelocity().isZero() && _currAnimation != _idleAnimation) {
             setIdling();
         }
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
@@ -224,15 +207,9 @@ void Enemy::updateAnimation(float dt){
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
-    else if (_state == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
-        _tint = Color4::WHITE;
-        setIdling();
-    }
     else {
         _tint = Color4::WHITE;
     }
-    _stunEffect->update(dt);
-    _hitboxAnimation->update(dt);
 }
 
 void Enemy::updateCounters() {
