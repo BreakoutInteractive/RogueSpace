@@ -10,28 +10,25 @@
             "file": "textures/upgrades-screen/confirm.png"
         },
         "upgrade-sword": {
-            "file": "textures/upgrades-screen/upgrade-sword.png"
+            "file": "textures/upgrades-screen/upgrade_atk.png"
         },
         "upgrade-bow": {
-            "file": "textures/upgrades-screen/upgrade-bow.png"
+            "file": "textures/upgrades-screen/upgrade_bow.png"
         },
         "upgrade-dash": {
-            "file": "textures/upgrades-screen/upgrade-dash.png"
+            "file": "textures/upgrades-screen/upgrade_dash.png"
         },
         "upgrade-parry": {
-            "file": "textures/upgrades-screen/upgrade-parry.png"
+            "file": "textures/upgrades-screen/upgrade_parry.png"
         },
         "upgrade-shield": {
-            "file": "textures/upgrades-screen/upgrade-shield.png"
+            "file": "textures/upgrades-screen/upgrade_shield.png"
         },
         "upgrade-speed": {
-            "file": "textures/upgrades-screen/upgrade-atkspeed.png"
+            "file": "textures/upgrades-screen/upgrade_atk_speed.png"
         },
-        "heal": {
-            "file": "textures/upgrades-screen/heal.png"
-        },
-        "heal-confirm": {
-            "file": "textures/upgrades-screen/heal-confirm.png"
+        "upgrade-health": {
+            "file": "textures/upgrades-screen/upgrade_max_health.png"
         }
     },
     "scene2s": {
@@ -711,96 +708,9 @@
                     "absolute": false,
                     "x_offset": 0.19,
                     "y_offset": -0.21
-                }
-            },
-            "heal": {
-                "type": "Button",
-                "format": {
-                    "type": "Anchored"
-                },
-                "data": {
-                    "anchor": [
-                        0.5,
-                        0.5
-                    ],
-                    "size": [
-                        70,
-                        70
-                    ],
-                    "angle": 0,
-                    "position": [
-                        500,
-                        297
-                    ],
-                    "visible": true,
-                    "upnode": "heal",
-                    "downnode": "heal-confirm"
-                },
-                "children": {
-                    "heal-confirm": {
-                        "type": "Image",
-                        "data": {
-                            "texture": "heal-confirm",
-                            "anchor": [
-                                0,
-                                1
-                            ],
-                            "size": [
-                                70,
-                                70
-                            ],
-                            "angle": 0,
-                            "position": [
-                                0,
-                                0
-                            ],
-                            "visible": true
-                        },
-                        "layout": {
-                            "x_anchor": "left",
-                            "y_anchor": "top",
-                            "absolute": false,
-                            "x_offset": 0,
-                            "y_offset": 0
-                        }
-                    },
-                    "heal": {
-                        "type": "Image",
-                        "data": {
-                            "texture": "heal",
-                            "anchor": [
-                                0,
-                                1
-                            ],
-                            "size": [
-                                70,
-                                70
-                            ],
-                            "angle": 0,
-                            "position": [
-                                0,
-                                0
-                            ],
-                            "visible": true
-                        },
-                        "layout": {
-                            "x_anchor": "left",
-                            "y_anchor": "top",
-                            "absolute": false,
-                            "x_offset": 0,
-                            "y_offset": 0
-                        }
-                    }
-                },
-                "layout": {
-                    "x_anchor": "center",
-                    "y_anchor": "middle",
-                    "absolute": false,
-                    "x_offset": -0.08,
-                    "y_offset": -0.04
-                }
+               }
             }
-        }
-       }
-    }
+         }
+      }
+   }
 }

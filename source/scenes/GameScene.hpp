@@ -26,6 +26,7 @@
 #include "../models/Counter.hpp"
 #include "../components/Animation.hpp"
 #include "TransitionScene.hpp"
+#include "UpgradesScene.hpp"
 #include "../utility/SaveData.hpp"
 
 /**
@@ -70,7 +71,6 @@ protected:
     CollisionController _collisionController;
     /** Controller to play sounds */
     std::shared_ptr<AudioController> _audioController;
-    
 
 #pragma mark Scenes
     /** custom renderer for this scene */
@@ -79,7 +79,12 @@ protected:
     Scene2 _effectsScene;
     /** The inner transition between levels (fading in and out) */
     TransitionScene _levelTransition;
-    
+    /** the upgrades menu  */
+    UpgradesScene _upgrades;
+    /**
+     * sets up the upgrade scene based on player stats, picking random stats to be upgraded.
+     */
+    void configureUpgradeMenu(std::shared_ptr<Player> player);
 
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
@@ -92,7 +97,6 @@ protected:
     /** the node which renders the dead effect */
     std::shared_ptr<scene2::SpriteNode> _deadEffectNode;
 
-
 #pragma mark Scene Animation
     /** animation manager */
     scene2::ActionManager _actionManager;
@@ -104,7 +108,6 @@ protected:
     const std::string DEAD_EFFECT_KEY = "dead_effect";
     /** the action corresponding to the dead effect pop-up animation*/
     std::shared_ptr<scene2::Animate> _deadEffectAnimation;
-
     
 #pragma mark State and Model
     /** tiled parser */
@@ -128,43 +131,13 @@ protected:
     /** The screen transitioning code */
     ExitCode _exitCode;
     
-#pragma mark Player Upgrades
-    
-    /** classification of the different upgrade types*/
-    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
-    /** sets the player attributes of the crrent level's player*/
-    void setPlayerAttributes(float hp);
-    /** upgrades generated for level*/
-    std::vector<int> upgradesForLevel;
-    /** all upgradeable stats for the player*/
-    std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
-    
 #pragma mark Internal Update Function Helpers
-    
     /**
      * handles player inputs and updates relevant HUD components.
      */
     void processPlayerInput();
     
 public:
-    /** Returns all upgradeable stats for the player*/
-    std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
-    
-    /** Returns upgradeable stats to be displayed for level*/
-    std::vector<int> getDisplayedUpgrades(){return upgradesForLevel;}
-    
-    /** whether the upgrades screen should be active*/
-    bool upgradeScreenActive;
-    
-    /** whether an upgrade has been chosen*/
-    bool upgradeChosen;
-    
-    /**
-     * Chooses random upgrades
-     * @param size length of attribute array
-     */
-    void generateRandomUpgrades();
-    
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -223,20 +196,6 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
-    
-    /**
-     * Sets whether Relic object is active
-     *
-     * @param activate whether relic object is active.
-     */
-    void setRelicActive(bool activate) { _level->getRelic()->setActive(activate); }
-    
-    /**
-     * Returns whether Relic object is active
-     */
-    bool isRelicActive() { return _level->getRelic()->getActive(); }
-    
-    std::shared_ptr<Relic> getRelic() {return _level->getRelic();}
     
     /**
      * Returns a reference to the game renderer
