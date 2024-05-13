@@ -18,6 +18,9 @@
         "energy-wall": {
             "file":        "textures/gameplay/energy_wall.png"
         },
+        "floor-arrows": {
+            "file":        "textures/gameplay/floor_arrows.png"
+        },
         "health-pack":{
             "file":     "textures/sprites/sprite_healthdrop.png"
         }
