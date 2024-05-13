@@ -175,20 +175,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 }
 
 void GameScene::dispose() {
-    if (isActive()) {
-        _input.dispose();
-        _debugNode = nullptr;
-        _winNode = nullptr; // TODO: remove
-        _level = nullptr;
-        _complete = false;
-        _defeat = false;
-        _debug = false;
-        Scene2::dispose();
-    }
+    _input.dispose();
+    _debugNode = nullptr;
+    _winNode = nullptr; // TODO: remove
+    _level = nullptr;
+    _complete = false;
+    _defeat = false;
+    _debug = false;
+    Scene2::dispose();
 }
 
 void GameScene::restart(){
-    _winNode->setVisible(false);
     _levelTransition.setActive(false);
     _isUpgradeRoom = true;  // first level is always upgrades
     SaveData::removeSave();
@@ -196,12 +193,11 @@ void GameScene::restart(){
     data.level = 1;
     data.hp = GameConstants::PLAYER_MAX_HP;
     setLevel(data);
-    auto player = _level->getPlayer();
-    player->setHP(player->getMaxHP());
 }
 
 void GameScene::setLevel(SaveData::Data saveData){
     _debugNode->removeAllChildren();
+    _winNode->setVisible(false);
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
@@ -278,13 +274,45 @@ void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
             options.push_back(upgrade);
         }
     }
-    int opt1 = std::rand() % options.size();
-    int opt2 = std::rand() % options.size();
-    while (opt2==opt1){
+    int opt1 = 0;
+    int opt2 = 1;
+    if (options.size() > 2){
+        opt1 = std::rand() % options.size();
         opt2 = std::rand() % options.size();
+        while (opt2==opt1){
+            opt2 = std::rand() % options.size();
+        }
+    }
+    else if (options.size() == 1){
+        // duplicate
+        options.push_back(options[0]);
+    }
+    else if (options.size() == 0){
+        // anything will work, nothing to upgrade
+        Upgradeable u1 = all[0];
+        u1.setCurrentLevel(u1.getMaxLevel() - 1);
+        Upgradeable u2 = all[1];
+        u2.setCurrentLevel(u2.getMaxLevel() - 1);
+        options.push_back(u1);
+        options.push_back(u2);
     }
     std::pair<Upgradeable, Upgradeable> randomOptions(options[opt1], options[opt2]);
     _upgrades.updateScene(randomOptions);
+}
+
+std::vector<int> GameScene::getPlayerLevels(){
+    std::vector<int> levels(7, 0);
+    if (_level != nullptr){
+        auto p = _level->getPlayer();
+        levels[0] = p->getMeleeUpgrade().getCurrentLevel();
+        levels[1] = p->getBowUpgrade().getCurrentLevel();
+        levels[2] = 0; // attack speed
+        levels[3] = p->getDamageReductionUpgrade().getCurrentLevel();
+        levels[4] = p->getDodgeUpgrade().getCurrentLevel();
+        levels[5] = p->getStunUpgrade().getCurrentLevel();
+        levels[6] = p->getHPUpgrade().getCurrentLevel();
+    }
+    return levels;
 }
 
 std::string GameScene::getLevelKey(int level){

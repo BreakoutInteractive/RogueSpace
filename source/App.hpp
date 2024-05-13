@@ -57,7 +57,9 @@ protected:
     DeathScene _death;
     /** The current active scene */
     State _scene;
-    /** The previously active scene - this is only used to know where 
+    /** The previously active scene before the game (this could be a tutorial menu or the title screen) */
+    State _gamePrevScene;
+    /** The previously active scene - this is only used to know where
     to go if the user exits the settings scene */
     State _prevScene;
 
