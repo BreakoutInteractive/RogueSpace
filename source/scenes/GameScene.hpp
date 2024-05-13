@@ -255,6 +255,11 @@ public:
      */
     ExitCode getExitCode(){ return _exitCode; }
     
+    /**
+     * @return list of levels in the order of attack, bow, attack speed, shield, dash, parry, health
+     */
+    std::vector<int> getPlayerLevels();
+    
 #pragma mark -
 #pragma mark Gameplay Handling
     /**

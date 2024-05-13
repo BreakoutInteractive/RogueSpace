@@ -124,6 +124,7 @@ void App::preUpdate(float dt) {
             }
             else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
+                _pause.setLabels(_gameplay.getPlayerLevels());
                 _gameplay.setActive(false);
             }
             else{
@@ -164,11 +165,15 @@ void App::postUpdate(float dt) {
 void App::updatePauseScene(float dt) {
     _pause.update(dt);
     switch (_pause.getChoice()) {
-        case PauseScene::Choice::RESTART:
+        case PauseScene::Choice::BACK:
             _pause.setActive(false);
-            _gameplay.getRenderer().setActivated(true);
-            _gameplay.restart();
-            _scene = State::GAME;
+            switch (_gamePrevScene) {
+                case TITLE:
+                    setTitleScene();
+                    break;
+                default:
+                    break;
+                }
             break;
         case PauseScene::Choice::RESUME:
             _pause.setActive(false);
@@ -206,6 +211,7 @@ void App::updateTitleScene(float dt){
             _gameplay.setActive(true);
             _gameplay.restart();
             _scene = GAME; // switch to game scene
+            _gamePrevScene = TITLE;
             break;
         case TitleScene::CONTINUE:
             _title.setActive(false);
@@ -213,6 +219,7 @@ void App::updateTitleScene(float dt){
             CULog("loading lv %d", save.level);
             _gameplay.setLevel(save);
             _scene = GAME;
+            _gamePrevScene = TITLE;
             break;
         case TitleScene::SETTINGS:
             _title.setActive(false);

@@ -8,11 +8,12 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 
+using namespace cugl;
 
 /**
- *
+ * A lovely-designed pause menu.
  */
-class PauseScene : public cugl::Scene2 {
+class PauseScene : public Scene2 {
 public:
     /**
      * The menu choice.
@@ -23,8 +24,8 @@ public:
     enum Choice {
         /** User has not yet made a choice */
         NONE,
-        /** User wants to restart game */
-        RESTART,
+        /** User wants to return to previous scene */
+        BACK,
         /** User wants to go back to a game */
         RESUME,
         /** User wants to go to settings */
@@ -34,29 +35,26 @@ public:
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    /** The button for restarting  game */
-    std::shared_ptr<cugl::scene2::Button> _restart;
-    /** The button for going back to game */
-    std::shared_ptr<cugl::scene2::Button> _resume;
-    /** The button for in-game settings */
-    std::shared_ptr<cugl::scene2::Button> _settings;
-    
-    /** The button for restarting  game */
-    std::shared_ptr<cugl::scene2::Button> _sword;
-    /** The button for going back to game */
-    std::shared_ptr<cugl::scene2::Button> _bow;
-    /** The button for in-game settings */
-    std::shared_ptr<cugl::scene2::Button> _parry;
-    /** The button for restarting  game */
-    std::shared_ptr<cugl::scene2::Button> _dash;
-    /** The button for going back to game */
-    std::shared_ptr<cugl::scene2::Button> _shield;
-    /** The button for in-game settings */
-    std::shared_ptr<cugl::scene2::Button> _speed;
-    
     /** The player choice */
     Choice _choice;
-    bool _active;
+
+#pragma mark - Menu Buttons
+    /** The button for restarting  game */
+    std::shared_ptr<scene2::Button> _back;
+    /** The button for going back to game */
+    std::shared_ptr<scene2::Button> _resume;
+    /** The button for in-game settings */
+    std::shared_ptr<scene2::Button> _settings;
+    
+#pragma mark - Icon Labels
+    
+    std::shared_ptr<scene2::Label> _atk;
+    std::shared_ptr<scene2::Label> _bow;
+    std::shared_ptr<scene2::Label> _atkSpeed;
+    std::shared_ptr<scene2::Label> _shield;
+    std::shared_ptr<scene2::Label> _dash;
+    std::shared_ptr<scene2::Label> _parry;
+    std::shared_ptr<scene2::Label> _maxHealth;
     
 public:
 #pragma mark -
@@ -67,7 +65,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    PauseScene() : cugl::Scene2() {}
+    PauseScene() : Scene2() {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -96,7 +94,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<AssetManager>& assets);
 
     /**
      * Sets whether the scene is currently active
@@ -108,6 +106,13 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
+    
+    /**
+     * Sets the icon level labels in this menu.
+     * @param levels a list of levels in the order given
+     * @pre order: attack, bow, attack speed, shield, dash, parry, health
+     */
+    void setLabels(std::vector<int> levels);
     
     /**
      * Returns the user's menu choice.

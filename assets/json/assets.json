@@ -159,6 +159,10 @@
             "file": "fonts/Roboto-Medium.ttf",
             "size": 16
         },
+        "robotoMedium48": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 48
+        },
         "robotoBold24": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 24
