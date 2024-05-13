@@ -37,6 +37,7 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/tutorial.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/settings.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/death.json", nullptr);
@@ -95,6 +96,7 @@ void App::update(float dt){
         _settings.init(_assets);
         _title.init(_assets);
         _death.init(_assets);
+        _tutorial.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
         setTitleScene();
@@ -124,6 +126,10 @@ void App::preUpdate(float dt) {
         case SETTINGS:
             _settings.setActive(true);
             updateSettingsScene(dt);
+            break;
+        case TUTORIAL:
+            _tutorial.setActive(true);
+            updateTutorialScene(dt);
             break;
         case GAME:
             if (_gameplay.getExitCode() == GameScene::ExitCode::DEATH){
@@ -280,6 +286,34 @@ void App::updateTitleScene(float dt){
             _prevScene = TITLE;
             break;
         case TitleScene::TUTORIAL:
+            _title.setActive(false);
+            _tutorial.setActive(true);
+            _scene = TUTORIAL;
+            break;
+    }
+}
+
+void App::updateTutorialScene(float dt){
+//    auto save = SaveData::getGameSave();
+    switch (_tutorial.getChoice()){
+        case TutorialScene::NONE:
+            break;
+        case TutorialScene::BACK:
+            _title.setActive(true);
+            _tutorial.setActive(false);
+            _scene = TITLE;
+            break;
+        case TutorialScene::LEVEL:
+            _tutorial.setActive(false);
+            _gameplay.setActive(true);
+            _gameplay.restart();
+            _scene = GAME; // switch to game scene
+            break;
+        case TutorialScene::SETTINGS:
+            _tutorial.setActive(false);
+            _settings.setActive(true);
+            _scene = SETTINGS; // switch to settings scene
+            _prevScene = TUTORIAL;
             break;
     }
 }
@@ -297,6 +331,10 @@ void App::updateSettingsScene(float dt) {
         case TITLE:
             setTitleScene();
             _scene = TITLE;
+            break;
+        case TUTORIAL:
+            _tutorial.setActive(true);
+            _scene = TUTORIAL;
             break;
         default: //should never be here since you can only access settings from pause and title scenes
             break;
@@ -361,6 +399,9 @@ void App::draw() {
         case TITLE:
             _title.render(_batch);
             break;
+        case TUTORIAL:
+            _tutorial.render(_batch);
+            break;
         case SETTINGS:
             switch (_prevScene) {
             case PAUSE:
@@ -369,6 +410,9 @@ void App::draw() {
                 break;
             case TITLE:
                 _title.render(_batch);
+                break;
+            case TUTORIAL:
+                _tutorial.render(_batch);
                 break;
             default: //should never be here since you can only access settings from pause and title scenes
                 break;
