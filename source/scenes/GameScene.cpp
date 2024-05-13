@@ -512,7 +512,7 @@ void GameScene::preUpdate(float dt) {
     
     // level is completed when player successfully exits the room
     if (isComplete() && _level->isCompleted()){
-        if (_levelNumber < MAX_LEVEL){
+        if (_levelNumber < MAX_LEVEL || _isUpgradeRoom){
             // begin transitioning to next level
             if (!_levelTransition.isActive()){
                 _levelTransition.setActive(true);
