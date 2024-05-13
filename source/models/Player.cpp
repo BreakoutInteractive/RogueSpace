@@ -122,7 +122,8 @@ void Player::drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const
     Vec2 loc = rayEnd;
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
-        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && !fixture->IsSensor()) {
+        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE 
+            && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE_SHADOW && !fixture->IsSensor()) {
             if (fraction < frac){
                 frac = fraction;
                 loc = point;

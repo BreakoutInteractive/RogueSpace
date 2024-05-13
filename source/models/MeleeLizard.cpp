@@ -85,7 +85,7 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     });
     
     _attackAnimation->addCallback(0.75f, [this](){
-        if (isEnabled()) {
+        if (isEnabled() && _health > 0) {
             _attack->setEnabled(true);
             _hitboxAnimation->start();
             _attack->setAwake(true);

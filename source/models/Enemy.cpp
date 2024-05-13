@@ -204,10 +204,7 @@ void Enemy::setChasing() {
 void Enemy::setDying() {
     _state = BehaviorState::DYING;
     _currAnimation->stopAnimation();
-    _attackAnimation->reset();
     _hitboxAnimation->reset();
-    _idleAnimation->reset();
-    _walkAnimation->reset();
     _stunEffect->reset();
     _meleeHitEffect->reset();
     _bowHitEffect->reset();
