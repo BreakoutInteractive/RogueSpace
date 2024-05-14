@@ -31,6 +31,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <array>
 #include "../components/Animation.hpp"
 #include "../utility/SaveData.hpp"
 using namespace cugl;
@@ -66,7 +67,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return false;
     }
     
-    srand((uint32)time(NULL));
+    srand((uint32) time(NULL));
 
     // initalize controllers with the assets
     _assets = assets;
@@ -74,7 +75,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
-    auto preprocessor = [this](Vec2 pos){
+    std::function<bool (Vec2)> preprocessor = [this](Vec2 pos) {
         return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
     };
     _input.init(preprocessor);
@@ -91,7 +92,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.init(getCamera(), config);
     
     // necessary (starting at any actual level implies it is not an upgrade room)
-    _isUpgradeRoom = false;
+    setUpgradeRoom(false);
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -174,20 +175,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 }
 
 void GameScene::dispose() {
-    if (isActive()) {
-        _input.dispose();
-        _debugNode = nullptr;
-        _winNode = nullptr; // TODO: remove
-        _level = nullptr;
-        _complete = false;
-        _defeat = false;
-        _debug = false;
-        Scene2::dispose();
-    }
+    _input.dispose();
+    _debugNode = nullptr;
+    _winNode = nullptr; // TODO: remove
+    _level = nullptr;
+    _complete = false;
+    _defeat = false;
+    _debug = false;
+    Scene2::dispose();
 }
 
 void GameScene::restart(){
-    _winNode->setVisible(false);
     _levelTransition.setActive(false);
     _isUpgradeRoom = true;  // first level is always upgrades
     SaveData::removeSave();
@@ -195,12 +193,11 @@ void GameScene::restart(){
     data.level = 1;
     data.hp = GameConstants::PLAYER_MAX_HP;
     setLevel(data);
-    auto player = _level->getPlayer();
-    player->setHP(player->getMaxHP());
 }
 
 void GameScene::setLevel(SaveData::Data saveData){
     _debugNode->removeAllChildren();
+    _winNode->setVisible(false);
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
@@ -277,13 +274,45 @@ void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
             options.push_back(upgrade);
         }
     }
-    int opt1 = std::rand() % options.size();
-    int opt2 = std::rand() % options.size();
-    while (opt2==opt1){
+    int opt1 = 0;
+    int opt2 = 1;
+    if (options.size() > 2){
+        opt1 = std::rand() % options.size();
         opt2 = std::rand() % options.size();
+        while (opt2==opt1){
+            opt2 = std::rand() % options.size();
+        }
+    }
+    else if (options.size() == 1){
+        // duplicate
+        options.push_back(options[0]);
+    }
+    else if (options.size() == 0){
+        // anything will work, nothing to upgrade
+        Upgradeable u1 = all[0];
+        u1.setCurrentLevel(u1.getMaxLevel() - 1);
+        Upgradeable u2 = all[1];
+        u2.setCurrentLevel(u2.getMaxLevel() - 1);
+        options.push_back(u1);
+        options.push_back(u2);
     }
     std::pair<Upgradeable, Upgradeable> randomOptions(options[opt1], options[opt2]);
     _upgrades.updateScene(randomOptions);
+}
+
+std::vector<int> GameScene::getPlayerLevels(){
+    std::vector<int> levels(7, 0);
+    if (_level != nullptr){
+        auto p = _level->getPlayer();
+        levels[0] = p->getMeleeUpgrade().getCurrentLevel();
+        levels[1] = p->getBowUpgrade().getCurrentLevel();
+        levels[2] = 0; // attack speed
+        levels[3] = p->getDamageReductionUpgrade().getCurrentLevel();
+        levels[4] = p->getDodgeUpgrade().getCurrentLevel();
+        levels[5] = p->getStunUpgrade().getCurrentLevel();
+        levels[6] = p->getHPUpgrade().getCurrentLevel();
+    }
+    return levels;
 }
 
 std::string GameScene::getLevelKey(int level){
@@ -511,7 +540,7 @@ void GameScene::preUpdate(float dt) {
     
     // level is completed when player successfully exits the room
     if (isComplete() && _level->isCompleted()){
-        if (_levelNumber < MAX_LEVEL){
+        if (_levelNumber < MAX_LEVEL || _isUpgradeRoom){
             // begin transitioning to next level
             if (!_levelTransition.isActive()){
                 _levelTransition.setActive(true);
@@ -551,20 +580,23 @@ void GameScene::preUpdate(float dt) {
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
+        if (!enemy->isEnabled() || enemy->isDying()) continue;
         if (enemy->getHealth() <= 0) {
             //drop health pack
-            if (enemy->isEnabled() && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
+            if (!enemy->_dropped && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
                 auto healthpack = HealthPack::alloc(enemy->getPosition(), _assets);
                 healthpack->setDrawScale(Vec2(_scale, _scale));
                 _level->addHealthPack(healthpack);
             }
-            //remove enemy
-            enemy->setEnabled(false);
+
             if (enemy->getType() == "melee lizard" ||
                 enemy->getType() == "tank enemy") {
                 std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
                 m->getAttack()->setEnabled(false);
             }
+
+            if (enemy->isEnabled() && !enemy->isDying()) enemy->setDying();
+            enemy->_dropped = true;
         }
         if (enemy->getType() == "melee lizard" ||
             enemy->getType() == "tank enemy") {
@@ -574,8 +606,7 @@ void GameScene::preUpdate(float dt) {
                 m->getAttack()->setEnabled(false);
             }
         }
-        
-        if (enemy->isEnabled()) {
+        if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
             bool canBeginNewAttack = false;
             if (enemy->getType() == "melee lizard" ||
@@ -629,6 +660,7 @@ void GameScene::preUpdate(float dt) {
     
     player->update(dt); // updates counters, hitboxes
     _levelTransition.update(dt); // does nothing when not active
+    _gameRenderer.update(dt);
     
 #pragma mark - Upgrade System
     
@@ -747,7 +779,6 @@ void GameScene::setActive(bool value){
 }
 
 void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
-    Scene2::render(batch); // this is mainly for the debug
     _gameRenderer.render(batch);
     _effectsScene.render(batch);
     if (_upgrades.isActive()){
@@ -756,5 +787,5 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
     }
-
+    Scene2::render(batch); // this is mainly for the debug
 }

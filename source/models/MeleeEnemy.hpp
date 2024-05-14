@@ -19,10 +19,7 @@ class Animation;
  *  This class represents a melee enemy in the game.
  */
 class MeleeEnemy : public Enemy {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(MeleeEnemy);
-    
+
 protected:
     /** The physics object used by this enemy's melee attack */
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;

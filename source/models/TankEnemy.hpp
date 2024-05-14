@@ -19,9 +19,6 @@ class Animation;
  *  This class represents a melee enemy in the game. It can only be damaged while stunned
  */
 class TankEnemy : public MeleeEnemy {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(TankEnemy);
 
 protected:
     // std::shared_ptr<cugl::physics2::WheelObstacle> _attack;

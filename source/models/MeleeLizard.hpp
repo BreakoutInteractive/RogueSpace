@@ -19,10 +19,7 @@ class Animation;
  *  This class represents a melee enemy in the game.
  */
 class MeleeLizard : public MeleeEnemy {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(MeleeLizard);
-    
+
 protected:
     // std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     

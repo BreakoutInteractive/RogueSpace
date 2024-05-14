@@ -32,13 +32,13 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attacks are less spammy
 
-float GameConstants::ENEMY_STUN_DURATION = 1.4f; //previously 1.0- Tank should be killed w/1parry
+float GameConstants::ENEMY_STUN_DURATION = 1.25f; //previously 1.4
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
 
 float GameConstants::ENEMY_SIGHT_RANGE = 10;
 
-float GameConstants::ENEMY_PROXIMITY_RANGE = 6;
+float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
 
 float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
@@ -52,9 +52,9 @@ float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
 float GameConstants::PROJ_SPEED_E = 5.5f; // previously 6.0
 
-float GameConstants::PROJ_RADIUS_LIZARD = 0.4f;
+float GameConstants::PROJ_RADIUS_LIZARD = 0.3f; //previously 0.4
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.65f; 
+float GameConstants::PROJ_RADIUS_MAGE = 0.56f; //previously 0.65
 
 float GameConstants::PROJ_DIST_E = 9.0f;
 
@@ -77,7 +77,7 @@ float GameConstants::PLAYER_PASSIVE_REDUCTION = 0; // initially no defense
 
 float GameConstants::PLAYER_BLOCKING_REDUCTION = 0.1; // initially 10% damage reduction while blocking
 
-float GameConstants::PLAYER_DODGE_COUNT = 1;    // could technically be a floating point to imply something like you have 1/3 dash energy remaining if dash count per full-charge is 1.5
+float GameConstants::PLAYER_DODGE_COUNT = 1.0;    // could technically be a floating point to imply something like you have 1/3 dash energy remaining if dash count per full-charge is 1.5
 
 float GameConstants::PLAYER_STUN_DURATION = 1.0f;
 
@@ -98,11 +98,11 @@ float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 
 float GameConstants::PLAYER_MOVE_SPEED = 4.7; //previously 4.6
-float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.7f; //previously 0.5
+float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.8f; //previously 0.5
 
 
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.4f; // previously 1.3
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.35f; // previously 1.4
 
 float GameConstants::PROJ_SPEED_P = 9.0f;
 
@@ -120,7 +120,7 @@ float GameConstants::HEALTHPACK_DROP_RATE = 34.0f;
 
 float GameConstants::HEALTHPACK_HEAL_AMT = 0.25f;
 
-float GameConstants::KNOCKBACK = 1.8f; // previously 1.6
+float GameConstants::KNOCKBACK = 1.6f;
 
 float GameConstants::KNOCKBACK_PWR_ATK = 4.7f; // previously 4.0
 

@@ -56,6 +56,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
+    _dropped = false;
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -129,6 +130,10 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_bowHitEffect->isActive()) {
         drawEffect(batch, _bowHitEffect, 2);
     }
+
+    if (_deathEffect->isActive()) {
+        drawEffect(batch, _deathEffect);
+    }
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
@@ -173,12 +178,23 @@ void Enemy::setChasing() {
     _state = BehaviorState::CHASING;
 }
 
+void Enemy::setDying() {
+    _state = BehaviorState::DYING;
+    _currAnimation->stopAnimation();
+    // _hitboxAnimation->reset();
+    // _stunEffect->reset();
+    _meleeHitEffect->reset();
+    _bowHitEffect->reset();
+    _collider->setLinearVelocity(Vec2::ZERO);
+    _deathEffect->start();
+}
+
 
 void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
     if (!_meleeHitEffect->isActive() && !_bowHitEffect->isActive()) {
         _hitCounter.reset();
         if (_state == BehaviorState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
-        setHealth(getHealth()-damage);
+        setHealth(std::fmax(0, getHealth() - damage));
         _meleeHitEffect->reset();
         _bowHitEffect->reset();
         if (ranged) _bowHitEffect->start();
@@ -193,15 +209,6 @@ void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_sc
 
 void Enemy::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
-    // attack animation must play to completion, as long as enemy is alive.
-    if (!_attackAnimation->isActive()) {
-        if (getCollider()->getLinearVelocity().isZero() && _currAnimation != _idleAnimation) {
-            setIdling();
-        }
-        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
-            setMoving();
-        }
-    }
     _meleeHitEffect->update(dt);
     _bowHitEffect->update(dt);
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
@@ -210,6 +217,7 @@ void Enemy::updateAnimation(float dt){
     else {
         _tint = Color4::WHITE;
     }
+    _deathEffect->update(dt);
 }
 
 void Enemy::updateCounters() {

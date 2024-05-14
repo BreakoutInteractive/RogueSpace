@@ -255,6 +255,11 @@ public:
      */
     ExitCode getExitCode(){ return _exitCode; }
     
+    /**
+     * @return list of levels in the order of attack, bow, attack speed, shield, dash, parry, health
+     */
+    std::vector<int> getPlayerLevels();
+    
 #pragma mark -
 #pragma mark Gameplay Handling
     /**
@@ -347,9 +352,9 @@ public:
     std::string getLevelKey(int level);
     
     /**
-     * Applies selected attribute to player.
+     * sets whether this room is an upgrades room.
      */
-    void updatePlayerAttributes(int selectedAttribute);
+    void setUpgradeRoom(bool value){ _isUpgradeRoom = value; }
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

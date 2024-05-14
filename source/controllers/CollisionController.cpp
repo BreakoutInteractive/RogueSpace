@@ -55,7 +55,7 @@ void CollisionController::beginContact(b2Contact* contact){
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        if ((*it)->isEnabled()) {
+        if ((*it)->isEnabled() && (*it)->getHealth() > 0) {
             intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
             //attack
             if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
@@ -92,7 +92,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                     //explosion shouldn't hit enemies (or should it?)
-                    if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
+                    if (!p->isExploding() && (*it)->isEnabled() && (*it)->getHealth() > 0) { //need to check isEnabled because projectiles hit corpses for some reason
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();

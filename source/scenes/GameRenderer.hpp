@@ -23,7 +23,7 @@ using namespace cugl;
 
 // forward reference
 class LevelModel;
-class PauseScene;
+class Animation;
 
 class GameRenderer : public cugl::Scene2 {
     
@@ -50,6 +50,10 @@ private:
     
     /** swap weapon button */
     std::shared_ptr<scene2::Button> _swapButton;
+    
+    std::shared_ptr<scene2::SpriteNode> _dashNode;
+    /** the dash now indicator animation on stamina */
+    std::shared_ptr<Animation> _dashNowEffect;
     
 #pragma mark -
 #pragma mark Game Components
@@ -159,6 +163,11 @@ public:
      * @param callback game event to trigger when button is toggled
      */
     void configureSwapButton(bool down, std::function<void()> callback);
+    
+    /**
+     * updates running animation by `dt` seconds.
+     */
+    void update(float dt) override;
         
     /**
      * Draws the game scene with the given sprite batch.

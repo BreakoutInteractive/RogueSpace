@@ -30,7 +30,7 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu1_setting"));
     
     _continue = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_continue"));
-    _newGame2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_new"));
+    _newGame2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_new_game"));
     _tutorial2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_tutorial"));
     _settings2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_setting"));
 

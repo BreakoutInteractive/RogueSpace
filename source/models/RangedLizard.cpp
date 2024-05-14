@@ -53,6 +53,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
+    auto deathEffect = assets->get<Texture>("enemy-death-effect");
     auto projectileTexture = assets->get<Texture>("lizard-projectile");
     
     auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 8);
@@ -61,6 +62,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 5);
+    auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
@@ -68,6 +70,7 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _chargingAnimation = Animation::alloc(projectileSheet, GameConstants::ENEMY_RANGED_ATK_SPEED / 4, false, 0, 4);
+    _deathEffect = Animation::alloc(deathEffectSheet, 1.0f, false);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -100,11 +103,11 @@ void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _bowHitEffect->onComplete([this]() {
         _bowHitEffect->reset();
         });
-}
-
-void RangedLizard::updateAnimation(float dt){
-    Enemy::updateAnimation(dt);
-    _chargingAnimation->update(dt);
+    
+    _deathEffect->onComplete([this]() {
+        _deathEffect->reset();
+        setEnabled(false);
+    });
 }
 
 void RangedLizard::setFacingDir(cugl::Vec2 dir) {

@@ -1082,7 +1082,6 @@
         {
          "draworder":"topdown",
          "id":269,
-         "locked":true,
          "name":"player",
          "objects":[
                 {
@@ -1161,7 +1160,7 @@
          "y":0
         }],
  "nextlayerid":279,
- "nextobjectid":3143,
+ "nextobjectid":3144,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

@@ -10,6 +10,7 @@
 
 #include <cugl/cugl.h>
 #include "GameObject.hpp"
+#include "../components/Animation.hpp"
 
 class Wall : public GameObject {
     
@@ -23,6 +24,8 @@ protected:
     /** the size of the visible object (including transparent region) expressed in game units */
     cugl::Vec2 _size;
 
+    /** animation of the floor arrows */
+    std::shared_ptr<Animation> _arrowAnimation;
 
 public:
 #pragma mark Constructors

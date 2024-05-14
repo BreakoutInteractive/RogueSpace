@@ -183,6 +183,7 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
 
 void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
     Vec2 intersection = lineOfSight(e, p);
+    std::shared_ptr<MeleeEnemy> m;
     switch (e->getBehaviorState()) {
         case Enemy::BehaviorState::DEFAULT:
             // if we see or are close to the player, chase them
@@ -225,7 +226,7 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
             }
             break;
         case Enemy::BehaviorState::STUNNED:
-            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(e);
+            m = std::dynamic_pointer_cast<MeleeEnemy>(e);
             // change state if we're no longer stunned
             if (!m->isStunned()) {
                 // if we're still close to the player, chase them
@@ -238,13 +239,18 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
                 }
             }
             break;
+        default:
+            break;
     }
 }
 
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
         std::shared_ptr<Enemy> enemy = *it;
-        changeState(enemy, _player);
+        if (enemy->isDying() || !enemy->isEnabled()) {
+            continue;
+        }
+        if (enemy->getHealth() > 0) changeState(enemy, _player);
         // pass while taking damage to allow for knockback
         if (!enemy->_hitCounter.isZero()) {
             continue;
@@ -389,6 +395,8 @@ void AIController::update(float dt) {
                 break;
             case Enemy::BehaviorState::STUNNED:
                 enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+                break;
+            default:
                 break;
         }
     }

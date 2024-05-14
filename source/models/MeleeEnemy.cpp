@@ -28,6 +28,13 @@ void MeleeEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     if (getBehaviorState() == BehaviorState::STUNNED) {
         drawEffect(batch, _stunEffect);
     }
+    if (_attack->isEnabled()) {
+        auto sheet = _hitboxAnimation->getSpriteSheet();
+        Affine2 atkTrans = Affine2::createRotation(_attack->getAngle() - M_PI_2);
+        atkTrans.scale(GameConstants::ENEMY_MELEE_ATK_RANGE / ((Vec2)sheet->getFrameSize() / 2) * _drawScale);
+        atkTrans.translate(_attack->getPosition() * _drawScale);
+        sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
+    }
 }
 
 #pragma mark -
@@ -64,7 +71,7 @@ void MeleeEnemy::setStunned() {
 }
 
 void MeleeEnemy::updateAnimation(float dt){
-    GameObject::updateAnimation(dt);
+    Enemy::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
         if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
@@ -74,17 +81,10 @@ void MeleeEnemy::updateAnimation(float dt){
             setMoving();
         }
     }
-    _meleeHitEffect->update(dt);
-    _bowHitEffect->update(dt);
-    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
-        _tint = Color4::RED;
-    }
-    else if (getBehaviorState() == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
+
+    if (getBehaviorState() == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
         _tint = Color4::WHITE;
         setIdling();
-    }
-    else {
-        _tint = Color4::WHITE;
     }
     _stunEffect->update(dt);
     _hitboxAnimation->update(dt);

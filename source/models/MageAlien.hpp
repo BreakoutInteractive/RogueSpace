@@ -19,10 +19,7 @@ class Animation;
  *  This class represents a ranged enemy in the game.
  */
 class MageAlien : public RangedEnemy {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(MageAlien);
-    
+
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -87,8 +84,6 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
-    
-    void updateAnimation(float dt) override;
     
     /**
      * Sets the direction that the enemy is currently facing
