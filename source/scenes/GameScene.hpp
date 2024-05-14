@@ -118,8 +118,6 @@ protected:
     bool _isUpgradeRoom;
     /** whether the current level to load is a tutorial level */
     bool _isTutorial;
-    /** level number for tutorial */
-    int _tutorialLevel;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
     /** The level model */
@@ -223,6 +221,10 @@ public:
      * Sets whether tutorial is active or not
      */
     void setTutorialActive(bool active){_isTutorial = active;}
+    /**
+     * Gets whether tutorial is active or not
+     */
+    bool isTutorialComplete(){return _isTutorial && _level->isCompleted();}
     
     /**
      * Returns true if the level is completed.

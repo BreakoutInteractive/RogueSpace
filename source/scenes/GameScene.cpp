@@ -94,7 +94,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // necessary (starting at any actual level implies it is not an upgrade room)
     setUpgradeRoom(false);
     _isTutorial = false;
-    _tutorialLevel = 0;
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -193,11 +192,10 @@ void GameScene::activateTutorial(int level){
     _levelTransition.setActive(false);
     _gameRenderer.setActivated(false);
     _isTutorial = true;
-    _tutorialLevel = level;
     _exitCode = NONE;
     _isUpgradeRoom = false;
     SaveData::Data data;
-    data.level = 0;
+    data.level = level;
     data.hp = GameConstants::PLAYER_MAX_HP;
     setLevel(data);
     _gameRenderer.setActivated(true);
@@ -223,7 +221,7 @@ void GameScene::setLevel(SaveData::Data saveData){
         levelToParse = "upgrades";
         _isTutorial = false;
     } else if (_isTutorial){
-        levelToParse = getLevelKey(_tutorialLevel);
+        levelToParse = getLevelKey(_levelNumber);
     }
     else{
         levelToParse = getLevelKey(_levelNumber);
@@ -525,7 +523,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
         // player finishes current level
-        if (activeCount == 0){
+        if (activeCount == 0 && !_isTutorial){
             setComplete(true);
             auto energyWalls = _level->getEnergyWalls();
             for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
@@ -535,6 +533,14 @@ void GameScene::preUpdate(float dt) {
                 // no more enemies remain, but there were enemies initially
                 _actionManager.remove(AREA_CLEAR_KEY);
                 _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
+            }
+        }
+        // player finishes current level
+        if (activeCount == 0 && _isTutorial){ //replace with tutorial condition
+            setComplete(true);
+            auto energyWalls = _level->getEnergyWalls();
+            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
+                (*it)->deactivate();
             }
         }
     }
@@ -550,6 +556,8 @@ void GameScene::preUpdate(float dt) {
             _actionManager.remove(AREA_CLEAR_KEY);
             _actionManager.remove(DEAD_EFFECT_KEY);
             _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
+        } else if (_isTutorial){
+            _level->getPlayer()->setHP(GameConstants::PLAYER_MAX_HP);
         }
     }
     

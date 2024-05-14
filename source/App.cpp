@@ -132,6 +132,11 @@ void App::preUpdate(float dt) {
                 _scene = State::PAUSE;
                 _pause.setLabels(_gameplay.getPlayerLevels());
                 _gameplay.setActive(false);
+            } else if(_gameplay.isTutorialComplete()){
+                _scene = State::TUTORIAL;
+                _gameplay.setActive(false);
+                _gameplay.setTutorialActive(false);
+                _tutorial.setActive(true);
             }
             else{
                 _gameplay.setActive(true);
