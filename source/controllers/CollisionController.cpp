@@ -147,7 +147,7 @@ void CollisionController::beginContact(b2Contact* contact){
                             physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
                             _audioController->playEnemyFX("attackHit", data2->getName());
                         }
-                        player->hit(dir);
+                        player->hit(dir, m->getDamage());
                         CULog("Player took damage!");
                     }
                 }

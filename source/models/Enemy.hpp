@@ -61,6 +61,8 @@ protected:
     float _moveSpeed;
     /** The enemy's current health */
     float _health;
+    /** The damage inflicted by this enemy */
+    float _damage;
     /** The enemy's maximum health */
     float _maxHealth;
     
@@ -183,6 +185,11 @@ public:
      * Gets the movement speed of this enemy.
      */
     int getMoveSpeed() const { return _moveSpeed; }
+    
+    /**
+     * @return the enemy's damage power
+     */
+    float getDamage() const { return _damage; }
     
     /**
      * Gets the current health of this enemy.

@@ -11,6 +11,7 @@
 #include "../components/Collider.hpp"
 #include "LevelModel.hpp"
 #include "GameConstants.hpp"
+#include "LevelConstants.hpp"
 
 using namespace cugl;
 
@@ -57,6 +58,9 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
     _dropped = false;
+    setHealth(data->getFloat(ENEMY_HP_FIELD));
+    setMaxHealth(data->getFloat(ENEMY_HP_FIELD));
+    _damage = data->getFloat(ENEMY_DMG_FIELD);
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
