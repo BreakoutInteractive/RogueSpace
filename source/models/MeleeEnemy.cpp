@@ -43,16 +43,19 @@ void MeleeEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
 void MeleeEnemy::setIdling() {
     Enemy::setIdling();
     _stunAnimation->reset();
+    _stunEffect->reset();
 }
 
 void MeleeEnemy::setMoving() {
     Enemy::setMoving();
     _stunAnimation->reset();
+    _stunEffect->reset();
 }
 
 void MeleeEnemy::setAttacking() {
     Enemy::setAttacking();
     _stunAnimation->reset();
+    _stunEffect->reset();
 }
 
 void MeleeEnemy::setStunned() {
