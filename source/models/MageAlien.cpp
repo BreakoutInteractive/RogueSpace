@@ -50,32 +50,26 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto idleTexture = assets->get<Texture>("mage-idle");
     auto walkTexture = assets->get<Texture>("mage-walk");
     auto attackTexture = assets->get<Texture>("mage-attack");
-    auto stunTexture = assets->get<Texture>("mage-idle"); // use idle animation for now
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
-    auto stunEffect = assets->get<Texture>("stun-effect");
     auto deathEffect = assets->get<Texture>("enemy-death-effect");
     auto projectileTexture = assets->get<Texture>("mage-projectile");
     
     auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 9);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 16);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 14);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
-    auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
     auto projectileSheet = SpriteSheet::alloc(projectileTexture, 4, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
-    _stunAnimation = Animation::alloc(stunSheet, GameConstants::ENEMY_STUN_DURATION, false, 0, 8);
+    _attackAnimation = Animation::alloc(attackSheet, GameConstants::ENEMY_RANGED_ATK_SPEED, false, 0, 13);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
-    _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
+    _chargingAnimation = Animation::alloc(projectileSheet, GameConstants::ENEMY_RANGED_ATK_SPEED / 2, false, 0, 13);
     _deathEffect = Animation::alloc(deathEffectSheet, 1.0f, false);
-    _chargingAnimation = Animation::alloc(projectileSheet, 0.5625f, false, 0, 13);
     
     _currAnimation = _idleAnimation; // set runnning
     
@@ -84,7 +78,6 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attackAnimation->reset();
         //_hitboxAnimation->reset();
         _atkCD.reset(); // cooldown begins AFTER the attack is done
-        _attack->setEnabled(false);
     });
     
     _attackAnimation->addCallback(0.0f, [this](){
@@ -94,7 +87,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
         setAiming(true);
     });
     
-    _attackAnimation->addCallback(0.45f, [this](){
+    _attackAnimation->addCallback(GameConstants::ENEMY_RANGED_ATK_SPEED * 0.4f, [this](){
         setAiming(false);
     });
     
@@ -111,6 +104,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _bowHitEffect->onComplete([this]() {
         _bowHitEffect->reset();
     });
+
     _deathEffect->onComplete([this]() {
         _deathEffect->reset();
         setEnabled(false);
@@ -138,6 +132,5 @@ void MageAlien::setFacingDir(cugl::Vec2 dir) {
         _idleAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
         _walkAnimation->setFrameRange(16 * _directionIndex + 6, 16 * _directionIndex + 13);
         _attackAnimation->setFrameRange(14 * _directionIndex, 14 * _directionIndex + 13);
-        _stunAnimation->setFrameRange(9 * _directionIndex, 9 * _directionIndex + 8);
     }
 }

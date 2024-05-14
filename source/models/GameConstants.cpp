@@ -44,6 +44,10 @@ float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
 float GameConstants::ENEMY_RANGED_ATK_RANGE = 7;
 
+float GameConstants::ENEMY_MELEE_ATK_SPEED = 1.125f;
+
+float GameConstants::ENEMY_RANGED_ATK_SPEED = 0.84375f;
+
 float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
 float GameConstants::PROJ_SPEED_E = 5.5f; // previously 6.0

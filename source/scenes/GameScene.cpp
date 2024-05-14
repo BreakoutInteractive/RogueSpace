@@ -588,19 +588,38 @@ void GameScene::preUpdate(float dt) {
                 healthpack->setDrawScale(Vec2(_scale, _scale));
                 _level->addHealthPack(healthpack);
             }
-            enemy->getAttack()->setEnabled(false);
+
+            if (enemy->getType() == "melee lizard" ||
+                enemy->getType() == "tank enemy") {
+                std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
+                m->getAttack()->setEnabled(false);
+            }
+
             if (enemy->isEnabled() && !enemy->isDying()) enemy->setDying();
             enemy->_dropped = true;
         }
-        if (enemy->isStunned()){
-            enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
-            enemy->getAttack()->setEnabled(false);
+        if (enemy->getType() == "melee lizard" ||
+            enemy->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
+            if (m->isStunned()){
+                enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+                m->getAttack()->setEnabled(false);
+            }
         }
         if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
-            bool canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !enemy->isStunned();
+            bool canBeginNewAttack = false;
+            if (enemy->getType() == "melee lizard" ||
+                enemy->getType() == "tank enemy") {
+                std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
+                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !m->isStunned();
+            }
+            else {
+                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero();
+            }
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
-                if (enemy->getType() == "melee lizard") {
+                if (enemy->getType() == "melee lizard" ||
+                    enemy->getType() == "tank enemy") {
                     enemy->attack(_level, _assets);
                 }
                 enemy->setAttacking();
@@ -608,7 +627,8 @@ void GameScene::preUpdate(float dt) {
             if (enemy->isAttacking()) {
                 if (enemy->getType() == "ranged lizard" ||
                     enemy->getType() == "mage alien") {
-                    if (enemy->getCharged()) {
+                    std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
+                    if (r->getCharged()) {
                         enemy->attack(_level, _assets);
                     }
                 }
@@ -710,7 +730,11 @@ void GameScene::fixedUpdate(float step) {
         for (auto it = enemies.begin(); it != enemies.end(); ++it){
             auto e = *it;
             e->syncPositions();
-            e->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
+            if (e->getType() == "melee lizard"
+                || e->getType() == "tank enemy") {
+                std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(e);
+                m->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
+            }
         }
         player->syncPositions();
 

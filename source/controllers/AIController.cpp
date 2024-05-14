@@ -183,6 +183,7 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
 
 void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
     Vec2 intersection = lineOfSight(e, p);
+    std::shared_ptr<MeleeEnemy> m;
     switch (e->getBehaviorState()) {
         case Enemy::BehaviorState::DEFAULT:
             // if we see or are close to the player, chase them
@@ -225,8 +226,9 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
             }
             break;
         case Enemy::BehaviorState::STUNNED:
+            m = std::dynamic_pointer_cast<MeleeEnemy>(e);
             // change state if we're no longer stunned
-            if (!e->isStunned()) {
+            if (!m->isStunned()) {
                 // if we're still close to the player, chase them
                 if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
                     e->setChasing();
@@ -345,7 +347,7 @@ void AIController::update(float dt) {
                 }
                 break;
             case Enemy::BehaviorState::CHASING:
-                if (enemy->getPosition().distance(_player->getPosition()) <= 1) {
+                if (enemy->getPosition().distance(_player->getPosition()) <= enemy->getAttackRange()) {
                     dir = _player->getPosition() - enemy->getPosition();
                     dir.normalize();
                     enemy->setFacingDir(dir);
@@ -381,10 +383,13 @@ void AIController::update(float dt) {
                 }
                 break;
             case Enemy::BehaviorState::ATTACKING:
-                if ((enemy->getType() == "ranged lizard" || enemy->getType() == "mage alien") && enemy->getAiming()) {
-                    dir = _player->getPosition() - enemy->getPosition();
-                    dir.normalize();
-                    enemy->setFacingDir(dir);
+                if ((enemy->getType() == "ranged lizard" || enemy->getType() == "mage alien")) {
+                    std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
+                    if (r->getAiming()) {
+                        dir = _player->getPosition() - enemy->getPosition();
+                        dir.normalize();
+                        enemy->setFacingDir(dir);
+                    }
                 }
                 enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
                 break;

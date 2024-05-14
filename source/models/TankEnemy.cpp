@@ -18,7 +18,7 @@ using namespace cugl;
 
 
 bool TankEnemy::init(std::shared_ptr<JsonValue> data) {
-    Enemy::init(data);
+    MeleeEnemy::init(data);
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE*0.8f;
     return true;
 }
@@ -67,7 +67,7 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
 
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 4);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 7);
+    _attackAnimation = Animation::alloc(attackSheet, GameConstants::ENEMY_MELEE_ATK_SPEED, false, 0, 7);
     _stunAnimation = Animation::alloc(stunSheet, GameConstants::ENEMY_STUN_DURATION, false, 0, 5);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
@@ -84,7 +84,7 @@ void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
         _attack->setEnabled(false);
         });
 
-    _attackAnimation->addCallback(0.75f, [this]() {
+    _attackAnimation->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 2 / 3, [this]() {
         if (isEnabled() && _health > 0) {
             _attack->setEnabled(true);
             _hitboxAnimation->start();

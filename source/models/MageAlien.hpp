@@ -19,10 +19,7 @@ class Animation;
  *  This class represents a ranged enemy in the game.
  */
 class MageAlien : public RangedEnemy {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(MageAlien);
-    
+
 public:
 #pragma mark -
 #pragma mark Constructors
