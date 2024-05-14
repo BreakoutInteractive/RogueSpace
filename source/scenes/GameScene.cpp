@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/BossEnemy.hpp"
 #include "../models/Wall.hpp"
 #include "../models/HealthPack.hpp"
 #include <box2d/b2_world.h>
@@ -590,7 +591,8 @@ void GameScene::preUpdate(float dt) {
             }
 
             if (enemy->getType() == "melee lizard" ||
-                enemy->getType() == "tank enemy") {
+                enemy->getType() == "tank enemy" ||
+                enemy->getType() == "boss enemy") {
                 std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
                 m->getAttack()->setEnabled(false);
             }
@@ -599,7 +601,8 @@ void GameScene::preUpdate(float dt) {
             enemy->_dropped = true;
         }
         if (enemy->getType() == "melee lizard" ||
-            enemy->getType() == "tank enemy") {
+            enemy->getType() == "tank enemy" ||
+            enemy->getType() == "boss enemy") {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
             if (m->isStunned()){
                 enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
@@ -607,10 +610,19 @@ void GameScene::preUpdate(float dt) {
             }
         }
         if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
-            // enemy can only begin an attack if not stunned and within range of player and can see them
+            // enemy can only begin an attack if not stunned and within range of player and can see them, or if already attacking (the boss)
+            if (enemy->getType() == "boss enemy") {
+                std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
+                if (boss->secondAttack()) {
+                    boss->attack2(_assets);
+                    boss->setAttacking2();
+                    continue;
+                }
+            }
             bool canBeginNewAttack = false;
             if (enemy->getType() == "melee lizard" ||
-                enemy->getType() == "tank enemy") {
+                enemy->getType() == "tank enemy" ||
+                enemy->getType() == "boss enemy") {
                 std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
                 canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !m->isStunned();
             }
@@ -619,7 +631,8 @@ void GameScene::preUpdate(float dt) {
             }
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard" ||
-                    enemy->getType() == "tank enemy") {
+                    enemy->getType() == "tank enemy" ||
+                    enemy->getType() == "boss enemy") {
                     enemy->attack(_level, _assets);
                 }
                 enemy->setAttacking();
@@ -731,7 +744,8 @@ void GameScene::fixedUpdate(float step) {
             auto e = *it;
             e->syncPositions();
             if (e->getType() == "melee lizard"
-                || e->getType() == "tank enemy") {
+                || e->getType() == "tank enemy"
+                || e->getType() == "boss enemy") {
                 std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(e);
                 m->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
             }

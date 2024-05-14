@@ -13,6 +13,7 @@
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
 #include "MageAlien.hpp"
+#include "BossEnemy.hpp"
 #include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
@@ -98,7 +99,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         
     for (int ii = 0; ii < _enemies.size(); ii++){
         if (_enemies[ii]->getType() == "melee lizard"
-            || _enemies[ii]->getType() == "tank enemy") {
+            || _enemies[ii]->getType() == "tank enemy"
+            || _enemies[ii]->getType() == "boss enemy") {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
             m->getAttack()->getDebugNode()->setVisible(m->getAttack()->isEnabled());
         }
@@ -139,7 +141,8 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         if (_enemies[ii]->getType() == "melee lizard"
-            || _enemies[ii]->getType() == "tank enemy") {
+            || _enemies[ii]->getType() == "tank enemy"
+            || _enemies[ii]->getType() == "boss enemy") {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
             m->getAttack()->setDebugScene(_debugNode);
             m->getAttack()->setDebugColor(Color4::RED);
@@ -248,7 +251,8 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->addObstaclesToWorld(_world);
         if (_enemies[ii]->getType() == "melee lizard"
-            || _enemies[ii]->getType() == "tank enemy") {
+            || _enemies[ii]->getType() == "tank enemy"
+            || _enemies[ii]->getType() == "boss enemy") {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
             addObstacle(m->getAttack());
             m->getAttack()->setEnabled(false);
@@ -382,7 +386,7 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
         enemy = MageAlien::alloc(json);
     }
     else if (enemyType == CLASS_TANK) {
-        enemy = TankEnemy::alloc(json);
+        enemy = BossEnemy::alloc(json);
     }
     CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());
     auto enemyCollider = enemy->getCollider();

@@ -112,7 +112,8 @@ void CollisionController::beginContact(b2Contact* contact){
     }
     // enemy melee attack
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
+        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
+            || (*it)->getType() == "boss enemy") {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
             intptr_t aptr = reinterpret_cast<intptr_t>(m->getAttack().get());
             if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
@@ -231,13 +232,14 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
                 (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
                 //enemies phase through each other if one is idle/stunned
-                if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
+                if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
+                    || (*it)->getType() == "boss enemy") {
                     std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
                     if (m->isStunned()) {
                         contact->SetEnabled(false);
                     }
                 }
-                if ((*iter)->getType() == "melee lizard" || (*iter)->getType() == "tank enemy") {
+                if ((*iter)->getType() == "melee lizard" || (*iter)->getType() == "tank enemy" || (*iter)->getType() == "boss enemy") {
                     std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*iter);
                     if (m->isStunned()) {
                         contact->SetEnabled(false);
