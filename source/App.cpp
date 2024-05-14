@@ -177,6 +177,10 @@ void App::updatePauseScene(float dt) {
                 case TITLE:
                     setTitleScene();
                     break;
+                case TUTORIAL:
+                    _tutorial.setActive(true);
+                    _scene = TUTORIAL;
+                    break;
                 default:
                     break;
                 }
@@ -252,11 +256,13 @@ void App::updateTutorialScene(float dt){
         case TutorialScene::BACK:
             _title.setActive(true);
             _tutorial.setActive(false);
+            _gamePrevScene= TITLE;
             _scene = TITLE;
             break;
         case TutorialScene::LEVEL:
             _tutorial.setActive(false);
             _gameplay.activateTutorial(_tutorial.getSelectedLevel());
+            _gamePrevScene = TUTORIAL;
             _scene = GAME; // switch to game scene
             break;
         case TutorialScene::SETTINGS:
