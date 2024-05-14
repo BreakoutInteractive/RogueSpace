@@ -219,6 +219,35 @@
         },
         {
             "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 14,
+            "members": [
+                {
+                    "name": "damage",
+                    "type": "float",
+                    "value": 2
+                },
+                {
+                    "name": "hp",
+                    "type": "float",
+                    "value": 4
+                },
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Slime",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
             "drawFill": false,
             "id": 7,
             "members": [

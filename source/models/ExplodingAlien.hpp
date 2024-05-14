@@ -96,6 +96,8 @@ public:
     
     void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) override;
     
+    std::shared_ptr<Hitbox> getAttack(){ return _attack; }
+    
     void addObstaclesToWorld(std::shared_ptr<physics2::ObstacleWorld> world) override {
         GameObject::addObstaclesToWorld(world);
         world->addObstacle(_attack);
@@ -105,6 +107,12 @@ public:
     void removeObstaclesFromWorld(std::shared_ptr<physics2::ObstacleWorld> world) override{
         GameObject::removeObstaclesFromWorld(world);
         world->removeObstacle(_attack);
+    }
+    
+    void setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug) override {
+        GameObject::setDebugNode(debug);
+        _attack->setDebugScene(debug);
+        _attack->setDebugColor(Color4::WHITE);
     }
     
 #pragma mark -
@@ -119,6 +127,12 @@ public:
      * @return whether this enemy can start an explosion
      */
     bool canExplode(){ return _windupCD.isZero(); }
+    
+    /**
+     * starts the attack animation on death, if the attack animation has not yet started.
+     * The attack will follow up with an explosion.
+     */
+    void setDying() override;
     
     /**
      * increments or decrements explosion timer based on value

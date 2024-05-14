@@ -291,7 +291,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type == CLASS_COLLIDER){
             data = parseCustomCollision(object);
         }
-        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD){
+        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD || type == CLASS_SLIME){
             data = parseEnemy(object, type);
         }
         if (data != nullptr){

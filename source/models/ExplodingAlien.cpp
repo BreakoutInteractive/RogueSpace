@@ -19,7 +19,7 @@ using namespace cugl;
 bool ExplodingAlien::init(std::shared_ptr<JsonValue> data) {
     Enemy::init(data);
     _attackRange = GameConstants::EXPLODE_PROX_RANGE;
-    _attack = Hitbox::alloc(getCollider()->getPosition(), _attackRange);
+    _attack = Hitbox::alloc(getCollider()->getPosition(), GameConstants::EXPLODE_RADIUS);
     _windupCD.setMaxCount(GameConstants::EXPLODE_TIMER);
     _windupCD.reset();
     b2Filter filter;
@@ -56,8 +56,6 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
-    auto stunEffect = assets->get<Texture>("stun-effect");
-    auto deathEffect = assets->get<Texture>("enemy-death-effect");
     auto explodeEffect = assets->get<Texture>("explosion-effect");
     
     auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 4);
@@ -68,27 +66,29 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
-    auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
-    auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
     auto explodeEffectSheet = SpriteSheet::alloc(explodeEffect, 2, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 3);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
     _idleAnimationWhite = Animation::alloc(idleSheetWhite, 1.0f, true, 0, 3);
     _walkAnimationWhite = Animation::alloc(walkSheetWhite, 1.0f, true, 0, 4);
-    _attackAnimation = Animation::alloc(attackSheet, 1.0f, false, 0, 5);
+    _attackAnimation = Animation::alloc(attackSheet, 0.8f, false, 0, 5);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
-    _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     _deathEffect = Animation::alloc(explodeEffectSheet, 0.333f, false); // this is explosion
     
     _currAnimation = _idleAnimation; // set running
     
     // add callbacks
     _attackAnimation->addCallback(0.5f, [this](){
-        if (isEnabled()) {
-            _health = 0; // self-destruct
+        if (isEnabled() && !isDying()) {
+            _health = 0; // self-destruct, enemy dies
             setDying();
+        }
+        if (!_deathEffect->isStarted()){
+            _deathEffect->start();
+            _attack->setAwake(true);
+            _attack->setEnabled(true);
         }
     });
     
@@ -102,16 +102,20 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     });
  
     // the effect is always started on 0 health (which is desired)
-    _deathEffect->addCallback(0.0f, [this](){
-        _attack->setPosition(_attack->getPosition().add(0, 64 / _drawScale.y)); //64 is half of the pixel height of the enemy
-        _attack->setAwake(true);
-        _attack->setEnabled(true);
-    });
     _deathEffect->onComplete([this]() {
         _deathEffect->reset();
         _attack->setEnabled(false);
         setEnabled(false);
     });
+}
+
+void ExplodingAlien::setDying(){
+    _state = BehaviorState::DYING;
+    if (!_attackAnimation->isStarted()){
+        setAnimation(_attackAnimation);
+        _attackAnimation->start();
+    }
+    getCollider()->setLinearVelocity(Vec2::ZERO);
 }
 
 void ExplodingAlien::setFacingDir(cugl::Vec2 dir) {
@@ -176,6 +180,11 @@ void ExplodingAlien::updateAnimation(float dt){
     else {
         _tint = Color4::WHITE;
     }
+    
+    // TODO: need a sync position implementation for enemies ...
+    // make sure hitbox debug node is hidden when not active
+    _attack->getDebugNode()->setVisible(_attack->isEnabled());
+    _attack->setPosition(_position + Vec2(0, 64 / _drawScale.y));
 }
 
 void ExplodingAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
@@ -217,6 +226,7 @@ void ExplodingAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         drawEffect(batch, _bowHitEffect, 2);
     }
     if (_deathEffect->isActive()) {
-        drawEffect(batch, _deathEffect, 0.8 * GameConstants::EXPLODE_RADIUS);
+        Vec2 scale = GameConstants::EXPLODE_RADIUS * _drawScale / _deathEffect->getSpriteSheet()->getFrameSize();
+        drawEffect(batch, _deathEffect, 2 * (500/365) * std::fmin(scale.x, scale.y)); // 500 to 365 is the ratio of the sprite to actual explosion size in sprite
     }
 }

@@ -59,6 +59,24 @@
         },
         "enemy-death-effect": {
             "file":     "textures/sprites/effect_death_enemy.png"
+        },
+        "slime-walk": {
+            "file":     "textures/sprites/slime/slime_walk.png"
+        },
+        "slime-idle": {
+            "file":     "textures/sprites/slime/slime_idle.png"
+        },
+        "slime-walk-white": {
+            "file":     "textures/sprites/slime/slime_walk_white.png"
+        },
+        "slime-idle-white": {
+            "file":     "textures/sprites/slime/slime_idle_white.png"
+        },
+        "slime-attack": {
+            "file":     "textures/sprites/slime/explosion.png"
+        },
+        "explosion-effect": {
+            "file":     "textures/sprites/effect_explosion.png"
         }
     }
 }
