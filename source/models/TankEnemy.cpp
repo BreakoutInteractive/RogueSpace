@@ -20,6 +20,7 @@ using namespace cugl;
 bool TankEnemy::init(std::shared_ptr<JsonValue> data) {
     MeleeEnemy::init(data);
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE*0.8f;
+    _attack->setRadius(_attackRange);
     return true;
 }
 
@@ -45,8 +46,7 @@ void TankEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 #pragma mark Animation
 
 void TankEnemy::loadAssets(const std::shared_ptr<AssetManager>& assets) {
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    MeleeEnemy::loadAssets(assets);
     auto idleTexture = assets->get<Texture>("tank-idle");
     auto walkTexture = assets->get<Texture>("tank-idle");
     auto attackTexture = assets->get<Texture>("tank-attack");

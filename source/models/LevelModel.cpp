@@ -187,17 +187,9 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     if (_relic!=nullptr){
         _relic->loadAssets(assets);
     }
-    
-    std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
-    std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 4);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
-        if (_enemies[ii]->getType() == "melee lizard" ||
-            _enemies[ii]->getType() == "tank enemy") {
-            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
-            m->setHitboxAnimation(Animation::alloc(s2, GameConstants::ENEMY_MELEE_ATK_SPEED / 3, false)); //0.25 seconds is approximately the previous length of the attack (16 frames at 60 fps);
-        }
     }
 }
 
@@ -419,22 +411,6 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
         enemyCollider->setBodyType(b2_staticBody);
     }
     _enemies.push_back(enemy);
-    
-    // attack setup
-    b2Filter filter;
-    if (enemyType == CLASS_LIZARD || enemyType == CLASS_TANK) {
-        std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
-        auto attack = physics2::WheelObstacle::alloc(enemyCollider->getPosition(), GameConstants::ENEMY_MELEE_ATK_RANGE);
-        attack->setSensor(true);
-        attack->setName("enemy-attack");
-        attack->setBodyType(b2_dynamicBody);
-        // this is an attack
-        filter.categoryBits = CATEGORY_ATTACK;
-        // since it is an enemy's attack, it can collide with the player
-        filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX;
-        attack->setFilterData(filter);
-        m->setAttack(attack);
-    }
     return true;
 }
 

@@ -19,7 +19,6 @@ using namespace cugl;
 
 bool MeleeLizard::init(std::shared_ptr<JsonValue> data) {
     MeleeEnemy::init(data);
-    
     return true;
 }
 
@@ -45,8 +44,7 @@ void MeleeLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_pt
 #pragma mark Animation
 
 void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    MeleeEnemy::loadAssets(assets);
     auto idleTexture = assets->get<Texture>("lizard-idle");
     auto walkTexture = assets->get<Texture>("lizard-walk");
     auto attackTexture = assets->get<Texture>("lizard-attack");

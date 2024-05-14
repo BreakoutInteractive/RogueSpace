@@ -50,7 +50,7 @@ void CollisionController::beginContact(b2Contact* contact){
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
     std::shared_ptr<Player> player = _level->getPlayer();
-    std::shared_ptr<PlayerHitbox> meleeHitbox = player->getMeleeHitbox();
+    std::shared_ptr<SemiCircleHitbox> meleeHitbox = player->getMeleeHitbox();
     intptr_t aptr = reinterpret_cast<intptr_t>(meleeHitbox.get());
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
@@ -60,27 +60,20 @@ void CollisionController::beginContact(b2Contact* contact){
             //attack
             if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
                 (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == aptr)) {
-                //attack hitbox is a circle, but we only want it to hit in a semicircle
                 Vec2 dir = (*it)->getPosition() * (*it)->getDrawScale() - player->getPosition() * player->getDrawScale();
                 dir.normalize();
                 float ang = acos(dir.dot(Vec2::UNIT_X));
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
-                float hitboxAngle = player->getMeleeHitbox()->getAngle();
-                if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    
-                    // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
-                    if (player->getMeleeHitbox()->hits(eptr)){
-                        (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
-                        _audioController->playPlayerFX("attackHit");
-                        CULog("Hit an enemy!");
-                        // record the hit
-                        if (!meleeHitbox->hitFlag){
-                            // the hitbox is active and this is the first hit of the frame
-                            meleeHitbox->hitFlag = true;
-                            if (player->isComboStrike()){
-                                // set flag to request "hit pause" effect
-                                _comboStriked = true;
-                            }
+                // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
+                if (player->getMeleeHitbox()->hits(eptr, ang)){
+                    (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    _audioController->playPlayerFX("attackHit");
+                    CULog("Hit an enemy!");
+                    if (meleeHitbox->hitCount() == 1){
+                        // the hitbox is active and this is the first hit of the frame
+                        if (player->isComboStrike()){
+                            // set flag to request "hit pause" effect
+                            _comboStriked = true;
                         }
                     }
                 }
@@ -130,8 +123,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if (player->getPosition().y * player->getDrawScale().y <
                     (*it)->getPosition().y *
                     (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
-                if (abs(ang - m->getAttack()->getAngle()) <= M_PI_2
-                    || abs(ang - m->getAttack()->getAngle()) >= 3 * M_PI_2) {
+                if (m->getAttack()->hits(pptr, ang)){
                     if (player->isParrying()) {
                         //successful parry
                         m->setStunned(player->getStunWindow());

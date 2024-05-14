@@ -40,6 +40,7 @@ bool SaveData::hasGameSave(){
     dataCache.weapon = json->getInt("weapon");
     dataCache.hpLvl = json->getInt("hpLvl");
     dataCache.atkLvl = json->getInt("atkLvl");
+    dataCache.atkSpLvl = json->getInt("atkSpLvl");
     dataCache.rangedLvl = json->getInt("rangedLvl");
     dataCache.defLvl = json->getInt("defLvl");
     dataCache.parryLvl = json->getInt("parryLvl");
@@ -61,6 +62,7 @@ void SaveData::makeSave(Data data){
     json->appendChild("hp", JsonValue::alloc(data.hp));
     json->appendChild("hpLvl", JsonValue::alloc((long)data.hpLvl));
     json->appendChild("atkLvl", JsonValue::alloc((long)data.atkLvl));
+    json->appendChild("atkSpLvl", JsonValue::alloc((long)data.atkSpLvl));
     json->appendChild("rangedLvl", JsonValue::alloc((long)data.rangedLvl));
     json->appendChild("defLvl", JsonValue::alloc((long)data.defLvl));
     json->appendChild("parryLvl", JsonValue::alloc((long)data.parryLvl));

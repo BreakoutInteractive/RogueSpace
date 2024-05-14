@@ -13,57 +13,11 @@
 #include "GameObject.hpp"
 #include "Upgradeable.hpp"
 #include "GameConstants.hpp"
+#include "../components/Hitbox.hpp"
 
 using namespace cugl;
 
 class Animation;
-
-/**
- * This class represents the player's melee attack hitbox. During the timeframe between the activation of this hitbox, it records whether there is a successful hit of any opponent to allow the player to perform combo hits.
- * This is a separate component attached to the player and the player model is responsible for its physics.
- */
-class PlayerHitbox : public physics2::WheelObstacle {
-
-private:
-    /** the set of entities (their pointers) that the hitbox damaged*/
-    std::unordered_set<intptr_t> hitSet;
-    
-public:
-    
-    /** whether the hitbox hit any targets */
-    bool hitFlag;
-    
-    /**
-     * Creates a new hitbox located at the world origin
-     */
-    PlayerHitbox(void): physics2::WheelObstacle(), hitFlag(false) {}
-    
-    /**
-     * Returns a new hitbox arc of the given radius.
-     *
-     * @param  pos      Initial position in world coordinates
-     * @param  radius   The hitbox radius
-     *
-     * @return a new hitbox object of the given radius.
-     */
-    static std::shared_ptr<PlayerHitbox> alloc(const Vec2 pos, float radius) {
-        std::shared_ptr<PlayerHitbox> result = std::make_shared<PlayerHitbox>();
-        return (result->init(pos,radius) ? result : nullptr);
-    }
-    
-    /**
-     * Sets whether the body is enabled and clears the hit flag.
-     * Any processing of the hitflag has to be done between calls to this method before the truth value is cleared.
-     *
-     * @param value whether the body is enabled
-     */
-    void setEnabled(bool value);
-    
-    /**
-     * @return whether to handle the collision between this hitbox and the target
-     */
-    bool hits(intptr_t enemyPtr);
-};
 
 /**
  * This class is the player object in this game.
@@ -181,7 +135,7 @@ protected:
     /** which step in the melee combo we are in */
     int _combo;
     /** player melee hitbox (semi-circle) */
-    std::shared_ptr<PlayerHitbox> _meleeHitbox;
+    std::shared_ptr<SemiCircleHitbox> _meleeHitbox;
 
 public:
 #pragma mark -
@@ -272,6 +226,13 @@ public:
     void setMeleeLevel(int level){
         CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
         _meleeDamage.setCurrentLevel(level);
+    }
+    
+    float getMeleeSpeed(){ return _attackCooldown.getCurrentValue();}
+    Upgradeable getMeleeSpeedUpgrade(){ return _attackCooldown; }
+    void setMeleeSpeedLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _attackCooldown.setCurrentLevel(level);
     }
     
     /**
@@ -408,7 +369,7 @@ public:
     /**
      * @return reference to the player melee hitbox
      */
-    std::shared_ptr<PlayerHitbox> getMeleeHitbox(){ return _meleeHitbox; }
+    std::shared_ptr<SemiCircleHitbox> getMeleeHitbox(){ return _meleeHitbox; }
     
     /**
      * enables the melee attack hitbox

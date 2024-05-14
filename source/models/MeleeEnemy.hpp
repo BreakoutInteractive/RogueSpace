@@ -12,8 +12,8 @@
 #include "Counter.hpp"
 #include "Enemy.hpp"
 #include "GameObject.hpp"
-
-class Animation;
+#include "../components/Animation.hpp"
+#include "../components/Hitbox.hpp"
 
 /**
  *  This class represents a melee enemy in the game.
@@ -22,7 +22,12 @@ class MeleeEnemy : public Enemy {
 
 protected:
     /** The physics object used by this enemy's melee attack */
-    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
+    std::shared_ptr<Hitbox> _attack;
+    
+    /**
+     * configure the hitbox for this enemy (by default, this is semisphere)
+     */
+    virtual void initAttack();
     
 #pragma mark - Animation Assets
     /** The animation of the hitbox while attacking */
@@ -35,6 +40,8 @@ protected:
 public:
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
+    
+    void loadAssets(const std::shared_ptr<cugl::AssetManager> &assets) override;
     
 #pragma mark -
 #pragma mark Constructors
@@ -83,17 +90,17 @@ public:
     }
     
 #pragma mark -
-#pragma mark Accessors
+#pragma mark Accessors and Physics
     
     /**
      * Gets this enemy's attack hitbox.
      */
-    std::shared_ptr<cugl::physics2::WheelObstacle> getAttack() const { return _attack; }
+    std::shared_ptr<Hitbox> getAttack() const { return _attack; }
     
-    /**
-     * Sets this enemy's attack hitbox.
-     */
-    void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
+    void removeObstaclesFromWorld(std::shared_ptr<physics2::ObstacleWorld> world) override{
+        GameObject::removeObstaclesFromWorld(world);
+        world->removeObstacle(_attack);
+    }
     
 #pragma mark -
 #pragma mark Animation and State
