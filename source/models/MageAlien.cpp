@@ -65,7 +65,7 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
-    auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 7);
+    auto projectileSheet = SpriteSheet::alloc(projectileTexture, 4, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);

@@ -147,8 +147,8 @@ bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_p
 
     std::shared_ptr<Texture> t = assets->get<Texture>("mage-projectile");
     //TODO: modify this to use the right frames
-    _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 7.0f / 24.0f, true, 14, 14); //24fps
-    _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 7), 0.000001f, false); //make time really small because there is no explosion effect
+    _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 7.0f / 24.0f, true, 14, 14); //24fps
+    _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.000001f, false); //make time really small because there is no explosion effect
     setFlying();
     setAngle(ang);
     setVelocity(Vec2(GameConstants::PROJ_SPEED_E, 0).rotate(ang));

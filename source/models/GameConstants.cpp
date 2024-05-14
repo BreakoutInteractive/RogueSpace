@@ -50,7 +50,7 @@ float GameConstants::PROJ_SPEED_E = 5.5f; // previously 6.0
 
 float GameConstants::PROJ_RADIUS_LIZARD = 0.3f; //previously 0.4
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.56f; //previously 0.65
+float GameConstants::PROJ_RADIUS_MAGE = 0.4f; //previously 0.65
 
 float GameConstants::PROJ_DIST_E = 9.0f;
 
