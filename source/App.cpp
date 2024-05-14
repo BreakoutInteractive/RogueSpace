@@ -164,6 +164,7 @@ void App::postUpdate(float dt) {
 
 void App::updatePauseScene(float dt) {
     _pause.update(dt);
+    _pause.activateConfirmButtons(_pause.isConfirmActive());
     switch (_pause.getChoice()) {
         case PauseScene::Choice::BACK:
             _pause.setActive(false);

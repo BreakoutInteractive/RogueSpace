@@ -39,12 +39,18 @@ protected:
     Choice _choice;
 
 #pragma mark - Menu Buttons
-    /** The button for restarting  game */
-    std::shared_ptr<scene2::Button> _back;
+    /** The button for going back to main */
+    std::shared_ptr<scene2::Button> _pauseBack;
     /** The button for going back to game */
     std::shared_ptr<scene2::Button> _resume;
     /** The button for in-game settings */
     std::shared_ptr<scene2::Button> _settings;
+    /** Exit confirmation menu**/
+    std::shared_ptr<scene2::Button> _confirmBack;
+    /** Exit to main menu**/
+    std::shared_ptr<scene2::Button> _confirmConfirm;
+    /** confirmation scene**/
+    std::shared_ptr<scene2::SceneNode> _confirmationScene;
     
 #pragma mark - Icon Labels
     
@@ -106,6 +112,18 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
+    
+    /**
+     * Returns whether confirm menu active or not.
+     */
+    bool isConfirmActive(){return _confirmationScene->isVisible();}
+    
+    /**
+     * activates confrim menu buttons, deactivates pause menu buttons
+     *
+     * @param value whether the scene is currently active
+     */
+    void activateConfirmButtons(bool active);
     
     /**
      * Sets the icon level labels in this menu.

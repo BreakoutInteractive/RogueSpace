@@ -20,6 +20,8 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     }
     // Acquire the scene built by the asset loader
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("pause");
+    _confirmationScene = _assets->get<scene2::SceneNode>("confirmationMenu");
+
     // Initialize the scene to a locked height
     Size dimen = Application::get()->getDisplaySize();
     dimen *= scene->getContentSize().height/dimen.height;
@@ -32,14 +34,18 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->doLayout();
 
     // retrieve the menu buttons
-    _back = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_back"));
+    _pauseBack = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_back"));
     _resume = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_resume"));
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_setting"));
+    
+    _confirmBack = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_back"));
+    _confirmConfirm = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_confirm"));
 
     // Program the buttons
-    _back->addListener([this](const std::string& name, bool down) {
+    _pauseBack->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _choice = Choice::BACK;
+            _confirmationScene->setVisible(true);
+            _pauseBack->setDown(false);
         }
     });
     _resume->addListener([this](const std::string& name, bool down) {
@@ -50,6 +56,18 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _settings->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::SETTINGS;
+        }
+    });
+
+    _confirmBack->addListener([this](const std::string& name, bool down) {
+        if (down) {
+            _confirmationScene->setVisible(false);
+            _confirmBack->setDown(false);
+        }
+    });
+    _confirmConfirm->addListener([this](const std::string& name, bool down) {
+        if (down) {
+            _choice = Choice::BACK;
         }
     });
     
@@ -63,6 +81,8 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _maxHealth = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("pause_pausemenu_maxHealth_level"));
     
     addChild(scene);
+    _confirmationScene->setVisible(false);
+    addChild(_confirmationScene);
     setActive(false);
     return true;
 }
@@ -82,22 +102,48 @@ void PauseScene::setLabels(std::vector<int> levels){
     _maxHealth->setText("LVL " + std::to_string(levels[6]));
 }
 
+void PauseScene::activateConfirmButtons(bool active){
+    if (active){
+        _resume->deactivate();
+        _settings->deactivate();
+        _pauseBack->deactivate();
+        
+        _confirmConfirm->activate();
+        _confirmBack->activate();
+    } else{
+        _confirmConfirm->deactivate();
+        _confirmBack->deactivate();
+        
+        _resume->activate();
+        _settings->activate();
+        _pauseBack->activate();
+
+    }
+}
+
 void PauseScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         _choice = NONE;
         if (value) {
-            _back->activate();
+            _pauseBack->activate();
             _resume->activate();
             _settings->activate();
+            
         } else {
-            _back->deactivate();
+            _pauseBack->deactivate();
             _resume->deactivate();
             _settings->deactivate();
+            _confirmBack->deactivate();
+            _confirmConfirm->deactivate();
+            
             // If any were pressed, reset them
-            _back->setDown(false);
+            _pauseBack->setDown(false);
             _resume->setDown(false);
             _settings->setDown(false);
+            _confirmBack->setDown(false);
+            _confirmConfirm->setDown(false);
+            _confirmationScene->setVisible(false);
         }
     }
 }
