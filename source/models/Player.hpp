@@ -228,6 +228,13 @@ public:
         _meleeDamage.setCurrentLevel(level);
     }
     
+    float getMeleeSpeed(){ return _attackCooldown.getCurrentValue();}
+    Upgradeable getMeleeSpeedUpgrade(){ return _attackCooldown; }
+    void setMeleeSpeedLevel(int level){
+        CUAssertLog(level >= 0 && level <= 5, "level must be within [0,5]");
+        _attackCooldown.setCurrentLevel(level);
+    }
+    
     /**
      * Damage of the ranged attack. It is 0.5x the bow strength stat at
      * minimum charge and 1.5x the bow strength stat at maximum charge. The
