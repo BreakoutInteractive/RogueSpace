@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"..\/exports\/ob_lvl_00.json"
+         "target":"..\/exports\/sc_lvl_00.json"
         }
     },
  "height":52,
@@ -2607,7 +2607,6 @@
                  "x":0,
                  "y":0
                 }],
-         "locked":true,
          "name":"rocks",
          "opacity":1,
          "type":"group",

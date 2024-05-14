@@ -32,7 +32,7 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attacks are less spammy
 
-float GameConstants::ENEMY_STUN_DURATION = 1.4f; //previously 1.0- Tank should be killed w/1parry
+float GameConstants::ENEMY_STUN_DURATION = 1.25f; //previously 1.4
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
 
