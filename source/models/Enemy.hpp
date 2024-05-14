@@ -281,6 +281,12 @@ public:
      */
     virtual std::string getType() { return ""; };
     
+    /**
+     * @note derived classes must implement
+     * @return whether this enemy can start an attack
+     */
+    virtual bool canBeginNewAttack(){ return true; }
+    
     
 #pragma mark -
 #pragma mark Physics

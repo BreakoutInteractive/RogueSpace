@@ -13,6 +13,7 @@
 #include "RangedEnemy.hpp"
 #include "RangedLizard.hpp"
 #include "MageAlien.hpp"
+#include "ExplodingAlien.hpp"
 #include "../utility/LevelParser.hpp"
 #include "GameObject.hpp"
 #include "CollisionConstants.hpp"
@@ -383,6 +384,9 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
     }
     else if (enemyType == CLASS_TANK) {
         enemy = TankEnemy::alloc(json);
+    }
+    else if (enemyType == CLASS_SLIME) {
+        enemy = ExplodingAlien::alloc(json);
     }
     CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());
     auto enemyCollider = enemy->getCollider();

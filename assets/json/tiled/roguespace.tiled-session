@@ -107,11 +107,31 @@
             }
         },
         "exports/parry_enemy_test.json": {
+            "expandedGroupLayers": [
+                23
+            ],
             "scale": 0.5003780241935484,
-            "selectedLayer": 0,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 992.2498111306977,
-                "y": 657.5028959959709
+                "x": 1286.027700831025,
+                "y": 801.3941072777639
+            }
+        },
+        "exports/sc_lvl_00.json": {
+            "expandedGroupLayers": [
+                137,
+                145,
+                138,
+                144,
+                112,
+                23,
+                116
+            ],
+            "scale": 0.24066342213114753,
+            "selectedLayer": 46,
+            "viewCenter": {
+                "x": 1473.0115480815284,
+                "y": 964.0019158107602
             }
         },
         "tilesets/entities.json": {
@@ -133,7 +153,7 @@
             "scale": 0.748,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1328.2085561497324,
+                "x": 1326.8716577540108,
                 "y": 756.6844919786096
             }
         },
@@ -206,11 +226,11 @@
             }
         },
         "working/example_level.json": {
-            "scale": 2.1605,
+            "scale": 0.53,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 712.1036797037724,
-                "y": 448.50728997917156
+                "x": 851.8867924528302,
+                "y": 720.754716981132
             }
         },
         "working/ob_default_small.json": {
@@ -228,11 +248,11 @@
             "expandedObjectLayers": [
                 27
             ],
-            "scale": 0.2987,
+            "scale": 0.29,
             "selectedLayer": 43,
             "viewCenter": {
-                "x": 1163.3746233679276,
-                "y": 1292.2664881151657
+                "x": 1429.3103448275863,
+                "y": 1293.1034482758623
             }
         },
         "working/ob_lvl_01.json": {
@@ -298,19 +318,19 @@
         "working/ob_lvl_00.json"
     ],
     "project": "roguespace.tiled-project",
-    "property.type": "int",
+    "property.type": "object",
     "recentFiles": [
+        "working/example_level.json",
+        "tilesets/entities.json",
+        "working/alpha_level.json",
+        "exports/parry_enemy_test.json",
+        "exports/sc_lvl_00.json",
         "working/ob_lvl_00.json",
         "exports/ob_lvl_00.json",
         "working/ob_lvl_05.json",
         "working/ob_lvl_upgrades.json",
         "working/ob_lvl_04.json",
         "working/ob_lvl_03.json",
-        "working/ob_lvl_02.json",
-        "working/ob_lvl_01.json",
-        "working/cb_lvl_01.json",
-        "exports/ob_lvl_01.json",
-        "working/ob_default_small.json",
-        "working/example_level.json"
+        "working/ob_lvl_02.json"
     ]
 }

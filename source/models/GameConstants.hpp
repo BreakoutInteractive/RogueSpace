@@ -85,6 +85,15 @@ public:
     static float STUN_DMG_BONUS;
 
 #pragma mark -
+#pragma mark Slime Constants
+    /** time before explosion for slime */
+    static float EXPLODE_TIMER;
+    /** radius of explosion */
+    static float EXPLODE_RADIUS;
+    /** range of detection from slime */
+    static float EXPLODE_PROX_RANGE;
+    
+#pragma mark -
 #pragma mark Player Upgradeable Stat Constants
     
     /** player initial HP */

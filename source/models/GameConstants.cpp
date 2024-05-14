@@ -63,6 +63,13 @@ float GameConstants::TANK_ENEMY_DR = 0.1f;
 float GameConstants::STUN_DMG_BONUS = 1.6f; // previously 1.5
 
 #pragma mark -
+#pragma mark Slime Constants
+
+float GameConstants::EXPLODE_TIMER = 60;
+float GameConstants::EXPLODE_RADIUS = 0.5f;
+float GameConstants::EXPLODE_PROX_RANGE = 2.0f;
+
+#pragma mark -
 #pragma mark Player Upgradeable Stat Constants
 
 float GameConstants::PLAYER_MAX_HP = 3;

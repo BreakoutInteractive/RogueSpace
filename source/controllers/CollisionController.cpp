@@ -8,6 +8,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/ExplodingAlien.hpp"
 #include "../models/Player.hpp"
 #include "../models/Wall.hpp"
 #include "../models/Relic.hpp"

@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/ExplodingAlien.hpp"
 #include "../models/Wall.hpp"
 #include "../models/HealthPack.hpp"
 #include <box2d/b2_world.h>
@@ -573,7 +574,7 @@ void GameScene::preUpdate(float dt) {
         _level->getPlayer()->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
 
-#pragma mark - Enemy movement
+#pragma mark - Enemy AI
     auto player = _level->getPlayer();
     _AIController.update(dt);
     // enemy attacks
@@ -608,14 +609,19 @@ void GameScene::preUpdate(float dt) {
         }
         if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
-            bool canBeginNewAttack = false;
-            if (enemy->getType() == "melee lizard" ||
-                enemy->getType() == "tank enemy") {
-                std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
-                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !m->isStunned();
-            }
-            else {
-                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero();
+            bool canBeginNewAttack = enemy->canBeginNewAttack();
+            if (enemy->getType() == "exploding alien"){
+                auto explode = std::dynamic_pointer_cast<ExplodingAlien>(enemy);
+                if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                    if (explode->canExplode()) {
+                        explode->setAttacking();
+                    } else {
+                        explode->updateWindup(true);
+                    }
+                } else {
+                    explode->updateWindup(false);
+                }
+                continue;
             }
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard" ||
