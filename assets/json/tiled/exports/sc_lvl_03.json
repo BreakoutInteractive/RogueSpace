@@ -205,7 +205,7 @@
                  "value":1
                 }],
          "type":"group",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -853,7 +853,7 @@
                  "value":1
                 }],
          "type":"group",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -916,7 +916,7 @@
          "name":"sand",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":30,
          "x":0,
          "y":0
@@ -7752,6 +7752,7 @@
                         {
                          "draworder":"topdown",
                          "id":31,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -7782,7 +7783,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1461,
                                          "name":"",
@@ -7795,7 +7796,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7803,9 +7804,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1408,
                                          "y":896
                                         }],
@@ -7821,7 +7822,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1462,
                                          "name":"",
@@ -7834,7 +7835,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7842,9 +7843,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1856,
                                          "y":672
                                         }],
@@ -7860,7 +7861,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1463,
                                          "name":"",
@@ -7873,7 +7874,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7881,9 +7882,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1856,
                                          "y":1120
                                         }],
@@ -7933,7 +7934,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1474,
                                          "name":"",
@@ -7946,7 +7947,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7954,9 +7955,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1408,
                                          "y":896
                                         }],
@@ -7972,7 +7973,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1475,
                                          "name":"",
@@ -7985,7 +7986,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7993,9 +7994,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":2304,
                                          "y":896
                                         }],
@@ -8011,7 +8012,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1476,
                                          "name":"",
@@ -8024,7 +8025,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8032,9 +8033,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1856,
                                          "y":672
                                         }],
@@ -8060,6 +8061,7 @@
                         {
                          "draworder":"topdown",
                          "id":127,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -8107,7 +8109,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1482,
                                          "name":"",
@@ -8120,7 +8122,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8128,9 +8130,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1856,
                                          "y":1120
                                         }],
@@ -8146,7 +8148,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1478,
                                          "name":"",
@@ -8159,7 +8161,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8167,9 +8169,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1408,
                                          "y":896
                                         }],
@@ -8185,7 +8187,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1479,
                                          "name":"",
@@ -8198,7 +8200,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8206,9 +8208,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":2304,
                                          "y":896
                                         }],
@@ -8234,6 +8236,7 @@
                         {
                          "draworder":"topdown",
                          "id":142,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -8281,7 +8284,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1483,
                                          "name":"",
@@ -8294,7 +8297,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8302,9 +8305,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1856,
                                          "y":1120
                                         }],
@@ -8320,7 +8323,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1488,
                                          "name":"",
@@ -8333,7 +8336,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8341,9 +8344,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":1856,
                                          "y":672
                                         }],
@@ -8359,7 +8362,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":254,
+                                         "gid":253,
                                          "height":128,
                                          "id":1485,
                                          "name":"",
@@ -8372,7 +8375,7 @@
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":3
+                                                 "value":2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8380,9 +8383,9 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"RangedLizard",
+                                         "type":"TankEnemy",
                                          "visible":true,
-                                         "width":64,
+                                         "width":128,
                                          "x":2304,
                                          "y":896
                                         }],
@@ -8408,6 +8411,7 @@
                         {
                          "draworder":"topdown",
                          "id":149,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {

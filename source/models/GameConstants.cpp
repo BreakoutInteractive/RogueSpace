@@ -38,7 +38,7 @@ int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
 
 float GameConstants::ENEMY_SIGHT_RANGE = 10;
 
-float GameConstants::ENEMY_PROXIMITY_RANGE = 6;
+float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
 
 float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 

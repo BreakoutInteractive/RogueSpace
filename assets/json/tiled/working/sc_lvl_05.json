@@ -210,6 +210,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":58,
          "id":269,
+         "locked":true,
          "name":"sandpath",
          "opacity":1,
          "type":"tilelayer",
@@ -279,6 +280,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":58,
          "id":270,
+         "locked":true,
          "name":"chunks",
          "opacity":1,
          "type":"tilelayer",
@@ -348,6 +350,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":58,
          "id":271,
+         "locked":true,
          "name":"plants",
          "opacity":1,
          "type":"tilelayer",
@@ -1092,6 +1095,7 @@
         {
          "draworder":"topdown",
          "id":257,
+         "locked":true,
          "name":"Obstacles",
          "objects":[
                 {
@@ -2531,23 +2535,22 @@
                          "class":"Collection",
                          "draworder":"topdown",
                          "id":258,
-                         "locked":true,
                          "name":"0",
                          "objects":[
                                 {
-                                 "gid":254,
+                                 "gid":252,
                                  "height":128,
                                  "id":2645,
                                  "name":"",
                                  "rotation":0,
                                  "type":"",
                                  "visible":true,
-                                 "width":64,
+                                 "width":128,
                                  "x":1984,
                                  "y":1088
                                 }, 
                                 {
-                                 "gid":254,
+                                 "gid":251,
                                  "height":128,
                                  "id":2646,
                                  "name":"",
@@ -2555,8 +2558,8 @@
                                  "type":"",
                                  "visible":true,
                                  "width":64,
-                                 "x":1792,
-                                 "y":864
+                                 "x":1856,
+                                 "y":1152
                                 }],
                          "opacity":1,
                          "properties":[
@@ -2574,7 +2577,6 @@
                          "class":"Collection",
                          "draworder":"topdown",
                          "id":261,
-                         "locked":true,
                          "name":"1",
                          "objects":[
                                 {
@@ -2611,7 +2613,7 @@
                                  "visible":true,
                                  "width":128,
                                  "x":1408,
-                                 "y":800
+                                 "y":832
                                 }],
                          "opacity":1,
                          "properties":[
@@ -2632,14 +2634,14 @@
                          "name":"2",
                          "objects":[
                                 {
-                                 "gid":254,
+                                 "gid":252,
                                  "height":128,
                                  "id":2771,
                                  "name":"",
                                  "rotation":0,
                                  "type":"",
                                  "visible":true,
-                                 "width":64,
+                                 "width":128,
                                  "x":1984,
                                  "y":1152
                                 }, 
@@ -2686,7 +2688,7 @@
                                  "y":1152
                                 }, 
                                 {
-                                 "gid":253,
+                                 "gid":252,
                                  "height":128,
                                  "id":2776,
                                  "name":"",
@@ -2716,26 +2718,26 @@
                          "name":"4",
                          "objects":[
                                 {
-                                 "gid":253,
+                                 "gid":251,
                                  "height":128,
                                  "id":2777,
                                  "name":"",
                                  "rotation":0,
                                  "type":"",
                                  "visible":true,
-                                 "width":128,
+                                 "width":64,
                                  "x":1856,
                                  "y":1152
                                 }, 
                                 {
-                                 "gid":254,
+                                 "gid":252,
                                  "height":128,
                                  "id":2778,
                                  "name":"",
                                  "rotation":0,
                                  "type":"",
                                  "visible":true,
-                                 "width":64,
+                                 "width":128,
                                  "x":1920,
                                  "y":928
                                 }],
@@ -2758,26 +2760,26 @@
                          "name":"5",
                          "objects":[
                                 {
-                                 "gid":253,
+                                 "gid":251,
                                  "height":128,
                                  "id":2779,
                                  "name":"",
                                  "rotation":0,
                                  "type":"",
                                  "visible":true,
-                                 "width":128,
+                                 "width":64,
                                  "x":1792,
                                  "y":992
                                 }, 
                                 {
-                                 "gid":254,
+                                 "gid":252,
                                  "height":128,
                                  "id":2780,
                                  "name":"",
                                  "rotation":0,
                                  "type":"",
                                  "visible":true,
-                                 "width":64,
+                                 "width":128,
                                  "x":1856,
                                  "y":1152
                                 }],
@@ -2800,7 +2802,6 @@
                  "x":0,
                  "y":0
                 }],
-         "locked":true,
          "name":"left",
          "opacity":1,
          "type":"group",
