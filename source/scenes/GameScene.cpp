@@ -640,6 +640,7 @@ void GameScene::preUpdate(float dt) {
     
     player->update(dt); // updates counters, hitboxes
     _levelTransition.update(dt); // does nothing when not active
+    _gameRenderer.update(dt);
     
 #pragma mark - Upgrade System
     

@@ -192,6 +192,10 @@ public:
      */
     void setFrameRange(int startIndex, int endIndex);
     
+    /**
+     * @return the active frame number of the filmstrip
+     */
+    int getFrame(){ return _filmStrip->getFrame(); }
 };
 
 #endif /* __ANIMATION_HPP__ */
