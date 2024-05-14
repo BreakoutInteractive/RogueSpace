@@ -13,7 +13,7 @@
     
 float GameConstants::TRANSITION_FADE_IN_TIME = 2.0f;
 float GameConstants::TRANSITION_FADE_OUT_TIME = 1.0f;
-int GameConstants::HIT_PAUSE_FRAMES = 8;
+int GameConstants::HIT_PAUSE_FRAMES = 0; //disabled as it feels like lag. Unsure how to fix
 
 #pragma mark -
 #pragma mark Camera
@@ -32,7 +32,7 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attacks are less spammy
 
-int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
+int GameConstants::ENEMY_SENTRY_COOLDOWN = 74; //previously 120
 
 float GameConstants::ENEMY_SIGHT_RANGE = 8;
 
@@ -40,7 +40,7 @@ float GameConstants::ENEMY_PROXIMITY_RANGE = 4;
 
 float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
-float GameConstants::ENEMY_RANGED_ATK_RANGE = 7;
+float GameConstants::ENEMY_RANGED_ATK_RANGE = 6.6; //previously 7
 
 float GameConstants::ENEMY_MELEE_ATK_SPEED = 1.125f;
 
@@ -48,13 +48,13 @@ float GameConstants::ENEMY_RANGED_ATK_SPEED = 0.84375f;
 
 float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
-float GameConstants::PROJ_SPEED_E = 5.5f; // previously 6.0
+float GameConstants::PROJ_SPEED_E = 5.4f; // previously 5.5
 
-float GameConstants::PROJ_RADIUS_LIZARD = 0.3f; //previously 0.4
+float GameConstants::PROJ_RADIUS_LIZARD = 0.32f; //previously 0.3
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.4f; //previously 0.65
+float GameConstants::PROJ_RADIUS_MAGE = 0.26f; //previously 0.4
 
-float GameConstants::PROJ_DIST_E = 9.0f;
+float GameConstants::PROJ_DIST_E = 8.0f; //previously 9.0
 
 float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
@@ -87,7 +87,7 @@ float GameConstants::PLAYER_ATTACK_COOLDOWN = 0; // disabled cooldown
 int GameConstants::PLAYER_IFRAME = 16;
 int GameConstants::PLAYER_INCOMING_KB_FRAMES = 5;
 
-float GameConstants::PLAYER_PARRY_TIME = 0.5f;
+float GameConstants::PLAYER_PARRY_TIME = 0.6f; //previously 0.5
 
 int GameConstants::PLAYER_STAMINA = 240; // should be a multiple of 3,4,5,6 to accomodate for evenly divisible by number of dashes
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
