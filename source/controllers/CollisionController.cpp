@@ -134,7 +134,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     || abs(ang - m->getAttack()->getAngle()) >= 3 * M_PI_2) {
                     if (player->isParrying()) {
                         //successful parry
-                        m->setStunned();
+                        m->setStunned(player->getStunWindow());
                         player->playParryEffect();
                     }
                     else {

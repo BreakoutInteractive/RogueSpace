@@ -114,7 +114,7 @@ public:
     void setAttacking();
     
     /** Set stunned state and change to using the stunned animation */
-    void setStunned();
+    void setStunned(float duration);
     
     /** whether enemy is stunned */
     bool isStunned(){ return _stunAnimation->isActive() && getBehaviorState() == BehaviorState::STUNNED; }

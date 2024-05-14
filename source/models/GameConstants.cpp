@@ -32,8 +32,6 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attacks are less spammy
 
-float GameConstants::ENEMY_STUN_DURATION = 1.25f; //previously 1.4
-
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
 
 float GameConstants::ENEMY_SIGHT_RANGE = 10;

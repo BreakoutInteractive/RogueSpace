@@ -58,10 +58,12 @@ void MeleeEnemy::setAttacking() {
     _stunEffect->reset();
 }
 
-void MeleeEnemy::setStunned() {
+void MeleeEnemy::setStunned(float duration) {
     if (getBehaviorState() == BehaviorState::STUNNED) {
         return;
     }
+    _stunAnimation->reset();
+    _stunAnimation->setDuration(duration);
     setAnimation(_stunAnimation);
     _atkCD.reset(); // stunning should reset attack
     _attackAnimation->reset();

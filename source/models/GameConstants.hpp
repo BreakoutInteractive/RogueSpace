@@ -53,8 +53,6 @@ public:
     static int ENEMY_IFRAME;
     /**the number of frames we wait before allowing another attack*/
     static int ENEMY_ATK_COOLDOWN;
-    /**the number of seconds an enemy will be stunned*/
-    static float ENEMY_STUN_DURATION;
     /**the number of frames a sentry will wait before rotating**/
     static int ENEMY_SENTRY_COOLDOWN;
     /**the sight range of an enemy**/
