@@ -214,6 +214,7 @@ void App::updateTitleScene(float dt){
             break;
         case TitleScene::NEW:
             _title.setActive(false);
+            _gameplay.setTutorialActive(false);
             _gameplay.setActive(true);
             _gameplay.restart();
             _scene = GAME; // switch to game scene
@@ -223,6 +224,7 @@ void App::updateTitleScene(float dt){
             _title.setActive(false);
             _gameplay.setActive(true);
             CULog("loading lv %d", save.level);
+            _gameplay.setTutorialActive(false);
             _gameplay.setLevel(save);
             _scene = GAME;
             _gamePrevScene = TITLE;
@@ -253,8 +255,7 @@ void App::updateTutorialScene(float dt){
             break;
         case TutorialScene::LEVEL:
             _tutorial.setActive(false);
-            _gameplay.setActive(true);
-            _gameplay.restart();
+            _gameplay.activateTutorial(_tutorial.getSelectedLevel());
             _scene = GAME; // switch to game scene
             break;
         case TutorialScene::SETTINGS:

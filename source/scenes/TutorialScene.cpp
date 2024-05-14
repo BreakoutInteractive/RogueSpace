@@ -29,16 +29,17 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _backgroundScale = std::max(dimen.width / _backgroundTexture->getWidth(), dimen.height/_backgroundTexture->getHeight());
     
     // gather buttons
-    _level1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_continue"));
     _back = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_new"));
+    _level1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_continue"));
     _level2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_tutorial"));
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_setting"));
 
     // attach listeners
     scene2::Button::Listener backListener = [this](std::string name, bool down){ _choice = BACK;};
-    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL;};
     auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS;};
-    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL;};
+    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 1;};
+    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 2;};
+    
     _back->addListener(backListener);
     _settings->addListener(settingsListener);
     _level2->addListener(level2Listener);
@@ -89,10 +90,6 @@ void TutorialScene::setActive(bool value) {
             _choice = NONE;
         }
     }
-}
-
-std::string TutorialScene::getLevelKey(int level){
-    return "tutorial"+std::to_string(level);
 }
 
 void TutorialScene::render(const std::shared_ptr<SpriteBatch> &batch){

@@ -116,6 +116,10 @@ protected:
     int _levelNumber;
     /** whether the current level to load is an upgrade room */
     bool _isUpgradeRoom;
+    /** whether the current level to load is a tutorial level */
+    bool _isTutorial;
+    /** level number for tutorial */
+    int _tutorialLevel;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
     /** The level model */
@@ -211,6 +215,14 @@ public:
      * toggle input devices
      */
     void activateInputs(bool value){ _input.setActive(value); }
+    /**
+     * activates given tutorial level
+     */
+    void activateTutorial(int level);
+    /**
+     * Sets whether tutorial is active or not
+     */
+    void setTutorialActive(bool active){_isTutorial = active;}
     
     /**
      * Returns true if the level is completed.

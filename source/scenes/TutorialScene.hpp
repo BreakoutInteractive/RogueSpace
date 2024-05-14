@@ -25,10 +25,7 @@ public:
         BACK,
         /** User wants to go to settings */
         SETTINGS
-    }
-    ;
-
-    std::string selectedLevel;
+    };
     
 protected:
     /** the title background texture (drawn separately) */
@@ -37,6 +34,8 @@ protected:
     float _backgroundScale;
     /** current menu choice */
     Choice _choice;
+    /** tutorial level selected */
+    int _selectedLevel;
 
 #pragma mark - Tutorial
     /** the parent node of the tutorial scene*/
@@ -90,11 +89,11 @@ public:
      * @return the user's menu choice (NONE if no choice has been selected).
      */
     Choice getChoice(){ return _choice; }
-        
+
     /**
-     * returns the asset key for the given level
+     * returns selected tutorial level.
      */
-    std::string getLevelKey(int level);
+    int getSelectedLevel(){return _selectedLevel;}
         
     /**
      * activates this menu scene which includes toggling button visibility and functionality.
