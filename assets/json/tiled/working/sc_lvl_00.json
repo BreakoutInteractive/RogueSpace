@@ -3,8 +3,7 @@
     {
      "export":
         {
-         "format":"json",
-         "target":"..\/exports\/sc_lvl_00.json"
+         "format":"json"
         }
     },
  "height":52,
@@ -203,10 +202,11 @@
                  "x":0,
                  "y":0
                 }],
+         "locked":true,
          "name":"ground",
          "opacity":1,
          "type":"group",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -844,10 +844,11 @@
                  "x":0,
                  "y":0
                 }],
+         "locked":true,
          "name":"roads",
          "opacity":1,
          "type":"group",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -906,10 +907,11 @@
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
          "height":52,
          "id":30,
+         "locked":true,
          "name":"sand",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":30,
          "x":0,
          "y":0
@@ -1296,10 +1298,11 @@
                  "x":0,
                  "y":0
                 }],
+         "locked":true,
          "name":"plants",
          "opacity":1,
          "type":"group",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1744,7 +1747,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -2607,10 +2610,11 @@
                  "x":0,
                  "y":0
                 }],
+         "locked":true,
          "name":"rocks",
          "opacity":1,
          "type":"group",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -5522,6 +5526,7 @@
                  "x":0,
                  "y":0
                 }],
+         "locked":true,
          "name":"Surroundings",
          "opacity":1,
          "type":"group",
@@ -5540,6 +5545,7 @@
                         {
                          "draworder":"topdown",
                          "id":31,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -5556,7 +5562,7 @@
                                 }],
                          "opacity":1,
                          "type":"objectgroup",
-                         "visible":true,
+                         "visible":false,
                          "x":0,
                          "y":0
                         }, 
@@ -5570,7 +5576,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1461,
                                          "name":"",
@@ -5593,7 +5599,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1462,
                                          "name":"",
@@ -5616,7 +5622,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1463,
                                          "name":"",
@@ -5640,11 +5646,10 @@
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"right",
                  "opacity":1,
                  "type":"group",
-                 "visible":false,
+                 "visible":true,
                  "x":0,
                  "y":0
                 }, 
@@ -5662,7 +5667,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1474,
                                          "name":"",
@@ -5685,7 +5690,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1475,
                                          "name":"",
@@ -5708,7 +5713,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1476,
                                          "name":"",
@@ -5735,6 +5740,7 @@
                         {
                          "draworder":"topdown",
                          "id":127,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -5751,15 +5757,14 @@
                                 }],
                          "opacity":1,
                          "type":"objectgroup",
-                         "visible":true,
+                         "visible":false,
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"bottom",
                  "opacity":1,
                  "type":"group",
-                 "visible":false,
+                 "visible":true,
                  "x":0,
                  "y":0
                 }, 
@@ -5777,7 +5782,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1482,
                                          "name":"",
@@ -5800,7 +5805,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1478,
                                          "name":"",
@@ -5823,7 +5828,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1479,
                                          "name":"",
@@ -5850,6 +5855,7 @@
                         {
                          "draworder":"topdown",
                          "id":142,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -5866,15 +5872,14 @@
                                 }],
                          "opacity":1,
                          "type":"objectgroup",
-                         "visible":true,
+                         "visible":false,
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"top",
                  "opacity":1,
                  "type":"group",
-                 "visible":false,
+                 "visible":true,
                  "x":0,
                  "y":0
                 }, 
@@ -5892,7 +5897,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1483,
                                          "name":"",
@@ -5915,7 +5920,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1488,
                                          "name":"",
@@ -5938,7 +5943,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":252,
                                          "height":128,
                                          "id":1485,
                                          "name":"",
@@ -5965,6 +5970,7 @@
                         {
                          "draworder":"topdown",
                          "id":149,
+                         "locked":true,
                          "name":"player",
                          "objects":[
                                 {
@@ -5981,23 +5987,21 @@
                                 }],
                          "opacity":1,
                          "type":"objectgroup",
-                         "visible":true,
+                         "visible":false,
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"left",
                  "opacity":1,
                  "type":"group",
-                 "visible":false,
+                 "visible":true,
                  "x":0,
                  "y":0
                 }],
-         "locked":true,
          "name":"player-spawn-locations",
          "opacity":1,
          "type":"group",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],

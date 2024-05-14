@@ -19,6 +19,8 @@ using namespace cugl;
 bool RangedEnemy::init(std::shared_ptr<JsonValue> data) {
     Enemy::init(data);
     _attackRange = GameConstants::ENEMY_RANGED_ATK_RANGE;
+    _isAiming = false;
+    _isCharged = false;
     
     return true;
 }
@@ -40,26 +42,15 @@ void RangedEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
 }
 
 void RangedEnemy::updateAnimation(float dt) {
-    GameObject::updateAnimation(dt);
+    Enemy::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
+        if (getCollider()->getLinearVelocity().isZero() && _currAnimation != _idleAnimation) {
             setIdling();
         }
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
             setMoving();
         }
     }
-    _meleeHitEffect->update(dt);
-    _bowHitEffect->update(dt);
-    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()) {
-        _tint = Color4::RED;
-    }
-    else {
-        _tint = Color4::WHITE;
-    }
-
-    _hitboxAnimation->update(dt);
-    _deathEffect->update(dt);
     _chargingAnimation->update(dt);
 }

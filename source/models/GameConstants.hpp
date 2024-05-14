@@ -53,8 +53,6 @@ public:
     static int ENEMY_IFRAME;
     /**the number of frames we wait before allowing another attack*/
     static int ENEMY_ATK_COOLDOWN;
-    /**the number of seconds an enemy will be stunned*/
-    static float ENEMY_STUN_DURATION;
     /**the number of frames a sentry will wait before rotating**/
     static int ENEMY_SENTRY_COOLDOWN;
     /**the sight range of an enemy**/
@@ -65,6 +63,10 @@ public:
     static float ENEMY_MELEE_ATK_RANGE;
     /**the ranged attack range of an enemy*/
     static float ENEMY_RANGED_ATK_RANGE;
+    /**the melee attack speed of an enemy**/
+    static float ENEMY_MELEE_ATK_SPEED;
+    /**the ranged attack speed of an enemy*/
+    static float ENEMY_RANGED_ATK_SPEED;
     /**the default movement speed for an enemy**/
     static float ENEMY_MOVE_SPEED;
     /** the speed of an enemy projectile */

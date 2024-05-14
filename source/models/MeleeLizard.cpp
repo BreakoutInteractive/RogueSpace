@@ -67,8 +67,8 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 7);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 8);
-    _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 17);
-    _stunAnimation = Animation::alloc(stunSheet, GameConstants::ENEMY_STUN_DURATION, false, 0, 14);
+    _attackAnimation = Animation::alloc(attackSheet, GameConstants::ENEMY_MELEE_ATK_SPEED, false, 0, 17);
+    _stunAnimation = Animation::alloc(stunSheet, 1.25f, false, 0, 14);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
@@ -84,13 +84,12 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
-    _attackAnimation->addCallback(0.75f, [this](){
+    _attackAnimation->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 2 / 3, [this](){
         if (isEnabled() && _health > 0) {
             _attack->setEnabled(true);
             _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
-            // TODO: clean this code
             _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
         }
     });

@@ -117,36 +117,39 @@ void CollisionController::beginContact(b2Contact* contact){
             }
         }
     }
-    // enemy attack
+    // enemy melee attack
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        intptr_t aptr = reinterpret_cast<intptr_t>((*it)->getAttack().get());
-        if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
-            || (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == aptr)) {
-            Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
-            dir.normalize();
-            float ang = acos(dir.dot(Vec2::UNIT_X));
-            if (player->getPosition().y * player->getDrawScale().y <
-                (*it)->getPosition().y *
-                (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
-            if (abs(ang - (*it)->getAttack()->getAngle()) <= M_PI_2
-                || abs(ang - (*it)->getAttack()->getAngle()) >= 3 * M_PI_2) {
-                if (player->isParrying()) {
-                    //successful parry
-                    (*it)->setStunned();
-                    player->playParryEffect();
-                }
-                else {
-                    if (body1->GetUserData().pointer == aptr) {
-                        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-                        _audioController->playEnemyFX("attackHit", data1->getName());
+        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
+            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
+            intptr_t aptr = reinterpret_cast<intptr_t>(m->getAttack().get());
+            if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
+                || (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == aptr)) {
+                Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
+                dir.normalize();
+                float ang = acos(dir.dot(Vec2::UNIT_X));
+                if (player->getPosition().y * player->getDrawScale().y <
+                    (*it)->getPosition().y *
+                    (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
+                if (abs(ang - m->getAttack()->getAngle()) <= M_PI_2
+                    || abs(ang - m->getAttack()->getAngle()) >= 3 * M_PI_2) {
+                    if (player->isParrying()) {
+                        //successful parry
+                        m->setStunned(player->getStunWindow());
+                        player->playParryEffect();
                     }
                     else {
-                        //body1 userdata pointer = pptr
-                        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-                        _audioController->playEnemyFX("attackHit", data2->getName());
+                        if (body1->GetUserData().pointer == aptr) {
+                            physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+                            _audioController->playEnemyFX("attackHit", data1->getName());
+                        }
+                        else {
+                            //body1 userdata pointer = pptr
+                            physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+                            _audioController->playEnemyFX("attackHit", data2->getName());
+                        }
+                        player->hit(dir, m->getDamage());
+                        CULog("Player took damage!");
                     }
-                    player->hit(dir);
-                    CULog("Player took damage!");
                 }
             }
         }
@@ -236,9 +239,20 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
                 (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
                 //enemies phase through each other if one is idle/stunned
-                if ((*it)->isStunned() || (*iter)->isStunned()
-                    || (*it)->getCollider()->getLinearVelocity().isZero()
-                    || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+                if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
+                    std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
+                    if (m->isStunned()) {
+                        contact->SetEnabled(false);
+                    }
+                }
+                if ((*iter)->getType() == "melee lizard" || (*iter)->getType() == "tank enemy") {
+                    std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*iter);
+                    if (m->isStunned()) {
+                        contact->SetEnabled(false);
+                    }
+                }
+                if ((*it)->getCollider()->getLinearVelocity().isZero() ||
+                    (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
             }
         }
         if (body1->GetUserData().pointer == eptr ||body2->GetUserData().pointer == eptr)

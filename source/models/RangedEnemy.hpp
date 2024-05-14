@@ -19,22 +19,16 @@ class Animation;
  *  This class represents a ranged enemy in the game.
  */
 class RangedEnemy : public Enemy {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(RangedEnemy);
     
 protected:
-    // TODO: change this to projectile when implemented
-    std::shared_ptr<cugl::physics2::WheelObstacle> _projectile;
     
-    /** The enemy projectile texture*/
-    std::shared_ptr<cugl::Texture> _projectileTexture;
-    
-    /** The enemy projectile speed*/
-    float _projectileSpeed;
-
     /** The animation to use while charging attack */
     std::shared_ptr<Animation> _chargingAnimation;
+    
+    /** Whether the enemy is aiming its ranged attack */
+    bool _isAiming;
+    /** Whether the enemy's ranged attack is charged */
+    bool _isCharged;
     
 public:
 
@@ -86,6 +80,29 @@ public:
         auto result = std::make_shared<RangedEnemy>();
         return (result->init(data) ? result : nullptr);
     }
+    
+#pragma mark -
+#pragma mark Accessors
+    
+    /**
+     * Gets whether this enemy's ranged attack is charged
+     */
+    bool getCharged() const { return _isCharged; }
+    
+    /**
+     * Sets whether this enemy's ranged attack is charged
+     */
+    void setCharged(bool value) { _isCharged = value; }
+    
+    /**
+     * Gets whether this enemy is aiming its ranged attack
+     */
+    bool getAiming() const { return _isAiming; }
+    
+    /**
+     * Sets whether this enemy is aiming its ranged attack
+     */
+    void setAiming(bool value) { _isAiming = value; }
 };
 
 #endif /* RangedEnemy_hpp */

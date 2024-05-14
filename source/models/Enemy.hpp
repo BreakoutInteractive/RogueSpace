@@ -36,11 +36,6 @@ protected:
     std::shared_ptr<Animation> _walkAnimation;
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
-    // TODO: this is an effect, move to melee enemies
-    /** The animation of the hitbox while attacking */
-    std::shared_ptr<Animation> _hitboxAnimation;
-    /** The animation to use while stunned */
-    std::shared_ptr<Animation> _stunAnimation;
 
 #pragma mark - Animation Effects
     /** The hit effect animation when hit by the melee attack */
@@ -51,9 +46,6 @@ protected:
     std::shared_ptr<Animation> _stunEffect;
     /** The death effect animation */
     std::shared_ptr<Animation> _deathEffect;
-    
-    // TODO: this belongs to melee enemies
-    std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
     float _sightRange;
@@ -69,6 +61,8 @@ protected:
     float _moveSpeed;
     /** The enemy's current health */
     float _health;
+    /** The damage inflicted by this enemy */
+    float _damage;
     /** The enemy's maximum health */
     float _maxHealth;
     
@@ -81,10 +75,6 @@ protected:
     
     /** The enemy's default state */
     std::string _defaultState;
-    /** Whether the enemy is aiming its ranged attack */
-    bool _isAiming;
-    /** Whether the enemy's ranged attack is charged */
-    bool _isCharged;
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
     /** The enemy's goal position */
@@ -197,6 +187,11 @@ public:
     int getMoveSpeed() const { return _moveSpeed; }
     
     /**
+     * @return the enemy's damage power
+     */
+    float getDamage() const { return _damage; }
+    
+    /**
      * Gets the current health of this enemy.
      */
     float getHealth() const { return _health; }
@@ -212,16 +207,6 @@ public:
     void setMaxHealth(float value){ _maxHealth = value; }
     
     /**
-     * Gets this enemy's attack hitbox.
-     */
-    std::shared_ptr<cugl::physics2::WheelObstacle> getAttack() const { return _attack; }
-    
-    /**
-     * Sets this enemy's attack hitbox.
-     */
-    void setAttack(std::shared_ptr<cugl::physics2::WheelObstacle> value) { _attack = value; }
-    
-    /**
      * Gets this enemy's default state.
      */
     std::string getDefaultState() const { return _defaultState; }
@@ -230,26 +215,6 @@ public:
      * Sets this enemy's default state.
      */
     void setDefaultState(std::string value) { _defaultState = value; }
-    
-    /**
-     * Gets whether this enemy's ranged attack is charged
-     */
-    bool getCharged() const { return _isCharged; }
-    
-    /**
-     * Sets whether this enemy's ranged attack is charged
-     */
-    void setCharged(bool value) { _isCharged = value; }
-    
-    /**
-     * Gets whether this enemy is aiming its ranged attack
-     */
-    bool getAiming() const { return _isAiming; }
-    
-    /**
-     * Sets whether this enemy is aiming its ranged attack
-     */
-    void setAiming(bool value) { _isAiming = value; }
     
     /**
      * Gets this enemy's patrol path.
@@ -325,9 +290,6 @@ public:
     
 #pragma mark -
 #pragma mark Animation and State
-
-    void setHitboxAnimation(std::shared_ptr<Animation> animation) { _hitboxAnimation = animation; }
-    std::shared_ptr<Animation> getHitboxAnimation() const { return _hitboxAnimation; }
     
     /** get current enemy behavior state */
     BehaviorState getBehaviorState() { return _state; }
@@ -341,7 +303,7 @@ public:
     /** Set attack state and change to using the attack animation */
     void setAttacking();
     
-    /** Set stunned state and change to using the stunned animation */
+    /** Set stunned state */
     void setStunned();
     
     /** Set default state */
@@ -361,7 +323,7 @@ public:
      */
     bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
     /** whether enemy is stunned */
-    bool isStunned(){ return _stunAnimation->isActive() && _state == BehaviorState::STUNNED; }
+    bool isStunned(){ return _state == BehaviorState::STUNNED; }
     /** whether enemy is dying */
     bool isDying() { return _deathEffect->isActive() && _state == BehaviorState::DYING; }
     

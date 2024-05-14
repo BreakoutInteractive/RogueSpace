@@ -11,6 +11,7 @@
 #include "../components/Collider.hpp"
 #include "LevelModel.hpp"
 #include "GameConstants.hpp"
+#include "LevelConstants.hpp"
 
 using namespace cugl;
 
@@ -46,8 +47,6 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
-    _isAiming = false; // will always be false for melee enemies
-    _isCharged = false; // will always be false for melee enemies
     _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
     _state = BehaviorState::DEFAULT;
@@ -59,6 +58,9 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
     _dropped = false;
+    setHealth(data->getFloat(ENEMY_HP_FIELD));
+    setMaxHealth(data->getFloat(ENEMY_HP_FIELD));
+    _damage = data->getFloat(ENEMY_DMG_FIELD);
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -132,9 +134,7 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_bowHitEffect->isActive()) {
         drawEffect(batch, _bowHitEffect, 2);
     }
-    if (_stunEffect->isActive()) {
-        drawEffect(batch, _stunEffect);
-    }
+
     if (_deathEffect->isActive()) {
         drawEffect(batch, _deathEffect);
     }
@@ -149,8 +149,6 @@ void Enemy::setIdling() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _walkAnimation->reset();
     _attackAnimation->reset();
-    _stunAnimation->reset();
-    _stunEffect->reset();
 }
 
 void Enemy::setMoving() {
@@ -158,8 +156,6 @@ void Enemy::setMoving() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _idleAnimation->reset();
     _attackAnimation->reset();
-    _stunAnimation->reset();
-    _stunEffect->reset();
 }
 
 void Enemy::setAttacking() {
@@ -167,26 +163,11 @@ void Enemy::setAttacking() {
     // MAYBE, we don't want to reset ?? (tweening unsure)
     _idleAnimation->reset();
     _walkAnimation->reset();
-    _stunAnimation->reset();
-    _stunEffect->reset();
     _state = BehaviorState::ATTACKING;
 }
 
 void Enemy::setStunned() {
-    if (_state == BehaviorState::STUNNED) {
-        return;
-    }
-    setAnimation(_stunAnimation);
-    _atkCD.reset(); // stunning should reset attack
-    _attackAnimation->reset();
-    _hitboxAnimation->reset();
-    _idleAnimation->reset();
-    _walkAnimation->reset();
-    _meleeHitEffect->reset();
-    _bowHitEffect->reset();
     _state = BehaviorState::STUNNED;
-    _stunEffect->start();
-    _stunAnimation->start();
 }
 
 void Enemy::setDefault() {
@@ -204,8 +185,8 @@ void Enemy::setChasing() {
 void Enemy::setDying() {
     _state = BehaviorState::DYING;
     _currAnimation->stopAnimation();
-    _hitboxAnimation->reset();
-    _stunEffect->reset();
+    // _hitboxAnimation->reset();
+    // _stunEffect->reset();
     _meleeHitEffect->reset();
     _bowHitEffect->reset();
     _collider->setLinearVelocity(Vec2::ZERO);
@@ -232,30 +213,15 @@ void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_sc
 
 void Enemy::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
-    // attack animation must play to completion, as long as enemy is alive.
-    if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
-            setIdling();
-        }
-        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
-            setMoving();
-        }
-    }
     _meleeHitEffect->update(dt);
     _bowHitEffect->update(dt);
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
-    else if (_state == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
-        _tint = Color4::WHITE;
-        setIdling();
-    }
     else {
         _tint = Color4::WHITE;
     }
-    _stunEffect->update(dt);
     _deathEffect->update(dt);
-    _hitboxAnimation->update(dt);
 }
 
 void Enemy::updateCounters() {
