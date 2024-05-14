@@ -35,7 +35,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     filter.maskBits = CATEGORY_PLAYER;
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
-    
+    hitFlag = false;
     // set the enemy hitbox sensor
     std::shared_ptr<JsonValue> hitboxData = data->get("hitbox");
     auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "enemy-hurtbox", true);
@@ -79,6 +79,20 @@ void Enemy::dispose() {
     // deallocate anything not on shared_pointers
 }
 
+void Enemy::setEnabled(bool value){
+    _attack->setEnabled(value);
+    hitFlag = false; // clear the flag
+    hitSet.clear();
+}
+
+bool Enemy::hits(intptr_t playerPtr){
+    if (hitSet.find(playerPtr) != hitSet.end()){
+        return false;
+    }
+    hitFlag = true;
+    hitSet.insert(playerPtr);
+    return true;
+}
 
 #pragma mark -
 #pragma mark Physics
@@ -240,6 +254,7 @@ void Enemy::updateAnimation(float dt){
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
             setMoving();
         }
+        setEnabled(false);
     }
     _meleeHitEffect->update(dt);
     _bowHitEffect->update(dt);

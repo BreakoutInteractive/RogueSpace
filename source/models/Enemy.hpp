@@ -93,7 +93,9 @@ protected:
     bool _isAligned;
     /** The enemy's goal path index */
     int _pathIndex;
-    
+    /** the set of entities (their pointers) that the hitbox damaged*/
+    std::unordered_set<intptr_t> hitSet;
+
 public:
 #pragma mark Counters
     
@@ -195,6 +197,20 @@ public:
      * Gets the movement speed of this enemy.
      */
     int getMoveSpeed() const { return _moveSpeed; }
+    
+    /**
+    * @return whether to handle the collision between this hitbox and the target
+    */
+    bool hits(intptr_t playerPtr);
+    /** whether the hitbox hit any targets */
+    bool hitFlag;
+    /**
+     * Sets whether the body is enabled and clears the hit flag.
+     * Any processing of the hitflag has to be done between calls to this method before the truth value is cleared.
+     *
+     * @param value whether the body is enabled
+     */
+    void setEnabled(bool value) override;
     
     /**
      * Gets the current health of this enemy.
