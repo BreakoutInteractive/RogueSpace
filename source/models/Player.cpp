@@ -17,20 +17,6 @@
 
 using namespace cugl;
 
-void PlayerHitbox::setEnabled(bool value){
-    WheelObstacle::setEnabled(value);
-    hitFlag = false; // clear the flag
-    hitSet.clear();
-}
-
-bool PlayerHitbox::hits(intptr_t enemyPtr){
-    if (hitSet.find(enemyPtr) != hitSet.end()){
-        return false;
-    }
-    hitSet.insert(enemyPtr);
-    return true;
-}
-
 #pragma mark -
 #pragma mark Constructors
 
@@ -92,11 +78,11 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     _sensor->setDebugColor(Color4::RED);
     
     // set up melee hitbox
-    _meleeHitbox = PlayerHitbox::alloc(Vec2::ZERO, GameConstants::PLAYER_MELEE_ATK_RANGE);
+    _meleeHitbox = SemiCircleHitbox::alloc(Vec2::ZERO, GameConstants::PLAYER_MELEE_ATK_RANGE);
     _meleeHitbox->setSensor(true);
     // this is an attack and, since it is the player's, can collide with enemies
     filter.categoryBits = CATEGORY_ATTACK;
-    filter.maskBits = CATEGORY_ENEMY | CATEGORY_ENEMY_HITBOX;
+    filter.maskBits = CATEGORY_ENEMY_HITBOX;
     _meleeHitbox->setFilterData(filter);
     
     // set the counter properties
@@ -305,19 +291,19 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation1->onComplete([this](){
         _attackAnimation1->reset();
         _comboTimer = 0;
-        if (!_meleeHitbox->hitFlag) _combo = 1;
+        if (!_meleeHitbox->hasHits()) _combo = 1;
         _state = IDLE;
         });
     _attackAnimation2->onComplete([this]() {
         _attackAnimation2->reset();
         _comboTimer = 0;
-        if (!_meleeHitbox->hitFlag) _combo = 1;
+        if (!_meleeHitbox->hasHits()) _combo = 1;
         _state = IDLE;
         });
     _attackAnimation3->onComplete([this]() {
         _attackAnimation3->reset();
         _comboTimer = 0;
-        if (!_meleeHitbox->hitFlag) _combo = 1;
+        if (!_meleeHitbox->hasHits()) _combo = 1;
         _state = IDLE;
         });
     _parryStartAnimation->onComplete([this]() {
@@ -586,7 +572,7 @@ void Player::update(float dt) {
     _meleeHitbox->getDebugNode()->setVisible(_meleeHitbox->isEnabled());
     if (_state != ATTACK) {
         if (_meleeHitbox->isEnabled()){
-            if (_meleeHitbox->hitFlag){
+            if (_meleeHitbox->hasHits()){
                 accumulateCombo();
             }
             disableMeleeAttack();

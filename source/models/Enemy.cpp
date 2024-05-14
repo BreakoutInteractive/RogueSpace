@@ -52,7 +52,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _state = BehaviorState::DEFAULT;
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
     _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
-    _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
+//    _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
     _moveSpeed = GameConstants::ENEMY_MOVE_SPEED;
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
@@ -141,7 +141,9 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    // nothing here: each enemy loads its own assets
+    _healthBG =  assets->get<Texture>("hp_back");
+    _healthFG =  assets->get<Texture>("hp");
+    // override loadAssets to load individual assets
 }
 
 void Enemy::setIdling() {
