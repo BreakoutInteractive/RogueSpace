@@ -226,7 +226,7 @@ void ExplodingAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         drawEffect(batch, _bowHitEffect, 2);
     }
     if (_deathEffect->isActive()) {
-        Vec2 scale = GameConstants::EXPLODE_RADIUS * _drawScale / _deathEffect->getSpriteSheet()->getFrameSize(); //
-        drawEffect(batch, _deathEffect, 2 * (500/365) * std::fmin(scale.x, scale.y));
+        Vec2 scale = GameConstants::EXPLODE_RADIUS * _drawScale / _deathEffect->getSpriteSheet()->getFrameSize();
+        drawEffect(batch, _deathEffect, 2 * (500/365) * std::fmin(scale.x, scale.y)); // 500 to 365 is the ratio of the sprite to actual explosion size in sprite
     }
 }

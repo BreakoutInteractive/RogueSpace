@@ -1,10 +1,8 @@
 {
-    "activeFile": "working/ob_lvl_00.json",
+    "activeFile": "",
     "expandedProjectPaths": [
-        ".",
-        "tilesets",
-        "exports",
-        "working"
+        "working",
+        "tilesets"
     ],
     "fileStates": {
         "exports/cb_lvl_00.json": {
@@ -226,19 +224,19 @@
             }
         },
         "working/example_level.json": {
-            "scale": 0.53,
-            "selectedLayer": 0,
+            "scale": 0.4569,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 851.8867924528302,
-                "y": 720.754716981132
+                "x": 1106.3690085357846,
+                "y": 733.2020135697089
             }
         },
         "working/ob_default_small.json": {
             "scale": 0.2892,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2546.680497925311,
-                "y": 1196.4038727524203
+                "x": 2335.753803596127,
+                "y": 1147.9944674965418
             }
         },
         "working/ob_lvl_00.json": {
@@ -252,7 +250,7 @@
             "selectedLayer": 43,
             "viewCenter": {
                 "x": 1429.3103448275863,
-                "y": 1293.1034482758623
+                "y": 1296.551724137931
             }
         },
         "working/ob_lvl_01.json": {
@@ -308,6 +306,70 @@
                 "x": 1824.6418338108883,
                 "y": 979.2550143266474
             }
+        },
+        "working/sc_lvl_00.json": {
+            "scale": 0.24,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1960.416666666667,
+                "y": 854.1666666666667
+            }
+        },
+        "working/sc_lvl_00_old.json": {
+            "scale": 0.24066342213114753,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1955.0125059869088,
+                "y": 851.8120376776114
+            }
+        },
+        "working/sc_lvl_17.json": {
+            "scale": 0.24066342213114753,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1955.0125059869088,
+                "y": 976.4674578255547
+            }
+        },
+        "working/sc_template_00.json": {
+            "scale": 0.24066342213114753,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1955.0125059869088,
+                "y": 851.8120376776114
+            }
+        },
+        "working/sc_template_01.json": {
+            "scale": 0.2575520833333333,
+            "selectedLayer": 10,
+            "viewCenter": {
+                "x": 1826.8149646107183,
+                "y": 978.4428715874619
+            }
+        },
+        "working/sc_tut_nextlevel.json": {
+            "scale": 0.24066342213114753,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1892.6847959129373,
+                "y": 315.7937310414559
+            }
+        },
+        "working/sc_tut_parry.json": {
+            "scale": 0.24066342213114753,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1955.0125059869088,
+                "y": 851.8120376776114
+            }
+        },
+        "working/sc_tut_ranged.json": {
+            "scale": 0.24066342213114753,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1955.0125059869088,
+                "y": 851.8120376776114
+            }
         }
     },
     "last.exportedFilePath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/exports",
@@ -315,22 +377,21 @@
     "last.objectTypesPath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/custom/propertytypes.json",
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "openFiles": [
-        "working/ob_lvl_00.json"
     ],
     "project": "roguespace.tiled-project",
     "property.type": "object",
     "recentFiles": [
+        "working/sc_lvl_00.json",
+        "working/sc_lvl_00_old.json",
+        "working/ob_lvl_01.json",
+        "working/ob_lvl_00.json",
         "working/example_level.json",
+        "working/ob_default_small.json",
         "tilesets/entities.json",
         "working/alpha_level.json",
         "exports/parry_enemy_test.json",
         "exports/sc_lvl_00.json",
-        "working/ob_lvl_00.json",
         "exports/ob_lvl_00.json",
-        "working/ob_lvl_05.json",
-        "working/ob_lvl_upgrades.json",
-        "working/ob_lvl_04.json",
-        "working/ob_lvl_03.json",
-        "working/ob_lvl_02.json"
+        "working/ob_lvl_05.json"
     ]
 }

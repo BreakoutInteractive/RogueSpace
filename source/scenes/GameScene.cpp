@@ -152,6 +152,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         data.level = _levelNumber;
         data.hp = p->getHP();
         data.atkLvl = p->getMeleeUpgrade().getCurrentLevel();
+        data.atkSpLvl = p->getMeleeSpeedUpgrade().getCurrentLevel();
         data.dashLvl = p->getDodgeUpgrade().getCurrentLevel();
         data.defLvl = p->getDamageReductionUpgrade().getCurrentLevel();
         data.hpLvl = p->getHPUpgrade().getCurrentLevel();
@@ -228,6 +229,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     auto p = _level->getPlayer();
     p->setMaxHPLevel(saveData.hpLvl);
     p->setMeleeLevel(saveData.atkLvl);
+    p->setMeleeSpeedLevel(saveData.atkSpLvl);
     p->setBowLevel(saveData.rangedLvl);
     p->setBlockLevel(saveData.defLvl);
     p->setArmorLevel(saveData.defLvl);
@@ -269,8 +271,8 @@ void GameScene::setLevel(SaveData::Data saveData){
 
 void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
     // first find the stats that can be upgraded
-    std::array<Upgradeable, 6> all = {
-        player->getMeleeUpgrade(), player->getBowUpgrade(), player->getHPUpgrade(), player->getStunUpgrade(), player->getDodgeUpgrade(), player->getDamageReductionUpgrade()};
+    std::array<Upgradeable, 7> all = {
+        player->getMeleeUpgrade(), player->getMeleeSpeedUpgrade(), player->getBowUpgrade(), player->getHPUpgrade(), player->getStunUpgrade(), player->getDodgeUpgrade(), player->getDamageReductionUpgrade()};
     std::vector<Upgradeable> options;
     for (Upgradeable& upgrade : all){
         if (!upgrade.isMaxLevel()){
@@ -309,7 +311,7 @@ std::vector<int> GameScene::getPlayerLevels(){
         auto p = _level->getPlayer();
         levels[0] = p->getMeleeUpgrade().getCurrentLevel();
         levels[1] = p->getBowUpgrade().getCurrentLevel();
-        levels[2] = 0; // attack speed
+        levels[2] = p->getMeleeSpeedUpgrade().getCurrentLevel(); // attack speed
         levels[3] = p->getDamageReductionUpgrade().getCurrentLevel();
         levels[4] = p->getDodgeUpgrade().getCurrentLevel();
         levels[5] = p->getStunUpgrade().getCurrentLevel();
@@ -686,7 +688,7 @@ void GameScene::preUpdate(float dt) {
                     player->setStunLevel(_upgrades.getUpgradeLevel());
                     break;
                 case ATK_SPEED:
-                    CULog("atk spd");
+                    player->setMeleeSpeedLevel(_upgrades.getUpgradeLevel());
                     break;
                 case DASH:
                     player->setDodgeLevel(_upgrades.getUpgradeLevel());
