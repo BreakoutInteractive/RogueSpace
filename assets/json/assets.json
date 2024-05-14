@@ -10,6 +10,16 @@
         "level6": "json/tiled/exports/sc_lvl_05.json",
         "level7": "json/tiled/exports/sc_lvl_06.json",
         "level8": "json/tiled/exports/sc_lvl_07.json",
+        "level9": "json/tiled/exports/sc_lvl_08.json",
+        "level10": "json/tiled/exports/sc_lvl_09.json",
+        "level11": "json/tiled/exports/sc_lvl_10.json",
+        "level12": "json/tiled/exports/sc_lvl_11.json",
+        "level13": "json/tiled/exports/sc_lvl_12.json",
+        "level14": "json/tiled/exports/sc_lvl_13.json",
+        "level15": "json/tiled/exports/sc_lvl_14.json",
+        "level16": "json/tiled/exports/sc_lvl_15.json",
+        "level17": "json/tiled/exports/sc_lvl_16.json",
+        "level18": "json/tiled/exports/sc_lvl_17.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
