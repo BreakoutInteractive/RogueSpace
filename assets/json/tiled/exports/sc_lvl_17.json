@@ -92,12 +92,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":1
+                         "value":0.8
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":4.6
+                         "value":5.4
                         }, 
                         {
                          "name":"path",
@@ -120,12 +120,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":1
+                         "value":0.8
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":4.6
+                         "value":5.4
                         }, 
                         {
                          "name":"path",
@@ -148,12 +148,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":1
+                         "value":0.8
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":4.6
+                         "value":5.4
                         }, 
                         {
                          "name":"path",
@@ -176,12 +176,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":1
+                         "value":0.8
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":4.6
+                         "value":5.4
                         }, 
                         {
                          "name":"path",

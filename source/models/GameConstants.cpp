@@ -34,9 +34,9 @@ int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attac
 
 int GameConstants::ENEMY_SENTRY_COOLDOWN = 75; //previously 120
 
-float GameConstants::ENEMY_SIGHT_RANGE = 10;
+float GameConstants::ENEMY_SIGHT_RANGE = 8;
 
-float GameConstants::ENEMY_PROXIMITY_RANGE = 5;
+float GameConstants::ENEMY_PROXIMITY_RANGE = 4;
 
 float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
@@ -65,7 +65,7 @@ float GameConstants::STUN_DMG_BONUS = 1.6f; // previously 1.5
 #pragma mark -
 #pragma mark Player Upgradeable Stat Constants
 
-float GameConstants::PLAYER_MAX_HP = 3;
+float GameConstants::PLAYER_MAX_HP = 2.8;
 
 float GameConstants::PLAYER_ATK_DAMAGE = 1.0f;
 
@@ -100,7 +100,7 @@ float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.8f; //previously 0.5
 
 
 
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.35f; // previously 1.4
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.36f; // previously 1.4
 
 float GameConstants::PROJ_SPEED_P = 9.0f;
 
