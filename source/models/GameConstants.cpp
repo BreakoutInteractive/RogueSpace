@@ -48,9 +48,9 @@ float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
 float GameConstants::PROJ_SPEED_E = 5.5f; // previously 6.0
 
-float GameConstants::PROJ_RADIUS_LIZARD = 0.4f;
+float GameConstants::PROJ_RADIUS_LIZARD = 0.3f; //previously 0.4
 
-float GameConstants::PROJ_RADIUS_MAGE = 0.65f; 
+float GameConstants::PROJ_RADIUS_MAGE = 0.56f; //previously 0.65
 
 float GameConstants::PROJ_DIST_E = 9.0f;
 
