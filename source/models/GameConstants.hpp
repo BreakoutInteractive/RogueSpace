@@ -86,8 +86,8 @@ public:
 
 #pragma mark -
 #pragma mark Slime Constants
-    /** time before explosion for slime */
-    static float EXPLODE_TIMER;
+    /** the number of game frames before explosion for slime */
+    static int EXPLODE_TIMER;
     /** radius of explosion */
     static float EXPLODE_RADIUS;
     /** range of detection from slime */

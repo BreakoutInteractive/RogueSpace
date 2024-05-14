@@ -322,7 +322,7 @@ public:
     void setChasing();
 
     /** Set dying state */
-    void setDying();
+    virtual void setDying();
     
     /**
      * whether enemy is attacking

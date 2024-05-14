@@ -65,8 +65,9 @@ float GameConstants::STUN_DMG_BONUS = 1.6f; // previously 1.5
 #pragma mark -
 #pragma mark Slime Constants
 
-float GameConstants::EXPLODE_TIMER = 60;
-float GameConstants::EXPLODE_RADIUS = 0.5f;
+int GameConstants::EXPLODE_TIMER = 60;
+// note radius needs to be larger than proximity otherwise player won't necessarily take damage
+float GameConstants::EXPLODE_RADIUS = 2.5f;
 float GameConstants::EXPLODE_PROX_RANGE = 2.0f;
 
 #pragma mark -

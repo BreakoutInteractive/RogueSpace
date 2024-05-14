@@ -261,6 +261,8 @@ void GameScene::setLevel(SaveData::Data saveData){
     });
     
     // hide effect nodes
+    _actionManager.remove(AREA_CLEAR_KEY);
+    _actionManager.remove(DEAD_EFFECT_KEY);
     _areaClearNode->setVisible(false);
     _deadEffectNode->setVisible(false);
 }
