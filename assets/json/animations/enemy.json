@@ -74,6 +74,9 @@
         },
         "enemy-death-effect": {
             "file":     "textures/sprites/effect_death_enemy.png"
+        },
+        "explosion-effect": {
+            "file":     "textures/sprites/effect_explosion.png"
         }
     }
 }

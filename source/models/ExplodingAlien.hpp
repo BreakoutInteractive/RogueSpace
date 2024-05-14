@@ -28,6 +28,9 @@ protected:
     /** The animation to use while walking */
     std::shared_ptr<Animation> _walkAnimationWhite;
     
+    /** The explosion effect animation */
+    std::shared_ptr<Animation> _explodeEffect;
+    
 public:
 #pragma mark -
 #pragma mark Constructors

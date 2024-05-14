@@ -48,10 +48,12 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto walkTextureWhite = assets->get<Texture>("explode-walk-white");
     auto idleTextureWhite = assets->get<Texture>("explode-idle-white");
     auto stunTexture = assets->get<Texture>("lizard-stun");
+    
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
     auto deathEffect = assets->get<Texture>("enemy-death-effect");
+    auto explodeEffect = assets->get<Texture>("explosion-effect");
     _healthBG =  assets->get<Texture>("hp_back");
     _healthFG =  assets->get<Texture>("hp");
     
@@ -60,11 +62,12 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto idleSheetWhite = SpriteSheet::alloc(idleTextureWhite, 8, 4);
     auto walkSheetWhite = SpriteSheet::alloc(walkTextureWhite, 8, 5);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 1, 6);
-    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15); // TODO: can't remove this because of base setAttacking()?
+    auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 15);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
     auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
+    auto explodeEffectSheet = SpriteSheet::alloc(explodeEffect, 2, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 3);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 0, 4);
@@ -76,6 +79,7 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
     _deathEffect = Animation::alloc(deathEffectSheet, 1.0f, false);
+    _explodeEffect = Animation::alloc(explodeEffectSheet, 0.333f, false);
     
     _currAnimation = _idleAnimation; // set running
     
@@ -93,6 +97,7 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
             _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
+            _explodeEffect->start();
         }
     });
     
@@ -103,6 +108,10 @@ void ExplodingAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     });
     _bowHitEffect->onComplete([this]() {
         _bowHitEffect->reset();
+    });
+    // no need to use stun/death assets, but must instantiate
+    _explodeEffect->onComplete([this]() {
+        _explodeEffect->reset();
     });
 }
 
@@ -154,9 +163,9 @@ void ExplodingAlien::updateAnimation(float dt){
         }
     }
     // attack animation must play to completion, as long as enemy is alive.
-    
     _meleeHitEffect->update(dt);
     _bowHitEffect->update(dt);
+    _explodeEffect->update(dt);
     if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
@@ -215,7 +224,7 @@ void ExplodingAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     if (_bowHitEffect->isActive()) {
         drawEffect(batch, _bowHitEffect, 2);
     }
-    if (_stunEffect->isActive()) {
-        drawEffect(batch, _stunEffect);
+    if (_explodeEffect->isActive()) {
+        drawEffect(batch, _explodeEffect, 0.8 * GameConstants::EXPLODE_RADIUS);
     }
 }
