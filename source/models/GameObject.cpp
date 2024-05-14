@@ -58,12 +58,10 @@ void GameObject::syncPositions(){
     }
     if (_colliderShadow != nullptr){
         _colliderShadow->setPosition(pos);
-        _colliderShadow->setEnabled(true);
         _colliderShadow->setAwake(true);
     }
     if (_sensor != nullptr){
         _sensor->setPosition(pos + _sensorOffset);
-        _sensor->setEnabled(true);
         _sensor->setAwake(true);
     }
 }
