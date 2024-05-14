@@ -781,7 +781,7 @@ void GameScene::setActive(bool value){
     if (isActive() != value){
         Scene2::setActive(value);
         _exitCode = NONE;
-        _gameRenderer.setActivated(value);
+        _gameRenderer.setActive(value);
         activateInputs(value);
         _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
         _upgrades.setActive(false); // upgrades is only on by interaction
