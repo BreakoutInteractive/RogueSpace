@@ -32,15 +32,15 @@ int GameConstants::ENEMY_IFRAME = 16;
 
 int GameConstants::ENEMY_ATK_COOLDOWN = 62; //previously 50- changed so EN attacks are less spammy
 
-int GameConstants::ENEMY_SENTRY_COOLDOWN = 74; //previously 120
+int GameConstants::ENEMY_SENTRY_COOLDOWN = 32; //previously 74
 
-float GameConstants::ENEMY_SIGHT_RANGE = 8;
+float GameConstants::ENEMY_SIGHT_RANGE = 9;
 
 float GameConstants::ENEMY_PROXIMITY_RANGE = 4;
 
 float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
-float GameConstants::ENEMY_RANGED_ATK_RANGE = 6.6; //previously 7
+float GameConstants::ENEMY_RANGED_ATK_RANGE = 6.8; //previously 7
 
 float GameConstants::ENEMY_MELEE_ATK_SPEED = 1.125f;
 
