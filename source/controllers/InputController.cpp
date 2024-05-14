@@ -251,11 +251,12 @@ void InputController::clear() {
 #pragma mark Results
 
 Vec2 InputController::getDodgeDirection(cugl::Vec2 facingDir){
-    #ifndef CU_TOUCH_SCREEN
-    _dodgeDir.set(facingDir).normalize();
-    #else
-    _dodgeDir.set(_keyDodgeDir).normalize();
-    #endif
+//    #ifndef CU_TOUCH_SCREEN
+//    _dodgeDir.set(facingDir).normalize();
+//    #else
+//    _dodgeDir.set(_keyDodgeDir).normalize();
+//    #endif
+    _dodgeDir.set(facingDir).normalize(); // uniform-controls across platforms
     return _dodgeDir;
 }
 
@@ -353,9 +354,9 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         // read the gesture input only if game is active
         // the only exceptions are stateful releases which is needed to transition the player back to non-combat states
         if (_active){
-            // DODGE: swipe in any direction
-            if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME){
-                _keyDodgeDir.set(swipeDir.x, -swipeDir.y);
+            // DODGE: swipe upwards
+            if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME && swipeDir.y < 0){
+                //_keyDodgeDir.set(swipeDir.x, -swipeDir.y);
                 _keyDodge = true;
             }
             
