@@ -1827,7 +1827,7 @@
                                 {
                                  "name":"damage",
                                  "type":"float",
-                                 "value":1.4
+                                 "value":0.8
                                 }, 
                                 {
                                  "name":"hp",
@@ -2031,7 +2031,7 @@
                                 {
                                  "name":"damage",
                                  "type":"float",
-                                 "value":0.6
+                                 "value":0.4
                                 }, 
                                 {
                                  "name":"hp",
@@ -2059,7 +2059,7 @@
                                 {
                                  "name":"damage",
                                  "type":"float",
-                                 "value":0.6
+                                 "value":0.4
                                 }, 
                                 {
                                  "name":"hp",
@@ -2116,7 +2116,7 @@
                                 {
                                  "name":"damage",
                                  "type":"float",
-                                 "value":0.6
+                                 "value":0.4
                                 }, 
                                 {
                                  "name":"hp",
