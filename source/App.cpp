@@ -225,6 +225,7 @@ void App::updateTitleScene(float dt){
             _gameplay.setActive(true);
             CULog("loading lv %d", save.level);
             _gameplay.setTutorialActive(false);
+            _gameplay.setUpgradeRoom(false);
             _gameplay.setLevel(save);
             _scene = GAME;
             _gamePrevScene = TITLE;

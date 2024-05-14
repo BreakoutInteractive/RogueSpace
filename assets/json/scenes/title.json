@@ -537,7 +537,7 @@
                                         "y_offset": 0
                                     }
                                 },
-                                "Tutorial": {
+                                "tutorial": {
                                     "type": "Label",
                                     "data": {
                                         "anchor": [
@@ -578,11 +578,11 @@
                                 }
                             },
                             "layout": {
-                                "priority": 2,
+                                "priority": 0,
                                 "padding": [
                                     0,
                                     0,
-                                    0,
+                                    50,
                                     0
                                 ]
                             }
@@ -637,7 +637,7 @@
                                         "y_offset": 0
                                     }
                                 },
-                                "Continue": {
+                                "continue": {
                                     "type": "Label",
                                     "data": {
                                         "anchor": [
@@ -687,7 +687,7 @@
                                 ]
                             }
                         },
-                        "new": {
+                        "new_game": {
                             "type": "Button",
                             "format": {
                                 "type": "Anchored"
@@ -737,7 +737,7 @@
                                         "y_offset": 0
                                     }
                                 },
-                                "new": {
+                                "new_game": {
                                     "type": "Label",
                                     "data": {
                                         "anchor": [
@@ -749,7 +749,7 @@
                                             33
                                         ],
                                         "position": [
-                                            101.79997253417969,
+                                            82.79997253417969,
                                             35.70001220703125
                                         ],
                                         "angle": 0,
@@ -778,11 +778,11 @@
                                 }
                             },
                             "layout": {
-                                "priority": 0,
+                                "priority": 2,
                                 "padding": [
                                     0,
                                     0,
-                                    50,
+                                    0,
                                     0
                                 ]
                             }

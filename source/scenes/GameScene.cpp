@@ -92,7 +92,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.init(getCamera(), config);
     
     // necessary (starting at any actual level implies it is not an upgrade room)
-    _isUpgradeRoom = false;
+    setUpgradeRoom(false);
     _isTutorial = false;
     _tutorialLevel = 0;
     
@@ -665,6 +665,7 @@ void GameScene::preUpdate(float dt) {
     
     player->update(dt); // updates counters, hitboxes
     _levelTransition.update(dt); // does nothing when not active
+    _gameRenderer.update(dt);
     
 #pragma mark - Upgrade System
     

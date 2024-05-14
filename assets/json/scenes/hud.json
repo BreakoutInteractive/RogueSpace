@@ -48,6 +48,9 @@
         },
         "swap_bow": {
             "file":     "textures/hud/swap_bow.png"
+        },
+        "dash_ready": {
+            "file":     "textures/hud/dash_ready.png"
         }
     },
     "scene2s": {
@@ -154,6 +157,35 @@
                                 "absolute": false,
                                 "x_offset": 0,
                                 "y_offset": 0
+                            }
+                        },
+                        "dash_ready": {
+                            "type": "Sprite",
+                            "data": {
+                                "texture": "dash_ready",
+                                "anchor": [
+                                    0,
+                                    1
+                                ],
+                                "size": [
+                                    0,0, 262,0, 262,102, 0,102 
+                                ],
+                                "angle": 0,
+                                "position": [
+                                    97,
+                                    -22
+                                ],
+                                "visible": false,
+                                "span": 6,
+                                "cols": 2,
+                                "frame": 0
+                            },
+                            "layout": {
+                                "x_anchor": "left",
+                                "y_anchor": "top",
+                                "absolute": false,
+                                "x_offset": 0.21,
+                                "y_offset": -0.01
                             }
                         }
                     },
