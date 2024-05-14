@@ -205,12 +205,9 @@ public:
     /** whether the hitbox hit any targets */
     bool hitFlag;
     /**
-     * Sets whether the body is enabled and clears the hit flag.
-     * Any processing of the hitflag has to be done between calls to this method before the truth value is cleared.
-     *
-     * @param value whether the body is enabled
+     * Clears the hits.
      */
-    void setEnabled(bool value) override;
+    void clearHits();
     
     /**
      * Gets the current health of this enemy.

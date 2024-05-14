@@ -79,8 +79,7 @@ void Enemy::dispose() {
     // deallocate anything not on shared_pointers
 }
 
-void Enemy::setEnabled(bool value){
-    _attack->setEnabled(value);
+void Enemy::clearHits(){
     hitFlag = false; // clear the flag
     hitSet.clear();
 }
@@ -254,7 +253,7 @@ void Enemy::updateAnimation(float dt){
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
             setMoving();
         }
-        setEnabled(false);
+        clearHits();
     }
     _meleeHitEffect->update(dt);
     _bowHitEffect->update(dt);
