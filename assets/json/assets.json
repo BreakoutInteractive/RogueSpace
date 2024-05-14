@@ -1,14 +1,15 @@
 {
     "jsons": {
-        "constants": "json/level.json",
+        "constants": "json/constants.json",
         "upgrades": "json/tiled/exports/ob_lvl_upgrades.json",
-        "level0": "json/tiled/exports/cb_lvl_01.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
         "level3": "json/tiled/exports/sc_lvl_02.json",
         "level4": "json/tiled/exports/sc_lvl_03.json",
-        "level5": "json/tiled/exports/ob_lvl_04.json",
-        "level6": "json/tiled/exports/ob_lvl_05.json",
+        "level5": "json/tiled/exports/sc_lvl_04.json",
+        "level6": "json/tiled/exports/sc_lvl_05.json",
+        "level7": "json/tiled/exports/sc_lvl_06.json",
+        "level8": "json/tiled/exports/sc_lvl_07.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
@@ -18,6 +19,18 @@
         },
         "energy-wall": {
             "file":        "textures/gameplay/energy_wall.png"
+        },
+        "floor-arrows": {
+            "file":        "textures/gameplay/floor_arrows.png"
+        },
+        "health-pack":{
+            "file":     "textures/sprites/sprite_healthdrop.png"
+        },
+        "artifact-glow":{
+            "file":     "textures/sprites/sprite_artifact_glow.png"
+        },
+        "artifact-chosen":{
+            "file":     "textures/sprites/sprite_artifact_chosen.png"
         }
 	},
     
@@ -146,9 +159,21 @@
             "file": "fonts/Roboto-Medium.ttf",
             "size": 16
         },
+        "robotoMedium48": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 48
+        },
         "robotoBold24": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 24
+        },
+        "robotoBold28": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 28
+        },
+        "robotoBold36": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 36
         },
         "robotoBold40": {
             "file": "fonts/Roboto-Bold.ttf",
@@ -167,8 +192,8 @@
             "size": 32
         },
         "robotoRegular16": {
-        "file": "fonts/Roboto-Regular.ttf",
-        "size": 16
+            "file": "fonts/Roboto-Regular.ttf",
+            "size": 16
         }
 	}
 }

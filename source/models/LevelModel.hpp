@@ -21,6 +21,7 @@
 #include <cugl/io/CUJsonReader.h>
 #include "../components/Animation.hpp"
 #include "Projectile.hpp"
+#include "HealthPack.hpp"
 #include "LevelGrid.hpp"
 #include "Wall.hpp"
 #include "Relic.hpp"
@@ -65,6 +66,8 @@ protected:
     std::vector<std::shared_ptr<Enemy>> _enemies;
     /** list of all projectiles */
     std::vector<std::shared_ptr<Projectile>> _projectiles;
+    /** list of all health packs */
+    std::vector<std::shared_ptr<HealthPack>> _healthpacks;
     
     /** list of all moving game objects */
     std::vector<std::shared_ptr<GameObject>> _dynamicObjects;
@@ -237,11 +240,19 @@ public:
     void addProjectile(std::shared_ptr<Projectile> p);
     /** remove the given projectile from this level and from the physics world (if present) */
     void delProjectile(std::shared_ptr<Projectile> p);
+    /** add a health pack to this level */
+    void addHealthPack(std::shared_ptr<HealthPack> h);
+    /** remove the given health pack from this level and from the physics world (if present) */
+    void delHealthPack(std::shared_ptr<HealthPack> h);
     
     /**
      * @return reference to list of all projectiles
      */
     const std::vector<std::shared_ptr<Projectile>>& getProjectiles() { return _projectiles; }
+    /**
+     * @return reference to list of all health packs
+     */
+    const std::vector<std::shared_ptr<HealthPack>>& getHealthPacks() { return _healthpacks; }
     
     /**
      * @note WARNING: temporarily excludes the list of projectiles.

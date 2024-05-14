@@ -73,6 +73,7 @@ void LevelModel::setDrawScale(Vec2 scale) {
         _enemies[ii]->setDrawScale(scale);
     }
     for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->setDrawScale(scale);
+    for (int ii = 0; ii < _healthpacks.size(); ii++) _healthpacks[ii]->setDrawScale(scale);
 }
 
 void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
@@ -81,8 +82,8 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }
     
     // indicators should be drawn between tile layers and objects
-    if (_player->_state == Player::state::CHARGING || _player->_state == Player::state::CHARGED){
-        _player->drawRangeIndicator(batch);
+    if (_player->isEnabled() && _player->isRangedAttackActive()){
+        _player->drawRangeIndicator(batch, _world);
     }
     
     // sort elements to be drawn
@@ -94,27 +95,17 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
         if ((*it)->isEnabled()){
             (*it)->draw(batch);
         }
-    }    
-
-    for (int ii = 0; ii < _enemies.size(); ii++){
-        auto enemyAtk = _enemies[ii]->getAttack();
-        //only draw the effect when the enemy's attack hitbox is enabled (when swinging the knife)
-        if (enemyAtk->isEnabled() && _enemies[ii]->getType() != "exploding alien") {
-            auto sheet = _enemies[ii]->getHitboxAnimation()->getSpriteSheet();
-            Affine2 atkTrans = Affine2::createScale( GameConstants::ENEMY_MELEE_ATK_RANGE / ((Vec2)sheet->getFrameSize() / 2) * _scale);
-            atkTrans.rotate(enemyAtk->getAngle() - M_PI_2);
-            atkTrans.translate(enemyAtk->getPosition() * _scale);
-            sheet->draw(batch, Color4::WHITE, Vec2(sheet->getFrameSize().getIWidth() / 2, 0), atkTrans);
-        }
     }
-
-    for (int ii = 0; ii < _projectiles.size(); ii++) _projectiles[ii]->draw(batch);
         
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->getAttack()->getDebugNode()->setVisible(_enemies[ii]->getAttack()->isEnabled());
     }
     for (int ii = 0; ii < _projectiles.size(); ii++) {
+        _projectiles[ii]->draw(batch);
         _projectiles[ii]->getCollider()->getDebugNode()->setVisible(_projectiles[ii]->isEnabled());
+    }
+    for (int ii = 0; ii < _healthpacks.size(); ii++) {
+        _healthpacks[ii]->getCollider()->getDebugNode()->setVisible(_healthpacks[ii]->isEnabled());
     }
 }
 
@@ -165,6 +156,10 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _projectiles[ii]->getCollider()->setDebugColor(Color4::RED);
         _projectiles[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
     }
+    for (int ii = 0; ii < _healthpacks.size(); ii++) {
+        _healthpacks[ii]->setDebugNode(_debugNode);
+        _healthpacks[ii]->getCollider()->setDebugColor(Color4::RED);
+    }
     if (_relic != nullptr){
         _relic->setDebugNode(_debugNode);
         _relic->getCollider()->setDebugColor(Color4::WHITE);
@@ -187,7 +182,7 @@ void LevelModel::setAssets(const std::shared_ptr<AssetManager> &assets){
     }
     
     std::shared_ptr<Texture> t2 = assets->get<Texture>("enemy-swipe");
-    std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 3);
+    std::shared_ptr<SpriteSheet> s2 = SpriteSheet::alloc(t2, 2, 4);
 
     for (int ii = 0; ii < _enemies.size(); ii++){
         _enemies[ii]->loadAssets(assets);
@@ -356,7 +351,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue> constants, const st
     bool success = true;
 
     // Get the object, which is automatically retained
-    _player = Player::alloc(json, _world);
+    _player = Player::alloc(json, constants->get("upgrades"));
     auto playerCollider = _player->getCollider();
     playerCollider->setDensity(constants->getDouble(DENSITY_FIELD));
     playerCollider->setFriction(constants->getDouble(FRICTION_FIELD));
@@ -569,6 +564,25 @@ void LevelModel::delProjectile(std::shared_ptr<Projectile> p) {
             p->removeObstaclesFromWorld(_world);
             p->dispose();
             _projectiles.erase(it);
+            return;
+        }
+    }
+}
+
+void LevelModel::addHealthPack(std::shared_ptr<HealthPack> h) {
+    _healthpacks.push_back(h);
+    h->addObstaclesToWorld(_world);
+    h->setDebugNode(_debugNode);
+    h->getCollider()->setDebugColor(Color4::RED);
+    _dynamicObjects.push_back(h);
+}
+
+void LevelModel::delHealthPack(std::shared_ptr<HealthPack> h) {
+    for (auto it = _healthpacks.begin(); it != _healthpacks.end(); ++it) {
+        if ((*it) == h) {
+            h->removeObstaclesFromWorld(_world);
+            h->dispose();
+            _healthpacks.erase(it);
             return;
         }
     }

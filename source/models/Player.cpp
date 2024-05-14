@@ -17,15 +17,49 @@
 
 using namespace cugl;
 
+void PlayerHitbox::setEnabled(bool value){
+    WheelObstacle::setEnabled(value);
+    hitFlag = false; // clear the flag
+    hitSet.clear();
+}
+
+bool PlayerHitbox::hits(intptr_t enemyPtr){
+    if (hitSet.find(enemyPtr) != hitSet.end()){
+        return false;
+    }
+    hitSet.insert(enemyPtr);
+    return true;
+}
+
 #pragma mark -
 #pragma mark Constructors
 
 
-bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::physics2::ObstacleWorld> world) {
-    _world = world;
+bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonValue> upgradesJson) {
+    auto meleeStats = upgradesJson->get("melee")->asFloatArray();
+    auto parryStats = upgradesJson->get("parry")->asFloatArray();
+    auto meleeSpStats = upgradesJson->get("meleeSpeed")->asFloatArray();
+    auto dodgeStats = upgradesJson->get("dodge")->asFloatArray();
+    auto bowStats = upgradesJson->get("range")->asFloatArray();
+    auto healthStats = upgradesJson->get("health")->asFloatArray();
+    auto armorStats = upgradesJson->get("armor")->asFloatArray();
+    auto blockStats = upgradesJson->get("block")->asFloatArray();
+    
+    _meleeDamage = Upgradeable(meleeStats, UpgradeType::SWORD);
+    _stunWindow = Upgradeable(parryStats, UpgradeType::PARRY);
+    _attackCooldown = Upgradeable(meleeSpStats, UpgradeType::ATK_SPEED);
+    _dodgeCount = Upgradeable(dodgeStats, UpgradeType::DASH);
+    _bowDamage = Upgradeable(bowStats, UpgradeType::BOW);
+    _maxHP = Upgradeable(healthStats, UpgradeType::HEALTH);
+    _damageReduction = Upgradeable(armorStats, UpgradeType::SHIELD);
+    _blockReduction = Upgradeable(blockStats, UpgradeType::SHIELD);
+
+
     _weapon = MELEE;
     _state = IDLE;
-    _dodge = 0;
+    _dodgeDuration = 0;
+    _attackActiveCooldown = 0;
+    _stamina = GameConstants::PLAYER_STAMINA;
     _combo = 1;
     _comboTimer = 0;
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
@@ -35,7 +69,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::p
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
-    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC;
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC | CATEGORY_HEALTHPACK;
     collider->setFilterData(filter);
     _collider = collider;                   // attach Component
     
@@ -52,7 +86,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::p
     std::shared_ptr<JsonValue> hitboxData = playerData->get("hitbox");
     auto hitbox = Collider::makeCollider(hitboxData, b2_kinematicBody, "player-hitbox", true);
     filter.categoryBits = CATEGORY_PLAYER_HITBOX;
-    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_HEALTHPACK;
     hitbox->setFilterData(filter);
     _sensor = hitbox;
     _sensor->setDebugColor(Color4::RED);
@@ -66,16 +100,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<cugl::p
     _meleeHitbox->setFilterData(filter);
     
     // set the counter properties
-    hitCounter.setMaxCount(GameConstants::PLAYER_IFRAME);
-
-    atkCD.setMaxCount(GameConstants::PLAYER_ATTACK_COOLDOWN);
-    dodgeCD.setMaxCount(GameConstants::PLAYER_DODGE_COOLDOWN);
-    _hp = GameConstants::PLAYER_MAX_HP;
-    
-    _moveScale = GameConstants::PLAYER_MOVE_SPEED;
-    defense = GameConstants::PLAYER_DEFENSE;
-    meleeDamage = GameConstants::PLAYER_ATK_DAMAGE;
-    bowDamage = GameConstants::PLAYER_BOW_DAMAGE;
+    _iframeCounter.setMaxCount(GameConstants::PLAYER_IFRAME);
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -95,24 +120,9 @@ void Player::dispose() {
 }
 
 #pragma mark -
-#pragma mark Properties
-
-int Player::getMaxHP(){
-    return GameConstants::PLAYER_MAX_HP;
-}
-
-int Player::getMoveScale(){
-    return GameConstants::PLAYER_MOVE_SPEED;
-}
-
-bool Player::isAttacking() {
-    return _state == CHARGING || _state == CHARGED || _state == SHOT || _state == ATTACK;
-}
-
-#pragma mark -
 #pragma mark Animation
 
-void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch) {
+void Player::drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<physics2::ObstacleWorld>& world) {
     Vec2 direction = getFacingDir();
     float ang = acos(direction.dot(Vec2::UNIT_X));
     if (direction.y < 0) {
@@ -128,7 +138,8 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
     Vec2 loc = rayEnd;
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
-        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && !fixture->IsSensor()) {
+        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE 
+            && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE_SHADOW && !fixture->IsSensor()) {
             if (fraction < frac){
                 frac = fraction;
                 loc = point;
@@ -137,7 +148,7 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
         }
         else return -1.0f;
         };
-    _world->rayCast(callback, getPosition(), rayEnd);
+    world->rayCast(callback, getPosition(), rayEnd);
     if (abs(frac-1)>0.01) {
         float dist = getPosition().distance(loc);
         if (dist >= GameConstants::PROJ_SIZE_P_HALF) {
@@ -167,10 +178,21 @@ void Player::drawRangeIndicator(const std::shared_ptr<cugl::SpriteBatch>& batch)
     }
 }
 
-void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    // TODO: render player with appropriate scales (right now default size)
-    auto spriteSheet = _currAnimation->getSpriteSheet();
+void Player::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float ang, float scale) {
+    auto sheet = effect->getSpriteSheet();
+    Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
+    Vec2 direction = getFacingDir();
     
+    Affine2 t = Affine2::createRotation(ang);
+    t.scale(scale);
+    t.translate((_position+Vec2(0, 64 / scale / getDrawScale().y)) * _drawScale);
+    sheet->draw(batch, o, t);
+}
+
+void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+    if (_state == State::DEAD) return;
+    
+    auto spriteSheet = _currAnimation->getSpriteSheet();
     
     Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
     Affine2 transform = Affine2::createTranslation(_position * _drawScale);
@@ -184,7 +206,11 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     Vec2 o = Vec2::ZERO;
     Affine2 t = Affine2::ZERO;
     Vec2 direction = Vec2::ZERO;
-    float ang = 0;
+    float ang = acos(direction.dot(Vec2::UNIT_X));
+    if (direction.y < 0) {
+        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
+        ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
+    }
     switch (_state) {
     case DODGE:
         // render player differently while dodging (add fading effect)
@@ -195,43 +221,13 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
         }
         break;
     case CHARGED:
-        sheet = _chargedEffect->getSpriteSheet();
-        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        direction = getFacingDir();
-        ang = acos(direction.dot(Vec2::UNIT_X));
-        if (direction.y < 0) {
-            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        }
-        t = Affine2::createRotation(ang);
-        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
-        sheet->draw(batch, o, t);
+        drawEffect(batch, _chargedEffect, ang);
         break;
     case CHARGING:
-        sheet = _chargingEffect->getSpriteSheet();
-        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        direction = getFacingDir();
-        ang = acos(direction.dot(Vec2::UNIT_X));
-        if (direction.y < 0) {
-            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        }
-        t = Affine2::createRotation(ang);
-        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
-        sheet->draw(batch, o, t);
+        drawEffect(batch, _chargingEffect, ang);
         break;
     case SHOT:
-        sheet = _shotEffect->getSpriteSheet();
-        o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-        direction = getFacingDir();
-        ang = acos(direction.dot(Vec2::UNIT_X));
-        if (direction.y < 0) {
-            // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-            ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
-        }
-        t = Affine2::createRotation(ang);
-        t.translate(getPosition().add(0, 64 / getDrawScale().y) * _drawScale);
-        if (_shotEffect->isActive()) sheet->draw(batch, o, t);
+        if (_shotEffect->isActive()) drawEffect(batch, _shotEffect, ang);
         break;
     default:
         break;
@@ -251,47 +247,35 @@ void Player::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 
     // this is always drawn on top of player
     if (_parryEffect->isActive()) {
-        std::shared_ptr<SpriteSheet> effSheet = _parryEffect->getSpriteSheet();
-        transform.translate(0, spriteSheet->getFrameSize().height/2);
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform); 
+        drawEffect(batch, _parryEffect, ang);
     }
     
+    if (_hitEffect->isActive()) {
+        drawEffect(batch, _hitEffect, 0, 2);
+    }
 
+    if (_deathEffect->isActive()) {
+        drawEffect(batch, _deathEffect);
+    }
 }
 
 void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    auto meleeIdleTexture = assets->get<Texture>("player-idle");
-    auto parryTexture = assets->get<Texture>("player-parry");
-    auto attackTexture = assets->get<Texture>("player-attack");
-    auto runTexture = assets->get<Texture>("player-run");
-    auto bowIdleTexture = assets->get<Texture>("player-bow-idle");
-    auto rangedTexture = assets->get<Texture>("player-ranged");
-    auto bowRunTexture = assets->get<Texture>("player-bow-run");
-    auto projEffectTexture = assets->get<Texture>("player-projectile");
-    auto parryEffectTexture = assets->get<Texture>("parry-effect");
-    auto meleeSwipeEffect = assets->get<Texture>("player-swipe");
-    auto meleeComboSwipeEffect = assets->get<Texture>("player-swipe-combo");
-    
-    // make sheets
-    auto parrySheet = SpriteSheet::alloc(parryTexture, 8, 16);
-    auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 24);
-    auto idleSheet = SpriteSheet::alloc(meleeIdleTexture, 8, 8);
-    auto runSheet = SpriteSheet::alloc(runTexture, 8, 16);
-    auto rangedSheet = SpriteSheet::alloc(rangedTexture, 8, 16);
-    auto bowIdleSheet = SpriteSheet::alloc(bowIdleTexture, 8, 8);
-    auto bowRunSheet = SpriteSheet::alloc(bowRunTexture, 8, 16);
-    auto projEffectSheet = SpriteSheet::alloc(projEffectTexture, 4, 4);
-    auto parryEffectSheet = SpriteSheet::alloc(parryEffectTexture, 2, 4);
-    auto swipeEffectSheet = SpriteSheet::alloc(meleeSwipeEffect, 1, 6);
-    auto comboSwipeEffectSheet = SpriteSheet::alloc(meleeComboSwipeEffect, 1, 6);
+    // make animation sheets and animations
+    auto parrySheet = SpriteSheet::alloc(assets->get<Texture>("player-parry"), 8, 16);
+    auto attackSheet = SpriteSheet::alloc(assets->get<Texture>("player-attack"), 8, 24);
+    auto idleSheet = SpriteSheet::alloc(assets->get<Texture>("player-idle"), 8, 8);
+    auto runSheet = SpriteSheet::alloc(assets->get<Texture>("player-run"), 8, 16);
+    auto rangedSheet = SpriteSheet::alloc(assets->get<Texture>("player-ranged"), 8, 16);
+    auto bowIdleSheet = SpriteSheet::alloc(assets->get<Texture>("player-bow-idle"), 8, 8);
+    auto bowRunSheet = SpriteSheet::alloc(assets->get<Texture>("player-bow-run"), 8, 16);
+    auto projEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-projectile"), 4, 4);
 
     // pass to animations
     _parryStartAnimation = Animation::alloc(parrySheet, 0.1f, false, 0, 1);
     _parryStanceAnimation = Animation::alloc(parrySheet, 0.5f, true, 2, 9);
     _parryAnimation = Animation::alloc(parrySheet, GameConstants::PLAYER_PARRY_TIME, false, 10, 15);
-    _attackAnimation1 = Animation::alloc(attackSheet, 0.3f, false, 0, 7);
-    _attackAnimation2 = Animation::alloc(attackSheet, 0.3f, false, 8, 13);
+    _attackAnimation1 = Animation::alloc(attackSheet, 0.5f, false, 0, 7);
+    _attackAnimation2 = Animation::alloc(attackSheet, 0.5f, false, 8, 13);
     _attackAnimation3 = Animation::alloc(attackSheet, 0.5f, false, 14, 23);
     _runAnimation = Animation::alloc(runSheet, 0.667f, true, 0, 15);
     _idleAnimation = Animation::alloc(idleSheet, 1.2f, true, 0, 7);
@@ -301,12 +285,21 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _recoveryAnimation = Animation::alloc(rangedSheet, 0.167f, false, 12, 15);
     _bowRunAnimation = Animation::alloc(bowRunSheet, 0.667f, true, 0, 15);
     _bowIdleAnimation = Animation::alloc(bowIdleSheet, 1.2f, true, 0, 7);
+    
+    // make effect sheets and animation
+    auto parryEffectSheet = SpriteSheet::alloc(assets->get<Texture>("parry-effect"), 2, 4);
+    auto swipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe"), 2, 4);
+    auto comboSwipeEffectSheet = SpriteSheet::alloc(assets->get<Texture>("player-swipe-combo"), 2, 4);
+    auto hitSheet = SpriteSheet::alloc(assets->get<Texture>("hit-effect"), 2, 3);
+    auto deathSheet = SpriteSheet::alloc(assets->get<Texture>("player-death-effect"), 2, 4);
     _chargingEffect = Animation::alloc(projEffectSheet, GameConstants::CHARGE_TIME, false, 0, 3);
     _chargedEffect = Animation::alloc(projEffectSheet, 0.333f, true, 4, 7);
     _shotEffect = Animation::alloc(projEffectSheet, 1/24.0f, false, 8, 8);
     _parryEffect = Animation::alloc(parryEffectSheet, 0.4f, false);
-    _swipeEffect = Animation::alloc(swipeEffectSheet, 0.3f, false); // match attack 1 and 2
-    _comboSwipeEffect = Animation::alloc(comboSwipeEffectSheet, 0.5f, false); // match attack 3
+    _swipeEffect = Animation::alloc(swipeEffectSheet, 0.4f, false); // tries to match attack 1 and 2, but played a bit faster
+    _comboSwipeEffect = Animation::alloc(comboSwipeEffectSheet, 0.4f, false);
+    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _deathEffect = Animation::alloc(deathSheet, 1.0f, false);
     
     // add callbacks
     _attackAnimation1->onComplete([this](){
@@ -358,6 +351,13 @@ void Player::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _chargedEffect->start();
         _state = CHARGED;
         });
+    _hitEffect->onComplete([this]() {
+        _hitEffect->reset();
+        });
+    _deathEffect->onComplete([this]() {
+        _deathEffect->reset();
+        _state = DEAD;
+        });
 
     setAnimation(_idleAnimation);
 }
@@ -393,7 +393,6 @@ void Player::animateDefault() {
 
 void Player::animateAttack() {
     _state = ATTACK;
-    _prevAnimation = _currAnimation;
     if (_combo==1) setAnimation(_attackAnimation1);
     else if (_combo == 2) setAnimation(_attackAnimation2);
     else if (_combo == 3) setAnimation(_attackAnimation3);
@@ -424,6 +423,13 @@ void Player::animateShot() {
     _state = SHOT;
 }
 
+void Player::animateDying() {
+    _currAnimation->stopAnimation();
+    _hitEffect->reset();
+    _deathEffect->start();
+    _state = DYING;
+}
+
 void Player::setAnimation(std::shared_ptr<Animation> animation){
     if (_currAnimation != animation){
         // MAYBE, we don't want to reset ?? (tweening unsure)
@@ -439,7 +445,9 @@ void Player::updateAnimation(float dt){
     // let all callbacks run (through default update) before custom update
     //the running/idle animations only apply in idle or dodge states; the other states have their own animations
     if (_state == IDLE || _state == DODGE){
-        //TODO: sync frames when swapping weapons
+        // TODO: (just a comment) knockback has no visual animation so having the player quickly play a run animation seems ok
+        // the player is running usually when velocity isn't zero but this is not the case when getting hit (hence hit counter)
+        // if (!_collider->getLinearVelocity().isZero() && _iframeCounter.isZero()){
         if (!_collider->getLinearVelocity().isZero()){
             switch (_weapon) {
             case MELEE:
@@ -464,16 +472,18 @@ void Player::updateAnimation(float dt){
     _parryEffect->update(dt);
     _swipeEffect->update(dt);
     _comboSwipeEffect->update(dt);
+    _hitEffect->update(dt);
+    if (_hitEffect->isActive()) {
+        _tint = Color4::RED;
+    }
 }
 
 #pragma mark -
 #pragma mark State Update
 
 void Player::updateCounters(){
-    atkCD.decrement();
-    dodgeCD.decrement();
-    hitCounter.decrement();
-    if (hitCounter.isZero()) _tint = Color4::WHITE;
+    _iframeCounter.decrement();
+    if (_iframeCounter.isZero()) _tint = Color4::WHITE;
 }
 
 void Player::setFacingDir(cugl::Vec2 dir){
@@ -517,17 +527,19 @@ void Player::setFacingDir(cugl::Vec2 dir){
 
 void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
-    if (hitCounter.isZero() && _state != DODGE) {
-        hitCounter.reset();
-        _hp = std::fmax(0, (_hp - damage*defense));
+    if (!_hitEffect->isActive() && _state != DODGE) {
+        float reduction = _damageReduction.getCurrentValue() + (isBlocking() ? _blockReduction.getCurrentValue() : 0);
+        _hp = std::fmax(0, (_hp - damage * (1 - reduction)));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);
+        _hitEffect->start();
         if (_state == ATTACK){
             // previously attacking, got interrupted
             _comboTimer = 0;    // equivalent to a "normal" termination of an attack
             _swipeEffect->reset();
             _comboSwipeEffect->reset();
         }
+        if (_hp == 0) animateDying();
     }
 }
 
@@ -553,33 +565,50 @@ void Player::update(float dt) {
         }
         break;
     case DODGE:
-        _dodge += dt;
-        if (_dodge >= GameConstants::PLAYER_DODGE_TIME) {
+        _dodgeDuration += dt;
+        if (_dodgeDuration >= GameConstants::PLAYER_DODGE_TIME) {
             _state = IDLE;
-            _dodge = 0;
+            _dodgeDuration = 0;
         }
         break;
     case SHOT:
         _shotEffect->update(dt);
         break;
-    case IDLE: case ATTACK: case RECOVERY: case PARRYSTART: case PARRYSTANCE: case PARRY:
+    case DYING:
+        _deathEffect->update(dt);
+        _meleeHitbox->setEnabled(false);
+        break;
+    case IDLE: case ATTACK: case RECOVERY: case PARRYSTART: case PARRYSTANCE: case PARRY: case DEAD:
         // no additional updates
         break;
     }
     // make sure hitbox debug node is hidden when not active
     _meleeHitbox->getDebugNode()->setVisible(_meleeHitbox->isEnabled());
-    if (_state != ATTACK && _meleeHitbox->isEnabled()) {
-        if (_meleeHitbox->hitFlag){
-            accumulateCombo();
+    if (_state != ATTACK) {
+        if (_meleeHitbox->isEnabled()){
+            if (_meleeHitbox->hitFlag){
+                accumulateCombo();
+            }
+            disableMeleeAttack();
         }
-        disableMeleeAttack();
+        // decrement cooldown on melee attack
+        _attackActiveCooldown -= dt;
+        _attackActiveCooldown = std::fmax(0, _attackActiveCooldown);
+    }
+    
+    if (_state != DODGE){
+        // increase stamina
+        _stamina = std::fmin(GameConstants::PLAYER_STAMINA, _stamina+1);
     }
 }
 
+#pragma mark -
+#pragma mark Stats and Properties
+
 float Player::getBowDamage() {
-    if (_state == CHARGING) return bowDamage * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
-    else if (_state == CHARGED) return bowDamage * 1.5f;
-    else return bowDamage;
+    if (_state == CHARGING) return _bowDamage.getCurrentValue() * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
+    else if (_state == CHARGED) return _bowDamage.getCurrentValue() * 1.5f;
+    else return _bowDamage.getCurrentValue();
 }
 
 #pragma mark -
@@ -604,13 +633,12 @@ void Player::setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug){
 
 void Player::syncPositions(){
     GameObject::syncPositions();
-    // TODO: attack position should be based on physics size of player
+    // move the melee hitbox with the player
     _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }
 
 void Player::enableMeleeAttack(float angle){
     _meleeHitbox->setEnabled(true);
     _meleeHitbox->setAngle(angle);
-    // TODO: attack position should be based on physics size of player
     _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }

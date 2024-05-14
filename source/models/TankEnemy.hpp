@@ -10,7 +10,7 @@
 
 #include <cugl/cugl.h>
 #include "Counter.hpp"
-#include "Enemy.hpp"
+#include "MeleeEnemy.hpp"
 #include "GameObject.hpp"
 
 class Animation;
@@ -18,7 +18,7 @@ class Animation;
 /**
  *  This class represents a melee enemy in the game. It can only be damaged while stunned
  */
-class TankEnemy : public Enemy {
+class TankEnemy : public MeleeEnemy {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(TankEnemy);
@@ -32,20 +32,12 @@ public:
     /**
      * Creates a new enemy at the origin.
      */
-    TankEnemy(void) : Enemy() { }
+    TankEnemy(void) : MeleeEnemy() { }
 
     /**
      * Destroys this player, releasing all resources.
      */
     virtual ~TankEnemy(void) { dispose(); }
-
-    /**
-     * Disposes all resources and assets
-     *
-     * Any assets owned by this object will be immediately released.
-     * Requires initialization before next use.
-     */
-    void dispose();
 
     /**
      * Initializes a new enemy with the given position and size.
@@ -107,10 +99,11 @@ public:
     /**
      * Method to call when an enemy is hit by an attack
      * @param atkDir the normal vector of the direction of the attack that hit this enemy
+     * @param ranged whether the attack that hit this enemy was ranged
      * @param damage how much damage this enemy takes
      * @param knockback_scl the factor to multiply the direction by for applying knockback
      */
-    void hit(cugl::Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK) override;
+    void hit(cugl::Vec2 atkDir, bool ranged, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK) override;
 
 };
 

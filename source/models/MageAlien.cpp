@@ -22,18 +22,6 @@ bool MageAlien::init(std::shared_ptr<JsonValue> data) {
     return true;
 }
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
-void MageAlien::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
-}
-
-
 #pragma mark -
 #pragma mark Physics
 
@@ -57,30 +45,36 @@ void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 #pragma mark Animation
 
 void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _enemyTexture = assets->get<Texture>("mage-idle");
     _healthBG =  assets->get<Texture>("hp_back");
     _healthFG =  assets->get<Texture>("hp");
+    auto idleTexture = assets->get<Texture>("mage-idle");
     auto walkTexture = assets->get<Texture>("mage-walk");
     auto attackTexture = assets->get<Texture>("mage-attack");
     auto stunTexture = assets->get<Texture>("mage-idle"); // use idle animation for now
-    auto hitEffect = assets->get<Texture>("enemy-hit-effect");
+    auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
+    auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
+    auto deathEffect = assets->get<Texture>("enemy-death-effect");
     auto projectileTexture = assets->get<Texture>("mage-projectile");
     
-    auto idleSheet = SpriteSheet::alloc(_enemyTexture, 8, 9);
+    auto idleSheet = SpriteSheet::alloc(idleTexture, 8, 9);
     auto walkSheet = SpriteSheet::alloc(walkTexture, 8, 16);
     auto attackSheet = SpriteSheet::alloc(attackTexture, 8, 14);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
-    auto hitSheet = SpriteSheet::alloc(hitEffect, 2, 3);
+    auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
+    auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
-    auto projectileSheet = SpriteSheet::alloc(projectileTexture, 3, 7);
+    auto deathEffectSheet = SpriteSheet::alloc(deathEffect, 2, 4);
+    auto projectileSheet = SpriteSheet::alloc(projectileTexture, 4, 4);
     
     _idleAnimation = Animation::alloc(idleSheet, 1.0f, true, 0, 8);
     _walkAnimation = Animation::alloc(walkSheet, 1.0f, true, 6, 13);
     _attackAnimation = Animation::alloc(attackSheet, 1.125f, false, 0, 13);
-    _stunAnimation = Animation::alloc(stunSheet, 1.0f, false, 0, 8);
-    _hitEffect = Animation::alloc(hitSheet, 0.25f, false);
+    _stunAnimation = Animation::alloc(stunSheet, GameConstants::ENEMY_STUN_DURATION, false, 0, 8);
+    _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
+    _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
+    _deathEffect = Animation::alloc(deathEffectSheet, 1.0f, false);
     _chargingAnimation = Animation::alloc(projectileSheet, 0.5625f, false, 0, 13);
     
     _currAnimation = _idleAnimation; // set runnning
@@ -111,85 +105,16 @@ void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
     
     setAnimation(_idleAnimation);
 
-    _hitEffect->onComplete([this]() {
-        _hitEffect->reset();
+    _meleeHitEffect->onComplete([this]() {
+        _meleeHitEffect->reset();
     });
-}
-
-void MageAlien::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-    // TODO: render enemy with appropriate scales
-    // batch draw(texture, color, origin, scale, angle, offset)
-    auto spriteSheet = _currAnimation->getSpriteSheet();
-    
-    Vec2 origin = Vec2(spriteSheet->getFrameSize().width / 2, 0);
-    Affine2 transform = Affine2();
-    // transform.scale(0.5);
-    transform.translate(getPosition() * _drawScale);
-    
-    spriteSheet->draw(batch, _tint, origin, transform);
-    
-    //enemy health bar
-    float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
-    Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
-    
-    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
-    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
-
-    batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
-    batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
-
-    if (_hitEffect->isActive()) {
-        auto effSheet = _hitEffect->getSpriteSheet();
-        Affine2 effTrans = Affine2();
-        effTrans.scale(2);
-        effTrans.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        Vec2 effOrigin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, effOrigin, effTrans);
-    }
-    std::shared_ptr<SpriteSheet>sheet = _chargingAnimation->getSpriteSheet();
-    Vec2 o = Vec2(sheet->getFrameSize().width / 2, sheet->getFrameSize().height / 2);
-    Vec2 dir = getFacingDir();
-    float ang = acos(dir.dot(Vec2::UNIT_X));
-    if (dir.y < 0) {
-        // handle downwards case, rotate counterclockwise by PI rads and add extra angle
-        ang = M_PI + acos(dir.rotate(M_PI).dot(Vec2::UNIT_X));
-    }
-    Affine2 t = Affine2::createRotation(ang);
-    t.scale(_drawScale/32);
-    t.translate((_position + Vec2(0, 64 / getDrawScale().y)) * _drawScale);
-    if (_chargingAnimation->isActive()) sheet->draw(batch, o, t);
-}
-
-void MageAlien::updateAnimation(float dt){
-    GameObject::updateAnimation(dt);
-    // attack animation must play to completion, as long as enemy is alive.
-    if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
-            setIdling();
-        }
-        else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
-            setMoving();
-        }
-    }
-    _hitEffect->update(dt);
-    if (_hitEffect->isActive()){
-        _tint = Color4::RED;
-    }
-    else if (getState() == EnemyState::STUNNED && _stunCD.isZero()) {
-        _tint = Color4::WHITE;
-        setIdling();
-    }
-    else if (getState() == EnemyState::STUNNED){
-        // TODO: could possibly use stunned animation and remove this state altogether
-        _tint = Color4::YELLOW;
-    }
-    else {
-        _tint = Color4::WHITE;
-    }
-    
-    _hitboxAnimation->update(dt);
-    
-    _chargingAnimation->update(dt);
+    _bowHitEffect->onComplete([this]() {
+        _bowHitEffect->reset();
+    });
+    _deathEffect->onComplete([this]() {
+        _deathEffect->reset();
+        setEnabled(false);
+    });
 }
 
 

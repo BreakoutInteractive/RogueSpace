@@ -20,69 +20,53 @@ class Animation;
  *  This class represents an enemy in the game.
  */
 class Enemy : public GameObject {
-private:
-    /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(Enemy);
 
 protected:
-
-    /** The force applied to the player for general movement purposes */
-    cugl::Vec2 _force;
-
-    /** The texture key for the enemy*/
-    std::string _enemyTextureKey;
-    
-    /** The texture key for the walk animation*/
-    std::string _walkTextureKey;
-    
-    /** The enemy texture*/
-    std::shared_ptr<cugl::Texture> _enemyTexture;
-    
+#pragma mark - Health Bar Assets
     /** The enemy health bar background */
     std::shared_ptr<cugl::Texture> _healthBG;
     
     /** The enemy health bar foreground */
     std::shared_ptr<cugl::Texture> _healthFG;
     
+#pragma mark - Animation Assets
     /** The animation to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
-    
     /** The animation to use while walking */
     std::shared_ptr<Animation> _walkAnimation;
-    
     /** The animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation;
+    // TODO: this is an effect, move to melee enemies
     /** The animation of the hitbox while attacking */
     std::shared_ptr<Animation> _hitboxAnimation;
-    
     /** The animation to use while stunned */
     std::shared_ptr<Animation> _stunAnimation;
 
-    /** The hit effect animation */
-    std::shared_ptr<Animation> _hitEffect;
+#pragma mark - Animation Effects
+    /** The hit effect animation when hit by the melee attack */
+    std::shared_ptr<Animation> _meleeHitEffect;
+    /** The hit effect animation when hit by the ranged attack */
+    std::shared_ptr<Animation> _bowHitEffect;
     /** The stun effect animation */
     std::shared_ptr<Animation> _stunEffect;
+    /** The death effect animation */
+    std::shared_ptr<Animation> _deathEffect;
     
+    // TODO: this belongs to melee enemies
     std::shared_ptr<cugl::physics2::WheelObstacle> _attack;
     
     /** Enemy's sight range */
     float _sightRange;
-    
     /** Enemy's proximity range */
     float _proximityRange;
-    
     /** Whether this enemy can currently see the player */
     bool _playerInSight;
-    
-    /** The player's last seen location */
-    cugl::Vec2 _playerLoc;
-    
+    /** The location this enemy will aggro to */
+    cugl::Vec2 _aggroLoc;
     /** Enemy's attack range */
     float _attackRange;
-    
     /** Enemy's movement speed */
     float _moveSpeed;
-    
     /** The enemy's current health */
     float _health;
     /** The enemy's maximum health */
@@ -92,45 +76,30 @@ protected:
     
     /** The 8 directions ranging from front and going counter clockwise until front-right*/
     cugl::Vec2 _directions[8];
-    
     /** The current direction the enemy is facing */
     cugl::Vec2 _facingDirection;
-    
     /** the index of the 8-cardinal directions that most closely matches the direction the enemy faces*/
     int _directionIndex;
     
     /** The enemy's default state */
     std::string _defaultState;
-    
-    /** Whether the enemy is currently in its default state */
-    bool _isDefault;
-    
     /** Whether the enemy is aiming its ranged attack */
     bool _isAiming;
-    
     /** Whether the enemy's ranged attack is charged */
     bool _isCharged;
-    
     /** The enemy's patrol path */
     std::vector<cugl::Vec2> _path;
-    
     /** The enemy's goal position */
     cugl::Vec2 _goal;
-    
     /** Whether the enemy is aligned with the level grid */
     bool _isAligned;
-    
     /** The enemy's goal path index */
     int _pathIndex;
-    
-    std::shared_ptr<Animation> _animation;
     
 public:
 #pragma mark Counters
     
     Counter _atkCD;
-    
-    Counter _stunCD; //todo: if stun animation exists, remove counter.
     
     Counter _sentryCD;
     
@@ -138,17 +107,22 @@ public:
 
     Counter _hitCounter;
     
-    enum class EnemyState : int {
-        IDLE = 1,
-        MOVING = 2,
-        ATTACKING = 3,
-        STUNNED = 4
+    /** whether this enemy has tried to drop a health pack */
+    bool _dropped;
+    
+    enum class BehaviorState: int {
+        DEFAULT = 1,
+        SEEKING = 2,
+        CHASING = 3,
+        ATTACKING = 4,
+        STUNNED = 5,
+        DYING = 6
     };
     
-private:
+protected:
     
-    /** internal enemy state (for animation and triggering events) */
-    EnemyState _state;
+    /** internal enemy state (for animation, logic and triggering events) */
+    BehaviorState _state;
 
 public:    
 #pragma mark -
@@ -182,9 +156,7 @@ public:
 #pragma mark Static Constructors
     
     /**
-     * TODO: document this propertly
-     *
-     * @return a newly allocated player with the given position
+     * @return a newly allocated enemy with the given data
      */
     static std::shared_ptr<Enemy> alloc(std::shared_ptr<JsonValue> data) {
         auto result = std::make_shared<Enemy>();
@@ -194,34 +166,24 @@ public:
 #pragma mark -
 #pragma mark Accessors
     /**
-     * Returns the sight range applied to this enemy.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
+     * @return the sight range applied to this enemy
      */
     const float getSightRange() const { return _sightRange; }
     
     /**
-     * Returns the proximity range applied to this enemy.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
+     * @return the proximity range applied to this enemy.
      */
     const float getProximityRange() const { return _proximityRange; }
     
     /**
-     * Returns this enemy's last known location of the player.
+     * Returns this enemy's aggro location.
      */
-    const cugl::Vec2 getPlayerLoc() const { return _playerLoc; }
+    const cugl::Vec2 getAggroLoc() const { return _aggroLoc; }
     
     /**
-     * Sets this enemy's last known location of the player.
+     * Sets this enemy's aggro location.
      */
-    void setPlayerLoc(cugl::Vec2 value) { _playerLoc = value; }
+    void setAggroLoc(cugl::Vec2 value) { _aggroLoc = value; }
     
     /**
      * Returns the attack range applied to this enemy.
@@ -232,66 +194,6 @@ public:
      * @return the force applied to this player.
      */
     const float getAttackRange() const { return _attackRange; }
-    
-    /**
-     * Returns the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this player.
-     */
-    const cugl::Vec2 getForce() const { return _force; }
-
-    /**
-     * Sets the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value  the force applied to this player.
-     */
-    void setForce(const cugl::Vec2 value) { _force.set(value); }
-
-    /**
-     * Returns the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the x-component of the force applied to this player.
-     */
-    float getFX() const { return _force.x; }
-    
-    /**
-     * Sets the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this player.
-     */
-    void setFX(float value) { _force.x = value; }
-    
-    /**
-     * Returns the y-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the y-component of the force applied to this player.
-     */
-    float getFY() const { return _force.y; }
-    
-    /**
-     * Sets the x-component of the force applied to this player.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this player.
-     */
-    void setFY(float value) { _force.y = value; }
     
     /**
      * Gets the movement speed of this enemy.
@@ -337,16 +239,6 @@ public:
      * Sets this enemy's default state.
      */
     void setDefaultState(std::string value) { _defaultState = value; }
-    
-    /**
-     * Gets whether this enemy is in its default state
-     */
-    bool isDefault() const { return _isDefault; }
-    
-    /**
-     * Sets whether this enemy is in its default state
-     */
-    void setDefault(bool value) { _isDefault = value; }
     
     /**
      * Gets whether this enemy's ranged attack is charged
@@ -446,8 +338,8 @@ public:
     void setHitboxAnimation(std::shared_ptr<Animation> animation) { _hitboxAnimation = animation; }
     std::shared_ptr<Animation> getHitboxAnimation() const { return _hitboxAnimation; }
     
-    /** current enemy state  */
-    EnemyState getState() { return _state;}
+    /** get current enemy behavior state */
+    BehaviorState getBehaviorState() { return _state; }
     
     /** Set idle state and change to using the idle animation */
     void setIdling();
@@ -461,33 +353,26 @@ public:
     /** Set stunned state and change to using the stunned animation */
     void setStunned();
     
+    /** Set default state */
+    void setDefault();
+    
+    /** Set seeking state */
+    void setSeeking();
+    
+    /** Set chasing state */
+    void setChasing();
+
+    /** Set dying state */
+    void setDying();
+    
     /**
      * whether enemy is attacking
      */
-    bool isAttacking(){ return _state == EnemyState::ATTACKING; }
+    bool isAttacking(){ return _attackAnimation->isActive() && _state == BehaviorState::ATTACKING; }
     /** whether enemy is stunned */
-    bool isStunned(){ return _state == EnemyState::STUNNED; }
-    
- 
-    /**
-    * Returns the texture (key) for this player
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @return the texture (key) for this player
-    */
-    const std::string& getTextureKey() const { return _enemyTextureKey; }
-
-    /**
-    * Returns the texture (key) for this player
-    *
-    * The value returned is not a Texture2D value.  Instead, it is a key for
-    * accessing the texture from the asset manager.
-    *
-    * @param  strip    the texture (key) for this player
-    */
-    void setTextureKey(const std::string& key) { _enemyTextureKey = key; }    
+    bool isStunned(){ return _stunAnimation->isActive() && _state == BehaviorState::STUNNED; }
+    /** whether enemy is dying */
+    bool isDying() { return _deathEffect->isActive() && _state == BehaviorState::DYING; }
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
@@ -506,31 +391,25 @@ public:
     /**
      * Method to call when an enemy is hit by an attack
      * @param atkDir the normal vector of the direction of the attack that hit this enemy
+     * @param ranged whether the attack that hit this enemy was a ranged attack
      * @param damage how much damage this enemy takes
      * @param knockback_scl the factor to multiply the direction by for applying knockback
      */
-    virtual void hit(cugl::Vec2 atkDir, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
+    virtual void hit(cugl::Vec2 atkDir, bool ranged, float damage = 1, float knockback_scl = GameConstants::KNOCKBACK);
 
     /**
      * Method to call when an enemy is stunned, e.g. when parried
      */
     void stun();
+
+    virtual void drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float scale = 1);
     
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
     void setDrawScale(cugl::Vec2 scale) override;
 
     void updateAnimation(float dt) override;
-    
-    
-#pragma mark -
-#pragma mark Physics
-//    /**
-//     * Applies the force to the body of this player
-//     *
-//     * This method should be called after the force attribute is set.
-//     */
-//    void applyForce();
+
 
 #pragma mark -
 #pragma mark State Update

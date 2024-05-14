@@ -12,9 +12,9 @@ using namespace cugl;
 #define EXIT_KEY  KeyCode::ESCAPE
 
 /** How far we must swipe (in pixels) in any direction for a dodge gesture*/
-const int DODGE_SWIPE_LENGTH = 175;
+const int DODGE_SWIPE_LENGTH = 100;
 /** the maximum amount of milliseconds for a motion swipe to be considered a dodge*/
-const int DODGE_SWIPE_TIME = 200;
+const int DODGE_SWIPE_TIME = 250;
 /** How far we must swipe in any direction for a movement gesture i*/
 const int MOVE_SWIPE_LENGTH = 100;
 /** the minimum amount of milliseconds for a press to be considered a hold*/
@@ -79,6 +79,7 @@ bool InputController::init(std::function<bool(Vec2)> preprocesser) {
     _active = success;
     reversedGestures = false;
     rangedMode = false;
+    inverted = true;
     this->preprocesser = preprocesser;
     clear();
     return success;
@@ -250,11 +251,12 @@ void InputController::clear() {
 #pragma mark Results
 
 Vec2 InputController::getDodgeDirection(cugl::Vec2 facingDir){
-    #ifndef CU_TOUCH_SCREEN
-    _dodgeDir.set(facingDir).normalize();
-    #else
-    _dodgeDir.set(_keyDodgeDir).normalize();
-    #endif
+//    #ifndef CU_TOUCH_SCREEN
+//    _dodgeDir.set(facingDir).normalize();
+//    #else
+//    _dodgeDir.set(_keyDodgeDir).normalize();
+//    #endif
+    _dodgeDir.set(facingDir).normalize(); // uniform-controls across platforms
     return _dodgeDir;
 }
 
@@ -278,7 +280,7 @@ Vec2 InputController::getAttackDirection(cugl::Vec2 facingDir){
 bool motionPosConstraint(Vec2 touchPos, bool reversed){
     Size s = Application::get()->getDisplaySize();
     if (reversed){
-        return touchPos.x >= 2* s.width/3;
+        return touchPos.x >= 2*s.width/3;
     }
     else {
         return touchPos.x < s.width/3;
@@ -291,10 +293,10 @@ bool motionPosConstraint(Vec2 touchPos, bool reversed){
 bool combatPosConstraint(Vec2 touchPos, bool reversed){
     Size s = Application::get()->getDisplaySize();
     if (reversed){
-        return touchPos.x < s.width/3;
+        return touchPos.x < s.width/2;
     }
     else {
-        return touchPos.x >= 2* s.width/3;
+        return touchPos.x >= s.width/2;
     }
 }
 
@@ -352,9 +354,9 @@ void InputController::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
         // read the gesture input only if game is active
         // the only exceptions are stateful releases which is needed to transition the player back to non-combat states
         if (_active){
-            // DODGE: swipe in any direction
-            if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME){
-                _keyDodgeDir.set(swipeDir.x, -swipeDir.y);
+            // DODGE: swipe upwards
+            if (changeInPosition >= DODGE_SWIPE_LENGTH && elapsed <= DODGE_SWIPE_TIME && swipeDir.y < 0){
+                //_keyDodgeDir.set(swipeDir.x, -swipeDir.y);
                 _keyDodge = true;
             }
             
@@ -424,7 +426,12 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         if (rangedMode && _combatGestureHeld){
             float changeInPosition = swipeDir.length();
             if (changeInPosition > HOLD_POS_DELTA){
-                _keyAttackDir.set(-swipeDir.x, swipeDir.y);
+                if (inverted){
+                    _keyAttackDir.set(-swipeDir.x, swipeDir.y);
+                }
+                else {
+                    _keyAttackDir.set(swipeDir.x, -swipeDir.y);
+                }
             }
         }
     }

@@ -1032,12 +1032,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":2
+                         "value":1
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":2
+                         "value":5
                         }, 
                         {
                          "name":"path",
@@ -1045,11 +1045,57 @@
                          "value":779
                         }],
                  "rotation":0,
-                 "type":"Explode",
+                 "type":"Lizard",
                  "visible":true,
                  "width":64,
                  "x":896,
                  "y":256
+                }, 
+                {
+                 "gid":251,
+                 "height":128,
+                 "id":751,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":5
+                        }, 
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":778
+                        }],
+                 "rotation":0,
+                 "type":"Lizard",
+                 "visible":true,
+                 "width":64,
+                 "x":768,
+                 "y":704
+                }, 
+                {
+                 "height":0,
+                 "id":778,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Path",
+                 "visible":true,
+                 "width":0,
+                 "x":704,
+                 "y":576
                 }, 
                 {
                  "height":0,
@@ -1076,7 +1122,7 @@
          "y":0
         }],
  "nextlayerid":21,
- "nextobjectid":807,
+ "nextobjectid":806,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

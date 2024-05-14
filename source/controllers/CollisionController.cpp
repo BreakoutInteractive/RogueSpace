@@ -2,6 +2,7 @@
 #include "../models/LevelModel.hpp"
 #include "CollisionController.hpp"
 #include "../models/LevelConstants.hpp"
+#include "../models/CollisionConstants.hpp"
 #include "../models/Enemy.hpp"
 #include "../models/MeleeEnemy.hpp"
 #include "../models/RangedEnemy.hpp"
@@ -43,7 +44,6 @@ bool CollisionController::isComboContact(){
 }
 
 
-
 #pragma mark -
 #pragma mark Collision Handling
 void CollisionController::beginContact(b2Contact* contact){
@@ -55,7 +55,7 @@ void CollisionController::beginContact(b2Contact* contact){
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        if ((*it)->isEnabled()) {
+        if ((*it)->isEnabled() && (*it)->getHealth() > 0) {
             intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
             //attack
             if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == eptr) ||
@@ -67,16 +67,20 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 float hitboxAngle = player->getMeleeHitbox()->getAngle();
                 if (abs(ang - hitboxAngle) <= M_PI_2 || abs(ang - hitboxAngle) >= 3 * M_PI_2) {
-                    (*it)->hit(dir, player->meleeDamage, !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
-                    _audioController->playPlayerFX("attackHit");
-                    CULog("Hit an enemy!");
-                    // record the hit
-                    if (!meleeHitbox->hitFlag){
-                        // the hitbox is active and this is the first hit of the frame
-                        meleeHitbox->hitFlag = true;
-                        if (player->isComboStrike()){
-                            // set flag to request "hit pause" effect
-                            _comboStriked = true;
+                    
+                    // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
+                    if (player->getMeleeHitbox()->hits(eptr)){
+                        (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                        _audioController->playPlayerFX("attackHit");
+                        CULog("Hit an enemy!");
+                        // record the hit
+                        if (!meleeHitbox->hitFlag){
+                            // the hitbox is active and this is the first hit of the frame
+                            meleeHitbox->hitFlag = true;
+                            if (player->isComboStrike()){
+                                // set flag to request "hit pause" effect
+                                _comboStriked = true;
+                            }
                         }
                     }
                 }
@@ -88,13 +92,28 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == eptr) ||
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                     //explosion shouldn't hit enemies (or should it?)
-                    if (!p->isExploding() && (*it)->isEnabled()) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), p->getDamage());
+                    if (!p->isExploding() && (*it)->isEnabled() && (*it)->getHealth() > 0) { //need to check isEnabled because projectiles hit corpses for some reason
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
                     }
                 }
+            }
+        }
+    }
+    //health packs
+    for (std::shared_ptr<HealthPack> h : _level->getHealthPacks()) {
+        intptr_t hptr = reinterpret_cast<intptr_t>(h.get());
+        if ((body1->GetUserData().pointer == hptr && body2->GetUserData().pointer == pptr) ||
+            (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == hptr)) {
+            //don't pick up the health pack if at full hp
+            if (player->getHP() < player->getMaxHP()) {
+                float maxHP = player->getMaxHP();
+                float newHP = player->getHP() + maxHP * GameConstants::HEALTHPACK_HEAL_AMT;
+                if (newHP > maxHP) newHP = maxHP;
+                player->setHP(newHP);
+                h->_delMark = true;
             }
         }
     }
@@ -118,7 +137,12 @@ void CollisionController::beginContact(b2Contact* contact){
             }
             if (abs(ang - (*it)->getAttack()->getAngle()) <= left
                 || abs(ang - (*it)->getAttack()->getAngle()) >= right) {
-                if (player->_state != Player::state::PARRY) {
+                if (player->isParrying()) {
+                    //successful parry
+                    if ((*it)->getType() != "exploding alien") (*it)->setStunned();
+                    player->playParryEffect();
+                }
+                else {
                     if (body1->GetUserData().pointer == aptr) {
                         physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
                         _audioController->playEnemyFX("attackHit", data1->getName());
@@ -134,13 +158,6 @@ void CollisionController::beginContact(b2Contact* contact){
                     }
                     CULog("Player took damage!");
                 }
-                else {
-                    //successful parry
-                    if ((*it)->getType() != "exploding alien") {
-                        (*it)->setStunned();
-                    }
-                    player->playParryEffect();
-                }
             }
         }
     }
@@ -151,11 +168,14 @@ void CollisionController::beginContact(b2Contact* contact){
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             Vec2 dir = player->getPosition() * player->getDrawScale() - p->getPosition() * p->getDrawScale();
             dir.normalize();
-            if (!p->isExploding() && player->_state != Player::state::DODGE) {
-                player->hit(dir, p->getDamage());
+            if (!p->isExploding() && !player->isDodging()) {
                 p->setExploding();
-                //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
-                CULog("Player got shot!");
+                if (!player->isParrying()) {
+                    player->hit(dir, p->getDamage());
+                    //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
+                    CULog("Player got shot!");
+                }
+                else player->playParryEffect();
             }
         }
         for (std::shared_ptr<Wall> w : _level->getWalls()) {
@@ -218,16 +238,16 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == eptr) ||
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
-            // phase through enemies while dodging
-            if (_level->getPlayer()->_state == Player::state::DODGE) contact->SetEnabled(false);
-            if ((*it)->getType() == "exploding alien" && (*it)->getState() == Enemy::EnemyState::ATTACKING) contact->SetEnabled(false);
+            //phase through enemies while dodging
+            if (_level->getPlayer()->isDodging()) contact->SetEnabled(false);
+            if ((*it)->getType() == "exploding alien" && (*it)->isAttacking()) contact->SetEnabled(false);
         }
         for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
             intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());
             if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
                 (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
                 //enemies phase through each other if one is idle/stunned
-                if (!(*it)->_stunCD.isZero() || !(*iter)->_stunCD.isZero()
+                if ((*it)->isStunned() || (*iter)->isStunned()
                     || (*it)->getCollider()->getLinearVelocity().isZero()
                     || (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
             }
@@ -240,7 +260,7 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
         if ((body1->GetUserData().pointer == projptr && body2->GetUserData().pointer == pptr) ||
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == projptr)) {
             // ignore projectile-player collision when player is dodging
-            if (_level->getPlayer()->_state == Player::state::DODGE) {
+            if (_level->getPlayer()->isDodging()) {
                 contact->SetEnabled(false);
             }
         }

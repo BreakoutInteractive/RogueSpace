@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "models/LevelConstants.hpp"
+#include "utility/SaveData.hpp"
 
 using namespace cugl;
 
@@ -37,6 +38,8 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/settings.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/death.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
@@ -49,7 +52,9 @@ void App::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
     _pause.dispose();
-    _upgrades.dispose();
+    _settings.dispose();
+    _title.dispose();
+    _death.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -85,11 +90,12 @@ void App::update(float dt){
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
         _pause.init(_assets);
-        _upgrades.init(_assets);
+        _settings.init(_assets);
         _title.init(_assets);
+        _death.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
-        _title.setActive(true);
+        setTitleScene();
         setDeterministic(true);
     }
 }
@@ -102,31 +108,32 @@ void App::preUpdate(float dt) {
         case TITLE:
             updateTitleScene(dt);
             break;
-        case UPGRADE:
-            _upgrades.setActive(true);
-            _gameplay.activateInputs(true);
-            _gameplay.getRenderer().setActivated(false);
-            _gameplay.preUpdate(dt);
-            updateUpgradesScene(dt);
-            break;
         case PAUSE:
             _pause.setActive(true);
             updatePauseScene(dt);
             break;
+        case SETTINGS:
+            _settings.setActive(true);
+            updateSettingsScene(dt);
+            break;
         case GAME:
-            if(_gameplay.getRenderer().getPaused()){
+            if (_gameplay.getExitCode() == GameScene::ExitCode::DEATH){
+                _scene = State::DEATH;
+                _gameplay.setActive(false);
+                _death.setActive(true);
+            }
+            else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
-                _gameplay.activateInputs(false);
-                _gameplay.getRenderer().setActivated(false);
-            } else if (_gameplay.upgradeScreenActive){
-                _upgrades.setActive(false);
-                _scene = State::UPGRADE;
-                _upgrades.updateScene(_gameplay.getDisplayedUpgrades(), _gameplay.getAvailableUpgrades());
+                _pause.setLabels(_gameplay.getPlayerLevels());
+                _gameplay.setActive(false);
             }
             else{
-                _gameplay.activateInputs(true);
+                _gameplay.setActive(true);
                 _gameplay.preUpdate(dt);
             }
+            break;
+        case DEATH:
+            updateDeathScene(dt);
             break;
     }
 }
@@ -136,9 +143,6 @@ void App::fixedUpdate() {
     switch (_scene) {
         case GAME:
             // Compute time to report to game scene version of fixedUpdate
-            _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
-            break;
-        case UPGRADE:
             _gameplay.fixedUpdate(getFixedStep()/1000000.0f);
             break;
         default:
@@ -153,9 +157,6 @@ void App::postUpdate(float dt) {
             // Compute time to report to game scene version of postUpdate
             _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
             break;
-        case UPGRADE:
-            _gameplay.postUpdate(getFixedRemainder()/1000000.0f);
-            break;
         default:
             break;
     }
@@ -164,11 +165,15 @@ void App::postUpdate(float dt) {
 void App::updatePauseScene(float dt) {
     _pause.update(dt);
     switch (_pause.getChoice()) {
-        case PauseScene::Choice::RESTART:
+        case PauseScene::Choice::BACK:
             _pause.setActive(false);
-            _gameplay.getRenderer().setActivated(true);
-            _gameplay.restart();
-            _scene = State::GAME;
+            switch (_gamePrevScene) {
+                case TITLE:
+                    setTitleScene();
+                    break;
+                default:
+                    break;
+                }
             break;
         case PauseScene::Choice::RESUME:
             _pause.setActive(false);
@@ -178,66 +183,109 @@ void App::updatePauseScene(float dt) {
             break;
         case PauseScene::Choice::SETTINGS:
             _pause.setActive(false);
+            _settings.setActive(true);
+            _scene = SETTINGS;
+            _prevScene = PAUSE;
             break;
         case PauseScene::Choice::NONE:
             break;
     }
 }
 
-void App::updateUpgradesScene(float dt){
-    _upgrades.update(dt);
-    if (!_gameplay.upgradeScreenActive){
-        _upgrades.setActive(false);
-        _gameplay.getRenderer().setActivated(true);
-        _scene = State::GAME;
-    } else{ 
-        switch (_upgrades.getChoice()) {
-            case UpgradesScene::HEALTH:
-                _upgrades.setActive(false);
-                _gameplay.getRenderer().setActivated(true);
-                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
-                _gameplay.upgradeScreenActive=false;
-                _gameplay.upgradeChosen = true;
-                _gameplay.setRelicActive(false);
-                _scene = State::GAME;
-            case UpgradesScene::Choice::UPGRADE_1:
-                _upgrades.setActive(false);
-                _gameplay.getRenderer().setActivated(true);
-                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
-                _gameplay.upgradeScreenActive=false;
-                _gameplay.upgradeChosen = true;
-                _gameplay.setRelicActive(false);
-                _scene = State::GAME;
-                break;
-            case UpgradesScene::Choice::UPGRADE_2:
-                _upgrades.setActive(false);
-                _gameplay.getRenderer().setActivated(true);
-                _gameplay.updatePlayerAttributes(_upgrades._selectedUpgrade);
-                _gameplay.upgradeScreenActive=false;
-                _gameplay.upgradeChosen = true;
-                _gameplay.setRelicActive(false);
-                _scene = State::GAME;
-                break;
-            default:
-                break;
-        }
-    }
+void App::setTitleScene(){
+    _scene = TITLE;
+    bool hasSave = SaveData::hasGameSave();
+    CULog("previous save available: %s", (hasSave ? "true" : "false"));
+    auto sceneType = hasSave ? TitleScene::SceneType::WITH_CONTINUE : TitleScene::SceneType::WITHOUT_CONTINUE;
+    _title.setSceneType(sceneType);
+    _title.setActive(true);
 }
 
 void App::updateTitleScene(float dt){
+    auto save = SaveData::getGameSave();
     switch (_title.getChoice()){
         case TitleScene::NONE:
             break;
         case TitleScene::NEW:
-            // TODO: check if there is an existing run, confirm user wants to start a new game
-            // TODO: if there is no exisitng run, the below code is okay.
             _title.setActive(false);
             _gameplay.setActive(true);
-            _gameplay.setLevel(0);
+            _gameplay.restart();
             _scene = GAME; // switch to game scene
+            _gamePrevScene = TITLE;
             break;
-        case TitleScene::CONTINUE: case TitleScene::SETTINGS:
-            CUAssertLog(false, "unimplemented");
+        case TitleScene::CONTINUE:
+            _title.setActive(false);
+            _gameplay.setActive(true);
+            CULog("loading lv %d", save.level);
+            _gameplay.setUpgradeRoom(false);
+            _gameplay.setLevel(save);
+            _scene = GAME;
+            _gamePrevScene = TITLE;
+            break;
+        case TitleScene::SETTINGS:
+            _title.setActive(false);
+            _settings.setActive(true);
+            _scene = SETTINGS; // switch to settings scene
+            _prevScene = TITLE;
+            break;
+        case TitleScene::TUTORIAL:
+            break;
+    }
+}
+
+void App::updateSettingsScene(float dt) {
+    _settings.update(dt);
+    switch (_settings.getChoice()) {
+    case SettingsScene::Choice::CLOSE:
+        _settings.setActive(false);
+        switch (_prevScene) {
+        case PAUSE:
+            _pause.setActive(true);
+            _scene = PAUSE; // switch to pause scene
+            break;
+        case TITLE:
+            setTitleScene();
+            _scene = TITLE;
+            break;
+        default: //should never be here since you can only access settings from pause and title scenes
+            break;
+        }
+        break;
+    //TODO: control volume when music/sfx are implemented
+    case SettingsScene::Choice::VOLUP:
+        break;
+    case SettingsScene::Choice::VOLDOWN:
+        break;
+    case SettingsScene::Choice::SFXUP:
+        break;
+    case SettingsScene::Choice::SFXDOWN:
+        break;
+    case SettingsScene::Choice::MUSICUP:
+        break;
+    case SettingsScene::Choice::MUSICDOWN:
+        break;
+    case SettingsScene::Choice::INVERT:
+        _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
+        break;
+    case SettingsScene::Choice::NONE:
+        break;
+    }
+}
+
+void App::updateDeathScene(float dt){
+    _death.update(dt);
+    switch(_death.getChoice()){
+        case DeathScene::NONE:
+            break;
+        case DeathScene::RESTART:
+            _death.setActive(false);
+            _gameplay.setActive(true);
+            _gameplay.restart();
+            _scene = GAME;
+            break;
+        case DeathScene::MAIN_MENU:
+            _death.setActive(false);
+            setTitleScene();
             break;
     }
 }
@@ -255,14 +303,26 @@ void App::draw() {
         case GAME:
             _gameplay.render(_batch);
             break;
-        case UPGRADE:
-            _gameplay.render(_batch);
-            _upgrades.render(_batch);
-            break;
         case TITLE:
             _title.render(_batch);
-        default:
             break;
+        case SETTINGS:
+            switch (_prevScene) {
+            case PAUSE:
+                _gameplay.render(_batch);
+                _pause.render(_batch);
+                break;
+            case TITLE:
+                _title.render(_batch);
+                break;
+            default: //should never be here since you can only access settings from pause and title scenes
+                break;
+            }
+            _settings.render(_batch);
+            break;
+        case DEATH:
+            _gameplay.render(_batch);
+            _death.render(_batch);
     }
 }
 

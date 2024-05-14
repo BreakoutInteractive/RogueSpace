@@ -105,17 +105,34 @@ public:
     float elapsed() { return _elapsed; }
     
     /**
+     * @return the time (seconds) the animation takes in one looping cycle
+     */
+    float getDuration(){ return _duration; }
+    
+    /**
+     * sets the time (seconds) the animation takes in one looping cycle.
+     * @note changing the duration may have undesirable side effects which should be handled before using the animation. For instance, callbacks do not adjust to the new duration.
+     * @pre the animation cannot be active, as behavior would otherwise be undefined.
+     */
+    void setDuration(float duration);
+    
+    /**
      * adds the callback to be executed at the timestamp `time` seconds into the animation
      * @pre the animation cannot be started.
      */
     void addCallback(float time, std::function<void()>);
     
     /**
-     * adds the callback to be executed at the end of the animation.
+     * sets the callback to be executed at the end of the current animation duration
      */
     void onComplete(std::function<void()> func){
         addCallback(_duration, func);
     }
+    
+    /**
+     * clears all internal callbacks assigned to particular times.
+     */
+    void clearCallbacks(){ _callbacks.clear();}
     
     /**
      * retrieve a reference to the underlying sprite sheet
@@ -175,6 +192,10 @@ public:
      */
     void setFrameRange(int startIndex, int endIndex);
     
+    /**
+     * @return the active frame number of the filmstrip
+     */
+    int getFrame(){ return _filmStrip->getFrame(); }
 };
 
 #endif /* __ANIMATION_HPP__ */

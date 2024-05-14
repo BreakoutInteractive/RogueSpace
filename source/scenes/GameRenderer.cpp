@@ -8,6 +8,7 @@
 #include "GameRenderer.hpp"
 #include "../models/LevelModel.hpp"
 #include "../models/Player.hpp"
+#include "../components/Animation.hpp"
 
 #define HOLD_TIME 25
 
@@ -20,6 +21,7 @@ GameRenderer::GameRenderer(){
 GameRenderer::~GameRenderer(){
     _level = nullptr;
     _gameCam = nullptr;
+    removeAllChildren();
 }
 
 bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
@@ -57,13 +59,14 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
             
     _hpBar = std::dynamic_pointer_cast<scene2::ProgressBar>(_assets->get<scene2::SceneNode>("HUD_status_hp"));
     
+    _dashNode = std::dynamic_pointer_cast<scene2::SpriteNode>(_assets->get<scene2::SceneNode>("HUD_status_dash_ready"));
+    _dashNowEffect = Animation::alloc(SpriteSheet::alloc(_assets->get<Texture>("dash_ready"), 3, 2), 1.0f, true);
+    _dashNowEffect->start();
+    
     // readjust scene to screen
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     
-    // activate UI
-    _pauseButton->activate();
-    _swapButton->activate();
     hideJoysticks();
     
     addChild(scene);
@@ -156,26 +159,40 @@ void GameRenderer::setActivated(bool value) {
 void GameRenderer::setSwapButtonActive(bool value){
     if (value){
         _swapButton->activate();
-        _swapButton->setColor(Color4::WHITE);
+//        _swapButton->setColor(Color4::WHITE);
     }
     else {
         _swapButton->deactivate();
-        _swapButton->setColor(Color4::GRAY);
+//        _swapButton->setColor(Color4::GRAY);
     }
 }
 
-void GameRenderer::setSwapButtonCallback(std::function<void()> callback){
+void GameRenderer::configureSwapButton(bool down, std::function<void()> callback){
     _swapButton->clearListeners();
-    _swapButton->setDown(true);
+    _swapButton->setDown(down);
     _swapButton->addListener([callback](const std::string name, bool down){
         callback();
     });
 }
 
+void GameRenderer::update(float dt){
+    auto player = _level->getPlayer();
+    if (player->canDodge()){
+        _dashNowEffect->update(dt);
+        _dashNode->setFrame(_dashNowEffect->getFrame());
+        _dashNode->setVisible(true);
+    }
+    else {
+        _dashNode->setVisible(false);
+        _dashNowEffect->reset();
+        _dashNowEffect->start();
+    }
+}
+
 void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
     auto player = _level->getPlayer();
-    _hpBar->setProgress(player->_hp / (float) player->getMaxHP());
-    _stamina->setProgress(1-(player->dodgeCD.getCount()/(float) player->dodgeCD.getMaxCount()));
+    _hpBar->setProgress(player->getHP() / (float) player->getMaxHP());
+    _stamina->setProgress(player->getStamina() / GameConstants::PLAYER_STAMINA);
     
     // using game camera, render the game
     if (_gameCam != nullptr){
@@ -185,7 +202,6 @@ void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
         }
         batch->end();
     }
-    
     Scene2::render(batch);  // call base method to render scene nodes
 }
 

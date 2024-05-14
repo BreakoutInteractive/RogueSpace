@@ -6,14 +6,14 @@
         "explode-idle": {
             "file":     "textures/sprites/explode/explode_idle.png"
         },
+        "explode-attack": {
+            "file":     "textures/sprites/explode/explosion.png"
+        },
         "explode-walk-white": {
             "file":     "textures/sprites/explode/explode_walk_white.png"
         },
         "explode-idle-white": {
             "file":     "textures/sprites/explode/explode_idle_white.png"
-        },
-        "explode-attack": {
-            "file":     "textures/sprites/explode/explosion.png"
         },
         "lizard-walk": {
             "file":     "textures/sprites/lizard/lizard_walk.png"
@@ -25,13 +25,13 @@
             "file":     "textures/sprites/lizard/lizard_atk.png"
         },
         "lizard-ranged-walk": {
-            "file":     "textures/sprites/lizard/lizard_ranged_walk.png"
+            "file":     "textures/sprites/lizard/blue_lizard_ranged_walk.png"
         },
         "lizard-ranged-idle": {
-            "file":     "textures/sprites/lizard/lizard_ranged_idle.png"
+            "file":     "textures/sprites/lizard/blue_lizard_ranged_idle.png"
         },
         "lizard-ranged-attack": {
-            "file":     "textures/sprites/lizard/lizard_ranged_atk.png"
+            "file":     "textures/sprites/lizard/blue_lizard_ranged_atk.png"
         },
         "lizard-stun": {
             "file":     "textures/sprites/lizard/lizard_stun.png"
@@ -51,11 +51,14 @@
         "mage-projectile": {
             "file":     "textures/sprites/caster/spelleffect_spritesheet.png"
         },
-        "enemy-hit-effect": {
-            "file":     "textures/sprites/hit.png"
+        "melee-hit-effect": {
+            "file":     "textures/sprites/effect_hit_sword.png"
+        },
+        "bow-hit-effect": {
+            "file":     "textures/sprites/effect_hit_bow.png"
         },
         "enemy-swipe": {
-            "file":     "textures/sprites/swipe.png"
+            "file":     "textures/sprites/effect_attack_alien1.png"
         },
         "stun-effect": {
             "file":     "textures/sprites/effect_stunned.png"
@@ -68,6 +71,9 @@
         },
         "tank-attack": {
             "file":     "textures/sprites/tank/tank_attack.png"
+        },
+        "enemy-death-effect": {
+            "file":     "textures/sprites/effect_death_enemy.png"
         }
     }
 }

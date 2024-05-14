@@ -23,9 +23,6 @@ private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(RangedLizard);
     
-    /** The animation to use while charging attack */
-    std::shared_ptr<Animation> _chargingAnimation;
-    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -38,14 +35,6 @@ public:
      * Destroys this player, releasing all resources.
      */
     virtual ~RangedLizard(void) { dispose(); }
-    
-    /**
-     * Disposes all resources and assets
-     *
-     * Any assets owned by this object will be immediately released.
-     * Requires initialization before next use.
-     */
-    void dispose();
     
     /**
      * Initializes a new player with the given position and size.
@@ -98,10 +87,6 @@ public:
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
      */
     void loadAssets(const std::shared_ptr<cugl::AssetManager>& assets) override;
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
-    
-    void updateAnimation(float dt) override;
     
     /**
      * Sets the direction that the enemy is currently facing

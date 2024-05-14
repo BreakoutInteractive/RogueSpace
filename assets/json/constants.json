@@ -1,0 +1,31 @@
+{
+    "max-level": 8,
+    "view-width": 16.0,
+    "view-height": 9.0,
+    "player": {
+        "bodytype":      "dynamic",
+        "density":        0.5,
+        "friction":       0.1,
+        "restitution":    0,
+        "rotation":      false,
+        "debugcolor":    "blue",
+        "upgrades": {
+            "melee" : [1.0, 1.2, 1.4, 1.6, 1.8, 2.0],
+            "parry" : [70, 80, 100, 120, 140, 160],
+            "meleeSpeed" : [0, 0.28, 0.24, 0.20, 0.16, 0.12],
+            "dodge": [1, 2, 3, 4, 5, 6],
+            "range" : [1.0, 1.2, 1.4, 1.6, 1.8, 2.0],
+            "health" : [3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+            "armor": [0.0, 0.1, 0.1, 0.15, 0.15, 0.2],
+            "block": [0.10, 0.15, 0.25, 0.4, 0.5, 0.55]
+        }
+    },
+    "enemy": {
+        "bodytype":     "dynamic",
+        "density":      1.0,
+        "friction":     0.1,
+        "restitution":  0,
+        "rotation":     false,
+        "debugcolor":   "green"
+    }
+}

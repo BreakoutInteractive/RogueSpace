@@ -20,6 +20,10 @@ protected:
     
     /** reference to the texture region */
     std::shared_ptr<cugl::Texture> _texture;
+    /** reference to the artifact glow animation */
+    std::shared_ptr<Animation> _activeAnimation;
+    /** reference to the artifact chosen animation */
+    std::shared_ptr<Animation> _chosenAnimation;
         
     /** the size of the visible object (including transparent region) expressed in game units */
     cugl::Vec2 _size;
@@ -48,7 +52,7 @@ public:
     /** Sets whether relic object is active
      * @param active whether relic active or inactive.
      */
-    void setActive(bool active){_active = active; }
+    void setActive(bool active);
     
     /** Returns whether relic object is active **/
     bool getActive(){return _active; }

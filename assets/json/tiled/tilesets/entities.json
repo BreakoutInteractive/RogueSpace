@@ -13,45 +13,45 @@
  "tiledversion":"1.10.2",
  "tileheight":128,
  "tiles":[
-     {
+        {
          "id":0,
          "image":"..\/images\/player.png",
          "imageheight":128,
          "imagewidth":128,
          "objectgroup":
-         {
+            {
              "draworder":"index",
              "name":"",
              "objects":[
-                 {
+                    {
                      "height":0,
                      "id":2,
                      "name":"collider",
                      "polygon":[
-                         {
+                            {
                              "x":0,
                              "y":0
-                         },
-                         {
+                            }, 
+                            {
                              "x":22.7047971903825,
                              "y":-11.3523985951912
-                         },
-                         {
+                            }, 
+                            {
                              "x":0,
                              "y":-22.7047971903825
-                         },
-                         {
+                            }, 
+                            {
                              "x":-22.7047971903825,
                              "y":-11.3523985951912
-                         }],
+                            }],
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
                      "width":0,
                      "x":64,
                      "y":122.637561963053
-                 },
-                 {
+                    }, 
+                    {
                      "height":63.7022470608031,
                      "id":3,
                      "name":"",
@@ -61,54 +61,54 @@
                      "width":18.7685455919629,
                      "x":54.8385695514136,
                      "y":32.2780199708803
-                 }],
+                    }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-         },
+            },
          "type":"Player"
-     },
-     {
+        }, 
+        {
          "id":1,
          "image":"..\/images\/lizard.png",
          "imageheight":128,
          "imagewidth":64,
          "objectgroup":
-         {
+            {
              "draworder":"index",
              "name":"",
              "objects":[
-                 {
+                    {
                      "height":0,
                      "id":1,
                      "name":"collider",
                      "polygon":[
-                         {
+                            {
                              "x":0,
                              "y":0
-                         },
-                         {
+                            }, 
+                            {
                              "x":22.7047971903825,
                              "y":-11.3523985951912
-                         },
-                         {
+                            }, 
+                            {
                              "x":0,
                              "y":-22.7047971903825
-                         },
-                         {
+                            }, 
+                            {
                              "x":-22.7047971903825,
                              "y":-11.3523985951912
-                         }],
+                            }],
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
                      "width":0,
                      "x":32,
                      "y":123.916508300482
-                 },
-                 {
+                    }, 
+                    {
                      "height":110.393954897871,
                      "id":2,
                      "name":"",
@@ -118,26 +118,26 @@
                      "width":27.3525128891338,
                      "x":17.5134794757763,
                      "y":8.46156873548742
-                 }],
+                    }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-         },
+            },
          "type":"Lizard"
-     },
-     {
+        }, 
+        {
          "id":4,
          "image":"..\/images\/ranged_lizard.png",
          "imageheight":128,
          "imagewidth":64,
          "objectgroup":
-         {
+            {
              "draworder":"topdown",
              "name":"",
              "objects":[
-                 {
+                    {
                      "height":110.393954897871,
                      "id":1,
                      "name":"",
@@ -147,82 +147,82 @@
                      "width":27.3525128891338,
                      "x":17.5134794757763,
                      "y":8.46156873548742
-                 },
-                 {
+                    }, 
+                    {
                      "height":0,
                      "id":2,
                      "name":"collider",
                      "polygon":[
-                         {
+                            {
                              "x":0,
                              "y":0
-                         },
-                         {
+                            }, 
+                            {
                              "x":22.7047971903825,
                              "y":-11.3523985951912
-                         },
-                         {
+                            }, 
+                            {
                              "x":0,
                              "y":-22.7047971903825
-                         },
-                         {
+                            }, 
+                            {
                              "x":-22.7047971903825,
                              "y":-11.3523985951912
-                         }],
+                            }],
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
                      "width":0,
                      "x":32,
                      "y":123.916508300482
-                 }],
+                    }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-         },
+            },
          "type":"RangedLizard"
-     },
-     {
+        }, 
+        {
          "id":2,
          "image":"..\/images\/caster.png",
          "imageheight":128,
          "imagewidth":128,
          "objectgroup":
-         {
+            {
              "draworder":"index",
              "name":"",
              "objects":[
-                 {
+                    {
                      "height":0,
                      "id":1,
                      "name":"collider",
                      "polygon":[
-                         {
+                            {
                              "x":0,
                              "y":0
-                         },
-                         {
+                            }, 
+                            {
                              "x":24.2624053273274,
                              "y":-12.1312026636637
-                         },
-                         {
+                            }, 
+                            {
                              "x":0,
                              "y":-24.2624053273274
-                         },
-                         {
+                            }, 
+                            {
                              "x":-24.2624053273274,
                              "y":-12.1312026636637
-                         }],
+                            }],
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
                      "width":0,
                      "x":64,
                      "y":124.777540743736
-                 },
-                 {
+                    }, 
+                    {
                      "height":110.393954897871,
                      "id":2,
                      "name":"",
@@ -232,143 +232,85 @@
                      "width":23.6305824478782,
                      "x":52.6650447543008,
                      "y":0.397386112767094
-                 }],
+                    }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-         },
+            },
          "type":"Caster"
-     },
-     {
+        }, 
+        {
          "id":3,
          "image":"..\/images\/tank.png",
          "imageheight":128,
          "imagewidth":128,
          "objectgroup":
-         {
+            {
              "draworder":"index",
              "name":"",
              "objects":[
-                 {
+                    {
                      "height":0,
                      "id":1,
                      "name":"collider",
                      "polygon":[
-                         {
+                            {
                              "x":0,
                              "y":0
-                         },
-                         {
+                            }, 
+                            {
                              "x":22.7048,
                              "y":-11.3524
-                         },
-                         {
+                            }, 
+                            {
                              "x":0,
                              "y":-22.7048
-                         },
-                         {
+                            }, 
+                            {
                              "x":-22.7048,
                              "y":-11.3524
-                         }],
+                            }],
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
                      "width":0,
                      "x":64,
                      "y":126.493519441675
-                 },
-                 {
+                    }, 
+                    {
                      "height":0,
                      "id":8,
                      "name":"",
                      "polygon":[
-                         {
+                            {
                              "x":0,
                              "y":0
-                         },
-                         {
+                            }, 
+                            {
                              "x":-34.2971086739781,
                              "y":-52.2432701894317
-                         },
-                         {
+                            }, 
+                            {
                              "x":-67.3978065802592,
                              "y":-1.59521435692921
-                         }],
+                            }],
                      "rotation":0,
                      "type":"Hitbox",
                      "visible":true,
                      "width":0,
                      "x":98.5044865403789,
                      "y":57.4277168494516
-                 }],
+                    }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-         },
+            },
          "type":"TankEnemy"
-     },
-     {
-      "id":5,
-      "image":"..\/images\/explode.png",
-      "imageheight":128,
-      "imagewidth":128,
-      "objectgroup":
-         {
-          "draworder":"index",
-          "name":"",
-          "objects":[
-                 {
-                  "height":0,
-                  "id":2,
-                  "name":"collider",
-                  "polygon":[
-                         {
-                          "x":0,
-                          "y":0
-                         },
-                         {
-                          "x":22.7047971903825,
-                          "y":-11.3523985951912
-                         },
-                         {
-                          "x":0,
-                          "y":-22.7047971903825
-                         },
-                         {
-                          "x":-22.7047971903825,
-                          "y":-11.3523985951912
-                         }],
-                  "rotation":0,
-                  "type":"Collider",
-                  "visible":true,
-                  "width":0,
-                  "x":64,
-                  "y":122.637561963053
-                 },
-                 {
-                  "height":63.7022470608031,
-                  "id":3,
-                  "name":"",
-                  "rotation":0,
-                  "type":"Hitbox",
-                  "visible":true,
-                  "width":18.7685455919629,
-                  "x":54.8385695514136,
-                  "y":32.2780199708803
-                 }],
-          "opacity":1,
-          "type":"objectgroup",
-          "visible":true,
-          "x":0,
-          "y":0
-         },
-      "type":"Explode"
-     }
- ],
+        }],
  "tilewidth":128,
  "type":"tileset",
  "version":"1.10"

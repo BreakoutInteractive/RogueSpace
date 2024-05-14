@@ -46,21 +46,21 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
-    _isDefault = true;
     _isAiming = false; // will always be false for melee enemies
     _isCharged = false; // will always be false for melee enemies
-    _playerLoc = Vec2::ZERO; // default value = hasn't ever seen the player
+    _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
+    _state = BehaviorState::DEFAULT;
     _sightRange = GameConstants::ENEMY_SIGHT_RANGE;
     _proximityRange = GameConstants::ENEMY_PROXIMITY_RANGE;
     _attackRange = GameConstants::ENEMY_MELEE_ATK_RANGE;
     _moveSpeed = GameConstants::ENEMY_MOVE_SPEED;
     _hitCounter.setMaxCount(GameConstants::ENEMY_IFRAME);
     _atkCD.setMaxCount(GameConstants::ENEMY_ATK_COOLDOWN);
-    _stunCD.setMaxCount(GameConstants::ENEMY_STUN_COOLDOWN);
     _sentryCD.setMaxCount(GameConstants::ENEMY_SENTRY_COOLDOWN);
     _windupCD.setMaxCount(1);
     _damage = data->getFloat("damage");
+    _dropped = false;
     
     // initialize directions
     _directions[0] = Vec2(0,-1);    //down
@@ -76,15 +76,9 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
 }
 
 
-/**
- * Disposes all resources and assets of this rocket
- *
- * Any assets owned by this object will be immediately released.  Once
- * disposed, a rocket may not be used until it is initialized again.
- */
 void Enemy::dispose() {
-    _enemyTextureKey = "";
-    _enemyTexture = nullptr;
+    // nothing to do here
+    // deallocate anything not on shared_pointers
 }
 
 
@@ -102,6 +96,14 @@ void Enemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<Asse
 
 void Enemy::setDrawScale(Vec2 scale) {
     _drawScale = scale;
+}
+
+void Enemy::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float scale) {    
+    auto effSheet = effect->getSpriteSheet();
+    Affine2 transform = Affine2::createScale(scale);
+    transform.translate((_position + Vec2(0, 64 / scale / _drawScale.y)) * _drawScale); //64 is half of enemy pixel height
+    Vec2 origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
+    effSheet->draw(batch, origin, transform);
 }
 
 void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
@@ -126,18 +128,17 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
     
-    if (_hitEffect->isActive()) {
-        auto effSheet = _hitEffect->getSpriteSheet();
-        transform = Affine2::createScale(2);
-        transform.translate(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
+    if (_meleeHitEffect->isActive()) {
+        drawEffect(batch, _meleeHitEffect, 2);
     }
-    if (_state == EnemyState::STUNNED) {
-        auto effSheet = _stunEffect->getSpriteSheet();
-        transform = Affine2::createTranslation(getPosition().add(0, 64 / _drawScale.y) * _drawScale); //64 is half of enemy pixel height
-        origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
-        effSheet->draw(batch, origin, transform);
+    if (_bowHitEffect->isActive()) {
+        drawEffect(batch, _bowHitEffect, 2);
+    }
+    if (_stunEffect->isActive()) {
+        drawEffect(batch, _stunEffect);
+    }
+    if (_deathEffect->isActive()) {
+        drawEffect(batch, _deathEffect);
     }
 }
 
@@ -151,8 +152,7 @@ void Enemy::setIdling() {
     _walkAnimation->reset();
     _attackAnimation->reset();
     _stunAnimation->reset();
-    _state = EnemyState::IDLE;
-    
+    _stunEffect->reset();
 }
 
 void Enemy::setMoving() {
@@ -161,7 +161,7 @@ void Enemy::setMoving() {
     _idleAnimation->reset();
     _attackAnimation->reset();
     _stunAnimation->reset();
-    _state = EnemyState::MOVING;
+    _stunEffect->reset();
 }
 
 void Enemy::setAttacking() {
@@ -170,34 +170,60 @@ void Enemy::setAttacking() {
     _idleAnimation->reset();
     _walkAnimation->reset();
     _stunAnimation->reset();
-    _state = EnemyState::ATTACKING;
+    _stunEffect->reset();
+    _state = BehaviorState::ATTACKING;
 }
 
 void Enemy::setStunned() {
-    if (_state == EnemyState::STUNNED) {
+    if (_state == BehaviorState::STUNNED) {
         return;
     }
     setAnimation(_stunAnimation);
-    _stunCD.reset();
     _atkCD.reset(); // stunning should reset attack
-    // MAYBE, we don't want to reset ?? (tweening unsure)
     _attackAnimation->reset();
     _hitboxAnimation->reset();
     _idleAnimation->reset();
     _walkAnimation->reset();
-    _state = EnemyState::STUNNED;
+    _meleeHitEffect->reset();
+    _bowHitEffect->reset();
+    _state = BehaviorState::STUNNED;
     _stunEffect->start();
+    _stunAnimation->start();
+}
+
+void Enemy::setDefault() {
+    _state = BehaviorState::DEFAULT;
+}
+
+void Enemy::setSeeking() {
+    _state = BehaviorState::SEEKING;
+}
+
+void Enemy::setChasing() {
+    _state = BehaviorState::CHASING;
+}
+
+void Enemy::setDying() {
+    _state = BehaviorState::DYING;
+    _currAnimation->stopAnimation();
+    _hitboxAnimation->reset();
+    _stunEffect->reset();
+    _meleeHitEffect->reset();
+    _bowHitEffect->reset();
+    _collider->setLinearVelocity(Vec2::ZERO);
+    _deathEffect->start();
 }
 
 
-void Enemy::hit(cugl::Vec2 atkDir, float damage, float knockback_scl) {
-    if (!_hitEffect->isActive()) {
+void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) {
+    if (!_meleeHitEffect->isActive() && !_bowHitEffect->isActive()) {
         _hitCounter.reset();
-        if (_state == EnemyState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
-        setHealth(getHealth()-damage);
-        CULog("%f", getHealth());
-        _hitEffect->reset();
-        _hitEffect->start();
+        if (_state == BehaviorState::STUNNED) damage *= GameConstants::STUN_DMG_BONUS;
+        setHealth(std::fmax(0, getHealth() - damage));
+        _meleeHitEffect->reset();
+        _bowHitEffect->reset();
+        if (ranged) _bowHitEffect->start();
+        else _meleeHitEffect->start();
         _collider->setLinearVelocity(atkDir * knockback_scl);
         // allows for a "revenge" attack if the enemy is attacked from behind
         if (!_playerInSight) {
@@ -210,35 +236,32 @@ void Enemy::updateAnimation(float dt){
     GameObject::updateAnimation(dt);
     // attack animation must play to completion, as long as enemy is alive.
     if (!_attackAnimation->isActive()) {
-        if ((getCollider()->getLinearVelocity().isZero() && _stunCD.isZero()) && _currAnimation != _idleAnimation) {
+        if ((getCollider()->getLinearVelocity().isZero() && !_stunAnimation->isActive()) && _currAnimation != _idleAnimation) {
             setIdling();
         }
         else if (!getCollider()->getLinearVelocity().isZero() && _currAnimation != _walkAnimation) {
             setMoving();
         }
     }
-    _hitEffect->update(dt);
-    if (_hitEffect->isActive()){
+    _meleeHitEffect->update(dt);
+    _bowHitEffect->update(dt);
+    if (_meleeHitEffect->isActive() || _bowHitEffect->isActive()){
         _tint = Color4::RED;
     }
-    else if (_state == EnemyState::STUNNED && _stunCD.isZero()) {
+    else if (_state == BehaviorState::STUNNED && !_stunAnimation->isActive()) {
         _tint = Color4::WHITE;
         setIdling();
-    }
-    else if (_state == EnemyState::STUNNED){
-        // TODO: could possibly use stunned animation and remove this state altogether
-        //_tint = Color4::YELLOW;
     }
     else {
         _tint = Color4::WHITE;
     }
     _stunEffect->update(dt);
+    _deathEffect->update(dt);
     _hitboxAnimation->update(dt);
 }
 
 void Enemy::updateCounters() {
     _sentryCD.decrement();
-    _stunCD.decrement();
     _atkCD.decrement();
     _hitCounter.decrement();
 }

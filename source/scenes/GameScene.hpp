@@ -26,6 +26,8 @@
 #include "../models/Counter.hpp"
 #include "../components/Animation.hpp"
 #include "TransitionScene.hpp"
+#include "UpgradesScene.hpp"
+#include "../utility/SaveData.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -35,9 +37,28 @@
  * so that we can have a separate mode for the loading screen.
  */
 class GameScene : public cugl::Scene2 {
+    
+public:
+    /**
+     * Unlike other scenes where the user has choices, the player's only choice is pausing
+     * the game. The other options are game-events.
+     */
+    enum ExitCode {
+        /** the player stays in the game */
+        NONE,
+        /** the player finishes the game */
+        VICTORY,
+        /** the player loses the game */
+        DEATH,
+        /** the player pauses the game*/
+        PAUSE
+    };
+    
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    /** The maximum level number to defeat for the game to end */
+    int MAX_LEVEL;
     
 #pragma mark Controllers
     /** Controller for abstracting out input across multiple platforms */
@@ -50,7 +71,6 @@ protected:
     CollisionController _collisionController;
     /** Controller to play sounds */
     std::shared_ptr<AudioController> _audioController;
-    
 
 #pragma mark Scenes
     /** custom renderer for this scene */
@@ -59,7 +79,12 @@ protected:
     Scene2 _effectsScene;
     /** The inner transition between levels (fading in and out) */
     TransitionScene _levelTransition;
-    
+    /** the upgrades menu  */
+    UpgradesScene _upgrades;
+    /**
+     * sets up the upgrade scene based on player stats, picking random stats to be upgraded.
+     */
+    void configureUpgradeMenu(std::shared_ptr<Player> player);
 
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
@@ -72,7 +97,6 @@ protected:
     /** the node which renders the dead effect */
     std::shared_ptr<scene2::SpriteNode> _deadEffectNode;
 
-
 #pragma mark Scene Animation
     /** animation manager */
     scene2::ActionManager _actionManager;
@@ -84,13 +108,14 @@ protected:
     const std::string DEAD_EFFECT_KEY = "dead_effect";
     /** the action corresponding to the dead effect pop-up animation*/
     std::shared_ptr<scene2::Animate> _deadEffectAnimation;
-
     
 #pragma mark State and Model
     /** tiled parser */
     LevelParser _parser;
     /** the current level to load */
     int _levelNumber;
+    /** whether the current level to load is an upgrade room */
+    bool _isUpgradeRoom;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
     /** The level model */
@@ -101,45 +126,18 @@ protected:
     bool _defeat;
     /** Whether or not debug mode is active */
     bool _debug;
-    /** whether active level is upgrades*/
-    bool _upgradeLevelActive;
     /** a counter for the number of frames to apply a hit-pause effect (for combo hit) */
     Counter hitPauseCounter;
-    /** a counter for the number levels until player earns upgrade */
-    Counter _lvlsToUpgrade;
-
+    /** The screen transitioning code */
+    ExitCode _exitCode;
     
-#pragma mark Player Upgrades
-    
-    /** classification of the different upgrade types*/
-    enum upgrades {SWORD, PARRY, SHIELD, ATK_SPEED, DASH, BOW};
-    /** sets the player attributes of the crrent level's player*/
-    void setPlayerAttributes(float hp);
-    /** upgrades generated for level*/
-    std::vector<int> upgradesForLevel;
-    /** all upgradeable stats for the player*/
-    std::vector<std::shared_ptr<Upgradeable>> availableUpgrades;
-    
-
-public:
-    /** Returns all upgradeable stats for the player*/
-    std::vector<std::shared_ptr<Upgradeable>> getAvailableUpgrades(){return availableUpgrades;}
-    
-    /** Returns upgradeable stats to be displayed for level*/
-    std::vector<int> getDisplayedUpgrades(){return upgradesForLevel;}
-    
-    /** whether the upgrades screen should be active*/
-    bool upgradeScreenActive;
-    
-    /** whether an upgrade has been chosen*/
-    bool upgradeChosen;
-    
+#pragma mark Internal Update Function Helpers
     /**
-     * Chooses random upgrades
-     * @param size length of attribute array
+     * handles player inputs and updates relevant HUD components.
      */
-    void generateRandomUpgrades();
+    void processPlayerInput();
     
+public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -200,23 +198,14 @@ public:
     void setDebug(bool value) { _debug = value; _level->showDebug(value); }
     
     /**
-     * Sets whether Relic object is active
-     *
-     * @param activate whether relic object is active.
-     */
-    void setRelicActive(bool activate) { _level->getRelic()->setActive(activate); }
-    
-    /**
-     * Returns whether Relic object is active
-     */
-    bool isRelicActive() { return _level->getRelic()->getActive(); }
-    
-    std::shared_ptr<Relic> getRelic() {return _level->getRelic();}
-    
-    /**
      * Returns a reference to the game renderer
      */
     GameRenderer& getRenderer(){return _gameRenderer;}
+
+    /**
+     * Returns a reference to the input controller
+     */
+    InputController& getInput() { return _input; }
 
     /**
      * toggle input devices
@@ -261,6 +250,15 @@ public:
      */
     void setDefeat(bool value) { _defeat = value; }
     
+    /**
+     * @return the screen exit code, `NONE` if the user stays in this game mode.
+     */
+    ExitCode getExitCode(){ return _exitCode; }
+    
+    /**
+     * @return list of levels in the order of attack, bow, attack speed, shield, dash, parry, health
+     */
+    std::vector<int> getPlayerLevels();
     
 #pragma mark -
 #pragma mark Gameplay Handling
@@ -344,9 +342,9 @@ public:
     void restart();
     
     /**
-     * sets the active level to load
+     * sets the active level to load with the given save data
      */
-    void setLevel(int level);
+    void setLevel(SaveData::Data saveData);
     
     /**
      * returns the asset key for the given level
@@ -354,9 +352,9 @@ public:
     std::string getLevelKey(int level);
     
     /**
-     * Applies selected attribute to player.
+     * sets whether this room is an upgrades room.
      */
-    void updatePlayerAttributes(int selectedAttribute);
+    void setUpgradeRoom(bool value){ _isUpgradeRoom = value; }
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
@@ -364,6 +362,8 @@ public:
      */
     virtual void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
+    void setActive(bool value) override;
+    
 protected:
 #pragma mark -
 #pragma mark Helpers
