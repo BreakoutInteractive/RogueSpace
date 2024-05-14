@@ -352,9 +352,9 @@ public:
     std::string getLevelKey(int level);
     
     /**
-     * Applies selected attribute to player.
+     * sets whether this room is an upgrades room.
      */
-    void updatePlayerAttributes(int selectedAttribute);
+    void setUpgradeRoom(bool value){ _isUpgradeRoom = value; }
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,
