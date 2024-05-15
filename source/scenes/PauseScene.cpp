@@ -52,11 +52,16 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _confirmBack = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_back"));
     _confirmConfirm = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_confirm"));
 
+    activateConfirmation = false;
     // Program the buttons
     _pauseBack->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _confirmationScene.setActive(true);
-            _pauseBack->setDown(false);
+            if (activateConfirmation) {
+                _confirmationScene.setActive(true);
+                _pauseBack->setDown(false);
+            } else{ //so pause in tutorial levels send the player right back to tutorial menu as opposed to mentioning progress
+                _choice = Choice::BACK;
+            }
         }
     });
     _resume->addListener([this](const std::string& name, bool down) {
@@ -71,13 +76,13 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     });
 
     _confirmBack->addListener([this](const std::string& name, bool down) {
-        if (down) {
+        if (down && activateConfirmation) {
             _confirmationScene.setActive(false);
             _confirmBack->setDown(false);
         }
     });
     _confirmConfirm->addListener([this](const std::string& name, bool down) {
-        if (down) {
+        if (down && activateConfirmation) {
             _choice = Choice::BACK;
         }
     });
@@ -112,22 +117,24 @@ void PauseScene::setLabels(std::vector<int> levels){
     _maxHealth->setText("LVL " + std::to_string(levels[6]));
 }
 
-void PauseScene::activateConfirmButtons(bool active){
-    if (active){
-        _resume->deactivate();
-        _settings->deactivate();
-        _pauseBack->deactivate();
-        
-        _confirmConfirm->activate();
-        _confirmBack->activate();
-    } else{
-        _confirmConfirm->deactivate();
-        _confirmBack->deactivate();
-        
-        _resume->activate();
-        _settings->activate();
-        _pauseBack->activate();
-
+void PauseScene::activateConfirmMenu(bool active, bool isGame){
+    activateConfirmation = isGame;
+    if (isGame){
+        if (active){
+            _resume->deactivate();
+            _settings->deactivate();
+            _pauseBack->deactivate();
+            
+            _confirmConfirm->activate();
+            _confirmBack->activate();
+        } else{
+            _confirmConfirm->deactivate();
+            _confirmBack->deactivate();
+            
+            _resume->activate();
+            _settings->activate();
+            _pauseBack->activate();
+        }
     }
 }
 
@@ -154,6 +161,7 @@ void PauseScene::setActive(bool value) {
             _confirmConfirm->setDown(false);
             // hide confirmation menu
             _confirmationScene.setActive(false);
+            activateConfirmation = false;
         }
     }
 }

@@ -236,6 +236,11 @@ public:
     bool isTutorialComplete(){return _isTutorial && _isTutorialComplete; }
     
     /**
+     * @return whether the running level is a tutorial
+     */
+    bool isTutorial(){return _isTutorial; }
+    
+    /**
      * Returns true if the level is completed.
      *
      * If true, the level will advance after a countdown

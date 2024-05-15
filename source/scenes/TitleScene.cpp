@@ -31,6 +31,7 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     overlay->setColor(Color4(0, 0, 0, 200));
     _confirmationScene.addChild(overlay);
     _confirmationScene.addChild(confirmationNode);
+
     // auto-resize text content
     auto confrimLabel = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("confirmation_confirmation_confirm_title"));
     confrimLabel->setText("Start New Game", true);
@@ -120,12 +121,14 @@ void TitleScene::activateScene(bool value){
         else if (_type == WITH_CONTINUE){
             _scene2->setVisible(false);
             _confirmationScene.setActive(false);
+            
             _continue->deactivate();
             _newGame2->deactivate();
             _settings2->deactivate();
             _tutorial2->deactivate();
             _confirm2->deactivate();
             _back2->deactivate();
+            
             _continue->setDown(false);
             _newGame2->setDown(false);
             _settings2->setDown(false);
@@ -137,24 +140,27 @@ void TitleScene::activateScene(bool value){
 }
 
 void TitleScene::activateConfirmButtons(bool active){
-    if (active){
-        _newGame2->deactivate();
+    if (active && _type == WITH_CONTINUE){
         _continue->deactivate();
+        _newGame2->deactivate();
         _tutorial2->deactivate();
         _settings2->deactivate();
-        _tutorial2->deactivate();
+        _continue->setDown(false);
+        _newGame2->setDown(false);
+        _settings2->setDown(false);
+        _tutorial2->setDown(false);
 
         _back2->activate();
         _confirm2->activate();
-    } else{
+    } else if (_type == WITH_CONTINUE){
         _confirm2->deactivate();
         _back2->deactivate();
+        _confirmationScene.setActive(false);
 
         _newGame2->activate();
         _continue->activate();
         _tutorial2->activate();
         _settings2->activate();
-        _tutorial2->activate();
     }
 }
 

@@ -96,6 +96,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // necessary (starting at any actual level implies it is not an upgrade room)
     setUpgradeRoom(false);
     _isTutorial = false;
+    _isTutorialComplete = false;
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -143,8 +144,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
             // current room was upgrades, just go to the current level number
             _isUpgradeRoom = false;
         } 
-        else if (_isTutorial){
+        else if (_isTutorial){ //can we take out this branch. init only gets called once and we don't save tutorials
             _isTutorialComplete = true; // this flags allows switching to tutorial menu
+            _isTutorial = false;
             return;
         }
         else {

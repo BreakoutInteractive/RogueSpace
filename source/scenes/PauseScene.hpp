@@ -51,6 +51,9 @@ protected:
     std::shared_ptr<scene2::Button> _confirmConfirm;
     /** confirmation scene**/
     Scene2 _confirmationScene;
+
+#pragma mark - Menu Button Activation
+    bool activateConfirmation;
     
 #pragma mark - Icon Labels
     
@@ -124,7 +127,7 @@ public:
      *
      * @param value whether the scene is currently active
      */
-    void activateConfirmButtons(bool active);
+    void activateConfirmMenu(bool active, bool tutorial);
     
     /**
      * Sets the icon level labels in this menu.

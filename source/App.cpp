@@ -176,7 +176,7 @@ void App::postUpdate(float dt) {
 
 void App::updatePauseScene(float dt) {
     _pause.update(dt);
-    _pause.activateConfirmButtons(_pause.isConfirmActive());
+    _pause.activateConfirmMenu(_pause.isConfirmActive(), !_gameplay.isTutorial());
     switch (_pause.getChoice()) {
         case PauseScene::Choice::BACK:
             _pause.setActive(false);
