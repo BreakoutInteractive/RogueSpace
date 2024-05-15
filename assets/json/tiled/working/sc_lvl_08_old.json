@@ -3,8 +3,7 @@
     {
      "export":
         {
-         "format":"json",
-         "target":"..\/exports\/sc_lvl_08.json"
+         "format":"json"
         }
     },
  "height":52,
@@ -1158,6 +1157,171 @@
         }, 
         {
          "class":"Random",
+         "id":294,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":295,
+                 "name":"0",
+                 "objects":[
+                        {
+                         "gid":252,
+                         "height":128,
+                         "id":3265,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"path",
+                                 "type":"object",
+                                 "value":3266
+                                }],
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1920,
+                         "y":960
+                        }, 
+                        {
+                         "height":0,
+                         "id":3266,
+                         "name":"",
+                         "point":true,
+                         "properties":[
+                                {
+                                 "name":"path",
+                                 "type":"object",
+                                 "value":3267
+                                }],
+                         "rotation":0,
+                         "type":"Path",
+                         "visible":true,
+                         "width":0,
+                         "x":1856,
+                         "y":928
+                        }, 
+                        {
+                         "height":0,
+                         "id":3267,
+                         "name":"",
+                         "point":true,
+                         "properties":[
+                                {
+                                 "name":"path",
+                                 "type":"object",
+                                 "value":3268
+                                }],
+                         "rotation":0,
+                         "type":"Path",
+                         "visible":true,
+                         "width":0,
+                         "x":1792,
+                         "y":960
+                        }, 
+                        {
+                         "height":0,
+                         "id":3268,
+                         "name":"",
+                         "point":true,
+                         "rotation":0,
+                         "type":"Path",
+                         "visible":true,
+                         "width":0,
+                         "x":1856,
+                         "y":992
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":296,
+                 "name":"1",
+                 "objects":[
+                        {
+                         "gid":253,
+                         "height":128,
+                         "id":3269,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"path",
+                                 "type":"object",
+                                 "value":3270
+                                }],
+                         "rotation":0,
+                         "type":"",
+                         "visible":true,
+                         "width":128,
+                         "x":1920,
+                         "y":960
+                        }, 
+                        {
+                         "height":0,
+                         "id":3270,
+                         "name":"",
+                         "point":true,
+                         "properties":[
+                                {
+                                 "name":"path",
+                                 "type":"object",
+                                 "value":3271
+                                }],
+                         "rotation":0,
+                         "type":"Path",
+                         "visible":true,
+                         "width":0,
+                         "x":1856,
+                         "y":928
+                        }, 
+                        {
+                         "height":0,
+                         "id":3271,
+                         "name":"",
+                         "point":true,
+                         "properties":[
+                                {
+                                 "name":"path",
+                                 "type":"object",
+                                 "value":3272
+                                }],
+                         "rotation":0,
+                         "type":"Path",
+                         "visible":true,
+                         "width":0,
+                         "x":1792,
+                         "y":960
+                        }, 
+                        {
+                         "height":0,
+                         "id":3272,
+                         "name":"",
+                         "point":true,
+                         "rotation":0,
+                         "type":"Path",
+                         "visible":true,
+                         "width":0,
+                         "x":1856,
+                         "y":992
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }],
+         "name":"group_2",
+         "opacity":1,
+         "type":"group",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "class":"Random",
          "id":292,
          "layers":[
                 {
@@ -1178,7 +1342,7 @@
                          "y":768
                         }, 
                         {
-                         "gid":253,
+                         "gid":252,
                          "height":128,
                          "id":3263,
                          "name":"",
@@ -1192,7 +1356,7 @@
                          "type":"",
                          "visible":true,
                          "width":128,
-                         "x":2112,
+                         "x":2176,
                          "y":832
                         }, 
                         {
@@ -1209,7 +1373,7 @@
                         }],
                  "opacity":1,
                  "type":"objectgroup",
-                 "visible":true,
+                 "visible":false,
                  "x":0,
                  "y":0
                 }, 
@@ -1228,7 +1392,7 @@
                          "visible":true,
                          "width":128,
                          "x":1856,
-                         "y":960
+                         "y":768
                         }, 
                         {
                          "gid":253,
@@ -1245,7 +1409,7 @@
                          "type":"",
                          "visible":true,
                          "width":128,
-                         "x":2112,
+                         "x":2176,
                          "y":832
                         }, 
                         {
@@ -1266,6 +1430,7 @@
                  "x":0,
                  "y":0
                 }],
+         "locked":true,
          "name":"group_1",
          "opacity":1,
          "type":"group",

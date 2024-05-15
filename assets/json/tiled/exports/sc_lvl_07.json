@@ -486,7 +486,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -2260,34 +2260,6 @@
                  "y":1024
                 }, 
                 {
-                 "gid":251,
-                 "height":128,
-                 "id":2935,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"float",
-                         "value":0.8
-                        }, 
-                        {
-                         "name":"hp",
-                         "type":"float",
-                         "value":5.4
-                        }, 
-                        {
-                         "name":"path",
-                         "type":"object",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"Lizard",
-                 "visible":true,
-                 "width":64,
-                 "x":1216,
-                 "y":608
-                }, 
-                {
                  "gid":252,
                  "height":128,
                  "id":2936,
@@ -2334,23 +2306,69 @@
                         {
                          "name":"path",
                          "type":"object",
-                         "value":0
+                         "value":3197
                         }],
                  "rotation":0,
                  "type":"Caster",
                  "visible":true,
                  "width":128,
                  "x":2368,
-                 "y":864
+                 "y":896
+                }, 
+                {
+                 "height":0,
+                 "id":3197,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Path",
+                 "visible":true,
+                 "width":0,
+                 "x":1856,
+                 "y":640
+                }, 
+                {
+                 "gid":251,
+                 "height":128,
+                 "id":3198,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":0.8
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":5.4
+                        }, 
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Lizard",
+                 "visible":true,
+                 "width":64,
+                 "x":1280,
+                 "y":608
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],
  "nextlayerid":280,
- "nextobjectid":3197,
+ "nextobjectid":3199,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

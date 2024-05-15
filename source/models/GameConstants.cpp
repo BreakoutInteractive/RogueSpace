@@ -42,9 +42,9 @@ float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
 
 float GameConstants::ENEMY_RANGED_ATK_RANGE = 6.8; //previously 7
 
-float GameConstants::ENEMY_MELEE_ATK_SPEED = 1.125f;
+float GameConstants::ENEMY_MELEE_ATK_SPEED = 1.44f;
 
-float GameConstants::ENEMY_RANGED_ATK_SPEED = 0.84375f;
+float GameConstants::ENEMY_RANGED_ATK_SPEED = 1.08f;
 
 float GameConstants::ENEMY_MOVE_SPEED = 2.3;
 
@@ -60,15 +60,15 @@ float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
-float GameConstants::STUN_DMG_BONUS = 1.6f; // previously 1.5
+float GameConstants::STUN_DMG_BONUS = 2.34f; // previously 1.6
 
 #pragma mark -
 #pragma mark Slime Constants
 
 int GameConstants::EXPLODE_TIMER = 60;
 // note radius needs to be larger than proximity otherwise player won't necessarily take damage
-float GameConstants::EXPLODE_RADIUS = 2.5f;
-float GameConstants::EXPLODE_PROX_RANGE = 2.0f;
+float GameConstants::EXPLODE_RADIUS = 2.3f;
+float GameConstants::EXPLODE_PROX_RANGE = 1.8f;
 
 #pragma mark -
 #pragma mark Boss Constants
@@ -113,7 +113,7 @@ float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
 
 
 float GameConstants::PLAYER_MOVE_SPEED = 4.7; //previously 4.6
-float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.8f; //previously 0.5
+float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.9f; //previously 1.8
 
 
 
@@ -125,11 +125,11 @@ float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
 float GameConstants::PROJ_DIST_P_SQ = 100.0f;
 
-float GameConstants::PROJ_DIST_P = 7.0f;
+float GameConstants::PROJ_DIST_P = 6.8f;
 
 float GameConstants::CHARGE_TIME = 0.3f;
 
-float GameConstants::COMBO_TIME = 1.0f;
+float GameConstants::COMBO_TIME = 0.8f;
 
 float GameConstants::HEALTHPACK_DROP_RATE = 34.0f;
 

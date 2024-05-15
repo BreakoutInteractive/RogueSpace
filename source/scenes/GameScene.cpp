@@ -204,6 +204,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
+    _upgrades.setActive(false);
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
     }
