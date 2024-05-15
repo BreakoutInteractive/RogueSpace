@@ -140,23 +140,34 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelTransition.setFadeIn(GameConstants::TRANSITION_FADE_IN_TIME);
     _levelTransition.setFadeOut(GameConstants::TRANSITION_FADE_OUT_TIME, Color4(255, 255, 255, 0));
     _levelTransition.setFadeInCallBack([this](){
+        if (_isTutorial){
+            _isTutorialComplete = true; // this flags allows switching to tutorial menu
+            return;
+        }
+        
+        SaveData::Data data;
+        auto p = _level->getPlayer();
+        bool upgradeAvailable = false;
         if (_isUpgradeRoom){
             // current room was upgrades, just go to the current level number
             _isUpgradeRoom = false;
-        } 
-        else if (_isTutorial){ //can we take out this branch. init only gets called once and we don't save tutorials
-            _isTutorialComplete = true; // this flags allows switching to tutorial menu
-            _isTutorial = false;
-            return;
         }
         else {
             this->_levelNumber+=1;
             this->_isUpgradeRoom = _levelNumber % 3 == 1; // check if an upgrades room should be offered before the next level
+            if (_isUpgradeRoom){
+                upgradeAvailable = true;
+                // generate random new upgrades
+                std::pair<std::pair<int, int>, std::pair<int, int>> indices = generateUpgradeIndices(p);
+                data.upgradeOpt1 = indices.first.first;
+                data.upgradeOpt1Level = indices.first.second;
+                data.upgradeOpt2 = indices.second.first;
+                data.upgradeOpt2Level = indices.second.second;
+            }
         }
-        
         // save game data as level ends
-        auto p = _level->getPlayer();
-        SaveData::Data data;
+        data.isUpgradeRoom = _isUpgradeRoom;
+        data.upgradeAvailable = upgradeAvailable;
         data.level = _levelNumber;
         data.hp = p->getHP();
         data.atkLvl = p->getMeleeUpgrade().getCurrentLevel();
@@ -199,7 +210,6 @@ void GameScene::activateTutorial(int level){
     _levelTransition.setActive(false);
     setTutorialActive(true);
     _exitCode = NONE;
-    _isUpgradeRoom = false;
     SaveData::Data data;
     data.level = level;
     data.hp = GameConstants::PLAYER_MAX_HP;
@@ -208,11 +218,19 @@ void GameScene::activateTutorial(int level){
 
 void GameScene::restart(){
     _levelTransition.setActive(false);
-    _isUpgradeRoom = true;  // first level is always upgrades
     SaveData::removeSave();
     SaveData::Data data;
     data.level = 1;
+    data.isUpgradeRoom = true; // first level is always upgrades
+    data.upgradeAvailable = true;
+    // pick two random upgrades
+    std::pair<std::pair<int, int>, std::pair<int, int>> indices = generateUpgradeIndices(nullptr);
+    data.upgradeOpt1 = indices.first.first;
+    data.upgradeOpt1Level = indices.first.second;
+    data.upgradeOpt2 = indices.second.first;
+    data.upgradeOpt2Level = indices.second.second;
     data.hp = GameConstants::PLAYER_MAX_HP;
+    SaveData::makeSave(data);
     setLevel(data);
 }
 
@@ -222,6 +240,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
+    _isUpgradeRoom = saveData.isUpgradeRoom;
     _upgrades.setActive(false);
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
@@ -265,13 +284,20 @@ void GameScene::setLevel(SaveData::Data saveData){
     _camController.setCamPosition(p->getPosition() * p->getDrawScale());
     
     if (_isUpgradeRoom) {
-        _level->getRelic()->setActive(true);
+        if (saveData.upgradeAvailable){
+            _level->getRelic()->setActive(true);
+            std::array<Upgradeable, 7> upgradeOptions = getPlayerUpgrades(p);
+            int idx1 = saveData.upgradeOpt1;
+            int idx2 = saveData.upgradeOpt2;
+            upgradeOptions[idx1].setCurrentLevel(saveData.upgradeOpt1Level);
+            upgradeOptions[idx2].setCurrentLevel(saveData.upgradeOpt2Level);
+            _upgrades.updateScene({upgradeOptions[idx1], upgradeOptions[idx2]});
+        }
         // turn off the energy walls first
         auto energyWalls = _level->getEnergyWalls();
         for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
             (*it)->deactivate();
         }
-        configureUpgradeMenu(p);
     }
     
     setComplete(false);
@@ -293,15 +319,42 @@ void GameScene::setLevel(SaveData::Data saveData){
     _deadEffectNode->setVisible(false);
 }
 
-void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
-    // first find the stats that can be upgraded
-    std::array<Upgradeable, 7> all = {
+std::array<Upgradeable, 7> GameScene::getPlayerUpgrades(std::shared_ptr<Player> player){
+    std::array<Upgradeable, 7> upgradeOptions = {
         player->getMeleeUpgrade(), player->getMeleeSpeedUpgrade(), player->getBowUpgrade(), player->getHPUpgrade(), player->getStunUpgrade(), player->getDodgeUpgrade(), player->getDamageReductionUpgrade()};
-    std::vector<Upgradeable> options;
-    for (Upgradeable& upgrade : all){
-        if (!upgrade.isMaxLevel()){
-            options.push_back(upgrade);
+    return upgradeOptions;
+}
+
+std::pair<std::pair<int,int>, std::pair<int,int>> GameScene::generateUpgradeIndices(std::shared_ptr<Player> player){
+    std::vector<int> options;
+    std::vector<int> levels;
+    if (player != nullptr){
+        // first find the stats that can be upgraded
+        std::array<Upgradeable, 7> upgradeOptions = getPlayerUpgrades(player);
+        for (int i = 0; i < 7; i++){
+            Upgradeable u = upgradeOptions[i];
+            if (!u.isMaxLevel()){
+                options.push_back(i);
+                levels.push_back(std::min(u.getCurrentLevel() + 1, u.getMaxLevel()));
+            }
         }
+        
+        if (options.size() == 1){
+            // duplicate, since only 1 thing to upgrade
+            options.push_back(options[0]);
+            levels.push_back(levels[0]);
+        }
+        else if (options.size() == 0){
+            // anything will work, nothing to upgrade
+            options.push_back(0);
+            options.push_back(1);
+            levels.push_back(upgradeOptions[0].getCurrentLevel());
+            levels.push_back(upgradeOptions[1].getCurrentLevel());
+        }
+    }
+    else {
+        options = {0, 1, 2, 3, 4, 5, 6};
+        levels = {1, 1, 1, 1, 1, 1, 1};
     }
     int opt1 = 0;
     int opt2 = 1;
@@ -312,21 +365,10 @@ void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
             opt2 = std::rand() % options.size();
         }
     }
-    else if (options.size() == 1){
-        // duplicate
-        options.push_back(options[0]);
-    }
-    else if (options.size() == 0){
-        // anything will work, nothing to upgrade
-        Upgradeable u1 = all[0];
-        u1.setCurrentLevel(u1.getMaxLevel() - 1);
-        Upgradeable u2 = all[1];
-        u2.setCurrentLevel(u2.getMaxLevel() - 1);
-        options.push_back(u1);
-        options.push_back(u2);
-    }
-    std::pair<Upgradeable, Upgradeable> randomOptions(options[opt1], options[opt2]);
-    _upgrades.updateScene(randomOptions);
+    std::pair<int, int> random1(options[opt1], levels[opt1]);
+    std::pair<int, int> random2(options[opt2], levels[opt2]);
+    std::pair<std::pair<int, int>, std::pair<int, int>> randomOptions(random1, random2);
+    return randomOptions;
 }
 
 std::vector<int> GameScene::getPlayerLevels(){
@@ -705,35 +747,49 @@ void GameScene::preUpdate(float dt) {
         auto relic = _level->getRelic();
         _upgrades.setActive(relic->getTouched() && relic->getActive());
         if (_upgrades.isActive() && _upgrades.hasSelectedUpgrade()){
+            // get current save, make new save based on selection
+            SaveData::Data data = SaveData::getGameSave();
+            data.upgradeAvailable = false;
+            data.weapon = player->getWeapon(); // easy to forget the weapon changes constantly
             // get the selected upgrade, apply to player
             float prevMaxHP = player->getMaxHP();
+            int newLevel = _upgrades.getUpgradeLevel();
             switch (_upgrades.getChoice()) {
                 case UpgradeType::SWORD:
-                    player->setMeleeLevel(_upgrades.getUpgradeLevel());
+                    player->setMeleeLevel(newLevel);
+                    data.atkLvl = newLevel;
                     break;
                 case PARRY:
-                    player->setStunLevel(_upgrades.getUpgradeLevel());
+                    player->setStunLevel(newLevel);
+                    data.parryLvl = newLevel;
                     break;
                 case ATK_SPEED:
-                    player->setMeleeSpeedLevel(_upgrades.getUpgradeLevel());
+                    player->setMeleeSpeedLevel(newLevel);
+                    data.atkSpLvl = newLevel;
                     break;
                 case DASH:
-                    player->setDodgeLevel(_upgrades.getUpgradeLevel());
+                    player->setDodgeLevel(newLevel);
+                    data.dashLvl = newLevel;
                     break;
                 case UpgradeType::BOW:
-                    player->setBowLevel(_upgrades.getUpgradeLevel());
+                    player->setBowLevel(newLevel);
+                    data.rangedLvl = newLevel;
                     break;
                 case HEALTH:
-                    player->setMaxHPLevel(_upgrades.getUpgradeLevel());
+                    player->setMaxHPLevel(newLevel);
                     player->setHP(player->getHP() + player->getMaxHP() - prevMaxHP);
+                    data.hpLvl = newLevel;
+                    data.hp = player->getHP();
                     break;
                 case SHIELD: case BLOCK:
                     player->setArmorLevel(_upgrades.getUpgradeLevel());
                     player->setBlockLevel(_upgrades.getUpgradeLevel());
+                    data.defLvl = newLevel;
                     break;
             }
             // turn off relic
             relic->setActive(false);
+            SaveData::makeSave(data);
         }
     }
 }

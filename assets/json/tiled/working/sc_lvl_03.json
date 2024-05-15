@@ -3,7 +3,8 @@
     {
      "export":
         {
-         "format":"json"
+         "format":"json",
+         "target":"..\/exports\/sc_lvl_03.json"
         }
     },
  "height":52,
