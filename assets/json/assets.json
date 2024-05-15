@@ -3,7 +3,7 @@
         "constants": "json/constants.json",
         "tutorial1": "json/tiled/exports/sc_tut_ranged.json",
         "tutorial2": "json/tiled/exports/sc_tut_parry.json",
-        "upgrades": "json/tiled/exports/ob_lvl_upgrades.json",
+        "upgrades": "json/tiled/exports/sc_test_arena_upgrade.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
         "level3": "json/tiled/exports/sc_lvl_02.json",
@@ -167,9 +167,25 @@
             "file": "fonts/Geometos.ttf",
             "size": 36
         },
+        "robotoRegular16": {
+            "file": "fonts/Roboto-Regular.ttf",
+            "size": 16
+        },
+        "robotoRegular20": {
+            "file": "fonts/Roboto-Regular.ttf",
+            "size": 20
+        },
         "robotoMedium16": {
             "file": "fonts/Roboto-Medium.ttf",
             "size": 16
+        },
+        "robotoMedium20": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 20
+        },
+        "robotoMedium24": {
+            "file": "fonts/Roboto-Medium.ttf",
+            "size": 24
         },
         "robotoMedium48": {
             "file": "fonts/Roboto-Medium.ttf",
@@ -183,6 +199,10 @@
             "file": "fonts/Roboto-Bold.ttf",
             "size": 28
         },
+        "robotoBold32": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 32
+        },
         "robotoBold36": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 36
@@ -190,22 +210,6 @@
         "robotoBold40": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 40
-        },
-        "robotoMedium20": {
-            "file": "fonts/Roboto-Medium.ttf",
-            "size": 20
-        },
-        "robotoRegular20": {
-            "file": "fonts/Roboto-Regular.ttf",
-            "size": 20
-        },
-        "robotoBold32": {
-            "file": "fonts/Roboto-Bold.ttf",
-            "size": 32
-        },
-        "robotoRegular16": {
-            "file": "fonts/Roboto-Regular.ttf",
-            "size": 16
         }
 	}
 }

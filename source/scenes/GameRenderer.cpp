@@ -66,11 +66,16 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
     // readjust scene to screen
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
-    
     hideJoysticks();
     
     addChild(scene);
     return true;
+}
+
+float GameRenderer::getJoystickScreenRadius(){
+    auto center = worldToScreenCoords(_joystickRing->getPosition());
+    auto bottom = worldToScreenCoords(_joystickRing->getPosition() + Size(0,_joystickRing->getSize().height/2));
+    return abs(bottom.y - center.y);
 }
 
 void GameRenderer::hideJoysticks(){
@@ -140,7 +145,7 @@ void GameRenderer::setJoystickPosition(std::shared_ptr<scene2::SceneNode> ring, 
     }
 }
 
-void GameRenderer::setActivated(bool value) {
+void GameRenderer::setActive(bool value) {
     if (value) {
         _pauseButton->setDown(false);
         _pauseButton->setVisible(true);
@@ -153,6 +158,7 @@ void GameRenderer::setActivated(bool value) {
         _pauseButton->deactivate();
         _swapButton->setVisible(false);
         _swapButton->deactivate();
+        hideJoysticks();
     }
 }
 

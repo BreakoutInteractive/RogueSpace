@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/ExplodingAlien.hpp"
 #include "../models/Wall.hpp"
 #include "../models/HealthPack.hpp"
 #include <box2d/b2_world.h>
@@ -79,6 +80,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
     };
     _input.init(preprocessor);
+    _input.setMinDragRadius(_gameRenderer.getJoystickScreenRadius() / 4);
     activateInputs(false);
     _audioController = std::make_shared<AudioController>();
     _audioController->init(_assets);
@@ -218,6 +220,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
+    _upgrades.setActive(false);
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
         _isTutorial = false;
@@ -282,6 +285,8 @@ void GameScene::setLevel(SaveData::Data saveData){
     });
     
     // hide effect nodes
+    _actionManager.remove(AREA_CLEAR_KEY);
+    _actionManager.remove(DEAD_EFFECT_KEY);
     _areaClearNode->setVisible(false);
     _deadEffectNode->setVisible(false);
 }
@@ -608,7 +613,7 @@ void GameScene::preUpdate(float dt) {
         _level->getPlayer()->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
 
-#pragma mark - Enemy movement
+#pragma mark - Enemy AI
     auto player = _level->getPlayer();
     _AIController.update(dt);
     // enemy attacks
@@ -643,14 +648,19 @@ void GameScene::preUpdate(float dt) {
         }
         if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
             // enemy can only begin an attack if not stunned and within range of player and can see them
-            bool canBeginNewAttack = false;
-            if (enemy->getType() == "melee lizard" ||
-                enemy->getType() == "tank enemy") {
-                std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
-                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !m->isStunned();
-            }
-            else {
-                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero();
+            bool canBeginNewAttack = enemy->canBeginNewAttack();
+            if (enemy->getType() == "exploding alien"){
+                auto explode = std::dynamic_pointer_cast<ExplodingAlien>(enemy);
+                if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                    if (explode->canExplode()) {
+                        explode->setAttacking();
+                    } else {
+                        explode->updateWindup(true);
+                    }
+                } else {
+                    explode->updateWindup(false);
+                }
+                continue;
             }
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard" ||
@@ -806,7 +816,7 @@ void GameScene::setActive(bool value){
     if (isActive() != value){
         Scene2::setActive(value);
         _exitCode = NONE;
-        _gameRenderer.setActivated(value);
+        _gameRenderer.setActive(value);
         activateInputs(value);
         _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
         _upgrades.setActive(false); // upgrades is only on by interaction
