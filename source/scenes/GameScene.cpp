@@ -142,8 +142,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         if (_isUpgradeRoom){
             // current room was upgrades, just go to the current level number
             _isUpgradeRoom = false;
-        } else if (_isTutorial){
-            _isTutorial = false;
+        } 
+        else if (_isTutorial){
+            _isTutorialComplete = true; // this flags allows switching to tutorial menu
+            return;
         }
         else {
             this->_levelNumber+=1;
@@ -193,7 +195,7 @@ void GameScene::dispose() {
 
 void GameScene::activateTutorial(int level){
     _levelTransition.setActive(false);
-    _isTutorial = true;
+    setTutorialActive(true);
     _exitCode = NONE;
     _isUpgradeRoom = false;
     SaveData::Data data;
@@ -528,7 +530,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
         // player finishes current level
-        if (activeCount == 0 && !_isTutorial){
+        if (activeCount == 0){
             setComplete(true);
             auto energyWalls = _level->getEnergyWalls();
             for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
@@ -538,14 +540,6 @@ void GameScene::preUpdate(float dt) {
                 // no more enemies remain, but there were enemies initially
                 _actionManager.remove(AREA_CLEAR_KEY);
                 _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
-            }
-        }
-        // player finishes current level
-        if (activeCount == 0 && _isTutorial){ //replace with tutorial condition
-            setComplete(true);
-            auto energyWalls = _level->getEnergyWalls();
-            for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
-                (*it)->deactivate();
             }
         }
     }
@@ -561,8 +555,6 @@ void GameScene::preUpdate(float dt) {
             _actionManager.remove(AREA_CLEAR_KEY);
             _actionManager.remove(DEAD_EFFECT_KEY);
             _actionManager.activate(DEAD_EFFECT_KEY, _deadEffectAnimation, _deadEffectNode);
-        } else if (_isTutorial){
-            _level->getPlayer()->setHP(GameConstants::PLAYER_MAX_HP);
         }
     }
     
