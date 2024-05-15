@@ -193,7 +193,6 @@ void GameScene::dispose() {
 
 void GameScene::activateTutorial(int level){
     _levelTransition.setActive(false);
-    _gameRenderer.setActivated(false);
     _isTutorial = true;
     _exitCode = NONE;
     _isUpgradeRoom = false;
@@ -201,7 +200,6 @@ void GameScene::activateTutorial(int level){
     data.level = level;
     data.hp = GameConstants::PLAYER_MAX_HP;
     setLevel(data);
-    _gameRenderer.setActivated(true);
 }
 
 void GameScene::restart(){

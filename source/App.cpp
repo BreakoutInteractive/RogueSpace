@@ -257,14 +257,12 @@ void App::updateTitleScene(float dt){
 }
 
 void App::updateTutorialScene(float dt){
-//    auto save = SaveData::getGameSave();
     switch (_tutorial.getChoice()){
         case TutorialScene::NONE:
             break;
         case TutorialScene::BACK:
             _title.setActive(true);
             _tutorial.setActive(false);
-            _gamePrevScene= TITLE;
             _scene = TITLE;
             break;
         case TutorialScene::LEVEL:
