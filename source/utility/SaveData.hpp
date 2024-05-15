@@ -23,7 +23,6 @@ public:
      * player data (with attributes default to 0)
      */
     struct Data {
-        // TODO: add other fields as needed
         /** the level to load on start */
         int level;
         /** player current HP */
@@ -37,6 +36,13 @@ public:
         int defLvl = 0;
         int parryLvl = 0;
         int dashLvl = 0;
+        /** whether this room has an available upgrade before the given level*/
+        bool isUpgradeRoom = false;
+        bool upgradeAvailable = false;
+        int upgradeOpt1 = 0;
+        int upgradeOpt1Level = 1;
+        int upgradeOpt2 = 0;
+        int upgradeOpt2Level = 1;
     };
     
     struct Preferences {
@@ -64,6 +70,13 @@ private:
     static std::shared_ptr<JsonValue> prefsJson;
     /** struct cache object for player preferences */
     static Preferences prefsCache;
+    
+    /**
+     * @returns the given value clipped inside the given extremes
+     */
+    static int constraint(int value, int low, int high){
+        return value > high ? high : (value < low ? low : value);
+    }
 
 public:
 #pragma mark - Game Related Saves

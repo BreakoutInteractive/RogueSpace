@@ -213,10 +213,10 @@ void UpgradesScene::setButtonText(UpgradeType upgrade, int level, int buttonType
 
 void UpgradesScene::updateScene(std::pair<Upgradeable, Upgradeable> upgradeOptions){
     _displayedAttribute1.first = upgradeOptions.first.getType();
-    _displayedAttribute1.second = upgradeOptions.first.getCurrentLevel() + 1;
+    _displayedAttribute1.second = upgradeOptions.first.getCurrentLevel();
     
     _displayedAttribute2.first = upgradeOptions.second.getType();
-    _displayedAttribute2.second = upgradeOptions.second.getCurrentLevel() + 1;
+    _displayedAttribute2.second = upgradeOptions.second.getCurrentLevel();
     
     setButtonText(_displayedAttribute1.first, _displayedAttribute1.second, 0);
     setButtonText(_displayedAttribute2.first, _displayedAttribute2.second, 1);

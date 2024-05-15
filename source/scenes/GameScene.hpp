@@ -14,6 +14,7 @@
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
+#include <array>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
 #include "../controllers/AudioController.hpp"
@@ -81,10 +82,17 @@ protected:
     TransitionScene _levelTransition;
     /** the upgrades menu  */
     UpgradesScene _upgrades;
+    
     /**
-     * sets up the upgrade scene based on player stats, picking random stats to be upgraded.
+     * @note the order is irrelevant. The function `generateUpgradeIndices` make up for this lack of specification.
+     * @return the list of current upgrades for the given player
      */
-    void configureUpgradeMenu(std::shared_ptr<Player> player);
+    std::array<Upgradeable, 7> getPlayerUpgrades(std::shared_ptr<Player> player);
+    /**
+     * @note if `player` is a null pointer, the entire set of upgrades are valid and implies that there are no current upgrades.
+     * @return a pair of pairs of (indices, level) indicating the two upgrades to be shown in upgrade scene.
+     */
+    std::pair<std::pair<int,int>, std::pair<int,int>> generateUpgradeIndices(std::shared_ptr<Player> player);
 
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
