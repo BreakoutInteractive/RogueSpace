@@ -152,7 +152,7 @@
                         {
                          "name":"tall",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"Wall",
@@ -808,7 +808,7 @@
                                 {
                                  "name":"tall",
                                  "type":"bool",
-                                 "value":true
+                                 "value":false
                                 }],
                          "rotation":0,
                          "type":"Wall",
@@ -826,7 +826,7 @@
                                 {
                                  "name":"tall",
                                  "type":"bool",
-                                 "value":true
+                                 "value":false
                                 }],
                          "rotation":0,
                          "type":"Wall",
@@ -844,7 +844,7 @@
                                 {
                                  "name":"tall",
                                  "type":"bool",
-                                 "value":true
+                                 "value":false
                                 }],
                          "rotation":0,
                          "type":"Wall",
@@ -891,7 +891,7 @@
                                 {
                                  "name":"tall",
                                  "type":"bool",
-                                 "value":true
+                                 "value":false
                                 }],
                          "rotation":0,
                          "type":"Wall",

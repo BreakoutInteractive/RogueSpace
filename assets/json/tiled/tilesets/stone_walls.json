@@ -309,7 +309,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -693,7 +692,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"Wall"
         }, 
@@ -742,7 +741,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"Wall"
         }, 
@@ -791,7 +790,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"Wall"
         }, 
@@ -840,7 +839,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"Wall"
         }, 

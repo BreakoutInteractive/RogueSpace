@@ -267,7 +267,7 @@
             {
                 "name": "damage",
                 "type": "float",
-                "value": 1.5
+                "value": 0.9
             },
             {
                 "name": "hp",
