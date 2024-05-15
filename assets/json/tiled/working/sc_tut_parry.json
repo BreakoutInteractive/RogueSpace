@@ -1103,6 +1103,16 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"damage",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":4
+                        }, 
+                        {
                          "name":"path",
                          "type":"object",
                          "value":3013
@@ -1123,8 +1133,8 @@
                  "type":"Path",
                  "visible":true,
                  "width":0,
-                 "x":1792,
-                 "y":704
+                 "x":1728,
+                 "y":832
                 }],
          "opacity":1,
          "type":"objectgroup",

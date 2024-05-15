@@ -1283,7 +1283,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
@@ -1311,7 +1311,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
@@ -1339,7 +1339,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
@@ -1367,7 +1367,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
@@ -1395,7 +1395,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
@@ -1423,7 +1423,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
@@ -1451,7 +1451,7 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",

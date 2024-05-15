@@ -95,6 +95,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // necessary (starting at any actual level implies it is not an upgrade room)
     setUpgradeRoom(false);
+    _isTutorial = false;
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -141,6 +142,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         if (_isUpgradeRoom){
             // current room was upgrades, just go to the current level number
             _isUpgradeRoom = false;
+        } 
+        else if (_isTutorial){
+            _isTutorialComplete = true; // this flags allows switching to tutorial menu
+            return;
         }
         else {
             this->_levelNumber+=1;
@@ -188,6 +193,17 @@ void GameScene::dispose() {
     Scene2::dispose();
 }
 
+void GameScene::activateTutorial(int level){
+    _levelTransition.setActive(false);
+    setTutorialActive(true);
+    _exitCode = NONE;
+    _isUpgradeRoom = false;
+    SaveData::Data data;
+    data.level = level;
+    data.hp = GameConstants::PLAYER_MAX_HP;
+    setLevel(data);
+}
+
 void GameScene::restart(){
     _levelTransition.setActive(false);
     _isUpgradeRoom = true;  // first level is always upgrades
@@ -207,9 +223,13 @@ void GameScene::setLevel(SaveData::Data saveData){
     _upgrades.setActive(false);
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
+        _isTutorial = false;
+    } else if (_isTutorial){
+        levelToParse = getLevelKey(_levelNumber);
     }
     else{
         levelToParse = getLevelKey(_levelNumber);
+        _isTutorial = false;
     }
     
     CULog("currLevel %d", _levelNumber);
@@ -323,6 +343,9 @@ std::vector<int> GameScene::getPlayerLevels(){
 }
 
 std::string GameScene::getLevelKey(int level){
+    if (_isTutorial) {
+        return "tutorial"+std::to_string(level);
+    }
     return "level"+std::to_string(level);
 }
 

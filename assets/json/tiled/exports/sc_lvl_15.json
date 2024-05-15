@@ -933,12 +933,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.6
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":2
+                         "value":2.4
                         }, 
                         {
                          "name":"path",
@@ -961,12 +961,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.6
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":2
+                         "value":2.4
                         }, 
                         {
                          "name":"path",
@@ -989,12 +989,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.6
+                         "value":0.3
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":2
+                         "value":2.4
                         }, 
                         {
                          "name":"path",
