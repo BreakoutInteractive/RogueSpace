@@ -1,21 +1,14 @@
 {
 	"textures": {
 		"logo": {
-			"file":      "textures/loading/cugl-logo.png",
+			"file":      "textures/loading/planet_1.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
 		},
         "name": {
-            "file":      "textures/loading/cugl-name.png",
-            "wrapS":     "clamp",
-            "wrapT":     "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear"
-        },
-        "play": {
-            "file":      "textures/loading/cugl-play.png",
+            "file":      "textures/loading/transparent_logo_white.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
@@ -42,7 +35,7 @@
                 "type" : "Anchored"
             },
             "data" : {
-                "color": [239,61,49,255]
+                "color": [0,0,0,255]
             },
             "children"  : {
                 "logo"  : {
@@ -53,7 +46,7 @@
                     "data"   : {
                         "texture"  : "logo",
                         "anchor"   : [0.5,0.5],
-                        "scale"    : 0.75
+                        "scale"    : 0.15
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -70,37 +63,12 @@
                     "data"   : {
                         "texture"  : "name",
                         "anchor"   : [0.5,0.5],
-                        "scale"    : 0.75
+                        "scale"    : 0.15
                     },
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "y_offset" : -55,
-                        "absolute" : true
-                    }
-                },
-                "play"  : {
-                    "type"   : "Button",
-                    "data"   : {
-                        "upnode"   : "up",
-                        "pushable" : [144,280,240,184,280,144,320,184,416,280,320,376,280,416,184,376],
-                        "visible"  : false,
-                        "pushsize" : true,
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 0.8
-                    },
-                    "children" : {
-                        "up"       : {
-                            "type"   : "Image",
-                            "data"   : {
-                                "texture"  : "play"
-                            }
-                        }
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "y_offset" : -115,
+                        "y_offset" : -70,
                         "absolute" : true
                     }
                 },
