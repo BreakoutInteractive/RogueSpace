@@ -163,6 +163,8 @@ private:
     bool rangedMode;
     /** whether player is using slingshot shoot mechanism*/
     bool inverted;
+    /** the minimum pixel distance threshold for drags*/
+    float _dragRadius = 50.0f;
 
 protected:
     
@@ -282,6 +284,11 @@ public:
      * gets the shooting direction control scheme. An inverted system is equivalent to a slingshot system.
      */
     bool getInverted() const { return inverted; }
+    
+    /**
+     * a minimum drag distance is needed to distinguish between holding still and not
+     */
+    void setMinDragRadius(float r){ _dragRadius = r; }
     
 #pragma mark -
 #pragma mark Input Results

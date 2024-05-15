@@ -81,6 +81,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
     };
     _input.init(preprocessor);
+    _input.setMinDragRadius(_gameRenderer.getJoystickScreenRadius() / 4);
     activateInputs(false);
     _audioController = std::make_shared<AudioController>();
     _audioController->init(_assets);

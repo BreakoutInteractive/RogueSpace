@@ -39,12 +39,18 @@ protected:
     Choice _choice;
 
 #pragma mark - Menu Buttons
-    /** The button for restarting  game */
-    std::shared_ptr<scene2::Button> _back;
+    /** The button for going back to main */
+    std::shared_ptr<scene2::Button> _pauseBack;
     /** The button for going back to game */
     std::shared_ptr<scene2::Button> _resume;
     /** The button for in-game settings */
     std::shared_ptr<scene2::Button> _settings;
+    /** Exit confirmation menu**/
+    std::shared_ptr<scene2::Button> _confirmBack;
+    /** Exit to main menu**/
+    std::shared_ptr<scene2::Button> _confirmConfirm;
+    /** confirmation scene**/
+    Scene2 _confirmationScene;
     
 #pragma mark - Icon Labels
     
@@ -96,6 +102,7 @@ public:
      */
     bool init(const std::shared_ptr<AssetManager>& assets);
 
+#pragma mark - Scene Functionality
     /**
      * Sets whether the scene is currently active
      *
@@ -106,6 +113,18 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
+    
+    /**
+     * @returns whether confirm menu active or not.
+     */
+    bool isConfirmActive(){return _confirmationScene.isActive();}
+    
+    /**
+     * activates confrim menu buttons, deactivates pause menu buttons
+     *
+     * @param value whether the scene is currently active
+     */
+    void activateConfirmButtons(bool active);
     
     /**
      * Sets the icon level labels in this menu.
@@ -122,6 +141,8 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+    
+    void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
 };
 
