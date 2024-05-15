@@ -12,6 +12,7 @@
 #include "Counter.hpp"
 #include "MeleeEnemy.hpp"
 #include "GameObject.hpp"
+#include "../components/Hitbox.hpp"
 
 class Animation;
 
@@ -21,12 +22,34 @@ class Animation;
 class BossEnemy : public MeleeEnemy {
     
 protected:
-#pragma mark - Animation Assets
+
     /** The second animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation2;
     
+    /** The animation to use while charging the storm */
+    std::shared_ptr<Animation> _chargeAnimation;
+    
     /** Whether the boss is ready for its second melee attack */
     bool _secondAttack;
+    
+    std::shared_ptr<Hitbox> _stormHitbox;
+    
+public:
+    
+    Counter _stormTimer;
+    
+    enum class StormState: int {
+        INACTIVE = 1,
+        CHARGING = 2,
+        CHARGED = 3,
+        STARTING = 4,
+        ACTIVE = 5
+    };
+
+protected:
+    
+    /** internal boss storm state (for animation, logic, triggering events) */
+    StormState _stormState;
     
 public:
 #pragma mark -
@@ -83,12 +106,19 @@ public:
     /** Gets whether the boss is ready for its second melee attack */
     bool secondAttack() { return _secondAttack; }
     
+    std::shared_ptr<Hitbox> getStormHitbox() { return _stormHitbox; }
+    
+    /** Gets current boss storm state */
+    StormState getStormState() { return _stormState; }
+    
 #pragma mark -
 #pragma mark Physics
     
     void attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) override;
     
     void attack2(const std::shared_ptr<AssetManager> &assets);
+    
+    void summonStorm(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets);
     
 #pragma mark -
 #pragma mark Animation and State
@@ -108,6 +138,15 @@ public:
      * Sets the direction that the enemy is currently facing
      */
     void setFacingDir(cugl::Vec2 dir) override;
+    
+    /**
+     * Method to call when the boss is hit by an attack
+     * @param atkDir the normal vector of the direction of the attack that hit the boss
+     * @param ranged whether the attack that hit the boss was a ranged attack
+     * @param damage how much damage the boss takes
+     * @param knockback_scl the factor to multiply the direction by for applying knockback
+     */
+    void hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_scl) override;
     
     void updateAnimation(float dt) override;
 };

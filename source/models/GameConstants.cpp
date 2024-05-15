@@ -71,6 +71,15 @@ float GameConstants::EXPLODE_RADIUS = 2.5f;
 float GameConstants::EXPLODE_PROX_RANGE = 2.0f;
 
 #pragma mark -
+#pragma mark Boss Constants
+
+int GameConstants::STORM_CHARGE_TIME = 1.5f;
+
+int GameConstants::STORM_TIMER = 300;
+
+float GameConstants::STORM_RADIUS = 3.0f;
+
+#pragma mark -
 #pragma mark Player Upgradeable Stat Constants
 
 float GameConstants::PLAYER_MAX_HP = 2.8;

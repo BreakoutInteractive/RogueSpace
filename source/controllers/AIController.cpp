@@ -267,6 +267,15 @@ void AIController::update(float dt) {
         if (enemy->isDying() || !enemy->isEnabled()) {
             continue;
         }
+        if (enemy->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
+            if (boss->getStormState() == BossEnemy::StormState::CHARGING ||
+                boss->getStormState() == BossEnemy::StormState::CHARGED ||
+                boss->getStormState() == BossEnemy::StormState::STARTING) {
+                enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+                continue;
+            }
+        }
         if (enemy->getHealth() > 0) changeState(enemy, _player);
         // pass while taking damage to allow for knockback
         if (!enemy->_hitCounter.isZero()) {

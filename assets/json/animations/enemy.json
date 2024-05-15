@@ -60,18 +60,6 @@
         "enemy-death-effect": {
             "file":     "textures/sprites/effect_death_enemy.png"
         },
-        "boss-idle": {
-            "file":     "textures/sprites/boss/boss_idle.png"
-        },
-        "boss-walk": {
-            "file":     "textures/sprites/boss/boss_walk.png"
-        },
-        "boss-attack-1": {
-            "file":     "textures/sprites/boss/boss_attack1.png"
-        },
-        "boss-attack-2": {
-            "file":     "textures/sprites/boss/boss_attack2.png"
-        },
         "slime-walk": {
             "file":     "textures/sprites/slime/slime_walk.png"
         },
@@ -89,6 +77,21 @@
         },
         "explosion-effect": {
             "file":     "textures/sprites/effect_explosion.png"
+        },
+        "boss-idle": {
+            "file":     "textures/sprites/boss/boss_idle.png"
+        },
+        "boss-walk": {
+            "file":     "textures/sprites/boss/boss_walk.png"
+        },
+        "boss-attack-1": {
+            "file":     "textures/sprites/boss/boss_attack1.png"
+        },
+        "boss-attack-2": {
+            "file":     "textures/sprites/boss/boss_attack2.png"
+        },
+        "boss-charge-storm": {
+            "file":     "textures/sprites/boss/boss_storm.png"
         }
     }
 }

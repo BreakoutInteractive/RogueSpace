@@ -656,6 +656,12 @@ void GameScene::preUpdate(float dt) {
                     }
                 }
             }
+            if (enemy->getType() == "boss enemy") {
+                std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
+                if (boss->getStormState() == BossEnemy::StormState::CHARGED) {
+                    boss->summonStorm(_level, _assets);
+                }
+            }
         }
     }
 
@@ -663,6 +669,10 @@ void GameScene::preUpdate(float dt) {
     
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         (*it)->updateCounters();
+        if ((*it)->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(*it);
+            boss->_stormTimer.decrement();
+        }
     }
     std::vector<std::shared_ptr<Projectile>> projs = _level->getProjectiles();
     for (auto it = projs.begin(); it != projs.end(); ++it) {

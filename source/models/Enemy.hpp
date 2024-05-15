@@ -202,6 +202,11 @@ public:
     void setHealth(float value) { _health = value; }
     
     /**
+     * Gets the maximum health of this enemy.
+     */
+    float getMaxHealth() const { return _maxHealth; }
+    
+    /**
      * Sets the maximum health of this enemy.
      */
     void setMaxHealth(float value){ _maxHealth = value; }

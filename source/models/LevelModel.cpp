@@ -106,6 +106,12 @@ void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
             m->getAttack()->getDebugNode()->setVisible(m->getAttack()->isEnabled());
         }
     }
+    for (int ii = 0; ii < _enemies.size(); ii++){
+        if (_enemies[ii]->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(_enemies[ii]);
+            boss->getStormHitbox()->getDebugNode()->setVisible(boss->getStormHitbox()->isEnabled());
+        }
+    }
     for (int ii = 0; ii < _projectiles.size(); ii++) {
         _projectiles[ii]->draw(batch);
         _projectiles[ii]->getCollider()->getDebugNode()->setVisible(_projectiles[ii]->isEnabled());
@@ -147,6 +153,11 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
             m->getAttack()->setDebugScene(_debugNode);
             m->getAttack()->setDebugColor(Color4::RED);
+        }
+        if (_enemies[ii]->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(_enemies[ii]);
+            boss->getStormHitbox()->setDebugScene(_debugNode);
+            boss->getStormHitbox()->setDebugColor(Color4::RED);
         }
         _enemies[ii]->getColliderShadow()->setDebugColor(Color4::BLUE);
         _enemies[ii]->setDebugNode(_debugNode);
@@ -257,6 +268,11 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(_enemies[ii]);
             addObstacle(m->getAttack());
             m->getAttack()->setEnabled(false);
+        }
+        if (_enemies[ii]->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(_enemies[ii]);
+            addObstacle(boss->getStormHitbox());
+            boss->getStormHitbox()->setEnabled(false);
         }
         
         _dynamicObjects.push_back(_enemies[ii]); // add the enemies to sorting layer

@@ -8,6 +8,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/BossEnemy.hpp"
 #include "../models/ExplodingAlien.hpp"
 #include "../models/Player.hpp"
 #include "../models/Wall.hpp"
@@ -152,6 +153,36 @@ void CollisionController::beginContact(b2Contact* contact){
                         player->hit(dir, (*it)->getDamage());
                         CULog("Player took damage!");
                     }
+                }
+            }
+        }
+    }
+    // boss storm attack
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        std::shared_ptr<BossEnemy> boss;
+        std::shared_ptr<Hitbox> storm;
+        if ((*it)->getType() == "boss enemy") {
+            boss = std::dynamic_pointer_cast<BossEnemy>(*it);
+            storm = boss->getStormHitbox();
+            if (storm->isEnabled()) {
+                intptr_t aptr = reinterpret_cast<intptr_t>(storm.get());
+                if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
+                    || (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == aptr)) {
+                    Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
+                    dir.normalize();
+                    float ang = acos(dir.dot(Vec2::UNIT_X));
+                    if (player->getPosition().y * player->getDrawScale().y < (*it)->getPosition().y * (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
+                    if (body1->GetUserData().pointer == aptr) {
+                        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data1->getName());
+                    }
+                    else {
+                            //body1 userdata pointer = pptr
+                        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data2->getName());
+                    }
+                    player->hit(dir, (*it)->getDamage());
+                    CULog("Player took damage!");
                 }
             }
         }
