@@ -110,7 +110,7 @@
             {
                 "name": "hp",
                 "type": "float",
-                "value": 5.4
+                "value": 5
             },
             {
                 "name": "path",
@@ -214,12 +214,12 @@
             {
                 "name": "damage",
                 "type": "float",
-                "value": 2
+                "value": 1.6
             },
             {
                 "name": "hp",
                 "type": "float",
-                "value": 4
+                "value": 3.2
             },
             {
                 "name": "path",

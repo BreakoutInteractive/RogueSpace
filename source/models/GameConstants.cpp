@@ -60,7 +60,7 @@ float GameConstants::PROJ_DIST_E_SQ = 81.0f;
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
-float GameConstants::STUN_DMG_BONUS = 1.6f; // previously 1.5
+float GameConstants::STUN_DMG_BONUS = 2.2f; // previously 1.6
 
 #pragma mark -
 #pragma mark Slime Constants
@@ -116,11 +116,11 @@ float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
 
 float GameConstants::PROJ_DIST_P_SQ = 100.0f;
 
-float GameConstants::PROJ_DIST_P = 7.0f;
+float GameConstants::PROJ_DIST_P = 6.8f;
 
 float GameConstants::CHARGE_TIME = 0.3f;
 
-float GameConstants::COMBO_TIME = 1.0f;
+float GameConstants::COMBO_TIME = 0.7f;
 
 float GameConstants::HEALTHPACK_DROP_RATE = 34.0f;
 
