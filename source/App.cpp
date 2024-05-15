@@ -206,6 +206,7 @@ void App::setTitleScene(){
 
 void App::updateTitleScene(float dt){
     auto save = SaveData::getGameSave();
+    _title.activateConfirmButtons(_title.isConfirmActive());
     switch (_title.getChoice()){
         case TitleScene::NONE:
             break;
