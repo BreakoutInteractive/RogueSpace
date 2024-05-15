@@ -32,6 +32,7 @@ public:
         int weapon = 0;
         int hpLvl = 0;
         int atkLvl = 0;
+        int atkSpLvl = 0;
         int rangedLvl = 0;
         int defLvl = 0;
         int parryLvl = 0;

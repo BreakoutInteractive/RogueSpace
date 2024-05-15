@@ -8,6 +8,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/ExplodingAlien.hpp"
 #include "../models/Player.hpp"
 #include "../models/Wall.hpp"
 #include "../models/Relic.hpp"
@@ -112,22 +113,30 @@ void CollisionController::beginContact(b2Contact* contact){
     }
     // enemy melee attack
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        std::shared_ptr<MeleeEnemy> melee;
+        std::shared_ptr<ExplodingAlien> explode;
+        std::shared_ptr<Hitbox> attack;
         if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
             || (*it)->getType() == "boss enemy") {
-            std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
-            intptr_t aptr = reinterpret_cast<intptr_t>(m->getAttack().get());
+            melee = std::dynamic_pointer_cast<MeleeEnemy>(*it);
+            attack = melee->getAttack();
+        }
+        else if ((*it)->getType() == "exploding alien"){
+            explode = std::dynamic_pointer_cast<ExplodingAlien>(*it);
+            attack = explode->getAttack();
+        }
+        if (attack != nullptr){
+            intptr_t aptr = reinterpret_cast<intptr_t>(attack.get());
             if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
                 || (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == aptr)) {
                 Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
                 dir.normalize();
                 float ang = acos(dir.dot(Vec2::UNIT_X));
-                if (player->getPosition().y * player->getDrawScale().y <
-                    (*it)->getPosition().y *
-                    (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
-                if (m->getAttack()->hits(pptr, ang)){
-                    if (player->isParrying()) {
+                if (player->getPosition().y * player->getDrawScale().y < (*it)->getPosition().y * (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
+                if (attack->hits(pptr, ang)){
+                    if (player->isParrying() && melee != nullptr) {
                         //successful parry
-                        m->setStunned(player->getStunWindow());
+                        melee->setStunned(player->getStunWindow());
                         player->playParryEffect();
                     }
                     else {
@@ -140,7 +149,7 @@ void CollisionController::beginContact(b2Contact* contact){
                             physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
                             _audioController->playEnemyFX("attackHit", data2->getName());
                         }
-                        player->hit(dir, m->getDamage());
+                        player->hit(dir, (*it)->getDamage());
                         CULog("Player took damage!");
                     }
                 }
@@ -226,6 +235,8 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == pptr)) {
             //phase through enemies while dodging
             if (_level->getPlayer()->isDodging()) contact->SetEnabled(false);
+            //player phase through slime when slime is in self-destruct mode
+            if ((*it)->getType() == "exploding alien" && (*it)->getHealth() == 0) contact->SetEnabled(false);
         }
         for (auto iter = enemies.begin(); iter != enemies.end(); ++iter) {
             intptr_t eptr2 = reinterpret_cast<intptr_t>((*iter).get());

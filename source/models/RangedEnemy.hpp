@@ -103,6 +103,10 @@ public:
      * Sets whether this enemy is aiming its ranged attack
      */
     void setAiming(bool value) { _isAiming = value; }
+    
+    bool canBeginNewAttack() override {
+        return !isAttacking() && _atkCD.isZero();
+    }
 };
 
 #endif /* RangedEnemy_hpp */

@@ -140,7 +140,7 @@ void GameRenderer::setJoystickPosition(std::shared_ptr<scene2::SceneNode> ring, 
     }
 }
 
-void GameRenderer::setActivated(bool value) {
+void GameRenderer::setActive(bool value) {
     if (value) {
         _pauseButton->setDown(false);
         _pauseButton->setVisible(true);
@@ -153,6 +153,7 @@ void GameRenderer::setActivated(bool value) {
         _pauseButton->deactivate();
         _swapButton->setVisible(false);
         _swapButton->deactivate();
+        hideJoysticks();
     }
 }
 

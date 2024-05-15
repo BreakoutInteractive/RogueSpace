@@ -21,6 +21,7 @@
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
 #include "../models/BossEnemy.hpp"
+#include "../models/ExplodingAlien.hpp"
 #include "../models/Wall.hpp"
 #include "../models/HealthPack.hpp"
 #include <box2d/b2_world.h>
@@ -152,6 +153,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
         data.level = _levelNumber;
         data.hp = p->getHP();
         data.atkLvl = p->getMeleeUpgrade().getCurrentLevel();
+        data.atkSpLvl = p->getMeleeSpeedUpgrade().getCurrentLevel();
         data.dashLvl = p->getDodgeUpgrade().getCurrentLevel();
         data.defLvl = p->getDamageReductionUpgrade().getCurrentLevel();
         data.hpLvl = p->getHPUpgrade().getCurrentLevel();
@@ -228,6 +230,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     auto p = _level->getPlayer();
     p->setMaxHPLevel(saveData.hpLvl);
     p->setMeleeLevel(saveData.atkLvl);
+    p->setMeleeSpeedLevel(saveData.atkSpLvl);
     p->setBowLevel(saveData.rangedLvl);
     p->setBlockLevel(saveData.defLvl);
     p->setArmorLevel(saveData.defLvl);
@@ -261,14 +264,16 @@ void GameScene::setLevel(SaveData::Data saveData){
     });
     
     // hide effect nodes
+    _actionManager.remove(AREA_CLEAR_KEY);
+    _actionManager.remove(DEAD_EFFECT_KEY);
     _areaClearNode->setVisible(false);
     _deadEffectNode->setVisible(false);
 }
 
 void GameScene::configureUpgradeMenu(std::shared_ptr<Player> player){
     // first find the stats that can be upgraded
-    std::array<Upgradeable, 6> all = {
-        player->getMeleeUpgrade(), player->getBowUpgrade(), player->getHPUpgrade(), player->getStunUpgrade(), player->getDodgeUpgrade(), player->getDamageReductionUpgrade()};
+    std::array<Upgradeable, 7> all = {
+        player->getMeleeUpgrade(), player->getMeleeSpeedUpgrade(), player->getBowUpgrade(), player->getHPUpgrade(), player->getStunUpgrade(), player->getDodgeUpgrade(), player->getDamageReductionUpgrade()};
     std::vector<Upgradeable> options;
     for (Upgradeable& upgrade : all){
         if (!upgrade.isMaxLevel()){
@@ -307,7 +312,7 @@ std::vector<int> GameScene::getPlayerLevels(){
         auto p = _level->getPlayer();
         levels[0] = p->getMeleeUpgrade().getCurrentLevel();
         levels[1] = p->getBowUpgrade().getCurrentLevel();
-        levels[2] = 0; // attack speed
+        levels[2] = p->getMeleeSpeedUpgrade().getCurrentLevel(); // attack speed
         levels[3] = p->getDamageReductionUpgrade().getCurrentLevel();
         levels[4] = p->getDodgeUpgrade().getCurrentLevel();
         levels[5] = p->getStunUpgrade().getCurrentLevel();
@@ -574,7 +579,7 @@ void GameScene::preUpdate(float dt) {
         _level->getPlayer()->getCollider()->setLinearVelocity(Vec2::ZERO);
     }
 
-#pragma mark - Enemy movement
+#pragma mark - Enemy AI
     auto player = _level->getPlayer();
     _AIController.update(dt);
     // enemy attacks
@@ -610,7 +615,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
         if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
-            // enemy can only begin an attack if not stunned and within range of player and can see them, or if already attacking (the boss)
+            // boss performs its second attack if already attacking
             if (enemy->getType() == "boss enemy") {
                 std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
                 if (boss->secondAttack()) {
@@ -619,15 +624,20 @@ void GameScene::preUpdate(float dt) {
                     continue;
                 }
             }
-            bool canBeginNewAttack = false;
-            if (enemy->getType() == "melee lizard" ||
-                enemy->getType() == "tank enemy" ||
-                enemy->getType() == "boss enemy") {
-                std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
-                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero() && !m->isStunned();
-            }
-            else {
-                canBeginNewAttack = !enemy->isAttacking() && enemy->_atkCD.isZero();
+            // enemy can only begin an attack if not stunned and within range of player and can see them
+            bool canBeginNewAttack = enemy->canBeginNewAttack();
+            if (enemy->getType() == "exploding alien"){
+                auto explode = std::dynamic_pointer_cast<ExplodingAlien>(enemy);
+                if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
+                    if (explode->canExplode()) {
+                        explode->setAttacking();
+                    } else {
+                        explode->updateWindup(true);
+                    }
+                } else {
+                    explode->updateWindup(false);
+                }
+                continue;
             }
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard" ||
@@ -691,7 +701,7 @@ void GameScene::preUpdate(float dt) {
                     player->setStunLevel(_upgrades.getUpgradeLevel());
                     break;
                 case ATK_SPEED:
-                    CULog("atk spd");
+                    player->setMeleeSpeedLevel(_upgrades.getUpgradeLevel());
                     break;
                 case DASH:
                     player->setDodgeLevel(_upgrades.getUpgradeLevel());
@@ -785,7 +795,7 @@ void GameScene::setActive(bool value){
     if (isActive() != value){
         Scene2::setActive(value);
         _exitCode = NONE;
-        _gameRenderer.setActivated(value);
+        _gameRenderer.setActive(value);
         activateInputs(value);
         _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
         _upgrades.setActive(false); // upgrades is only on by interaction
