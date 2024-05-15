@@ -1,6 +1,8 @@
 {
     "jsons": {
         "constants": "json/constants.json",
+        "tutorial1": "json/tiled/exports/sc_tut_ranged.json",
+        "tutorial2": "json/tiled/exports/sc_tut_parry.json",
         "upgrades": "json/tiled/exports/sc_test_arena_upgrade.json",
         "level1": "json/tiled/exports/sc_tut_nextlevel.json",
         "level2": "json/tiled/exports/sc_tut_parry.json",
