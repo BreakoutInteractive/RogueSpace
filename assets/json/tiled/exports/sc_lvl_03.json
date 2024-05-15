@@ -7783,7 +7783,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1461,
                                          "name":"",
@@ -7791,12 +7791,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7804,7 +7804,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1408,
@@ -7822,7 +7822,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1462,
                                          "name":"",
@@ -7830,12 +7830,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7843,7 +7843,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1856,
@@ -7861,7 +7861,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1463,
                                          "name":"",
@@ -7869,12 +7869,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7882,7 +7882,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1856,
@@ -7934,7 +7934,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1474,
                                          "name":"",
@@ -7942,12 +7942,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7955,7 +7955,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1408,
@@ -7973,7 +7973,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1475,
                                          "name":"",
@@ -7981,12 +7981,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -7994,7 +7994,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":2304,
@@ -8012,7 +8012,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1476,
                                          "name":"",
@@ -8020,12 +8020,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8033,7 +8033,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1856,
@@ -8109,7 +8109,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1482,
                                          "name":"",
@@ -8117,12 +8117,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8130,7 +8130,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1856,
@@ -8148,7 +8148,7 @@
                                  "name":"left",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1478,
                                          "name":"",
@@ -8156,12 +8156,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8169,7 +8169,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1408,
@@ -8187,7 +8187,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1479,
                                          "name":"",
@@ -8195,12 +8195,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8208,7 +8208,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":2304,
@@ -8284,7 +8284,7 @@
                                  "name":"bottom",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1483,
                                          "name":"",
@@ -8292,12 +8292,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8305,7 +8305,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1856,
@@ -8323,7 +8323,7 @@
                                  "name":"top",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1488,
                                          "name":"",
@@ -8331,12 +8331,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8344,7 +8344,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":1856,
@@ -8362,7 +8362,7 @@
                                  "name":"right",
                                  "objects":[
                                         {
-                                         "gid":253,
+                                         "gid":255,
                                          "height":128,
                                          "id":1485,
                                          "name":"",
@@ -8370,12 +8370,12 @@
                                                 {
                                                  "name":"damage",
                                                  "type":"float",
-                                                 "value":0.6
+                                                 "value":1.6
                                                 }, 
                                                 {
                                                  "name":"hp",
                                                  "type":"float",
-                                                 "value":2
+                                                 "value":3.2
                                                 }, 
                                                 {
                                                  "name":"path",
@@ -8383,7 +8383,7 @@
                                                  "value":0
                                                 }],
                                          "rotation":0,
-                                         "type":"TankEnemy",
+                                         "type":"Slime",
                                          "visible":true,
                                          "width":128,
                                          "x":2304,

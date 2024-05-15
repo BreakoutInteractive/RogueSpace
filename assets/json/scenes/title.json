@@ -14,6 +14,9 @@
         },
         "title_tutorial_down": {
             "file":     "textures/title/title_tutorial_down.png"
+        },
+        "setting": {
+            "file": "textures/pause/setting.png"
         }
     },
     "scene2s": {

@@ -128,6 +128,12 @@ public:
         return _pauseButton->inContentBounds(pos) || _swapButton->inContentBounds(pos);
     }
     
+    /**
+     * joysticks are rendered to the window/screen space from the world space. The size of the joystick in pixel screen size is useful to determine a deadzone on the joystick.
+     * @return joystick screen pixel radius
+     */
+    float getJoystickScreenRadius();
+    
 #pragma mark -
 #pragma mark View (Methods)
     
@@ -144,11 +150,10 @@ public:
     void updateAimJoystick(bool touched, Vec2 anchorScreenPos, Vec2 screenPos);
         
     /**
-     * sets whether or not this HUD scene is activated.
-     *
-     * All nodes all hidden when this scene is not activated
+     * sets whether or not this HUD scene is active.
+     * The HUD contains joysticks and buttons and status bar (that is always active).
      */
-    void setActivated(bool value);
+    void setActive(bool value) override;
     
     /**
      * activates/deactivates the swap button.

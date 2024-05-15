@@ -281,6 +281,12 @@ public:
      */
     virtual std::string getType() { return ""; };
     
+    /**
+     * @note derived classes must implement
+     * @return whether this enemy can start an attack
+     */
+    virtual bool canBeginNewAttack(){ return true; }
+    
     
 #pragma mark -
 #pragma mark Physics
@@ -316,7 +322,7 @@ public:
     void setChasing();
 
     /** Set dying state */
-    void setDying();
+    virtual void setDying();
     
     /**
      * whether enemy is attacking

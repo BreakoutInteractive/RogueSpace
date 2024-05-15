@@ -104,6 +104,10 @@ public:
     
 #pragma mark -
 #pragma mark Animation and State
+    
+    bool canBeginNewAttack() override {
+        return !isAttacking() && _atkCD.isZero() && !isStunned();
+    }
 
     /** Sets this enemy's attack hitbox animation */
     void setHitboxAnimation(std::shared_ptr<Animation> animation) { _hitboxAnimation = animation; }

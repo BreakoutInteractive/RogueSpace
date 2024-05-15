@@ -32,12 +32,13 @@ void App::onStartup() {
     
     // Queue the other assets
     AudioEngine::start(24);
+    // must ensure assets are loaded in order of being used in scene graphs!
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/gameplay.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
-    _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/settings.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/death.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
@@ -178,8 +179,9 @@ void App::updatePauseScene(float dt) {
             break;
         case PauseScene::Choice::RESUME:
             _pause.setActive(false);
-            _gameplay.getRenderer().setActivated(true);
-            _gameplay.activateInputs(true);
+           _gameplay.getRenderer().setActive(true);
+           _gameplay.activateInputs(true);
+            // _gameplay.setActive(true); // using this turns off the upgrades menu too, so no.
             _scene = State::GAME;
             break;
         case PauseScene::Choice::SETTINGS:

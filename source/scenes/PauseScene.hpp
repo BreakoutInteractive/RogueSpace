@@ -50,7 +50,7 @@ protected:
     /** Exit to main menu**/
     std::shared_ptr<scene2::Button> _confirmConfirm;
     /** confirmation scene**/
-    std::shared_ptr<scene2::SceneNode> _confirmationScene;
+    Scene2 _confirmationScene;
     
 #pragma mark - Icon Labels
     
@@ -102,6 +102,7 @@ public:
      */
     bool init(const std::shared_ptr<AssetManager>& assets);
 
+#pragma mark - Scene Functionality
     /**
      * Sets whether the scene is currently active
      *
@@ -114,9 +115,9 @@ public:
     virtual void setActive(bool value) override;
     
     /**
-     * Returns whether confirm menu active or not.
+     * @returns whether confirm menu active or not.
      */
-    bool isConfirmActive(){return _confirmationScene->isVisible();}
+    bool isConfirmActive(){return _confirmationScene.isActive();}
     
     /**
      * activates confrim menu buttons, deactivates pause menu buttons
@@ -140,6 +141,8 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+    
+    void render(const std::shared_ptr<SpriteBatch>& batch) override;
 
 };
 
