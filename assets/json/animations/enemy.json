@@ -71,6 +71,7 @@
         },
         "boss-attack-2": {
             "file":     "textures/sprites/boss/boss_attack2.png"
+        },
         "slime-walk": {
             "file":     "textures/sprites/slime/slime_walk.png"
         },
