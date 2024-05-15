@@ -38,14 +38,19 @@ bool SaveData::hasGameSave(){
     dataCache.hp = hp;
     dataCache.level = json->getInt("level", 1);
     dataCache.weapon = json->getInt("weapon");
-    dataCache.hpLvl = json->getInt("hpLvl");
-    dataCache.atkLvl = json->getInt("atkLvl");
-    dataCache.atkSpLvl = json->getInt("atkSpLvl");
-    dataCache.rangedLvl = json->getInt("rangedLvl");
-    dataCache.defLvl = json->getInt("defLvl");
-    dataCache.parryLvl = json->getInt("parryLvl");
-    dataCache.dashLvl = json->getInt("dashLvl");
-    //TODO: maybe do post-processing to constraint within [0,5] for each level
+    dataCache.hpLvl = constraint(json->getInt("hpLvl"), 0, 5);
+    dataCache.atkLvl = constraint(json->getInt("atkLvl"), 0, 5);
+    dataCache.atkSpLvl = constraint(json->getInt("atkSpLvl"), 0, 5);
+    dataCache.rangedLvl = constraint(json->getInt("rangedLvl"), 0, 5);
+    dataCache.defLvl = constraint(json->getInt("defLvl"), 0, 5);
+    dataCache.parryLvl = constraint(json->getInt("parryLvl"), 0, 5);
+    dataCache.dashLvl = constraint(json->getInt("dashLvl"), 0, 5);
+    dataCache.isUpgradeRoom = json->getBool("up", false);
+    dataCache.upgradeAvailable = json->getBool("available", false);
+    dataCache.upgradeOpt1 = json->getInt("opt1", 0);
+    dataCache.upgradeOpt2 = json->getInt("opt2", 0);
+    dataCache.upgradeOpt1Level = constraint(json->getInt("opt1level"), 0, 5);
+    dataCache.upgradeOpt2Level = constraint(json->getInt("opt2level"), 0, 5);
     reader->close();
     return true;
 }
@@ -67,6 +72,14 @@ void SaveData::makeSave(Data data){
     json->appendChild("defLvl", JsonValue::alloc((long)data.defLvl));
     json->appendChild("parryLvl", JsonValue::alloc((long)data.parryLvl));
     json->appendChild("dashLvl", JsonValue::alloc((long)data.dashLvl));
+    // upgrade room info
+    json->appendChild("up", JsonValue::alloc((data.isUpgradeRoom)));
+    json->appendChild("available", JsonValue::alloc(data.upgradeAvailable));
+    json->appendChild("opt1", JsonValue::alloc((long)data.upgradeOpt1));
+    json->appendChild("opt1level", JsonValue::alloc((long)data.upgradeOpt1Level));
+    json->appendChild("opt2", JsonValue::alloc((long)data.upgradeOpt2));
+    json->appendChild("opt2level", JsonValue::alloc((long)data.upgradeOpt2Level));
+    
     auto path = Application::get()->getSaveDirectory() + SAVEFILE;
     CULog("savefile %s", std::string(path).c_str());
     auto writer = JsonWriter::alloc(path);
