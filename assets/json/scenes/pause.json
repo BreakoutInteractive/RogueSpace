@@ -15,9 +15,6 @@
       "title_button": {
          "file": "textures/pause/confirm.png"
       },
-      "setting": {
-         "file": "textures/pause/setting.png"
-      },
       "upgrade_atk": {
           "file": "textures/upgrades-screen/upgrade_atk.png"
       },
