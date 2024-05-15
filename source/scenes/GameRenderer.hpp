@@ -128,6 +128,12 @@ public:
         return _pauseButton->inContentBounds(pos) || _swapButton->inContentBounds(pos);
     }
     
+    /**
+     * joysticks are rendered to the window/screen space from the world space. The size of the joystick in pixel screen size is useful to determine a deadzone on the joystick.
+     * @return joystick screen pixel radius
+     */
+    float getJoystickScreenRadius();
+    
 #pragma mark -
 #pragma mark View (Methods)
     

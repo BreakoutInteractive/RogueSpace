@@ -15,8 +15,6 @@ using namespace cugl;
 const int DODGE_SWIPE_LENGTH = 100;
 /** the maximum amount of milliseconds for a motion swipe to be considered a dodge*/
 const int DODGE_SWIPE_TIME = 250;
-/** How far we must swipe in any direction for a movement gesture i*/
-const int MOVE_SWIPE_LENGTH = 100;
 /** the minimum amount of milliseconds for a press to be considered a hold*/
 const u_long HOLD_TIME = 300;
 /** the maximum change in position for a hold to not be considered a drag/swipe*/
@@ -425,7 +423,7 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         Vec2 swipeDir = touchPos - _combatGesture.initialPos;
         if (rangedMode && _combatGestureHeld){
             float changeInPosition = swipeDir.length();
-            if (changeInPosition > HOLD_POS_DELTA){
+            if (changeInPosition >= _dragRadius){
                 if (inverted){
                     _keyAttackDir.set(-swipeDir.x, swipeDir.y);
                 }
@@ -442,7 +440,7 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, const Vec2 pr
         Vec2 swipeDir = touchPos - _motionGesture.initialPos;
         float swipeLength = swipeDir.length();
         // check if finger dragged enough to initiate movement
-        if (swipeLength >= MOVE_SWIPE_LENGTH){
+        if (swipeLength >= _dragRadius){
             // update movement based on the direction vector
             //negate y because screen origin is different from game origin.
             _keyMoveDir.set(swipeDir.x, -swipeDir.y);
