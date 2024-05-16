@@ -43,11 +43,14 @@ void AudioController::playCollisionFX(const std::string key1, const std::string 
      */
 void AudioController::playPlayerFX(const std::string action){
     if (!AudioEngine::get()->isActive(action+"player")) {
-        std::shared_ptr<Sound> source;
+        std::shared_ptr<Sound> source; // TODO: might be bad to create a <Sound> instead of <AudioSample>
         bool loop = false;
-        if (action == "attackHit") {
-            source = _assets->get<Sound>("playerAttack");
+        if (action == "attackMiss") {
+            source = _assets->get<Sound>("airSlash");
         } 
+        else if (action == "attackHit") {
+            source = _assets->get<Sound>("playerAttack");
+        }
         else if (action == "drawBow") {
             source = _assets->get<Sound>("bowDraw");
         }
@@ -110,8 +113,17 @@ void AudioController::playUiFX(const std::string action){
      *
      * @param  key1  the reference key for the event
      */
-void AudioController::playMusic(const std::string key){
-        
+void AudioController::playMusic(const std::string key) {
+    if (!AudioEngine::get()->isActive("music")) {
+        if (key == "title") {
+            auto source = _assets->get<Sound>("title");
+            AudioEngine::get()->play("music", source, true, source->getVolume());
+        }
+    } else {
+        if (key == "clear") {
+            AudioEngine::get()->clear("music");
+        }
+    }
 }
     
     /**

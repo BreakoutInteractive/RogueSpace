@@ -156,8 +156,12 @@
             "type":     "sample",
             "file":     "sounds/impact/impact_08.wav",
             "volume":   0.5
+        },
+        "title": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_title.ogg",
+            "volume":   0.5
         }
-        
     },
 	"fonts": {
 		"retro": {
