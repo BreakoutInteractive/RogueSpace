@@ -2,8 +2,6 @@
 //  AudioController.cpp
 //  RS
 //
-//  Created by Brie Smith on 3/11/24.
-//
 
 #include "AudioController.hpp"
 #include <stdio.h>
@@ -63,6 +61,20 @@ void AudioController::playEnemyFX(const std::string action, const std::string ke
         if(action == "attackHit"){
             auto source = _assets->get<Sound>("enemyMelee");
             AudioEngine::get()->play(action+key, source, false, source->getVolume());
+        }
+    }
+}
+
+/**
+ * Plays sound associated with player action.
+ *
+ * @param  action  the action key for the player
+ */
+void AudioController::playUiFX(const std::string action){
+    if (!AudioEngine::get()->isActive(action+"ui")) {
+        if (action == "menuClick") {
+            auto source = _assets->get<Sound>("menuClick");
+            AudioEngine::get()->play(action+"ui", source, false, source->getVolume());
         }
     }
 }

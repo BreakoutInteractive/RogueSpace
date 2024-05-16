@@ -2,8 +2,6 @@
 //  AudioController.hpp
 //  RS
 //
-//  Created by Brie Smith on 3/11/24.
-//
 
 #ifndef AudioController_hpp
 #define AudioController_hpp
@@ -68,6 +66,14 @@ public:
     void playEnemyFX(const std::string action, const std::string key);
     
     /**
+     * Plays sound associated with UI actions.
+     *
+     * @param  action  the action key for the enemy
+     * @param  key  the reference key for the enemy type
+     */
+    void playUiFX(const std::string action);
+    
+    /**
      * Plays music associated with scene.
      *
      * @param  key1  the reference key for the event
@@ -75,7 +81,7 @@ public:
     void playMusic(const std::string key);
     
     /**
-     * Paise all sound associated with game.
+     * Pause all sound associated with game.
      *
      * @param  key1  the reference key for the event
      */

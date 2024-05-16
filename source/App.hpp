@@ -16,6 +16,7 @@
 #include "scenes/SettingsScene.hpp"
 #include "scenes/DeathScene.hpp"
 #include "scenes/TutorialScene.hpp"
+#include "controllers/AudioController.hpp"
 
 /**
  * This class represents the application root for the ship demo.
@@ -67,6 +68,8 @@ protected:
     /** The previously active scene - this is only used to know where
     to go if the user exits the settings scene */
     State _prevScene;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
 
     
 public:

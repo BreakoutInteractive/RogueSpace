@@ -12,7 +12,7 @@ using namespace std;
 #pragma mark -
 #pragma mark Constructors
 
-bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio) {
     // Start up the input handler
     _assets = assets;
     if (assets == nullptr) {
@@ -57,16 +57,19 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         if (down) {
             _confirmationScene.setActive(true);
             _pauseBack->setDown(false);
+            _audioController->playUiFX("menuClick");
         }
     });
     _resume->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::RESUME;
+            _audioController->playUiFX("menuClick");
         }
     });
     _settings->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::SETTINGS;
+            _audioController->playUiFX("menuClick");
         }
     });
 
@@ -74,11 +77,13 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         if (down) {
             _confirmationScene.setActive(false);
             _confirmBack->setDown(false);
+            _audioController->playUiFX("menuClick");
         }
     });
     _confirmConfirm->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::BACK;
+            _audioController->playUiFX("menuClick");
         }
     });
     
@@ -94,6 +99,7 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     addChild(scene);
     _confirmationScene.setActive(false);
     setActive(false);
+    _audioController = audio;
     return true;
 }
 

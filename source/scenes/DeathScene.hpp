@@ -9,6 +9,8 @@
 #define DeathScene_hpp
 
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
+
 using namespace cugl;
 
 /**
@@ -35,6 +37,8 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The player choice */
     Choice _choice;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
     
 #pragma mark Scene Animation
     /** animation manager */
@@ -74,7 +78,7 @@ public:
      * @param assets    The (loaded) assets for this game mode
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio);
     
 #pragma mark - Scene Functionality
     

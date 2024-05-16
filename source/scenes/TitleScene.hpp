@@ -9,6 +9,8 @@
 #define TitleScene_hpp
 
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
+
 using namespace cugl;
 
 class TitleScene : public Scene2 {
@@ -44,6 +46,8 @@ protected:
     Choice _choice;
     /** the variant of the title screen to render */
     SceneType _type;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
 
 #pragma mark - Scene with No Saves
     /** the parent node of the title scene without continue button */
@@ -95,7 +99,7 @@ public:
      *
      * @return true if the scene is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio);
     
 #pragma mark Scene Functionality
     

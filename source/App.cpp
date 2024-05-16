@@ -46,7 +46,9 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
 
-
+    _audioController = std::make_shared<AudioController>();
+    _audioController->init(_assets);
+    
     Application::onStartup(); // this is required
 }
 
@@ -90,12 +92,12 @@ void App::update(float dt){
         _loading.update(0.01f);
     } else {
         _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets); // this makes GameScene active
-        _pause.init(_assets);
-        _settings.init(_assets);
-        _title.init(_assets);
+        _gameplay.init(_assets, _audioController); // this makes GameScene active
+        _pause.init(_assets, _audioController);
+        _settings.init(_assets, _audioController);
+        _title.init(_assets, _audioController);
         _death.init(_assets);
-        _tutorial.init(_assets);
+        _tutorial.init(_assets, _audioController);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
         setTitleScene();

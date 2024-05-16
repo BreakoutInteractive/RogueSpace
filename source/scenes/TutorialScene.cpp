@@ -13,7 +13,7 @@
 using namespace cugl;
 using namespace std;
 
-bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio) {
     if (assets == nullptr) {
         return false;
     }
@@ -35,10 +35,10 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_setting"));
 
     // attach listeners
-    scene2::Button::Listener backListener = [this](std::string name, bool down){ _choice = BACK;};
-    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS;};
-    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 1;};
-    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 2;};
+    scene2::Button::Listener backListener = [this](std::string name, bool down){ _choice = BACK; _audioController->playUiFX("menuClick");};
+    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; _audioController->playUiFX("menuClick");};
+    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 1; _audioController->playUiFX("menuClick");};
+    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 2; _audioController->playUiFX("menuClick");};
     
     _back->addListener(backListener);
     _settings->addListener(settingsListener);
@@ -52,6 +52,7 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     addChild(_scene);
     setActive(false);
     _choice = NONE;
+    _audioController = audio;
     return true;
 }
 

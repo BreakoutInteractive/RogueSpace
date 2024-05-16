@@ -9,6 +9,7 @@
 #include <cugl/cugl.h>
 
 #include "../utility/SaveData.hpp"
+#include "../controllers/AudioController.hpp"
 
 /**
  *
@@ -73,6 +74,7 @@ protected:
     bool _active;
 
     SaveData::Preferences _prefs;
+    std::shared_ptr<AudioController> _audioController;
     
 public:
 #pragma mark -
@@ -112,7 +114,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio);
 
     /**
      * Sets whether the scene is currently active

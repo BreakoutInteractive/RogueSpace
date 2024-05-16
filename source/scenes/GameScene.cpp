@@ -59,7 +59,7 @@ GameScene::GameScene() : Scene2(),
 _complete(false), _defeat(false), _debug(false){}
 
 
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<AudioController> audio) {
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
@@ -82,8 +82,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _input.init(preprocessor);
     _input.setMinDragRadius(_gameRenderer.getJoystickScreenRadius() / 4);
     activateInputs(false);
-    _audioController = std::make_shared<AudioController>();
-    _audioController->init(_assets);
+    _audioController = audio;
     _collisionController.setAssets(_assets, _audioController);
     
     CameraController::CameraConfig config;

@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
+
 using namespace cugl;
 
 class TutorialScene : public Scene2 {
@@ -36,6 +38,8 @@ protected:
     Choice _choice;
     /** tutorial level selected */
     int _selectedLevel;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
 
 #pragma mark - Tutorial
     /** the parent node of the tutorial scene*/
@@ -80,7 +84,7 @@ public:
      *
      * @return true if the scene is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio);
     
 #pragma mark Scene Functionality
     

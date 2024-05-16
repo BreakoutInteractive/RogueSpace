@@ -35,7 +35,7 @@ using namespace std;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_HEIGHT/dimen.height;
@@ -102,6 +102,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::CLOSE;
             SaveData::savePreferences(_prefs);
             CULog("closing (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _volDown->addListener([this](const std::string& name, bool down) {
@@ -111,6 +112,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             std::string key = "vol_front" + (_prefs.vol == 0 ? "" : "_" + std::to_string(_prefs.vol));
             _volBar->getChildByName("vol_front")->getChildByName(key)->setVisible(false);
             CULog("master volume down (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _volUp->addListener([this](const std::string& name, bool down) {
@@ -120,6 +122,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             std::string key = "vol_front" + (_prefs.vol - 1 == 0 ? "" : "_" + std::to_string(_prefs.vol - 1));
             _volBar->getChildByName("vol_front")->getChildByName(key)->setVisible(true);
             CULog("master volume up (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _sfxDown->addListener([this](const std::string& name, bool down) {
@@ -129,6 +132,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             std::string key = "vol_front" + (_prefs.SFXvol == 0 ? "" : "_" + std::to_string(_prefs.SFXvol));
             _sfxBar->getChildByName("vol_front")->getChildByName(key)->setVisible(false);
             CULog("sfx volume down (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _sfxUp->addListener([this](const std::string& name, bool down) {
@@ -138,6 +142,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             std::string key = "vol_front" + (_prefs.SFXvol - 1 == 0 ? "" : "_" + std::to_string(_prefs.SFXvol - 1));
             _sfxBar->getChildByName("vol_front")->getChildByName(key)->setVisible(true);
             CULog("sfx volume up (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _musicDown->addListener([this](const std::string& name, bool down) {
@@ -147,6 +152,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             std::string key = "vol_front" + (_prefs.BGMvol == 0 ? "" : "_" + std::to_string(_prefs.BGMvol));
             _musicBar->getChildByName("vol_front")->getChildByName(key)->setVisible(false);
             CULog("music volume down (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _musicUp->addListener([this](const std::string& name, bool down) {
@@ -156,12 +162,14 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             std::string key = "vol_front" + (_prefs.BGMvol - 1 == 0 ? "" : "_" + std::to_string(_prefs.BGMvol - 1));
             _musicBar->getChildByName("vol_front")->getChildByName(key)->setVisible(true);
             CULog("music volume up (settings screen)");
+            _audioController->playUiFX("menuClick");
         }
     });
     _invert->addListener([this](const std::string& name, bool down) {
         _choice = Choice::INVERT;
         _prefs.inverted = !_prefs.inverted;
         CULog("swapping bow aiming mode (settings screen)");
+        _audioController->playUiFX("menuClick");
     });
 
     // add an overlay layer to separate game background from UI
@@ -170,6 +178,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     addChild(overlay);
     addChild(scene);
     setActive(false);
+    _audioController = audio;
     return true;
 }
 
