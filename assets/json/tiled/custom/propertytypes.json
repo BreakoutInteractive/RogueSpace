@@ -7,7 +7,7 @@
             {
                 "name": "damage",
                 "type": "float",
-                "value": 0.4
+                "value": 0.3
             },
             {
                 "name": "hp",
@@ -31,7 +31,7 @@
     {
         "color": "#ff000000",
         "drawFill": true,
-        "id": 2,
+        "id": 9,
         "members": [
             {
                 "name": "weight",
@@ -48,7 +48,7 @@
     {
         "color": "#ffffffff",
         "drawFill": true,
-        "id": 3,
+        "id": 4,
         "members": [
         ],
         "name": "Collider",
@@ -62,7 +62,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 4,
+        "id": 10,
         "members": [
             {
                 "name": "animation",
@@ -86,7 +86,7 @@
     {
         "color": "#ffff2600",
         "drawFill": true,
-        "id": 5,
+        "id": 2,
         "members": [
         ],
         "name": "Hitbox",
@@ -100,17 +100,17 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 6,
+        "id": 5,
         "members": [
             {
                 "name": "damage",
                 "type": "float",
-                "value": 0.8
+                "value": 0.6
             },
             {
                 "name": "hp",
                 "type": "float",
-                "value": 5
+                "value": 5.2
             },
             {
                 "name": "path",
@@ -128,8 +128,61 @@
     },
     {
         "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 11,
+        "members": [
+            {
+                "name": "hp",
+                "type": "int",
+                "value": 2
+            },
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "Parry",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 13,
+        "members": [
+            {
+                "name": "damage",
+                "type": "float",
+                "value": 1
+            },
+            {
+                "name": "hp",
+                "type": "float",
+                "value": 2
+            },
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "ParryEnemy",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 8,
+        "id": 6,
         "members": [
             {
                 "name": "path",
@@ -148,7 +201,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 9,
+        "id": 7,
         "members": [
         ],
         "name": "Player",
@@ -162,7 +215,7 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 10,
+        "id": 12,
         "members": [
             {
                 "name": "weight",
@@ -180,12 +233,12 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 13,
+        "id": 14,
         "members": [
             {
                 "name": "damage",
                 "type": "float",
-                "value": 0.8
+                "value": 0.6
             },
             {
                 "name": "hp",
@@ -209,17 +262,17 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 14,
+        "id": 16,
         "members": [
             {
                 "name": "damage",
                 "type": "float",
-                "value": 1.6
+                "value": 0.9
             },
             {
                 "name": "hp",
                 "type": "float",
-                "value": 3.2
+                "value": 2.8
             },
             {
                 "name": "path",
@@ -238,17 +291,17 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": false,
-        "id": 7,
+        "id": 15,
         "members": [
             {
                 "name": "damage",
                 "type": "float",
-                "value": 0.6
+                "value": 0.3
             },
             {
                 "name": "hp",
                 "type": "float",
-                "value": 2
+                "value": 2.4
             },
             {
                 "name": "path",
@@ -265,9 +318,20 @@
         ]
     },
     {
+        "id": 8,
+        "name": "Type",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "RANGE",
+            "MELEE"
+        ],
+        "valuesAsFlags": false
+    },
+    {
         "color": "#fff4c183",
         "drawFill": false,
-        "id": 12,
+        "id": 3,
         "members": [
             {
                 "name": "tall",

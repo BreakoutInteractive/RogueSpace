@@ -2286,14 +2286,14 @@
                         {
                          "name":"path",
                          "type":"object",
-                         "value":0
+                         "value":3199
                         }],
                  "rotation":0,
                  "type":"Caster",
                  "visible":true,
                  "width":128,
-                 "x":1664,
-                 "y":512
+                 "x":1536,
+                 "y":480
                 }, 
                 {
                  "gid":252,
@@ -2320,8 +2320,8 @@
                  "type":"Caster",
                  "visible":true,
                  "width":128,
-                 "x":2368,
-                 "y":896
+                 "x":2304,
+                 "y":960
                 }, 
                 {
                  "height":0,
@@ -2339,19 +2339,67 @@
                  "visible":true,
                  "width":0,
                  "x":1856,
-                 "y":640
+                 "y":672
                 }, 
                 {
                  "gid":251,
                  "height":128,
                  "id":3198,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":3200
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
                  "x":1280,
                  "y":608
+                }, 
+                {
+                 "height":0,
+                 "id":3199,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Path",
+                 "visible":true,
+                 "width":0,
+                 "x":2048,
+                 "y":736
+                }, 
+                {
+                 "height":0,
+                 "id":3200,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"path",
+                         "type":"object",
+                         "value":3201
+                        }],
+                 "rotation":0,
+                 "type":"Path",
+                 "visible":true,
+                 "width":0,
+                 "x":1472,
+                 "y":512
+                }, 
+                {
+                 "height":0,
+                 "id":3201,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Path",
+                 "visible":true,
+                 "width":0,
+                 "x":1600,
+                 "y":544
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -2360,7 +2408,7 @@
          "y":0
         }],
  "nextlayerid":280,
- "nextobjectid":3199,
+ "nextobjectid":3202,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

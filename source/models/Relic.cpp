@@ -64,12 +64,10 @@ void Relic::setActive(bool active) {
 void Relic::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
     if (_texture != nullptr){
         Vec2 origin(_texture->getWidth()/2, 0);
-        auto spriteSheet = _currAnimation->getSpriteSheet();
-        Affine2 aniTransform = Affine2::createTranslation(_position * _drawScale);
-        
         batch->draw(_texture, origin, _size * _drawScale / _texture->getSize(), 0, _position * _drawScale);
-        
-        if (!_currAnimation->isCompleted()){
+        if (_currAnimation != nullptr && !_currAnimation->isCompleted()){
+            auto spriteSheet = _currAnimation->getSpriteSheet();
+            Affine2 aniTransform = Affine2::createTranslation(_position * _drawScale);
             spriteSheet->draw(batch, origin, aniTransform);
         }
     }

@@ -14,6 +14,7 @@
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
+#include <array>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
 #include "../controllers/AudioController.hpp"
@@ -81,10 +82,17 @@ protected:
     TransitionScene _levelTransition;
     /** the upgrades menu  */
     UpgradesScene _upgrades;
+    
     /**
-     * sets up the upgrade scene based on player stats, picking random stats to be upgraded.
+     * @note the order is irrelevant. The function `generateUpgradeIndices` make up for this lack of specification.
+     * @return the list of current upgrades for the given player
      */
-    void configureUpgradeMenu(std::shared_ptr<Player> player);
+    std::array<Upgradeable, 7> getPlayerUpgrades(std::shared_ptr<Player> player);
+    /**
+     * @note if `player` is a null pointer, the entire set of upgrades are valid and implies that there are no current upgrades.
+     * @return a pair of pairs of (indices, level) indicating the two upgrades to be shown in upgrade scene.
+     */
+    std::pair<std::pair<int,int>, std::pair<int,int>> generateUpgradeIndices(std::shared_ptr<Player> player);
 
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
@@ -116,11 +124,18 @@ protected:
     int _levelNumber;
     /** whether the current level to load is an upgrade room */
     bool _isUpgradeRoom;
+    /** whether the current level to load is a tutorial level */
+    bool _isTutorial;
+    /** whether the current mode (if tutorial) should return to tutorial menu */
+    bool _isTutorialComplete;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
-    /** Whether we have completed this "game" */
+    /**
+     * Whether we have completed this level's mission
+     * @note completion of a level requires that the level itself is completed.
+     */
     bool _complete;
     /** Whether we got defeated */
     bool _defeat;
@@ -211,6 +226,22 @@ public:
      * toggle input devices
      */
     void activateInputs(bool value){ _input.setActive(value); }
+    
+    /**
+     * calls `setTutorialActive` and loads given tutorial level.
+     */
+    void activateTutorial(int level);
+    /**
+     * Sets whether tutorial is active or not
+     */
+    void setTutorialActive(bool active){
+        _isTutorial = active;
+        _isTutorialComplete = false;
+    }
+    /**
+     * @return whether the running tutorial level is completed
+     */
+    bool isTutorialComplete(){return _isTutorial && _isTutorialComplete; }
     
     /**
      * Returns true if the level is completed.

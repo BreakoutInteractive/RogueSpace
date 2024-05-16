@@ -12,6 +12,8 @@
 
 #define HOLD_TIME 25
 
+using namespace cugl;
+
 GameRenderer::GameRenderer(){
     Scene2();
     _moveHoldCounter = 0;
@@ -146,30 +148,30 @@ void GameRenderer::setJoystickPosition(std::shared_ptr<scene2::SceneNode> ring, 
 }
 
 void GameRenderer::setActive(bool value) {
-    if (value) {
+    if (isActive() != value){
+        Scene2::setActive(value);
         _pauseButton->setDown(false);
-        _pauseButton->setVisible(true);
-        _pauseButton->activate();
-        _swapButton->setVisible(true);
-        _swapButton->activate();
-        _paused = false;
-    } else{
-        _pauseButton->setVisible(false);
-        _pauseButton->deactivate();
-        _swapButton->setVisible(false);
-        _swapButton->deactivate();
+        _pauseButton->setVisible(value);
+        _swapButton->setVisible(value);
         hideJoysticks();
+        _paused = false;
+        if (value){
+            _pauseButton->activate();
+            _swapButton->activate();
+        }
+        else {
+            _pauseButton->deactivate();
+            _swapButton->deactivate();
+        }
     }
 }
 
 void GameRenderer::setSwapButtonActive(bool value){
     if (value){
         _swapButton->activate();
-//        _swapButton->setColor(Color4::WHITE);
     }
     else {
         _swapButton->deactivate();
-//        _swapButton->setColor(Color4::GRAY);
     }
 }
 

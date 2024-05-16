@@ -15,6 +15,7 @@
 #include "scenes/TitleScene.hpp"
 #include "scenes/SettingsScene.hpp"
 #include "scenes/DeathScene.hpp"
+#include "scenes/TutorialScene.hpp"
 
 /**
  * This class represents the application root for the ship demo.
@@ -33,6 +34,8 @@ protected:
         GAME,
         /** The settings scene */
         SETTINGS,
+        /** The turtorial scene */
+        TUTORIAL,
         /** The scene to show options when game over */
         DEATH
     };
@@ -51,6 +54,8 @@ protected:
     PauseScene _pause;
     /** The title and menu scene */
     TitleScene _title;
+    /** The tutorial scene */
+    TutorialScene _tutorial;
     /** the settings scene */
     SettingsScene _settings;
     /** The game over scene */
@@ -261,6 +266,17 @@ private:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateTitleScene(float dt);
+    
+    /**
+     * Inidividualized update method for the tutorial scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements.
+     *
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updateTutorialScene(float dt);
+
 
     /**
      * Inidividualized update method for the settings scene.

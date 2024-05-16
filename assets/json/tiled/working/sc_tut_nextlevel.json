@@ -896,6 +896,63 @@
         }, 
         {
          "draworder":"topdown",
+         "id":283,
+         "name":"enemy",
+         "objects":[
+                {
+                 "gid":251,
+                 "height":128,
+                 "id":3234,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":2240,
+                 "y":704
+                }, 
+                {
+                 "gid":251,
+                 "height":128,
+                 "id":3235,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"float",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":1792,
+                 "y":800
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":282,
          "name":"player",
          "objects":[
@@ -917,8 +974,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":283,
- "nextobjectid":3234,
+ "nextlayerid":284,
+ "nextobjectid":3236,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

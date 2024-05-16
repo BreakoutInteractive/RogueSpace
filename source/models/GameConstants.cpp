@@ -38,7 +38,7 @@ float GameConstants::ENEMY_SIGHT_RANGE = 9;
 
 float GameConstants::ENEMY_PROXIMITY_RANGE = 4;
 
-float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.7f; // previously 1.6
+float GameConstants::ENEMY_MELEE_ATK_RANGE = 1.6f; // previously 1.7
 
 float GameConstants::ENEMY_RANGED_ATK_RANGE = 6.8; //previously 7
 
