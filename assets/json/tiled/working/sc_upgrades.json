@@ -3454,6 +3454,7 @@
                  "y":0
                 }, 
                 {
+                 "class":"Random",
                  "id":310,
                  "layers":[
                         {
@@ -4173,6 +4174,7 @@
                          "x":0,
                          "y":0
                         }],
+                 "locked":true,
                  "name":"right",
                  "opacity":1,
                  "type":"group",
