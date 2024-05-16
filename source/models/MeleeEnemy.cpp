@@ -119,3 +119,11 @@ void MeleeEnemy::updateAnimation(float dt){
     _stunEffect->update(dt);
     _hitboxAnimation->update(dt);
 }
+
+void MeleeEnemy::updateCounters() {
+    _sentryCD.decrement();
+    if (!isStunned()) {
+        _atkCD.decrement();
+    }
+    _hitCounter.decrement();
+}

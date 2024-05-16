@@ -22,12 +22,18 @@ class Animation;
 class BossEnemy : public MeleeEnemy {
     
 protected:
+    
+    /** The direction of the first melee attack (to ensure the second melee attack is in the same direction) */
+    cugl::Vec2 _attackDir;
 
     /** The second animation to use while attacking */
     std::shared_ptr<Animation> _attackAnimation2;
     
     /** The animation to use while charging the storm */
     std::shared_ptr<Animation> _chargeAnimation;
+    
+    /** The animation to use when displaying the storm */
+    std::shared_ptr<Animation> _stormEffect;
     
     /** Whether the boss is ready for its second melee attack */
     bool _secondAttack;
@@ -126,8 +132,13 @@ public:
     /** change to using the second attack animation */
     void setAttacking2();
     
+    /** change to using the stun animation */
+    void setStunned(float duration);
+    
     /** whether the boss is attacking */
     bool isAttacking(){ return (_attackAnimation->isActive() || _attackAnimation2->isActive()) && _state == BehaviorState::ATTACKING; }
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.

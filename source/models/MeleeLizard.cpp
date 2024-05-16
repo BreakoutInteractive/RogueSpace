@@ -82,7 +82,7 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
-    _attackAnimation->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 2 / 3, [this](){
+    _attackAnimation->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 0.7f, [this](){
         if (isEnabled() && _health > 0) {
             _attack->setEnabled(true);
             _hitboxAnimation->start();

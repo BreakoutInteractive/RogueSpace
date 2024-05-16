@@ -48,6 +48,7 @@ bool BossEnemy::init(std::shared_ptr<JsonValue> data) {
 void BossEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
     Vec2 direction = level->getPlayer()->getPosition() * level->getPlayer()->getDrawScale() - getPosition() * getDrawScale();
     direction.normalize();
+    _attackDir = direction;
     float ang = acos(direction.dot(Vec2::UNIT_X));
     if (direction.y < 0){
         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
@@ -59,8 +60,9 @@ void BossEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 }
 
 void BossEnemy::attack2(const std::shared_ptr<AssetManager> &assets) {
-    Vec2 direction = getFacingDir();
+    Vec2 direction = _attackDir;
     direction.normalize();
+    setFacingDir(direction);
     float ang = acos(direction.dot(Vec2::UNIT_X));
     if (direction.y < 0){
         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
@@ -92,6 +94,13 @@ void BossEnemy::summonStorm(std::shared_ptr<LevelModel> level, const std::shared
 #pragma mark -
 #pragma mark Animation
 
+void BossEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
+    MeleeEnemy::draw(batch);
+    if (_stormHitbox->isEnabled()) {
+        drawEffect(batch, _stormEffect);
+    }
+}
+
 void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     MeleeEnemy::loadAssets(assets);
     auto idleTexture = assets->get<Texture>("boss-idle");
@@ -100,6 +109,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture2 = assets->get<Texture>("boss-attack-2");
     auto chargeTexture = assets->get<Texture>("boss-charge-storm");
     auto stunTexture = assets->get<Texture>("boss-idle"); // same as idle for now
+    auto stormEffect = assets->get<Texture>("explosion-effect");
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
@@ -111,6 +121,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackSheet2 = SpriteSheet::alloc(attackTexture2, 8, 9);
     auto chargeSheet = SpriteSheet::alloc(chargeTexture, 8, 10);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
+    auto stormSheet = SpriteSheet::alloc(stormEffect, 2, 4);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
@@ -122,6 +133,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation2 = Animation::alloc(attackSheet2, GameConstants::ENEMY_MELEE_ATK_SPEED, false, 0, 8);
     _chargeAnimation = Animation::alloc(chargeSheet, GameConstants::STORM_CHARGE_TIME, false, 0, 9);
     _stunAnimation = Animation::alloc(stunSheet, 1.25f, false, 0, 8);
+    _stormEffect = Animation::alloc(stormSheet, 0.625f, true, 4, 7);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
@@ -138,7 +150,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _attack->setEnabled(false);
     });
     
-    _attackAnimation->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 2 / 3, [this](){
+    _attackAnimation->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 0.7f, [this](){
         if (isEnabled() && _health > 0) {
             _attack->setEnabled(true);
             _hitboxAnimation->start();
@@ -156,7 +168,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
         _secondAttack = false;
     });
     
-    _attackAnimation2->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 2 / 3, [this](){
+    _attackAnimation2->addCallback(GameConstants::ENEMY_MELEE_ATK_SPEED * 0.7f, [this](){
         if (isEnabled() && _health > 0) {
             _attack->setEnabled(true);
             _hitboxAnimation->start();
@@ -169,6 +181,8 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _chargeAnimation->onComplete([this](){
         _stormState = StormState::ACTIVE;
         _chargeAnimation->reset();
+        _stormEffect->start();
+        setIdling();
     });
     
     _chargeAnimation->addCallback(GameConstants::STORM_CHARGE_TIME * 0.75f, [this](){
@@ -204,6 +218,12 @@ void BossEnemy::setAttacking2() {
     _state = BehaviorState::ATTACKING;
 }
 
+void BossEnemy::setStunned(float duration) {
+    MeleeEnemy::setStunned(duration);
+    _secondAttack = false;
+    _attackAnimation2->reset();
+}
+
 void BossEnemy::setFacingDir(cugl::Vec2 dir) {
     int prevDirection = _directionIndex;
     Vec2 d = dir.normalize();
@@ -236,12 +256,24 @@ void BossEnemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockbac
     float currHealth = getHealth() / getMaxHealth();
     if (prevHealth > 0.75f && currHealth <= 0.75f && currHealth > 0) {
         _stormState = StormState::CHARGING;
+        _secondAttack = false;
+        _attackAnimation->reset();
+        _attackAnimation2->reset();
+        setChasing();
     }
     else if (prevHealth > 0.5f && currHealth <= 0.5f && currHealth > 0) {
         _stormState = StormState::CHARGING;
+        _secondAttack = false;
+        _attackAnimation->reset();
+        _attackAnimation2->reset();
+        setChasing();
     }
     else if (prevHealth > 0.25f && currHealth <= 0.25f && currHealth > 0) {
         _stormState = StormState::CHARGING;
+        _secondAttack = false;
+        _attackAnimation->reset();
+        _attackAnimation2->reset();
+        setChasing();
     }
 }
 
@@ -268,6 +300,10 @@ void BossEnemy::updateAnimation(float dt){
             if (_currAnimation != _chargeAnimation) {
                 setAnimation(_chargeAnimation);
             }
+            if (_attack->isEnabled()) {
+                _attack->setEnabled(false);
+                _attack->setAwake(false);
+            }
             break;
         case StormState::ACTIVE:
             // attack animation must play to completion, as long as enemy is alive.
@@ -289,6 +325,7 @@ void BossEnemy::updateAnimation(float dt){
                 _stormState = StormState::INACTIVE;
                 _stormHitbox->setEnabled(false);
                 _stormHitbox->setAwake(false);
+                _stormEffect->reset();
             }
             break;
             
@@ -297,6 +334,7 @@ void BossEnemy::updateAnimation(float dt){
     }
 
     _stunEffect->update(dt);
+    _stormEffect->update(dt);
     _hitboxAnimation->update(dt);
     
     // _stormHitbox->getDebugNode()->setVisible(_stormHitbox->isEnabled());

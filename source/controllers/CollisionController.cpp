@@ -116,11 +116,15 @@ void CollisionController::beginContact(b2Contact* contact){
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         std::shared_ptr<MeleeEnemy> melee;
         std::shared_ptr<ExplodingAlien> explode;
+        std::shared_ptr<BossEnemy> boss;
         std::shared_ptr<Hitbox> attack;
-        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
-            || (*it)->getType() == "boss enemy") {
+        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
             melee = std::dynamic_pointer_cast<MeleeEnemy>(*it);
             attack = melee->getAttack();
+        }
+        else if ((*it)->getType() == "boss enemy") {
+            boss = std::dynamic_pointer_cast<BossEnemy>(*it);
+            attack = boss->getAttack();
         }
         else if ((*it)->getType() == "exploding alien"){
             explode = std::dynamic_pointer_cast<ExplodingAlien>(*it);
@@ -138,6 +142,11 @@ void CollisionController::beginContact(b2Contact* contact){
                     if (player->isParrying() && melee != nullptr) {
                         //successful parry
                         melee->setStunned(player->getStunWindow());
+                        player->playParryEffect();
+                    }
+                    else if (player->isParrying() && boss != nullptr) {
+                        //successful parry
+                        boss->setStunned(player->getStunWindow());
                         player->playParryEffect();
                     }
                     else {

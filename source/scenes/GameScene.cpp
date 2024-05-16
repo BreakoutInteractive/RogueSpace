@@ -670,7 +670,15 @@ void GameScene::preUpdate(float dt) {
 #pragma mark - Component Updates
     
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        (*it)->updateCounters();
+        std::shared_ptr<MeleeEnemy> m;
+        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
+            || (*it)->getType() == "boss enemy") {
+            m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
+            m->updateCounters();
+        }
+        else {
+            (*it)->updateCounters();
+        }
         if ((*it)->getType() == "boss enemy") {
             std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(*it);
             boss->_stormTimer.decrement();
