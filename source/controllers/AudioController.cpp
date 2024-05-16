@@ -122,11 +122,22 @@ void AudioController::playMusic(const std::string key) {
         if (key == "title") {
             auto source = _assets->get<Sound>("title");
             AudioEngine::get()->play("music", source, true, source->getVolume());
+        } else if (key == "oasis") {
+            auto source = _assets->get<Sound>("oasis");
+            AudioEngine::get()->play("music", source, true, source->getVolume());
         }
-    } else {
+        _currTrack = key;
+    } else if (_currTrack != key) {
         if (key == "clear") {
             AudioEngine::get()->clear("music");
+        } 
+        else if (key == "title") {
+            AudioEngine::get()->clear("music");
         }
+        else if (key == "oasis") {
+            AudioEngine::get()->clear("music");
+        }
+        _currTrack = key;
     }
 }
     

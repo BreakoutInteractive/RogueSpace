@@ -14,6 +14,8 @@ protected:
     /** The asset manager for this audio controller. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    std::string _currTrack;
+    
 public:
 #pragma mark -
 #pragma mark Constructors

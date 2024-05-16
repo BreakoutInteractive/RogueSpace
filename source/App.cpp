@@ -127,7 +127,7 @@ void App::preUpdate(float dt) {
             updateTutorialScene(dt);
             break;
         case GAME:
-            _audioController->playMusic("clear");
+            _audioController->playMusic("oasis");
             if (_gameplay.getExitCode() == GameScene::ExitCode::DEATH){
                 _scene = State::DEATH;
                 _gameplay.setActive(false);
@@ -149,6 +149,7 @@ void App::preUpdate(float dt) {
             }
             break;
         case DEATH:
+            _audioController->playMusic("clear");
             updateDeathScene(dt);
             break;
     }

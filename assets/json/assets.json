@@ -162,6 +162,16 @@
             "file":     "sounds/music/rs_title.ogg",
             "volume":   0.5
         },
+        "oasis": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_oasis_loop.ogg",
+            "volume":   0.5
+        },
+        "strand": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_stranded_loop.ogg",
+            "volume":   0.5
+        },
         "upgrade": {
             "type":     "sample",
             "file":     "sounds/music/rs_play_heal.ogg",
