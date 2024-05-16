@@ -381,17 +381,17 @@
     "project": "roguespace.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "working/sc_lvl_00.json",
-        "working/sc_lvl_00_old.json",
-        "working/ob_lvl_01.json",
-        "working/ob_lvl_00.json",
         "working/example_level.json",
-        "working/ob_default_small.json",
-        "tilesets/entities.json",
-        "working/alpha_level.json",
-        "exports/parry_enemy_test.json",
-        "exports/sc_lvl_00.json",
-        "exports/ob_lvl_00.json",
-        "working/ob_lvl_05.json"
+        "working/sc_upgrades.json",
+        "working/sc_tut_ranged.json",
+        "working/sc_tut_parry.json",
+        "working/sc_tut_nextlevel.json",
+        "working/sc_test_arena_slime.json",
+        "working/sc_template_01.json",
+        "working/sc_template_00.json",
+        "working/sc_lvl_18.json",
+        "working/sc_lvl_17.json",
+        "working/sc_lvl_16.json",
+        "working/sc_lvl_15.json"
     ]
 }
