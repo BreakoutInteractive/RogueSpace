@@ -58,6 +58,13 @@ public:
     void playPlayerFX(const std::string action);
     
     /**
+     * Plays sound associated with player action.
+     *
+     * @param  action  the action key for the player
+     */
+    void clearPlayerFX(const std::string action);
+    
+    /**
      * Plays sound associated with action of eney type.
      *
      * @param  action  the action key for the enemy

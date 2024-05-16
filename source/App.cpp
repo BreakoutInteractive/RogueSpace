@@ -96,7 +96,7 @@ void App::update(float dt){
         _pause.init(_assets, _audioController);
         _settings.init(_assets, _audioController);
         _title.init(_assets, _audioController);
-        _death.init(_assets);
+        _death.init(_assets, _audioController);
         _tutorial.init(_assets, _audioController);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;

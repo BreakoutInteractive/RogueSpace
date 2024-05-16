@@ -43,10 +43,36 @@ void AudioController::playCollisionFX(const std::string key1, const std::string 
      */
 void AudioController::playPlayerFX(const std::string action){
     if (!AudioEngine::get()->isActive(action+"player")) {
-        if(action == "attackHit"){
-            auto source = _assets->get<Sound>("playerAttack");
-            AudioEngine::get()->play(action+"player", source, false, source->getVolume());
+        std::shared_ptr<Sound> source;
+        bool loop = false;
+        if (action == "attackHit") {
+            source = _assets->get<Sound>("playerAttack");
+        } 
+        else if (action == "drawBow") {
+            source = _assets->get<Sound>("bowDraw");
         }
+        else if (action == "loopBow") {
+            source = _assets->get<Sound>("bowCharge");
+            loop = true;
+        }
+        else if (action == "shootBow") {
+            source = _assets->get<Sound>("bowFire");
+        }
+        else {
+            CULogError("player sound action not found");
+        }
+        AudioEngine::get()->play(action+"player", source, loop, source->getVolume());
+    }
+}
+
+/**
+ * Clears sound associated with player action.
+ *
+ * @param  action  the action key for the player
+ */
+void AudioController::clearPlayerFX(const std::string action){
+    if (AudioEngine::get()->isActive(action+"player")) {
+        AudioEngine::get()->clear(action+"player");
     }
 }
     
@@ -58,7 +84,7 @@ void AudioController::playPlayerFX(const std::string action){
      */
 void AudioController::playEnemyFX(const std::string action, const std::string key){
     if (!AudioEngine::get()->isActive(action+key)) {
-        if(action == "attackHit"){
+        if (action == "attackHit") {
             auto source = _assets->get<Sound>("enemyMelee");
             AudioEngine::get()->play(action+key, source, false, source->getVolume());
         }

@@ -450,6 +450,7 @@ void GameScene::processPlayerInput(){
                         }
                         break;
                 case Player::Weapon::RANGED:
+                        _audioController->playPlayerFX("loopBow");
                         player->animateCharge();
                         player->getCollider()->setLinearVelocity(Vec2::ZERO);
                         break;
@@ -463,6 +464,8 @@ void GameScene::processPlayerInput(){
                 }
             }
             else if (_input.didShoot() && player->getWeapon() == Player::Weapon::RANGED) {
+                _audioController->clearPlayerFX("loopBow");
+                _audioController->playPlayerFX("shootBow");
                 Vec2 direction = Vec2::ZERO;
                 float ang = 0;
                 if (player->isRangedAttackActive()) {
