@@ -15,6 +15,9 @@
         "player-projectile": {
             "file":     "textures/sprites/player/player_bow_projectile.png"
         },
+        "player-projectile-weak": {
+            "file":     "textures/sprites/player/player_bow_projectile_weak.png"
+        },
         "player-ranged": {
             "file":     "textures/sprites/player/player_bow_attack.png"
         },

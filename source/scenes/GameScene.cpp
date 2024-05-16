@@ -475,7 +475,7 @@ void GameScene::processPlayerInput(){
                         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                     }
-                    std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), ang, _assets);
+                    std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), player->isCharged(), ang, _assets);
                     p->setDrawScale(Vec2(_scale, _scale));
                     _level->addProjectile(p);
                     player->animateShot();
@@ -523,6 +523,9 @@ void GameScene::processPlayerInput(){
                     break;
             }
         }
+    }
+    else {
+        CULog("knockback being applied");
     }
     
     // TODO: could remove, this is PC-only

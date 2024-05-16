@@ -56,8 +56,6 @@ float GameConstants::PROJ_RADIUS_MAGE = 0.26f; //previously 0.4
 
 float GameConstants::PROJ_DIST_E = 8.0f; //previously 9.0
 
-float GameConstants::PROJ_DIST_E_SQ = 81.0f;
-
 float GameConstants::TANK_ENEMY_DR = 0.1f;
 
 float GameConstants::STUN_DMG_BONUS = 2.34f; // previously 1.6
@@ -71,63 +69,47 @@ float GameConstants::EXPLODE_RADIUS = 2.3f;
 float GameConstants::EXPLODE_PROX_RANGE = 1.8f;
 
 #pragma mark -
-#pragma mark Player Upgradeable Stat Constants
+#pragma mark Player Combat
 
-float GameConstants::PLAYER_MAX_HP = 2.8;
+float GameConstants::PLAYER_MAX_HP = 2.8; // must match level 0 of HP
 
-float GameConstants::PLAYER_ATK_DAMAGE = 1.0f;
+// Requires min <= max, can be any range. Interpolation of [min,max] will be used based on charged time.
+// If user has completed charge, they get the max multiplier.
+// If their bow dmg is 2 and max multiplier is 2, they deal a damage of 4 on full charge.
+// If min multiplier is 0.2, they deal a damage of 0.2 * 2 = 0.4 on instant fire.
+// Between instant fire and complete charge, the damage would be linear between 0.4 and 4 in the example.
+float GameConstants::MIN_PROJ_DMG_MULTIPLIER = 0.5f;
+float GameConstants::MAX_PROJ_DMG_MULTIPLIER = 1.5f;
+float GameConstants::CHARGE_TIME = 0.6f;
+float GameConstants::PLAYER_PROJ_KNOCKBACK = 1.6f;
 
-float GameConstants::PLAYER_BOW_DAMAGE = 1.0f;
+float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.36f; // previously 1.4
+float GameConstants::COMBO_TIME = 0.8f;
+float GameConstants::PLAYER_PARRY_TIME = 0.6f; //previously 0.5, do not confuse with the stun time.
 
-float GameConstants::PLAYER_PASSIVE_REDUCTION = 0; // initially no defense
-
-float GameConstants::PLAYER_BLOCKING_REDUCTION = 0.1; // initially 10% damage reduction while blocking
-
-float GameConstants::PLAYER_DODGE_COUNT = 1.0;    // could technically be a floating point to imply something like you have 1/3 dash energy remaining if dash count per full-charge is 1.5
-
-float GameConstants::PLAYER_STUN_DURATION = 1.0f;
-
-float GameConstants::PLAYER_ATTACK_COOLDOWN = 0; // disabled cooldown
+float GameConstants::KNOCKBACK = 1.6f;
+float GameConstants::KNOCKBACK_PWR_ATK = 4.7f; // previously 4.0
 
 #pragma mark -
 #pragma mark Player
 
-int GameConstants::PLAYER_IFRAME = 16;
-int GameConstants::PLAYER_INCOMING_KB_FRAMES = 5;
+int GameConstants::PLAYER_IFRAME = 16;  // dead constant, cannot be removed until knockback fix.
+int GameConstants::PLAYER_INCOMING_KB_FRAMES = 5; // dead constant, same issue as above
 
-float GameConstants::PLAYER_PARRY_TIME = 0.6f; //previously 0.5
-
-int GameConstants::PLAYER_STAMINA = 240; // should be a multiple of 3,4,5,6 to accomodate for evenly divisible by number of dashes
+int GameConstants::PLAYER_STAMINA = 240;
 float GameConstants::PLAYER_DODGE_TIME = 1/6.0f;
 float GameConstants::PLAYER_DODGE_SPEED = 14.0f;
-
-
 
 float GameConstants::PLAYER_MOVE_SPEED = 4.7; //previously 4.6
 float GameConstants::PLAYER_ATK_MOVE_SPEED = 1.9f; //previously 1.8
 
-
-
-float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.36f; // previously 1.4
-
 float GameConstants::PROJ_SPEED_P = 9.0f;
-
 float GameConstants::PROJ_SIZE_P_HALF = 1.0f;
-
-float GameConstants::PROJ_DIST_P_SQ = 100.0f;
-
 float GameConstants::PROJ_DIST_P = 6.8f;
 
-float GameConstants::CHARGE_TIME = 0.3f;
-
-float GameConstants::COMBO_TIME = 0.8f;
-
 float GameConstants::HEALTHPACK_DROP_RATE = 34.0f;
-
 float GameConstants::HEALTHPACK_HEAL_AMT = 0.25f;
 
-float GameConstants::KNOCKBACK = 1.6f;
-
-float GameConstants::KNOCKBACK_PWR_ATK = 4.7f; // previously 4.0
-
+#pragma mark - Warning
+// Do not adjust these, will need actual non-parameter adjustments, no one number fits all.
 float GameConstants::PROJ_SHADOW_SCALE = 0.25f;
