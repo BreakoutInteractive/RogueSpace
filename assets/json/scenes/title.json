@@ -781,6 +781,450 @@
                 }
             }
         },
+        "menu2_tablet": {
+            "type": "Node",
+            "format": {
+                "type": "Anchored"
+            },
+            "data": {
+                "anchor": [
+                    0,
+                    0
+                ],
+                "size": [
+                    1280,
+                    720
+                ],
+                "angle": 0,
+                "position": [
+                    0,
+                    0
+                ],
+                "visible": true
+            },
+            "children": {
+                "title": {
+                    "type": "Image",
+                    "data": {
+                        "texture": "title",
+                        "anchor": [
+                            0.5,
+                            1
+                        ],
+                        "size": [
+                            848,
+                            83
+                        ],
+                        "angle": 0,
+                        "position": [
+                            216,
+                            454
+                        ],
+                        "visible": true
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "top",
+                        "absolute": false,
+                        "x_offset": 0,
+                        "y_offset": -0.25
+                    }
+                },
+                "setting": {
+                    "type": "Button",
+                    "format": {
+                        "type": "Anchored"
+                    },
+                    "data": {
+                        "anchor": [
+                            1,
+                            1
+                        ],
+                        "size": [
+                            90,
+                            90
+                        ],
+                        "angle": 0,
+                        "position": [
+                            1162,
+                            603
+                        ],
+                        "visible": true,
+                        "upnode": "setting"
+                    },
+                    "children": {
+                        "setting": {
+                            "type": "Image",
+                            "data": {
+                                "texture": "setting",
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "size": [
+                                    90,
+                                    90
+                                ],
+                                "angle": 0,
+                                "position": [
+                                    0,
+                                    0
+                                ],
+                                "visible": true
+                            },
+                            "layout": {
+                                "x_anchor": "center",
+                                "y_anchor": "middle",
+                                "absolute": false,
+                                "x_offset": 0,
+                                "y_offset": 0
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor": "right",
+                        "y_anchor": "top",
+                        "absolute": false,
+                        "x_offset": -0.02,
+                        "y_offset": -0.04
+                    }
+                },
+                "title_selection": {
+                    "type": "Node",
+                    "format": {
+                        "type": "Float",
+                        "x_alignment": "center",
+                        "y_alignment": "bottom",
+                        "orientation": "horizontal"
+                    },
+                    "data": {
+                        "anchor": [
+                            0.5,
+                            0
+                        ],
+                        "size": [
+                            844.35,
+                            99.07
+                        ],
+                        "angle": 0,
+                        "position": [
+                            217.54,
+                            86.54
+                        ],
+                        "visible": true
+                    },
+                    "children": {
+                        "tutorial": {
+                            "type": "Button",
+                            "format": {
+                                "type": "Anchored"
+                            },
+                            "data": {
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "size": [
+                                    241.6,
+                                    83.2
+                                ],
+                                "angle": 0,
+                                "position": [
+                                    120.80005187988354,
+                                    57.47199630737305
+                                ],
+                                "visible": true,
+                                "upnode": "title_button"
+                            },
+                            "children": {
+                                "title_button": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "title_button",
+                                        "anchor": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "size": [
+                                            240.96,
+                                            82.56
+                                        ],
+                                        "angle": 0,
+                                        "position": [
+                                            0.16,
+                                            0.4
+                                        ],
+                                        "visible": true
+                                    },
+                                    "layout": {
+                                        "x_anchor": "center",
+                                        "y_anchor": "middle",
+                                        "absolute": false,
+                                        "x_offset": 0,
+                                        "y_offset": 0
+                                    }
+                                },
+                                "tutorial": {
+                                    "type": "Label",
+                                    "data": {
+                                        "anchor": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "size": [
+                                            84,
+                                            28
+                                        ],
+                                        "position": [
+                                            78.43997955322266,
+                                            27.960006713867188
+                                        ],
+                                        "angle": 0,
+                                        "visible": true,
+                                        "font": "robotoBold24",
+                                        "text": "Tutorial",
+                                        "foreground": "#ffffffff",
+                                        "background": "#00000000",
+                                        "padding": [
+                                            0,
+                                            0,
+                                            0,
+                                            0
+                                        ],
+                                        "valign": "middle",
+                                        "halign": "center"
+                                    },
+                                    "children": {},
+                                    "layout": {
+                                        "x_anchor": "center",
+                                        "y_anchor": "middle",
+                                        "absolute": false,
+                                        "x_offset": 0,
+                                        "y_offset": 0
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "priority": 0,
+                                "padding": [
+                                    0,
+                                    0,
+                                    36,
+                                    0
+                                ]
+                            }
+                        },
+                        "continue": {
+                            "type": "Button",
+                            "format": {
+                                "type": "Anchored"
+                            },
+                            "data": {
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "size": [
+                                    289.15,
+                                    99.07
+                                ],
+                                "angle": 0,
+                                "position": [
+                                    422.17604064941406,
+                                    49.53600006103517
+                                ],
+                                "visible": true,
+                                "upnode": "title_button"
+                            },
+                            "children": {
+                                "title_button": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "title_button",
+                                        "anchor": [
+                                            0.5,
+                                            0
+                                        ],
+                                        "size": [
+                                            289.15,
+                                            99.07
+                                        ],
+                                        "angle": 0,
+                                        "position": [
+                                            0,
+                                            0
+                                        ],
+                                        "visible": true
+                                    },
+                                    "layout": {
+                                        "x_anchor": "center",
+                                        "y_anchor": "bottom",
+                                        "absolute": false,
+                                        "x_offset": 0,
+                                        "y_offset": 0
+                                    }
+                                },
+                                "continue": {
+                                    "type": "Label",
+                                    "data": {
+                                        "anchor": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "size": [
+                                            114,
+                                            33
+                                        ],
+                                        "position": [
+                                            87.0159912109375,
+                                            33.07197952270508
+                                        ],
+                                        "angle": 0,
+                                        "visible": true,
+                                        "font": "robotoBold28",
+                                        "text": "Continue",
+                                        "foreground": "#ffffffff",
+                                        "background": "#00000000",
+                                        "padding": [
+                                            0,
+                                            0,
+                                            0,
+                                            0
+                                        ],
+                                        "valign": "middle",
+                                        "halign": "center"
+                                    },
+                                    "children": {},
+                                    "layout": {
+                                        "x_anchor": "center",
+                                        "y_anchor": "middle",
+                                        "absolute": false,
+                                        "x_offset": 0,
+                                        "y_offset": 0
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "priority": 1,
+                                "padding": [
+                                    0,
+                                    0,
+                                    36,
+                                    0
+                                ]
+                            }
+                        },
+                        "new_game": {
+                            "type": "Button",
+                            "format": {
+                                "type": "Anchored"
+                            },
+                            "data": {
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "size": [
+                                    241.6,
+                                    83.2
+                                ],
+                                "angle": 0,
+                                "position": [
+                                    723.5520782470703,
+                                    57.47199630737305
+                                ],
+                                "visible": true,
+                                "upnode": "title_button"
+                            },
+                            "children": {
+                                "title_button": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "title_button",
+                                        "anchor": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "size": [
+                                            240.96,
+                                            82.56
+                                        ],
+                                        "angle": 0,
+                                        "position": [
+                                            0.16,
+                                            0.4
+                                        ],
+                                        "visible": true
+                                    },
+                                    "layout": {
+                                        "x_anchor": "center",
+                                        "y_anchor": "middle",
+                                        "absolute": false,
+                                        "x_offset": 0,
+                                        "y_offset": 0
+                                    }
+                                },
+                                "new_game": {
+                                    "type": "Label",
+                                    "data": {
+                                        "anchor": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "size": [
+                                            117,
+                                            28
+                                        ],
+                                        "position": [
+                                            62.239967346191406,
+                                            27.960006713867188
+                                        ],
+                                        "angle": 0,
+                                        "visible": true,
+                                        "font": "robotoBold24",
+                                        "text": "New Game",
+                                        "foreground": "#ffffffff",
+                                        "background": "#00000000",
+                                        "padding": [
+                                            0,
+                                            0,
+                                            0,
+                                            0
+                                        ],
+                                        "valign": "middle",
+                                        "halign": "center"
+                                    },
+                                    "children": {},
+                                    "layout": {
+                                        "x_anchor": "center",
+                                        "y_anchor": "middle",
+                                        "absolute": false,
+                                        "x_offset": 0,
+                                        "y_offset": 0
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "priority": 2,
+                                "padding": [
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ]
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0,
+                        "y_offset": 0.12
+                    }
+                }
+            }
+        },
         "confirmation": {
            "type": "Node",
            "format": {

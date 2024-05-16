@@ -752,7 +752,9 @@ void GameScene::preUpdate(float dt) {
             // get current save, make new save based on selection
             SaveData::Data data = SaveData::getGameSave();
             data.upgradeAvailable = false;
-            data.weapon = player->getWeapon(); // easy to forget the weapon changes constantly
+            data.weapon = player->getWeapon();
+            data.level = _levelNumber;
+            data.isUpgradeRoom = true;
             // get the selected upgrade, apply to player
             float prevMaxHP = player->getMaxHP();
             int newLevel = _upgrades.getUpgradeLevel();
@@ -781,7 +783,6 @@ void GameScene::preUpdate(float dt) {
                     player->setMaxHPLevel(newLevel);
                     player->setHP(player->getHP() + player->getMaxHP() - prevMaxHP);
                     data.hpLvl = newLevel;
-                    data.hp = player->getHP();
                     break;
                 case SHIELD: case BLOCK:
                     player->setArmorLevel(_upgrades.getUpgradeLevel());
@@ -791,6 +792,7 @@ void GameScene::preUpdate(float dt) {
             }
             // turn off relic
             relic->setActive(false);
+            data.hp = player->getHP();
             SaveData::makeSave(data);
         }
     }
