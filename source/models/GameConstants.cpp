@@ -78,10 +78,10 @@ float GameConstants::PLAYER_MAX_HP = 2.8; // must match level 0 of HP
 // If their bow dmg is 2 and max multiplier is 2, they deal a damage of 4 on full charge.
 // If min multiplier is 0.2, they deal a damage of 0.2 * 2 = 0.4 on instant fire.
 // Between instant fire and complete charge, the damage would be linear between 0.4 and 4 in the example.
-float GameConstants::MIN_PROJ_DMG_MULTIPLIER = 0.5f;
-float GameConstants::MAX_PROJ_DMG_MULTIPLIER = 1.5f;
-float GameConstants::CHARGE_TIME = 0.6f;
-float GameConstants::PLAYER_PROJ_KNOCKBACK = 1.6f;
+float GameConstants::MIN_PROJ_DMG_MULTIPLIER = 0.3f;
+float GameConstants::MAX_PROJ_DMG_MULTIPLIER = 2.4f;
+float GameConstants::CHARGE_TIME = 0.66f;
+float GameConstants::PLAYER_PROJ_KNOCKBACK = 1.4f;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.36f; // previously 1.4
 float GameConstants::COMBO_TIME = 0.8f;
