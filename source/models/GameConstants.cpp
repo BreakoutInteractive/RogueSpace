@@ -118,7 +118,7 @@ float GameConstants::PROJ_DIST_P_SQ = 100.0f;
 
 float GameConstants::PROJ_DIST_P = 6.8f;
 
-float GameConstants::CHARGE_TIME = 0.3f;
+float GameConstants::CHARGE_TIME = 0.6f;
 
 float GameConstants::COMBO_TIME = 0.8f;
 
