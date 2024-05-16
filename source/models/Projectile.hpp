@@ -17,6 +17,11 @@ private:
 	state _state;
 	float _damage;
 	Vec2 _initPos;
+    /**
+     * whether the projectile was spawn from maximum charge
+     * @note this will be true for enemies.
+     */
+    bool _isFullyCharged;
 public:
 
 	/**
@@ -75,6 +80,11 @@ public:
 	}
 
 	bool isExploding() { return _state == EXPLODING; }
+    
+    /**
+     * @return whether this projectile is fully charged (at full power) or not
+     */
+    bool isFullyCharged() { return _isFullyCharged; }
 
 	void draw(const std::shared_ptr<cugl::SpriteBatch>& batch) override;
 

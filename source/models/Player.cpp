@@ -597,8 +597,12 @@ void Player::update(float dt) {
 #pragma mark Stats and Properties
 
 float Player::getBowDamage() {
-    if (_state == CHARGING) return _bowDamage.getCurrentValue() * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
-    else if (_state == CHARGED) return _bowDamage.getCurrentValue() * 1.5f;
+    if (_state == CHARGING){
+        float interpolant = _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME;
+        float range = GameConstants::MAX_PROJ_DMG_MULTIPLIER - GameConstants::MIN_PROJ_DMG_MULTIPLIER;
+        return _bowDamage.getCurrentValue() * (GameConstants::MIN_PROJ_DMG_MULTIPLIER + interpolant * range );
+    }
+    else if (_state == CHARGED) return _bowDamage.getCurrentValue() * GameConstants::MAX_PROJ_DMG_MULTIPLIER;
     else return _bowDamage.getCurrentValue();
 }
 
