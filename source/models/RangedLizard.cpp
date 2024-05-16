@@ -36,7 +36,7 @@ void RangedLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_p
     }
     
     setCharged(false);
-    std::shared_ptr<Projectile> p = Projectile::lizardAlloc(getPosition().add(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), ang, assets);
+    std::shared_ptr<Projectile> p = Projectile::lizardAlloc(getPosition() + Vec2(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), ang, assets);
     p->setDrawScale(level->getDrawScale());
     level->addProjectile(p);
 }

@@ -620,11 +620,11 @@ void Player::setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug){
 void Player::syncPositions(){
     GameObject::syncPositions();
     // move the melee hitbox with the player
-    _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
+    _meleeHitbox->setPosition(getPosition() + Vec2(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }
 
 void Player::enableMeleeAttack(float angle){
     _meleeHitbox->setEnabled(true);
     _meleeHitbox->setAngle(angle);
-    _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
+    _meleeHitbox->setPosition(getPosition() + Vec2(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }

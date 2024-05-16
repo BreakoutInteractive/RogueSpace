@@ -35,7 +35,7 @@ void MeleeLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_pt
         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
     }
     
-    _attack->setPosition(_attack->getPosition().add(0, (_pixelHeight/2) / _drawScale.y)); //64 is half of the pixel height of the enemy
+    _attack->setPosition(_attack->getPosition() + Vec2(0, (_pixelHeight/2) / _drawScale.y)); //64 is half of the pixel height of the enemy
     _attack->setAngle(ang);
 }
 
@@ -88,7 +88,7 @@ void MeleeLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
             _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
-            _attack->setPosition(getPosition().add(0, (_pixelHeight/2) / getDrawScale().y)); //64 is half of the enemy pixel height
+            _attack->setPosition(getPosition() + Vec2(0, (_pixelHeight/2) / getDrawScale().y)); //64 is half of the enemy pixel height
         }
     });
     
