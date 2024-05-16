@@ -45,18 +45,23 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     confirmationNode->doLayout();
 
     // retrieve the menu buttons
-    _pauseBack = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_back"));
+    _back = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_back"));
     _resume = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_resume"));
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("pause_pausemenu_menu_buttons_setting"));
     
     _confirmBack = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_back"));
     _confirmConfirm = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_confirm"));
 
+    _activateConfirmation = false;
     // Program the buttons
-    _pauseBack->addListener([this](const std::string& name, bool down) {
+    _back->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _confirmationScene.setActive(true);
-            _pauseBack->setDown(false);
+            if (_activateConfirmation) {
+                _confirmationScene.setActive(true); // the buttons will be activated in the update() call.
+                _back->setDown(false);
+            } else{
+                _choice = Choice::BACK;
+            }
         }
     });
     _resume->addListener([this](const std::string& name, bool down) {
@@ -102,6 +107,31 @@ void PauseScene::dispose() {
     removeAllChildren();
 }
 
+#pragma mark - Internal
+void PauseScene::activatePauseMenuButtons(bool activate){
+    if (activate){
+        _back->activate();
+        _resume->activate();
+        _settings->activate();
+    }
+    else {
+        _back->deactivate();
+        _resume->deactivate();
+        _settings->deactivate();
+    }
+}
+
+void PauseScene::activateConfirmMenu(bool active){
+    if (active){
+        _confirmConfirm->activate();
+        _confirmBack->activate();
+    } else{
+        _confirmConfirm->deactivate();
+        _confirmBack->deactivate();
+    }
+}
+
+#pragma mark - Public API
 void PauseScene::setLabels(std::vector<int> levels){
     _atk->setText("LVL " + std::to_string(levels[0]));
     _bow->setText("LVL " + std::to_string(levels[1]));
@@ -112,49 +142,31 @@ void PauseScene::setLabels(std::vector<int> levels){
     _maxHealth->setText("LVL " + std::to_string(levels[6]));
 }
 
-void PauseScene::activateConfirmButtons(bool active){
-    if (active){
-        _resume->deactivate();
-        _settings->deactivate();
-        _pauseBack->deactivate();
-        
-        _confirmConfirm->activate();
-        _confirmBack->activate();
-    } else{
-        _confirmConfirm->deactivate();
-        _confirmBack->deactivate();
-        
-        _resume->activate();
-        _settings->activate();
-        _pauseBack->activate();
-
-    }
-}
-
 void PauseScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
-        _choice = NONE;
-        if (value) {
-            _pauseBack->activate();
-            _resume->activate();
-            _settings->activate();
-            
-        } else {
-            _pauseBack->deactivate();
-            _resume->deactivate();
-            _settings->deactivate();
-            _confirmBack->deactivate();
-            _confirmConfirm->deactivate();
-            // If any were pressed, reset them
-            _pauseBack->setDown(false);
-            _resume->setDown(false);
-            _settings->setDown(false);
-            _confirmBack->setDown(false);
-            _confirmConfirm->setDown(false);
-            // hide confirmation menu
+        activatePauseMenuButtons(value);
+        if (!value){
             _confirmationScene.setActive(false);
+            activateConfirmMenu(false);
         }
+        _back->setDown(false);
+        _resume->setDown(false);
+        _settings->setDown(false);
+        _confirmBack->setDown(false);
+        _confirmConfirm->setDown(false);
+        _choice = NONE;
+    }
+}
+
+void PauseScene::update(float dt){
+    if (_confirmationScene.isActive()){
+        activatePauseMenuButtons(false);
+        activateConfirmMenu(true);
+    }
+    else {
+        activatePauseMenuButtons(true);
+        activateConfirmMenu(false);
     }
 }
 

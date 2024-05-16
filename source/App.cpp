@@ -132,6 +132,7 @@ void App::preUpdate(float dt) {
             else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
                 _pause.setLabels(_gameplay.getPlayerLevels());
+                _pause.setConfirmationAlert(!_gameplay.isUpgradeRoom() && !_gameplay.isTutorial());
                 _gameplay.setActive(false);
             } else if(_gameplay.isTutorialComplete()){
                 _scene = State::TUTORIAL;
@@ -176,7 +177,6 @@ void App::postUpdate(float dt) {
 
 void App::updatePauseScene(float dt) {
     _pause.update(dt);
-    _pause.activateConfirmButtons(_pause.isConfirmActive());
     switch (_pause.getChoice()) {
         case PauseScene::Choice::BACK:
             _pause.setActive(false);
@@ -221,6 +221,7 @@ void App::setTitleScene(){
 
 void App::updateTitleScene(float dt){
     auto save = SaveData::getGameSave();
+    _title.activateConfirmButtons(_title.isConfirmActive());
     switch (_title.getChoice()){
         case TitleScene::NONE:
             break;
@@ -237,7 +238,6 @@ void App::updateTitleScene(float dt){
             _gameplay.setActive(true);
             CULog("loading lv %d", save.level);
             _gameplay.setTutorialActive(false);
-            _gameplay.setUpgradeRoom(false);
             _gameplay.setLevel(save);
             _scene = GAME;
             _gamePrevScene = TITLE;
