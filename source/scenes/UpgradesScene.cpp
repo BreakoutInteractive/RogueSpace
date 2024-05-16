@@ -37,7 +37,7 @@ using namespace std;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_HEIGHT/dimen.height;
@@ -85,6 +85,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _upgrade = _displayedAttribute1.first;
             _level = _displayedAttribute1.second;
             _selectedUpgrade = true;
+            _audioController->playUiFX("upgrade");
         }
     });
     _confirm2->addListener([this](const std::string& name, bool down) {
@@ -92,6 +93,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _upgrade = _displayedAttribute2.first;
             _level = _displayedAttribute2.second;
             _selectedUpgrade = true;
+            _audioController->playUiFX("upgrade");
         }
     });
     
@@ -106,6 +108,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _option1->setToggle(true);
             _confirm1->setVisible(true);
             _confirm1->activate();
+            _audioController->playUiFX("menuClick");
         } else{
             _confirm1->setVisible(false);
             _confirm1->deactivate();
@@ -121,6 +124,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _option2->setToggle(true);
             _confirm2->setVisible(true);
             _confirm2->activate();
+            _audioController->playUiFX("menuClick");
         } else{
             _confirm2->setVisible(false);
             _confirm2->deactivate();
@@ -129,6 +133,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     addChild(scene);
     setActive(false);
+    _audioController = audio;
     return true;
 }
 

@@ -12,7 +12,7 @@
 #include <iostream>
 #include <sstream>
 #include "../models/Upgradeable.hpp"
-
+#include "../controllers/AudioController.hpp"
 
 using namespace cugl;
 
@@ -32,6 +32,8 @@ public:
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    /** Controller to play sounds */
+    std::shared_ptr<AudioController> _audioController;
     
 #pragma mark - Scene Nodes
     /** The button for upgrade option 1 */
@@ -111,7 +113,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio);
     
 #pragma mark Scene Configuration
     /**

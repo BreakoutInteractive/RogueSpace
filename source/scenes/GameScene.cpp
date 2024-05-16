@@ -181,7 +181,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_pt
         this->setLevel(data);
     });
     
-    _upgrades.init(assets);
+    _upgrades.init(assets, audio);
   
 #pragma mark - Game State Initialization
     setActive(false);

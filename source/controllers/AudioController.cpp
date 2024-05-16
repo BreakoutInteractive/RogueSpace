@@ -105,6 +105,10 @@ void AudioController::playUiFX(const std::string action){
             auto source = _assets->get<Sound>("menuClick");
             AudioEngine::get()->play(action+"ui", source, false, source->getVolume());
         }
+        else if (action == "upgrade") {
+            auto source = _assets->get<Sound>("upgrade");
+            AudioEngine::get()->play(action+"ui", source, false, source->getVolume());
+        }
     }
 }
     

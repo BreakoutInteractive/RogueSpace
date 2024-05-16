@@ -161,6 +161,11 @@
             "type":     "sample",
             "file":     "sounds/music/rs_title.ogg",
             "volume":   0.5
+        },
+        "upgrade": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_play_heal.ogg",
+            "volume":   0.5
         }
     },
 	"fonts": {
