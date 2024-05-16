@@ -30,7 +30,9 @@ bool BossEnemy::init(std::shared_ptr<JsonValue> data) {
     filter.maskBits = CATEGORY_PLAYER_HITBOX;
     _attack->setFilterData(filter);
     
+    _pixelHeight = 256;
     _secondAttack = false;
+    _dropped = true;
     
     _stormTimer.setMaxCount(GameConstants::STORM_TIMER);
     _stormState = StormState::INACTIVE;
@@ -55,7 +57,7 @@ void BossEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
     }
     
-    _attack->setPosition(_attack->getPosition().add(0, 64 / _drawScale.y)); //64 is half of the pixel height of the enemy
+    _attack->setPosition(_attack->getPosition().add(0, (_pixelHeight/2) / _drawScale.y)); //64 is half of the pixel height of the enemy
     _attack->setAngle(ang);
 }
 
@@ -69,7 +71,7 @@ void BossEnemy::attack2(const std::shared_ptr<AssetManager> &assets) {
         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
     }
     
-    _attack->setPosition(_attack->getPosition().add(0, 64 / _drawScale.y)); //64 is half of the pixel height of the enemy
+    _attack->setPosition(_attack->getPosition().add(0, (_pixelHeight/2) / _drawScale.y)); //64 is half of the pixel height of the enemy
     _attack->setAngle(ang);
 }
 
@@ -83,7 +85,7 @@ void BossEnemy::summonStorm(std::shared_ptr<LevelModel> level, const std::shared
     }
     for (int i = 0; i < 8; i++) {
         float a = ang + M_PI_4 * i;
-        std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition().add(0, 64 / getDrawScale().y), getDamage(), a, assets);
+        std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition().add(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), a, assets);
         p->setDrawScale(level->getDrawScale());
         level->addProjectile(p);
     }
@@ -156,7 +158,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
             _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
-            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
+            _attack->setPosition(getPosition().add(0, (_pixelHeight/2) / getDrawScale().y)); //64 is half of the enemy pixel height
         }
     });
     
@@ -174,7 +176,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
             _hitboxAnimation->start();
             _attack->setAwake(true);
             _attack->setAngle(getFacingDir().getAngle());
-            _attack->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the enemy pixel height
+            _attack->setPosition(getPosition().add(0, (_pixelHeight/2) / getDrawScale().y)); //64 is half of the enemy pixel height
         }
     });
     
@@ -338,5 +340,5 @@ void BossEnemy::updateAnimation(float dt){
     _hitboxAnimation->update(dt);
     
     // _stormHitbox->getDebugNode()->setVisible(_stormHitbox->isEnabled());
-    _stormHitbox->setPosition(_position + Vec2(0, 64 / _drawScale.y));
+    _stormHitbox->setPosition(_position + Vec2(0, (_pixelHeight/2) / _drawScale.y));
 }

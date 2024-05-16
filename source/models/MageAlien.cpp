@@ -35,7 +35,7 @@ void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
     }
     
     setCharged(false);
-    std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition().add(0, 64 / getDrawScale().y), getDamage(), ang, assets);
+    std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition().add(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), ang, assets);
     p->setDrawScale(level->getDrawScale());
     level->addProjectile(p);
 }

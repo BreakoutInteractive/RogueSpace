@@ -47,6 +47,8 @@ protected:
     /** The death effect animation */
     std::shared_ptr<Animation> _deathEffect;
     
+    /** Enemy image's pixel height */
+    int _pixelHeight;
     /** Enemy's sight range */
     float _sightRange;
     /** Enemy's proximity range */
