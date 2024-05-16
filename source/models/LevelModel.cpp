@@ -406,6 +406,9 @@ bool LevelModel::loadEnemy(const std::shared_ptr<JsonValue> constants, const std
         enemy = TankEnemy::alloc(json);
     }
     else if (enemyType == CLASS_SLIME) {
+        enemy = ExplodingAlien::alloc(json);
+    }
+    else if (enemyType == CLASS_BOSS) {
         enemy = BossEnemy::alloc(json);
     }
     CUAssertLog(enemy != nullptr, "enemy type %s is not allowed", enemyType.c_str());

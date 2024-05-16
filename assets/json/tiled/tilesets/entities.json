@@ -9,7 +9,7 @@
  "name":"entities",
  "objectalignment":"bottom",
  "spacing":0,
- "tilecount":6,
+ "tilecount":7,
  "tiledversion":"1.10.2",
  "tileheight":128,
  "tiles":[
@@ -319,7 +319,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -417,6 +416,13 @@
              "y":0
             },
          "type":"Slime"
+        }, 
+        {
+         "id":6,
+         "image":"..\/images\/boss.png",
+         "imageheight":128,
+         "imagewidth":128,
+         "type":"Boss"
         }],
  "tilewidth":128,
  "type":"tileset",
