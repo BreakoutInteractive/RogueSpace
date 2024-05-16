@@ -217,7 +217,6 @@ void GameScene::activateTutorial(int level){
 }
 
 void GameScene::restart(){
-    _levelTransition.setActive(false);
     SaveData::removeSave();
     SaveData::Data data;
     data.level = 1;
@@ -230,7 +229,6 @@ void GameScene::restart(){
     data.upgradeOpt2 = indices.second.first;
     data.upgradeOpt2Level = indices.second.second;
     data.hp = GameConstants::PLAYER_MAX_HP;
-    SaveData::makeSave(data);
     setLevel(data);
 }
 
@@ -558,6 +556,7 @@ void GameScene::preUpdate(float dt) {
     
     // TODO: can be removed, but for pc devs to quickly reset
     if (_input.didReset()){
+        _levelTransition.setActive(false);
         restart();
         return;
     }
