@@ -40,7 +40,7 @@ protected:
 
 #pragma mark - Menu Buttons
     /** The button for going back to main */
-    std::shared_ptr<scene2::Button> _pauseBack;
+    std::shared_ptr<scene2::Button> _back;
     /** The button for going back to game */
     std::shared_ptr<scene2::Button> _resume;
     /** The button for in-game settings */
@@ -51,9 +51,8 @@ protected:
     std::shared_ptr<scene2::Button> _confirmConfirm;
     /** confirmation scene**/
     Scene2 _confirmationScene;
-
-#pragma mark - Menu Button Activation
-    bool activateConfirmation;
+    /** whether a confirmation pop up is needed (for the back button) */
+    bool _activateConfirmation;
     
 #pragma mark - Icon Labels
     
@@ -64,6 +63,18 @@ protected:
     std::shared_ptr<scene2::Label> _dash;
     std::shared_ptr<scene2::Label> _parry;
     std::shared_ptr<scene2::Label> _maxHealth;
+    
+#pragma mark Internal Functionality
+    
+    /**
+     * @param active whether to activate the confirmation menu
+     */
+    void activateConfirmMenu(bool active);
+    
+    /**
+     * @param active whether to activate the button listeners on pause menu
+     */
+    void activatePauseMenuButtons(bool active);
     
 public:
 #pragma mark -
@@ -91,14 +102,6 @@ public:
     
     /**
      * Initializes the controller contents.
-     *
-     * In previous labs, this method "started" the scene.  But in this
-     * case, we only use to initialize the scene user interface.  We
-     * do not activate the user interface yet, as an active user
-     * interface will still receive input EVEN WHEN IT IS HIDDEN.
-     *
-     * That is why we have the method {@link #setActive}.
-     *
      * @param assets    The (loaded) assets for this game mode
      *
      * @return true if the controller is initialized properly, false otherwise.
@@ -118,23 +121,17 @@ public:
     virtual void setActive(bool value) override;
     
     /**
-     * @returns whether confirm menu active or not.
-     */
-    bool isConfirmActive(){return _confirmationScene.isActive();}
-    
-    /**
-     * activates confrim menu buttons, deactivates pause menu buttons
-     *
-     * @param value whether the scene is currently active
-     */
-    void activateConfirmMenu(bool active, bool tutorial);
-    
-    /**
      * Sets the icon level labels in this menu.
      * @param levels a list of levels in the order given
      * @pre order: attack, bow, attack speed, shield, dash, parry, health
      */
     void setLabels(std::vector<int> levels);
+    
+    /**
+     * @param value whether to show confirmation pop up when deciding to exit mode
+     * @note this is particular useful if quitting interrupts progress as the pause menu is a stopping point in time until resume is chosen.
+     */
+    void setConfirmationAlert(bool value){ _activateConfirmation = value; }
     
     /**
      * Returns the user's menu choice.
@@ -144,6 +141,8 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+    
+    void update(float dt) override;
     
     void render(const std::shared_ptr<SpriteBatch>& batch) override;
 

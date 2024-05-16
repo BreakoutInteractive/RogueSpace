@@ -94,7 +94,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.init(getCamera(), config);
     
     // necessary (starting at any actual level implies it is not an upgrade room)
-    setUpgradeRoom(false);
+    _isUpgradeRoom = false;
     _isTutorial = false;
     _isTutorialComplete = false;
     
