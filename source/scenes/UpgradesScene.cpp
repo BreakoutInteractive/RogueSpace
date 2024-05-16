@@ -54,29 +54,29 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->setContentSize(dimen);
     scene->doLayout();
     
-    _healthTexture = assets->get<Texture>("upgrade-health");
-    _parryTexture = assets->get<Texture>("upgrade-parry");
-    _shieldTexture = assets->get<Texture>("upgrade-shield");
-    _atkSdTexture = assets->get<Texture>("upgrade-speed");
-    _dashTexture = assets->get<Texture>("upgrade-dash");
-    _bowTexture = assets->get<Texture>("upgrade-bow");
-    _swordTexture = assets->get<Texture>("upgrade-sword");
+    _healthTexture = assets->get<Texture>("upgrade_maxHealth");
+    _parryTexture = assets->get<Texture>("upgrade_parry");
+    _shieldTexture = assets->get<Texture>("upgrade_shield");
+    _atkSdTexture = assets->get<Texture>("upgrade_atkSpeed");
+    _dashTexture = assets->get<Texture>("upgrade_dash");
+    _bowTexture = assets->get<Texture>("upgrade_bow");
+    _swordTexture = assets->get<Texture>("upgrade_atk");
     
-    _option1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item"));
-    _option1Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_name"));
-    _option1Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_description"));
-    _option1Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_tier"));
-    _option1Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item_upgrade-icon"));
+    _option1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_choice1_item"));
+    _option1Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_choice1_item_name"));
+    _option1Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_choice1_item_description"));
+    _option1Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_choice1_item_tier"));
+    _option1Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_choice1_item_icon"));
 
-    _option2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1"));
-    _option2Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_name"));
-    _option2Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_description"));
-    _option2Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_tier"));
-    _option2Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_upgrade-item-1_upgrade-icon"));
+    _option2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_choice2_item"));
+    _option2Name = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_choice2_item_name"));
+    _option2Descrip = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_choice2_item_description"));
+    _option2Level = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("upgrades_choice2_item_tier"));
+    _option2Icon = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("upgrades_choice2_item_icon"));
     
 
-    _confirm1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm"));
-    _confirm2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_confirm-1"));
+    _confirm1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_choice1_confirm"));
+    _confirm2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("upgrades_choice2_confirm"));
     _confirm1->setVisible(false);
     _confirm2->setVisible(false);
     

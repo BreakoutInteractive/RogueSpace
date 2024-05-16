@@ -1,27 +1,4 @@
 {
-    "textures": {
-        "title_background": {
-            "file":     "textures/title/title_background.png"
-        },
-        "title": {
-            "file":     "textures/title/title.png"
-        },
-        "title_button": {
-            "file":     "textures/title/title_button.png"
-        },
-        "title_tutorial_up": {
-            "file":     "textures/title/title_tutorial_up.png"
-        },
-        "title_tutorial_down": {
-            "file":     "textures/title/title_tutorial_down.png"
-        },
-        "confirm_board": {
-            "file": "textures/title/confirm_board.png"
-        },
-        "setting": {
-            "file": "textures/pause/setting.png"
-        }
-    },
     "scene2s": {
         "menu1": {
             "type": "Node",

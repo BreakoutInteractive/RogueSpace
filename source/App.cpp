@@ -34,6 +34,7 @@ void App::onStartup() {
     AudioEngine::start(24);
     // must ensure assets are loaded in order of being used in scene graphs!
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadDirectoryAsync("json/scenes/textures.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/gameplay.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
