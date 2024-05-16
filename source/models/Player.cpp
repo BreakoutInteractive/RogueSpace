@@ -404,7 +404,9 @@ void Player::animateCharge() {
 
 void Player::animateShot() {
     setAnimation(_shotAnimation);
+    _chargingAnimation->reset();
     _chargedEffect->reset();
+    _chargingEffect->reset();
     _shotEffect->start();
     _state = SHOT;
 }
@@ -462,6 +464,9 @@ void Player::updateAnimation(float dt){
     if (_hitEffect->isActive()) {
         _tint = Color4::RED;
     }
+    else {
+        _tint = Color4::WHITE;
+    }
 }
 
 #pragma mark -
@@ -469,7 +474,7 @@ void Player::updateAnimation(float dt){
 
 void Player::updateCounters(){
     _iframeCounter.decrement();
-    if (_iframeCounter.isZero()) _tint = Color4::WHITE;
+//    if (_iframeCounter.isZero()) _tint = Color4::WHITE;
 }
 
 void Player::setFacingDir(cugl::Vec2 dir){

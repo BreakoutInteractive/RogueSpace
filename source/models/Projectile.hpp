@@ -8,7 +8,7 @@
 using namespace cugl;
 class Projectile : public GameObject {
 private:
-	bool playerInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
+	bool playerInit(Vec2 pos, float damage, bool charged, float ang, const std::shared_ptr<AssetManager>& assets);
 	bool lizardInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
 	bool mageInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
 	std::shared_ptr<Animation> _flyingAnimation;
@@ -27,9 +27,9 @@ public:
 	 * @param ang The angle this projectile is facing
 	 * @param assets The asset manager containing the player projectile assets
 	 */
-	static std::shared_ptr<Projectile> playerAlloc(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+	static std::shared_ptr<Projectile> playerAlloc(Vec2 pos, float damage, bool fullCharged, float ang, const std::shared_ptr<AssetManager>& assets) {
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
-		return (result->playerInit(pos, damage, ang, assets) ? result : nullptr);
+		return (result->playerInit(pos, damage, fullCharged, ang, assets) ? result : nullptr);
 	}
 	/**
 	 * Creates a new lizard enemy projectile.

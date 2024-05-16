@@ -1,6 +1,6 @@
 #include "Projectile.hpp"
 
-bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::playerInit(Vec2 pos, float damage, bool charged, float ang, const std::shared_ptr<AssetManager>& assets) {
     //init fields
     _enabled = true;
     _position = pos;
@@ -54,10 +54,17 @@ bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
 
-    std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile");
-    //TODO: modify this to use the right frames
-    _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,4,4), 0.125f, true, 9, 11); //0.125 because 3 frames/24 fps = 1/8 seconds
-    _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.25f, false);
+    if (charged){
+        // full charged projectile animation
+        std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile");
+        _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,4,4), 0.125f, true, 9, 11); //0.125 because 3 frames/24 fps = 1/8 seconds
+        _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.25f, false, 12, 15);
+    }
+    else {
+        std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile-weak");
+        _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,2,4), 0.125f, true, 0, 2); //0.125 because 3 frames/24 fps = 1/8 seconds
+        _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 2,4), 0.25f, false, 3, 7);
+    }
     setFlying();
     setAngle(ang);
     setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
