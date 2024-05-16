@@ -2488,7 +2488,7 @@
                         }],
                  "opacity":1,
                  "type":"objectgroup",
-                 "visible":true,
+                 "visible":false,
                  "x":0,
                  "y":0
                 }, 
@@ -7328,8 +7328,8 @@
                                                  "type":"RangedLizard",
                                                  "visible":true,
                                                  "width":64,
-                                                 "x":1472,
-                                                 "y":864
+                                                 "x":1600,
+                                                 "y":768
                                                 }, 
                                                 {
                                                  "gid":254,
