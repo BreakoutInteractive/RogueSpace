@@ -47,7 +47,8 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
 
     _audioController = std::make_shared<AudioController>();
-    _audioController->init(_assets);
+    SaveData::hasPreferences();
+    _audioController->init(_assets, SaveData::getPreferences());
     
     Application::onStartup(); // this is required
 }
@@ -288,43 +289,44 @@ void App::updateTutorialScene(float dt){
 void App::updateSettingsScene(float dt) {
     _settings.update(dt);
     switch (_settings.getChoice()) {
-    case SettingsScene::Choice::CLOSE:
-        _settings.setActive(false);
-        switch (_prevScene) {
-        case PAUSE:
-            _pause.setActive(true);
-            _scene = PAUSE; // switch to pause scene
+        case SettingsScene::Choice::CLOSE:
+            _settings.setActive(false);
+            switch (_prevScene) {
+            case PAUSE:
+                _pause.setActive(true);
+                _scene = PAUSE; // switch to pause scene
+                break;
+            case TITLE:
+                setTitleScene();
+                _scene = TITLE;
+                break;
+            case TUTORIAL:
+                _tutorial.setActive(true);
+                _scene = TUTORIAL;
+                break;
+            default: //should never be here since you can only access settings from pause and title scenes
+                break;
+            }
             break;
-        case TITLE:
-            setTitleScene();
-            _scene = TITLE;
+        // TODO: control volume when music/sfx are implemented
+        // handled in listener
+        case SettingsScene::Choice::VOLUP:
             break;
-        case TUTORIAL:
-            _tutorial.setActive(true);
-            _scene = TUTORIAL;
+        case SettingsScene::Choice::VOLDOWN:
             break;
-        default: //should never be here since you can only access settings from pause and title scenes
+        case SettingsScene::Choice::SFXUP:
             break;
-        }
-        break;
-    //TODO: control volume when music/sfx are implemented
-    case SettingsScene::Choice::VOLUP:
-        break;
-    case SettingsScene::Choice::VOLDOWN:
-        break;
-    case SettingsScene::Choice::SFXUP:
-        break;
-    case SettingsScene::Choice::SFXDOWN:
-        break;
-    case SettingsScene::Choice::MUSICUP:
-        break;
-    case SettingsScene::Choice::MUSICDOWN:
-        break;
-    case SettingsScene::Choice::INVERT:
-        _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
-        break;
-    case SettingsScene::Choice::NONE:
-        break;
+        case SettingsScene::Choice::SFXDOWN:
+            break;
+        case SettingsScene::Choice::MUSICUP:
+            break;
+        case SettingsScene::Choice::MUSICDOWN:
+            break;
+        case SettingsScene::Choice::INVERT:
+            _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
+            break;
+        case SettingsScene::Choice::NONE:
+            break;
     }
 }
 

@@ -50,132 +50,132 @@
         "airSlash": {
             "type":     "sample",
             "file":     "sounds/impact/slash_01.wav",
-            "volume":   0.4
+            "volume":   1.0
         },
         "enemyMelee": {
             "type":     "sample",
             "file":     "sounds/weapons/sword_03.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "playerAttack": {
             "type":     "sample",
             "file":     "sounds/weapons/sword_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "wallMelee": {
             "type":     "sample",
             "file":     "sounds/impact/impact_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "bowDraw": {
             "type":     "sample",
             "file":     "sounds/weapons/bow_pull.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "bowCharge": {
             "type":     "sample",
             "file":     "sounds/weapons/bow_chargeloop.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "bowFire": {
             "type":     "sample",
             "file":     "sounds/weapons/bow_fire.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "parryMelee": {
             "type":     "sample",
             "file":     "sounds/weapons/steel_04.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "envWinds": {
             "type":     "sample",
             "file":     "sounds/env/env_wind_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "p-AlienGrowl1": {
             "type":     "sample",
             "file":     "sounds/alien/passive/alien_quiet_00.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "p-AlienGrowl2": {
             "type":     "sample",
             "file":     "sounds/alien/passive/alien_quiet_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "p-AlienGrowl3": {
             "type":     "sample",
             "file":     "sounds/alien/passive/alien_quiet_02.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "a-AlienGrowl1": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_00.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "a-AlienGrowl2": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_02.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "a-AlienGrowl3": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_03.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "lizardHitLanded": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_08.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "meleeHitLanded1": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "meleeHitLanded2": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_06.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "lizardDeath": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_00.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "meleeDeath1": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "meleeDeath2": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_02.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "menuClick": {
             "type":     "sample",
             "file":     "sounds/impact/impact_08.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "title": {
             "type":     "sample",
             "file":     "sounds/music/rs_title.ogg",
-            "volume":   0.5
+            "volume":   1.0
         },
         "oasis": {
             "type":     "sample",
             "file":     "sounds/music/rs_oasis_loop.ogg",
-            "volume":   0.5
+            "volume":   1.0
         },
         "strand": {
             "type":     "sample",
             "file":     "sounds/music/rs_stranded_loop.ogg",
-            "volume":   0.5
+            "volume":   1.0
         },
         "upgrade": {
             "type":     "sample",
             "file":     "sounds/music/rs_play_heal.ogg",
-            "volume":   0.5
+            "volume":   1.0
         }
     },
 	"fonts": {

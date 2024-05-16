@@ -8,6 +8,7 @@
 
 #include <cugl/cugl.h>
 #include <stdio.h>
+#include "../utility/SaveData.hpp"
 
 class AudioController {
 protected:
@@ -15,6 +16,10 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     
     std::string _currTrack;
+    
+    float _master;
+    float _sfx;
+    float _bgm;
     
 public:
 #pragma mark -
@@ -28,7 +33,7 @@ public:
     /**
      * Initializes the controller
      */
-    void init(std::shared_ptr<cugl::AssetManager> assets);
+    void init(std::shared_ptr<cugl::AssetManager> assets, SaveData::Preferences p);
 
 #pragma mark -
 #pragma mark audio
@@ -43,6 +48,34 @@ public:
 //    bool isActive(const std::string key) const {
 //        return cugl::AudioEngine::get()->isActive(key);
 //    }
+    
+    /**
+     * Get current track
+     *
+     * @param t  the proportion to change by
+     */
+    std::string getCurrTrack() { return _currTrack; }
+    
+    /**
+     * Change master volume
+     *
+     * @param t  the proportion to change by
+     */
+    void changeMasterVolume(float t);
+    
+    /**
+     * Change SFX volume
+     *
+     * @param t  the proportion to change by
+     */
+    void changeSFXVolume(float t);
+    
+    /**
+     * Change music volume
+     *
+     * @param t  the proportion to change by
+     */
+    void changeBGMVolume(float t);
     
     /**
      * Plays sound associated with collision bodies.
