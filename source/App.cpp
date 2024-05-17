@@ -60,6 +60,7 @@ void App::onShutdown() {
     _settings.dispose();
     _title.dispose();
     _death.dispose();
+    AudioController::dispose();
     _assets = nullptr;
     _batch = nullptr;
     

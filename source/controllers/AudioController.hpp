@@ -35,6 +35,11 @@ public:
      * Initializes the controller
      */
     static void init(std::shared_ptr<cugl::AssetManager> assets, SaveData::Preferences p);
+    
+    /**
+     * @note should only be called once and remove reference to assets.
+     */
+    static void dispose(){ _assets = nullptr; }
 
 #pragma mark -
 #pragma mark audio

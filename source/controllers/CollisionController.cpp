@@ -178,15 +178,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     dir.normalize();
                     float ang = acos(dir.dot(Vec2::UNIT_X));
                     if (player->getPosition().y * player->getDrawScale().y < (*it)->getPosition().y * (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
-//                    if (body1->GetUserData().pointer == aptr) {
-//                        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-//                        AudioController::playEnemyFX("attackHit", data1->getName());
-//                    }
-//                    else {
-//                            //body1 userdata pointer = pptr
-//                        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-//                        AudioController::playEnemyFX("attackHit", data2->getName());
-//                    }
+                    AudioController::playPlayerFX("damaged");
                     player->hit(dir, (*it)->getDamage());
                     CULog("Player took damage!");
                 }
