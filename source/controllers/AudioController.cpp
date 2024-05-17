@@ -79,6 +79,12 @@ void AudioController::playPlayerFX(const std::string action){
         else if (action == "parry") {
             source = _assets->get<Sound>("parryMelee");
         }
+        else if (action == "damaged") {
+            source = _assets->get<Sound>("playerDmg");
+        }
+        else if (action == "dash") {
+            source = _assets->get<Sound>("dash");
+        }
         else {
             CULogError("player sound action not found");
         }
@@ -106,18 +112,25 @@ void AudioController::clearPlayerFX(const std::string action){
 void AudioController::playEnemyFX(const std::string action, const std::string key){
     if (!AudioEngine::get()->isActive(action+key)) {
         std::shared_ptr<Sound> source; // TODO: might be bad to create a <Sound> instead of <AudioSample>
-        bool loop = false;
         if (action == "attack") {
-            int randn = std::rand() % 4 + 1;
-            source = _assets->get<Sound>("playerAttack" + std::to_string(randn));
+            int randn = std::rand() % 6 + 1;
+            source = _assets->get<Sound>("enemyAttack" + std::to_string(randn));
         }
-        else if (action == "drawBow") {
-            source = _assets->get<Sound>("bowDraw");
+        else if (action == "death") {
+            int randn = std::rand() % 4 + 1;
+            source = _assets->get<Sound>("alienDeath" + std::to_string(randn));
+        }
+        else if (action == "aggro") {
+            int randn = std::rand() % 4 + 1;
+            source = _assets->get<Sound>("alienAggro" + std::to_string(randn));
+        }
+        else if (action == "damaged") {
+            source = _assets->get<Sound>("alienImpact");
         }
         else {
             CULogError("player sound action not found");
         }
-        AudioEngine::get()->play(action+key, source, loop, source->getVolume() * _master * _sfx);
+        AudioEngine::get()->play(action+key, source, false, source->getVolume() * _master * _sfx);
     }
 }
 
@@ -159,7 +172,6 @@ void AudioController::updateMusic(const std::string key) {
         _looping = loop;
         _currTrack = key;
         m->enqueue(source, loop, 0.5 * _master * _bgm);
-        CULog("annyeong!");
     } else if (_currTrack != key) {
         if (key == "oasis") {
             loop = true;
@@ -179,7 +191,6 @@ void AudioController::updateMusic(const std::string key) {
         _currTrack = key;
         m->enqueue(source, loop, 0.5 * _master * _bgm);
         m->advance();
-        CULog("aharro!");
     } else if (m->getVolume() != _bgm) { // to remove
         m->setVolume(0.5 * _master * _bgm);
         return;

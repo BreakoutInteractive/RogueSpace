@@ -54,6 +54,7 @@ void CollisionController::beginContact(b2Contact* contact){
     intptr_t aptr = reinterpret_cast<intptr_t>(meleeHitbox.get());
     intptr_t pptr = reinterpret_cast<intptr_t>(player.get());
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
+    int enemyIndex = 0;
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         if ((*it)->isEnabled() && (*it)->getHealth() > 0) {
             intptr_t eptr = reinterpret_cast<intptr_t>((*it).get());
@@ -67,6 +68,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
                 if (player->getMeleeHitbox()->hits(eptr, ang)){
                     (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    AudioController::playEnemyFX("damaged", std::to_string(enemyIndex));
                     CULog("Hit an enemy!");
                     if (meleeHitbox->hitCount() == 1){
                         // the hitbox is active and this is the first hit of the frame
@@ -86,12 +88,14 @@ void CollisionController::beginContact(b2Contact* contact){
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled() && (*it)->getHealth() > 0) { //need to check isEnabled because projectiles hit corpses for some reason
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
+                        AudioController::playEnemyFX("damaged", std::to_string(enemyIndex));
                         CULog("Shot an enemy!");
                         p->setExploding();
                     }
                 }
             }
         }
+        enemyIndex++;
     }
     //health packs
     for (std::shared_ptr<HealthPack> h : _level->getHealthPacks()) {
@@ -134,16 +138,11 @@ void CollisionController::beginContact(b2Contact* contact){
                         //successful parry
                         melee->setStunned(player->getStunWindow());
                         player->playParryEffect();
+                        AudioController::playPlayerFX("parry");
                     }
                     else {
-//                        if (body1->GetUserData().pointer == aptr) {
-//                            physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-//                        }
-//                        else {
-//                            //body1 userdata pointer = pptr
-//                            physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-//                        }
                         player->hit(dir, (*it)->getDamage());
+                        AudioController::playPlayerFX("damaged");
                         CULog("Player took damage!");
                     }
                 }
@@ -161,6 +160,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 p->setExploding();
                 if (!player->isParrying()) {
                     player->hit(dir, p->getDamage());
+                    AudioController::playPlayerFX("damaged");
                     CULog("Player got shot!");
                 }
                 else player->playParryEffect();

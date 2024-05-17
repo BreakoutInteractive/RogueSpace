@@ -428,6 +428,7 @@ void GameScene::processPlayerInput(){
             player->setFacingDir(force);
             player->setDodging();
             player->reduceStamina();
+            AudioController::playPlayerFX("dash");
         }
         else if (!player->isRecovering()){
             //for now, give middle precedence to attack
@@ -492,7 +493,6 @@ void GameScene::processPlayerInput(){
                 if (player->isBlocking()) {
                     CULog("parried");
                     player->animateParry();
-                    AudioController::playPlayerFX("parry");
                 }
                 else player->animateDefault();
             }
@@ -653,12 +653,14 @@ void GameScene::preUpdate(float dt) {
     auto player = _level->getPlayer();
     _AIController.update(dt);
     // enemy attacks
+    int enemyIndex = 0;
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
         if (!enemy->isEnabled() || enemy->isDying()) continue;
         if (enemy->getHealth() <= 0) {
             //drop health pack
+            AudioController::playEnemyFX("death", enemy->getType());
             if (!enemy->_dropped && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
                 auto healthpack = HealthPack::alloc(enemy->getPosition(), _assets);
                 healthpack->setDrawScale(Vec2(_scale, _scale));
@@ -702,6 +704,7 @@ void GameScene::preUpdate(float dt) {
                 if (enemy->getType() == "melee lizard" ||
                     enemy->getType() == "tank enemy") {
                     enemy->attack(_level, _assets);
+                    AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
                 }
                 enemy->setAttacking();
             }
@@ -711,10 +714,12 @@ void GameScene::preUpdate(float dt) {
                     std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
                     if (r->getCharged()) {
                         enemy->attack(_level, _assets);
+                        AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
                     }
                 }
             }
         }
+        enemyIndex++;
     }
 
 #pragma mark - Component Updates

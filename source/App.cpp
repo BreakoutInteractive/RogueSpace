@@ -123,6 +123,7 @@ void App::preUpdate(float dt) {
             updateSettingsScene(dt);
             break;
         case TUTORIAL:
+            AudioController::updateMusic("title");
             _tutorial.setActive(true);
             updateTutorialScene(dt);
             break;
@@ -149,7 +150,6 @@ void App::preUpdate(float dt) {
             }
             break;
         case DEATH:
-            AudioController::updateMusic("clear");
             updateDeathScene(dt);
             break;
     }
