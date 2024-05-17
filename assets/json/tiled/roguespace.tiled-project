@@ -13,6 +13,35 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": false,
+            "id": 15,
+            "members": [
+                {
+                    "name": "damage",
+                    "type": "float",
+                    "value": 1
+                },
+                {
+                    "name": "hp",
+                    "type": "float",
+                    "value": 10
+                },
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Boss",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": false,
             "id": 1,
             "members": [
                 {
@@ -287,70 +316,6 @@
                 }
             ],
             "name": "Wall",
-            "type": "class",
-            "useAs": [
-                "object",
-                "tile",
-                "project"
-            ]
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": false,
-            "id": 15,
-            "members": [
-                {
-                    "name": "damage",
-                    "type": "float",
-                    "value": 1
-                },
-                {
-                    "name": "hp",
-                    "type": "float",
-                    "value": 10
-                },
-                {
-                    "name": "path",
-                    "type": "object",
-                    "value": 0
-                }
-            ],
-            "name": "Boss",
-            "type": "class",
-            "useAs": [
-                "object",
-                "tile",
-                "project"
-            ]
-        },
-        {
-            "id": 16,
-            "name": "Type",
-            "storageType": "string",
-            "type": "enum",
-            "values": [
-                "RANGE",
-                "MELEE"
-            ],
-            "valuesAsFlags": false
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": false,
-            "id": 17,
-            "members": [
-                {
-                    "name": "hp",
-                    "type": "int",
-                    "value": 2
-                },
-                {
-                    "name": "path",
-                    "type": "object",
-                    "value": 0
-                }
-            ],
-            "name": "Parry",
             "type": "class",
             "useAs": [
                 "object",
