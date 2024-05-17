@@ -46,14 +46,14 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _screenshotParry = assets->get<Texture>("screenshotParry");
     
     // attach listeners
-    auto backListener = [this](std::string name, bool down){ _choice = BACK; _selectedLevel=1;};
+    auto backListener = [this](std::string name, bool down){ _choice = BACK; _selectedLevel=1; AudioController::playUiFX("menuClick");};
     //if user exits tutorial screen, reset to first option
-    auto playListener = [this](std::string name, bool down){ _choice = LEVEL;};
+    auto playListener = [this](std::string name, bool down){ _choice = LEVEL; AudioController::playUiFX("menuClick");};
     //if they play a level, same level should be selected
-    auto level1Listener = [this](std::string name, bool down){_selectedLevel = 1; setScreenText();};
-    auto level2Listener = [this](std::string name, bool down){_selectedLevel = 2; setScreenText();};
-    auto level3Listener = [this](std::string name, bool down){_selectedLevel = 3; setScreenText();};
-    auto level4Listener = [this](std::string name, bool down){_selectedLevel = 4; setScreenText();};
+    auto level1Listener = [this](std::string name, bool down){_selectedLevel = 1; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level2Listener = [this](std::string name, bool down){_selectedLevel = 2; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level3Listener = [this](std::string name, bool down){_selectedLevel = 3; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level4Listener = [this](std::string name, bool down){_selectedLevel = 4; setScreenText(); AudioController::playUiFX("menuClick");};
     
     _back->addListener(backListener);
     _play->addListener(playListener);
@@ -89,7 +89,7 @@ void TutorialScene::setScreenText(){
     switch (levelType) {
         case DASH:
             tutName = "DASH";
-            tutDescription = "Dash to avoid damage and phase through \nenemies.";
+            tutDescription = "Dash to avoid damage and phase through enemies.";
             levelSS = _screenshotDash;
             break;
         case MELEE:
@@ -109,7 +109,7 @@ void TutorialScene::setScreenText(){
             break;
     }
     _levelLabel->setText(tutName);
-    _levelDescrip->setText(tutDescription);
+    _levelDescrip->setText(tutDescription, true);
     _screenshot->setTexture(levelSS);
 
 }

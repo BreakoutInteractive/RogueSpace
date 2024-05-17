@@ -337,8 +337,11 @@ public:
     /**
      * Render the level container using the sprite batch. The container includes all elements
      * of this level which includes entities and environment.
+     *
+     * @param batch the spritebatch
+     * @param camRect a rectangle defining the camera's viewport where position is shifted to the left corner as opposed to center of the viewport.
      */
-    void render(const std::shared_ptr<cugl::SpriteBatch>& batch);
+    void render(const std::shared_ptr<cugl::SpriteBatch>& batch, Rect camRect);
 
 
 #pragma mark -

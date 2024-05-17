@@ -77,15 +77,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
+    _gameRenderer.setGameCam(getCamera());
     std::function<bool (Vec2)> preprocessor = [this](Vec2 pos) {
         return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
     };
     _input.init(preprocessor);
     _input.setMinDragRadius(_gameRenderer.getJoystickScreenRadius() / 4);
     activateInputs(false);
-    _audioController = std::make_shared<AudioController>();
-    _audioController->init(_assets);
-    _collisionController.setAssets(_assets, _audioController);
+    _collisionController.setAssets(_assets);
     
     CameraController::CameraConfig config;
     config.speed = GameConstants::GAME_CAMERA_SPEED;
@@ -244,12 +243,15 @@ void GameScene::setLevel(SaveData::Data saveData){
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
         _isTutorial = false;
+        AudioController::updateMusic("oasis", 1.0f);
     } else if (_isTutorial){
         levelToParse = getLevelKey(_levelNumber);
+        AudioController::updateMusic("oasis", 0.0f);
     }
     else{
         levelToParse = getLevelKey(_levelNumber);
         _isTutorial = false;
+        AudioController::updateMusic("pursuit", 1.0f);
     }
     
     CULog("currLevel %d", _levelNumber);
@@ -266,7 +268,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     setDebug(isDebug());
     _AIController.init(_level);
     _collisionController.setLevel(_level);
-    _gameRenderer.setGameElements(getCamera(), _level);
+    _gameRenderer.setGameLevel(_level);
     
     auto p = _level->getPlayer();
     p->setMaxHPLevel(saveData.hpLvl);
@@ -430,6 +432,7 @@ void GameScene::processPlayerInput(){
             player->setFacingDir(force);
             player->setDodging();
             player->reduceStamina();
+            AudioController::playPlayerFX("dash");
         }
         else if (!player->isRecovering()){
             //for now, give middle precedence to attack
@@ -448,9 +451,11 @@ void GameScene::processPlayerInput(){
                             player->enableMeleeAttack(ang);
                             player->animateAttack();
                             player->resetAttackCooldown();
+                            AudioController::playPlayerFX("attackHit");
                         }
                         break;
                 case Player::Weapon::RANGED:
+                        AudioController::playPlayerFX("loopBow");
                         player->animateCharge();
                         player->getCollider()->setLinearVelocity(Vec2::ZERO);
                         break;
@@ -464,6 +469,8 @@ void GameScene::processPlayerInput(){
                 }
             }
             else if (_input.didShoot() && player->getWeapon() == Player::Weapon::RANGED) {
+                AudioController::clearPlayerFX("loopBow");
+                AudioController::playPlayerFX("shootBow");
                 Vec2 direction = Vec2::ZERO;
                 float ang = 0;
                 if (player->isRangedAttackActive()) {
@@ -522,9 +529,6 @@ void GameScene::processPlayerInput(){
                     break;
             }
         }
-    }
-    else {
-        CULog("knockback being applied");
     }
     
     // TODO: could remove, this is PC-only
@@ -587,6 +591,7 @@ void GameScene::preUpdate(float dt) {
                 // no more enemies remain, but there were enemies initially
                 _actionManager.remove(AREA_CLEAR_KEY);
                 _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
+                AudioController::updateMusic("strand", 1.0f);
             }
         }
     }
@@ -654,12 +659,14 @@ void GameScene::preUpdate(float dt) {
     auto player = _level->getPlayer();
     _AIController.update(dt);
     // enemy attacks
+    int enemyIndex = 0;
     std::vector<std::shared_ptr<Enemy>> enemies = _level->getEnemies();
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         auto enemy = *it;
         if (!enemy->isEnabled() || enemy->isDying()) continue;
         if (enemy->getHealth() <= 0) {
             //drop health pack
+            AudioController::playEnemyFX("death", enemy->getType());
             if (!enemy->_dropped && rand() % 100 < GameConstants::HEALTHPACK_DROP_RATE) {
                 auto healthpack = HealthPack::alloc(enemy->getPosition(), _assets);
                 healthpack->setDrawScale(Vec2(_scale, _scale));
@@ -715,6 +722,7 @@ void GameScene::preUpdate(float dt) {
                     enemy->getType() == "tank enemy" ||
                     enemy->getType() == "boss enemy") {
                     enemy->attack(_level, _assets);
+                    AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
                 }
                 enemy->setAttacking();
             }
@@ -724,6 +732,7 @@ void GameScene::preUpdate(float dt) {
                     std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
                     if (r->getCharged()) {
                         enemy->attack(_level, _assets);
+                        AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
                     }
                 }
             }
@@ -734,6 +743,7 @@ void GameScene::preUpdate(float dt) {
                 }
             }
         }
+        enemyIndex++;
     }
 
 #pragma mark - Component Updates

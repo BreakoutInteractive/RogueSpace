@@ -92,6 +92,9 @@
         },
         "boss-charge-storm": {
             "file":     "textures/sprites/boss/boss_storm.png"
+        },
+        "boss-projectile": {
+            "file":     "textures/sprites/boss/effect_rockthrow.png"
         }
     }
 }

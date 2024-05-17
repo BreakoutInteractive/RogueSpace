@@ -32,6 +32,9 @@ protected:
     /** The animation to use while charging the storm */
     std::shared_ptr<Animation> _chargeAnimation;
     
+    /** The animation to use when displaying the charging rock projectiles */
+    std::shared_ptr<Animation> _rockEffect;
+    
     /** The animation to use when displaying the storm */
     std::shared_ptr<Animation> _stormEffect;
     

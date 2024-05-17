@@ -65,9 +65,12 @@ public:
     /**
      * @return the world position of the bottom center of this tile
      */
-    Vec2 getPosition(){
-        return _pos;
-    }
+    Vec2 getPosition(){ return _pos; }
+    
+    /**
+     * @return box2d size of this tile
+     */
+    Vec2 getSize(){ return _size; }
     
 #pragma mark Assets and Animation
     
@@ -109,13 +112,17 @@ public:
         std::shared_ptr<TileLayer> result = std::make_shared<TileLayer>();
         return result;
     }
+    
+    int getCount(){ return (int) _tiles.size(); }
 
 #pragma mark Animation and Assets
     
     /**
      * render this layer through the sprite batch.
+     * @param batch the spritebatch
+     * @param camRect a rectangle defining the camera's viewport where position is shifted to the left corner as opposed to center of the viewport.
      */
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, Rect camRect);
  
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.

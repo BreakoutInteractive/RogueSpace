@@ -16,6 +16,7 @@
 #include "scenes/SettingsScene.hpp"
 #include "scenes/DeathScene.hpp"
 #include "scenes/TutorialScene.hpp"
+#include "controllers/AudioController.hpp"
 
 /**
  * This class represents the application root for the ship demo.

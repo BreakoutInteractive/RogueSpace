@@ -11,6 +11,7 @@ private:
 	bool playerInit(Vec2 pos, float damage, bool charged, float ang, const std::shared_ptr<AssetManager>& assets);
 	bool lizardInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
 	bool mageInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
+    bool bossInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets);
 	std::shared_ptr<Animation> _flyingAnimation;
 	std::shared_ptr<Animation> _explodingAnimation;
 	enum state { FLYING, EXPLODING };
@@ -60,6 +61,19 @@ public:
 		std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
 		return (result->mageInit(pos, damage, ang, assets) ? result : nullptr);
 	}
+    
+    /**
+     * Creates a new boss enemy projectile.
+     *
+     * @param pos The position at which to spawn the projectile. This should be the enemy's position
+     * @param damage The damage this projectile deals to the player
+     * @param ang The angle this projectile is facing
+     * @param assets The asset manager containing the enemy projectile assets
+     */
+    static std::shared_ptr<Projectile> bossAlloc(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+        std::shared_ptr<Projectile> result = std::make_shared<Projectile>();
+        return (result->bossInit(pos, damage, ang, assets) ? result : nullptr);
+    }
 
 	/** Returns whether this projectile has completed its lifespan and should be destroyed 
 	 * TODO: recycle the object instead of destroying it 
