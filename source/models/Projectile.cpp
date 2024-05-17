@@ -1,6 +1,7 @@
 #include "Projectile.hpp"
+#include <cmath>
 
-bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {
+bool Projectile::playerInit(Vec2 pos, float damage, bool charged, float ang, const std::shared_ptr<AssetManager>& assets) {
     //init fields
     _enabled = true;
     _position = pos;
@@ -9,6 +10,7 @@ bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared
     _damage = damage;
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
+    _isFullyCharged = charged;
 
     //init hitbox
     std::vector<Vec2> v;
@@ -54,10 +56,17 @@ bool Projectile::playerInit(Vec2 pos, float damage, float ang, const std::shared
     shadow->setFilterData(filter);
     _colliderShadow = shadow;
 
-    std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile");
-    //TODO: modify this to use the right frames
-    _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,4,4), 0.125f, true, 9, 11); //0.125 because 3 frames/24 fps = 1/8 seconds
-    _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.25f, false);
+    if (charged){
+        // full charged projectile animation
+        std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile");
+        _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,4,4), 0.125f, true, 9, 11); //0.125 because 3 frames/24 fps = 1/8 seconds
+        _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 4, 4), 0.25f, false, 12, 15);
+    }
+    else {
+        std::shared_ptr<Texture> t = assets->get<Texture>("player-projectile-weak");
+        _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t,2,4), 0.125f, true, 0, 2); //0.125 because 3 frames/24 fps = 1/8 seconds
+        _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 2,4), 0.25f, false, 3, 7);
+    }
     setFlying();
     setAngle(ang);
     setVelocity(Vec2(GameConstants::PROJ_SPEED_P, 0).rotate(ang));
@@ -73,6 +82,7 @@ bool Projectile::lizardInit(Vec2 pos, float damage, float ang, const std::shared
     _damage = damage;
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
+    _isFullyCharged = true;
 
     //init hitbox
     //TODO: modify shape and size
@@ -118,6 +128,7 @@ bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_p
     _damage = damage;
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
+    _isFullyCharged = true;
 
     //init hitbox
     //TODO: modify shape and size
@@ -186,10 +197,10 @@ bool Projectile::isCompleted() {
     if (_state == FLYING) {
         if ((_collider->getFilterData().maskBits & CATEGORY_PLAYER) == CATEGORY_PLAYER)
             //if this can hit the player, it belongs to an enemy
-            return _position.distanceSquared(_initPos) >= GameConstants::PROJ_DIST_E_SQ;
+            return _position.distanceSquared(_initPos) >= pow(GameConstants::PROJ_DIST_E,2);
         else if ((_collider->getFilterData().maskBits & CATEGORY_ENEMY) == CATEGORY_ENEMY)
             //if this can hit enemies, it belongs to the player
-            return _position.distanceSquared(_initPos) >= GameConstants::PROJ_DIST_P_SQ;
+            return _position.distanceSquared(_initPos) >= pow(GameConstants::PROJ_DIST_P,2);
 
         // impossible path
         return false;

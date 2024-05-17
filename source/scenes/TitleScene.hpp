@@ -63,6 +63,10 @@ protected:
     std::shared_ptr<scene2::Button> _newGame2;
     std::shared_ptr<scene2::Button> _tutorial2;
     std::shared_ptr<scene2::Button> _settings2;
+    /** buttons for confirmation menu**/
+    std::shared_ptr<scene2::Button> _back2;
+    std::shared_ptr<scene2::Button> _confirm2;
+    Scene2 _confirmationScene;
 
 #pragma mark - Internal Scene Helpers
     /**
@@ -110,6 +114,18 @@ public:
      * @note if you would like to switch the scene, make sure to deactivate the current scene, set the new scene, and make the new scene active.
      */
     void setSceneType(SceneType type);
+    
+    /**
+    * @returns whether confirm menu active or not.
+    */
+    bool isConfirmActive(){return _confirmationScene.isActive();}
+
+    /**
+     * activates confrim menu buttons, deactivates title menu buttons
+    *
+    * @param value whether the scene is currently active
+    */
+    void activateConfirmButtons(bool active);
     
     /**
      * activates this menu scene which includes toggling button visibility and functionality.
