@@ -68,7 +68,8 @@ void CollisionController::beginContact(b2Contact* contact){
                 if ((*it)->getPosition().y * (*it)->getDrawScale().y < player->getPosition().y * player->getDrawScale().y) ang = 2 * M_PI - ang;
                 // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
                 if (player->getMeleeHitbox()->hits(eptr, ang)){
-                    (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
+                    if (!player->isComboStrike()) (*it)->hit(dir, false, player->getMeleeDamage());
+                    else (*it)->hit(dir, false, player->getMeleeDamage() * GameConstants::COMBO_DMG_MUL, GameConstants::KNOCKBACK_PWR_ATK);
                     AudioController::playEnemyFX("damaged", std::to_string(enemyIndex));
                     CULog("Hit an enemy!");
                     if (meleeHitbox->hitCount() == 1){
