@@ -88,7 +88,8 @@ void CollisionController::beginContact(b2Contact* contact){
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled() && (*it)->getHealth() > 0) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
+                        float knockback = p->isFullyCharged() ? GameConstants::PLAYER_PROJ_KNOCKBACK : 0;
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage(), knockback);
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx

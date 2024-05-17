@@ -75,8 +75,6 @@ public:
     static float PROJ_RADIUS_LIZARD;
     /** the radius of a mage enemy projectile */
     static float PROJ_RADIUS_MAGE;
-    /** the square of the distance the enemy projectile travels, not including the explosion animation */
-    static float PROJ_DIST_E_SQ;
     /** the distance the enemy projectile travels, not including the explosion animation */
     static float PROJ_DIST_E;
     /** the fraction of damage the tank enemy takes when not stunned */
@@ -96,33 +94,33 @@ public:
 #pragma mark -
 #pragma mark Boss Constants
     /** the number of seconds the storm takes to charge */
-    static int STORM_CHARGE_TIME;
+    static float STORM_CHARGE_TIME;
     /** the number of game frames the storm will last */
     static int STORM_TIMER;
     /** radius of storm */
     static float STORM_RADIUS;
     
 #pragma mark -
-#pragma mark Player Upgradeable Stat Constants
+#pragma mark Player Combat
     
     /** player initial HP */
     static float PLAYER_MAX_HP;
-    /** player initial attack damage */
-    static float PLAYER_ATK_DAMAGE;
-    /** player initial ranged attack damage */
-    static float PLAYER_BOW_DAMAGE;
-    /** player initial passive damage reduction */
-    static float PLAYER_PASSIVE_REDUCTION;
-    /** player initial blocking damage reduction (reduction from parry stance)*/
-    static float PLAYER_BLOCKING_REDUCTION;
-    /** the number of dodges  */
-    static float PLAYER_DODGE_COUNT;
-    /** the initial duration of the player's parry stun on enemies */
-    static float PLAYER_STUN_DURATION;
+
+    /** the multiplier value applied to the bow damage stat when firing a projectile instantly (weakest) */
+    static float MIN_PROJ_DMG_MULTIPLIER;
+    /** the multiplier value applied to the bow damage stat when projectile is FULLY charged (strongest) */
+    static float MAX_PROJ_DMG_MULTIPLIER;
+    /** how many seconds it takes for the player to charge the ranged attack */
+    static float CHARGE_TIME;
+    /** the knockback dealt to the enemies when projectile is fully charged*/
+    static float PLAYER_PROJ_KNOCKBACK;
     
-    // TODO: pending further discussion
-    /** the time in seconds for which a player cannot start a new melee attack AFTER the end of such attack */
-    static float PLAYER_ATTACK_COOLDOWN;
+    /** player melee attack range, radius of semicircle sweep */
+    static float PLAYER_MELEE_ATK_RANGE;
+    /** the maximum time before restting the combo */
+    static float COMBO_TIME;
+    /** the length of the parry animation */
+    static float PLAYER_PARRY_TIME;
     
     
 #pragma mark -
@@ -135,8 +133,6 @@ public:
     /** the number of frames to receive enemy knockback (must be strictly less than or equal to number of iframes) */
     static int PLAYER_INCOMING_KB_FRAMES;
 
-    /** the length of the parry animation */
-    static float PLAYER_PARRY_TIME;
 
     /** the number of seconds for the dodge effect to last*/
     static float PLAYER_DODGE_TIME;
@@ -147,25 +143,15 @@ public:
     /** player speed while melee attacking */
     static float PLAYER_ATK_MOVE_SPEED;
     
-    /** player melee attack range
-     
-     the radius of a melee attack. sweeps out a semicircle with this radius (in physics coordinates) centered at the center of the player.
-     this is how sweeping melee attacks work in Hades
-     */
-    static float PLAYER_MELEE_ATK_RANGE;
 
     /** the speed of a player projectile */
     static float PROJ_SPEED_P;
     /** half of the size of a player projectile */
     static float PROJ_SIZE_P_HALF;
-    /** the square of the distance the player projectile travels, not including the explosion animation */
-    static float PROJ_DIST_P_SQ;
     /** the distance the player projectile travels, not including the explosion animation */
     static float PROJ_DIST_P;
-    /** how many seconds it takes for the player to charge the ranged attack */
-    static float CHARGE_TIME;
-    /** the maximum time before restting the combo */
-    static float COMBO_TIME;
+
+
     /** The chance (out of 100) for a health pack to drop when defeating an enemy.
      *  If the value is <0, the health pack will never drop. If it is >=99, it will always drop.
      */
