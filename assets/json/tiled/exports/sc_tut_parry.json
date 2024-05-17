@@ -1521,7 +1521,7 @@
         {
          "draworder":"topdown",
          "id":269,
-         "name":"player",
+         "name":"entities",
          "objects":[
                 {
                  "gid":250,

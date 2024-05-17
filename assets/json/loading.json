@@ -1,12 +1,12 @@
 {
-	"textures": {
-		"logo": {
-			"file":      "textures/loading/planet_1.png",
+    "textures": {
+        "logo": {
+            "file":      "textures/loading/planet_1.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
-		},
+        },
         "name": {
             "file":      "textures/loading/transparent_logo_white.png",
             "wrapS":     "clamp",
@@ -27,7 +27,7 @@
                 "rightcap"   : [296, 45, 320, 90]
             }
         }
-	},
+    },
     "scene2s" : {
         "load" : {
             "type"      : "Solid",

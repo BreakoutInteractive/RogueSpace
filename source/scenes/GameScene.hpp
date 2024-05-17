@@ -14,6 +14,7 @@
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
 #include <vector>
+#include <array>
 #include "../models/Player.hpp"
 #include "../controllers/AIController.hpp"
 #include "../controllers/AudioController.hpp"
@@ -81,10 +82,17 @@ protected:
     TransitionScene _levelTransition;
     /** the upgrades menu  */
     UpgradesScene _upgrades;
+    
     /**
-     * sets up the upgrade scene based on player stats, picking random stats to be upgraded.
+     * @note the order is irrelevant. The function `generateUpgradeIndices` make up for this lack of specification.
+     * @return the list of current upgrades for the given player
      */
-    void configureUpgradeMenu(std::shared_ptr<Player> player);
+    std::array<Upgradeable, 7> getPlayerUpgrades(std::shared_ptr<Player> player);
+    /**
+     * @note if `player` is a null pointer, the entire set of upgrades are valid and implies that there are no current upgrades.
+     * @return a pair of pairs of (indices, level) indicating the two upgrades to be shown in upgrade scene.
+     */
+    std::pair<std::pair<int,int>, std::pair<int,int>> generateUpgradeIndices(std::shared_ptr<Player> player);
 
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
@@ -236,6 +244,16 @@ public:
     bool isTutorialComplete(){return _isTutorial && _isTutorialComplete; }
     
     /**
+     * @return whether the running level is a tutorial
+     */
+    bool isTutorial(){return _isTutorial; }
+    
+    /**
+     * @return whether the active room is an upgrades room
+     */
+    bool isUpgradeRoom(){ return _isUpgradeRoom; }
+    
+    /**
      * Returns true if the level is completed.
      *
      * If true, the level will advance after a countdown
@@ -373,11 +391,6 @@ public:
      * returns the asset key for the given level
      */
     std::string getLevelKey(int level);
-    
-    /**
-     * sets whether this room is an upgrades room.
-     */
-    void setUpgradeRoom(bool value){ _isUpgradeRoom = value; }
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

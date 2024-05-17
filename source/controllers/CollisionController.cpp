@@ -8,6 +8,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/BossEnemy.hpp"
 #include "../models/ExplodingAlien.hpp"
 #include "../models/Player.hpp"
 #include "../models/Wall.hpp"
@@ -87,7 +88,8 @@ void CollisionController::beginContact(b2Contact* contact){
                     (body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == projptr)) {
                     //explosion shouldn't hit enemies (or should it?)
                     if (!p->isExploding() && (*it)->isEnabled() && (*it)->getHealth() > 0) { //need to check isEnabled because projectiles hit corpses for some reason
-                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
+                        float knockback = p->isFullyCharged() ? GameConstants::PLAYER_PROJ_KNOCKBACK : 0;
+                        (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage(), knockback);
                         CULog("Shot an enemy!");
                         p->setExploding();
                         //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
@@ -115,10 +117,15 @@ void CollisionController::beginContact(b2Contact* contact){
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         std::shared_ptr<MeleeEnemy> melee;
         std::shared_ptr<ExplodingAlien> explode;
+        std::shared_ptr<BossEnemy> boss;
         std::shared_ptr<Hitbox> attack;
         if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
             melee = std::dynamic_pointer_cast<MeleeEnemy>(*it);
             attack = melee->getAttack();
+        }
+        else if ((*it)->getType() == "boss enemy") {
+            boss = std::dynamic_pointer_cast<BossEnemy>(*it);
+            attack = boss->getAttack();
         }
         else if ((*it)->getType() == "exploding alien"){
             explode = std::dynamic_pointer_cast<ExplodingAlien>(*it);
@@ -138,6 +145,11 @@ void CollisionController::beginContact(b2Contact* contact){
                         melee->setStunned(player->getStunWindow());
                         player->playParryEffect();
                     }
+                    else if (player->isParrying() && boss != nullptr) {
+                        //successful parry
+                        boss->setStunned(player->getStunWindow());
+                        player->playParryEffect();
+                    }
                     else {
                         if (body1->GetUserData().pointer == aptr) {
                             physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
@@ -151,6 +163,36 @@ void CollisionController::beginContact(b2Contact* contact){
                         player->hit(dir, (*it)->getDamage());
                         CULog("Player took damage!");
                     }
+                }
+            }
+        }
+    }
+    // boss storm attack
+    for (auto it = enemies.begin(); it != enemies.end(); ++it) {
+        std::shared_ptr<BossEnemy> boss;
+        std::shared_ptr<Hitbox> storm;
+        if ((*it)->getType() == "boss enemy") {
+            boss = std::dynamic_pointer_cast<BossEnemy>(*it);
+            storm = boss->getStormHitbox();
+            if (storm->isEnabled()) {
+                intptr_t aptr = reinterpret_cast<intptr_t>(storm.get());
+                if ((body1->GetUserData().pointer == aptr && body2->GetUserData().pointer == pptr)
+                    || (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == aptr)) {
+                    Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
+                    dir.normalize();
+                    float ang = acos(dir.dot(Vec2::UNIT_X));
+                    if (player->getPosition().y * player->getDrawScale().y < (*it)->getPosition().y * (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
+                    if (body1->GetUserData().pointer == aptr) {
+                        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data1->getName());
+                    }
+                    else {
+                            //body1 userdata pointer = pptr
+                        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+                        _audioController->playEnemyFX("attackHit", data2->getName());
+                    }
+                    player->hit(dir, (*it)->getDamage());
+                    CULog("Player took damage!");
                 }
             }
         }
@@ -242,13 +284,14 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
             if (eptr != eptr2 && ((body1->GetUserData().pointer == eptr && body2->GetUserData().pointer == eptr2) ||
                 (body1->GetUserData().pointer == eptr2 && body2->GetUserData().pointer == eptr))) {
                 //enemies phase through each other if one is idle/stunned
-                if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy") {
+                if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
+                    || (*it)->getType() == "boss enemy") {
                     std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
                     if (m->isStunned()) {
                         contact->SetEnabled(false);
                     }
                 }
-                if ((*iter)->getType() == "melee lizard" || (*iter)->getType() == "tank enemy") {
+                if ((*iter)->getType() == "melee lizard" || (*iter)->getType() == "tank enemy" || (*iter)->getType() == "boss enemy") {
                     std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(*iter);
                     if (m->isStunned()) {
                         contact->SetEnabled(false);

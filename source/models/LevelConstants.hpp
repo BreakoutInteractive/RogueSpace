@@ -44,6 +44,7 @@
 #define CLASS_CASTER        "Caster"
 #define CLASS_SLIME         "Slime"
 #define CLASS_TANK			"TankEnemy"
+#define CLASS_BOSS          "Boss"
 #define CLASS_RELIC         "Relic"
 #define CLASS_COLLIDER      "Collider"
 #define CLASS_HITBOX        "Hitbox"

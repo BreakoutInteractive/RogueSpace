@@ -7,6 +7,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/BossEnemy.hpp"
 #include "../models/Player.hpp"
 #include "../models/CollisionConstants.hpp"
 
@@ -184,6 +185,7 @@ cugl::Vec2 AIController::moveToGoal(std::shared_ptr<Enemy> e, cugl::Vec2 goal) {
 void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player> p) {
     Vec2 intersection = lineOfSight(e, p);
     std::shared_ptr<MeleeEnemy> m;
+    std::shared_ptr<BossEnemy> boss;
     switch (e->getBehaviorState()) {
         case Enemy::BehaviorState::DEFAULT:
             // if we see or are close to the player, chase them
@@ -214,14 +216,29 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
             break;
         case Enemy::BehaviorState::ATTACKING:
             // change state if we're no longer attacking
-            if (!e->isAttacking()) {
-                // if we're still close to the player, chase them
-                if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
-                    e->setChasing();
+            if (e->getType() == "boss enemy") {
+                boss = std::dynamic_pointer_cast<BossEnemy>(e);
+                if (!boss->isAttacking()) {
+                    // if we're still close to the player, chase them
+                    if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
+                        e->setChasing();
+                    }
+                    // if we're no longer close to the player, search their last known position
+                    else {
+                        e->setSeeking();
+                    }
                 }
-                // if we're no longer close to the player, search their last known position
-                else {
-                    e->setSeeking();
+            }
+            else {
+                if (!e->isAttacking()) {
+                    // if we're still close to the player, chase them
+                    if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
+                        e->setChasing();
+                    }
+                    // if we're no longer close to the player, search their last known position
+                    else {
+                        e->setSeeking();
+                    }
                 }
             }
             break;
@@ -249,6 +266,15 @@ void AIController::update(float dt) {
         std::shared_ptr<Enemy> enemy = *it;
         if (enemy->isDying() || !enemy->isEnabled()) {
             continue;
+        }
+        if (enemy->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
+            if (boss->getStormState() == BossEnemy::StormState::CHARGING ||
+                boss->getStormState() == BossEnemy::StormState::CHARGED ||
+                boss->getStormState() == BossEnemy::StormState::STARTING) {
+                enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
+                continue;
+            }
         }
         if (enemy->getHealth() > 0) changeState(enemy, _player);
         // pass while taking damage to allow for knockback

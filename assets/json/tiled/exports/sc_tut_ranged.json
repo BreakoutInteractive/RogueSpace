@@ -1851,7 +1851,7 @@
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":3.2
+                         "value":2.1
                         }, 
                         {
                          "name":"path",
@@ -1891,7 +1891,7 @@
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":3.2
+                         "value":2.1
                         }, 
                         {
                          "name":"path",
@@ -1914,12 +1914,12 @@
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":0.6
+                         "value":0
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":3.2
+                         "value":2.1
                         }, 
                         {
                          "name":"path",

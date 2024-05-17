@@ -404,7 +404,9 @@ void Player::animateCharge() {
 
 void Player::animateShot() {
     setAnimation(_shotAnimation);
+    _chargingAnimation->reset();
     _chargedEffect->reset();
+    _chargingEffect->reset();
     _shotEffect->start();
     _state = SHOT;
 }
@@ -462,6 +464,9 @@ void Player::updateAnimation(float dt){
     if (_hitEffect->isActive()) {
         _tint = Color4::RED;
     }
+    else {
+        _tint = Color4::WHITE;
+    }
 }
 
 #pragma mark -
@@ -469,7 +474,7 @@ void Player::updateAnimation(float dt){
 
 void Player::updateCounters(){
     _iframeCounter.decrement();
-    if (_iframeCounter.isZero()) _tint = Color4::WHITE;
+//    if (_iframeCounter.isZero()) _tint = Color4::WHITE;
 }
 
 void Player::setFacingDir(cugl::Vec2 dir){
@@ -592,8 +597,12 @@ void Player::update(float dt) {
 #pragma mark Stats and Properties
 
 float Player::getBowDamage() {
-    if (_state == CHARGING) return _bowDamage.getCurrentValue() * (0.5f + _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME);
-    else if (_state == CHARGED) return _bowDamage.getCurrentValue() * 1.5f;
+    if (_state == CHARGING){
+        float interpolant = _chargingAnimation->elapsed() / GameConstants::CHARGE_TIME;
+        float range = GameConstants::MAX_PROJ_DMG_MULTIPLIER - GameConstants::MIN_PROJ_DMG_MULTIPLIER;
+        return _bowDamage.getCurrentValue() * (GameConstants::MIN_PROJ_DMG_MULTIPLIER + interpolant * range );
+    }
+    else if (_state == CHARGED) return _bowDamage.getCurrentValue() * GameConstants::MAX_PROJ_DMG_MULTIPLIER;
     else return _bowDamage.getCurrentValue();
 }
 
@@ -620,11 +629,11 @@ void Player::setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug){
 void Player::syncPositions(){
     GameObject::syncPositions();
     // move the melee hitbox with the player
-    _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
+    _meleeHitbox->setPosition(getPosition() + Vec2(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }
 
 void Player::enableMeleeAttack(float angle){
     _meleeHitbox->setEnabled(true);
     _meleeHitbox->setAngle(angle);
-    _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
+    _meleeHitbox->setPosition(getPosition() + Vec2(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }
