@@ -98,7 +98,7 @@ void BossEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
         drawEffect(batch, _rockEffect);
     }
     if (_stormHitbox->isEnabled()) {
-        drawEffect(batch, _stormEffect);
+        drawEffect(batch, _stormEffect, 1.5f);
     }
 }
 
@@ -111,7 +111,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto chargeTexture = assets->get<Texture>("boss-charge-storm");
     auto stunTexture = assets->get<Texture>("boss-idle"); // same as idle for now
     auto rockEffect = assets->get<Texture>("boss-projectile");
-    auto stormEffect = assets->get<Texture>("explosion-effect");
+    auto stormEffect = assets->get<Texture>("storm-effect");
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
     auto stunEffect = assets->get<Texture>("stun-effect");
@@ -124,7 +124,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto chargeSheet = SpriteSheet::alloc(chargeTexture, 8, 10);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
     auto rockSheet = SpriteSheet::alloc(rockEffect, 3, 5);
-    auto stormSheet = SpriteSheet::alloc(stormEffect, 2, 4);
+    auto stormSheet = SpriteSheet::alloc(stormEffect, 1, 5);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
     auto stunEffectSheet = SpriteSheet::alloc(stunEffect, 2, 4);
@@ -137,7 +137,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _chargeAnimation = Animation::alloc(chargeSheet, GameConstants::STORM_CHARGE_TIME, false, 0, 9);
     _stunAnimation = Animation::alloc(stunSheet, 1.25f, false, 0, 8);
     _rockEffect = Animation::alloc(rockSheet, GameConstants::STORM_CHARGE_TIME * 0.75f, false, 0, 4);
-    _stormEffect = Animation::alloc(stormSheet, 0.625f, true, 4, 7);
+    _stormEffect = Animation::alloc(stormSheet, 0.625f, true, 0, 4);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
     _stunEffect = Animation::alloc(stunEffectSheet, 0.333f, true);
