@@ -27,24 +27,44 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     }
     _backgroundTexture = assets->get<Texture>("title_background");
     _backgroundScale = std::max(dimen.width / _backgroundTexture->getWidth(), dimen.height/_backgroundTexture->getHeight());
+    _selectedLevel = 1;
     
     // gather buttons
-    _back = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_new"));
-    _level1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_continue"));
-    _level2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_title_selection_tutorial"));
-    _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_setting"));
-
+    _back = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_tutorial_top_bar_back"));
+    _play = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_play_tutorial"));
+    _levelLabel = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("tutorial_tutorial_display_tutorial_title"));
+    _levelDescrip = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("tutorial_tutorial_display_tutorial_description"));
+    _screenshot = std::dynamic_pointer_cast<scene2::PolygonNode>(assets->get<scene2::SceneNode>("tutorial_tutorial_display_screenshot"));
+    
+    _level1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_tutorial_left_tutorial_selection_dash"));
+    _screenshotDash = assets->get<Texture>("screenshotDash");
+    _level2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_tutorial_left_tutorial_selection_melee"));
+    _screenshotMelee = assets->get<Texture>("screenshotMelee");
+    _level3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_tutorial_left_tutorial_selection_range"));
+    _screenshotRange = assets->get<Texture>("screenshotRange");
+    _level4 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_tutorial_left_tutorial_selection_parry"));
+    _screenshotParry = assets->get<Texture>("screenshotParry");
+    
     // attach listeners
-    scene2::Button::Listener backListener = [this](std::string name, bool down){ _choice = BACK; AudioController::playUiFX("menuClick");};
-    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; AudioController::playUiFX("menuClick");};
-    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 1; AudioController::playUiFX("menuClick");};
-    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 2; AudioController::playUiFX("menuClick");};
+    auto backListener = [this](std::string name, bool down){ _choice = BACK; _selectedLevel=1; AudioController::playUiFX("menuClick");};
+    //if user exits tutorial screen, reset to first option
+    auto playListener = [this](std::string name, bool down){ _choice = LEVEL; AudioController::playUiFX("menuClick");};
+    //if they play a level, same level should be selected
+    auto level1Listener = [this](std::string name, bool down){_selectedLevel = 1; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level2Listener = [this](std::string name, bool down){_selectedLevel = 2; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level3Listener = [this](std::string name, bool down){_selectedLevel = 3; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level4Listener = [this](std::string name, bool down){_selectedLevel = 4; setScreenText(); AudioController::playUiFX("menuClick");};
     
     _back->addListener(backListener);
-    _settings->addListener(settingsListener);
-    _level2->addListener(level2Listener);
+    _play->addListener(playListener);
     _level1->addListener(level1Listener);
+    _level2->addListener(level2Listener);
+    _level3->addListener(level3Listener);
+    _level4->addListener(level4Listener);
     
+    auto overlay = scene2::PolygonNode::allocWithPoly(Rect(0, 0, dimen.width, dimen.height));
+    overlay->setColor(Color4(128, 128, 128, 200));
+    addChild(overlay);
     // resize and setup the scene
     _scene->setContentSize(dimen);
     _scene->doLayout();
@@ -60,26 +80,68 @@ void TutorialScene::dispose(){
     setActive(false);
 }
 
+void TutorialScene::setScreenText(){
+    int levelType = _selectedLevel-1;
+    std::string tutName;
+    std::string tutDescription;
+    std::shared_ptr<Texture> levelSS;
+
+    switch (levelType) {
+        case DASH:
+            tutName = "DASH";
+            tutDescription = "Dash to avoid damage and phase through enemies.";
+            levelSS = _screenshotDash;
+            break;
+        case MELEE:
+            tutName = "MELEE";
+            tutDescription = "Attack enemies up close to deplete their health.";
+            levelSS = _screenshotMelee;
+            break;
+        case RANGE:
+            tutName = "RANGE";
+            tutDescription = "Equip the bow. Charge and fire a bolt of energy \nat distant foes.";
+            levelSS = _screenshotRange;
+            break;
+        case PARRY:
+            tutName = "PARRY";
+            tutDescription = "Hold the blocking stance. Let go before being \nhit to stun melee enemies.";
+            levelSS = _screenshotParry;
+            break;
+    }
+    _levelLabel->setText(tutName);
+    _levelDescrip->setText(tutDescription, true);
+    _screenshot->setTexture(levelSS);
+
+}
+
 void TutorialScene::activateScene(bool value){
     if (value){
         _scene->setVisible(true);
-        _level1->activate();
         _back->activate();
-        _settings->activate();
+        _play->activate();
+
+        _level1->activate();
         _level2->activate();
+        _level3->activate();
+        _level4->activate();
+        setScreenText();
     }
     else {
         _scene->setVisible(false);
-        _level1->deactivate();
         _back->deactivate();
-        _settings->deactivate();
+        _play->deactivate();
+        _level1->deactivate();
         _level2->deactivate();
-        _level1->setDown(false);
+        _level3->deactivate();
+        _level4->deactivate();
+
         _back->setDown(false);
-        _settings->setDown(false);
+        _play->setDown(false);
+        _level1->setDown(false);
         _level2->setDown(false);
+        _level3->setDown(false);
+        _level4->setDown(false);
     }
-        
 }
 
 void TutorialScene::setActive(bool value) {

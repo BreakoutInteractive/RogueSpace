@@ -1,8 +1,10 @@
 {
     "jsons": {
         "constants": "json/constants.json",
-        "tutorial1": "json/tiled/exports/sc_tut_ranged.json",
-        "tutorial2": "json/tiled/exports/sc_tut_parry.json",
+        "tutorial1": "json/tiled/exports/sc_test_arena.json",
+        "tutorial2": "json/tiled/exports/sc_tut_nextlevel.json",
+        "tutorial3": "json/tiled/exports/sc_tut_ranged.json",
+        "tutorial4": "json/tiled/exports/sc_tut_parry.json",
         "upgrades": "json/tiled/exports/sc_upgrades.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
@@ -315,6 +317,10 @@
         "robotoBold40": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 40
+        },
+        "robotoBold48": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 48
         }
 	}
 }

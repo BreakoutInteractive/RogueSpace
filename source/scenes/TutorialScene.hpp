@@ -24,9 +24,14 @@ public:
         /** User wants to play a tutorial level */
         LEVEL,
         /** User wants to go back to Main */
-        BACK,
-        /** User wants to go to settings */
-        SETTINGS
+        BACK
+    };
+    
+    enum Level {
+        DASH,
+        MELEE,
+        RANGE,
+        PARRY
     };
     
 protected:
@@ -42,20 +47,34 @@ protected:
 #pragma mark - Tutorial
     /** the parent node of the tutorial scene*/
     std::shared_ptr<scene2::SceneNode> _scene;
-    /** the button node for continue button */
-    std::shared_ptr<scene2::Button> _level1;
     /** the button node for new game button */
     std::shared_ptr<scene2::Button> _back;
-    /** the button node for tutorial button */
+    /** the label for selected level */
+    std::shared_ptr<scene2::Label> _levelLabel;
+    /** the description for selected level */
+    std::shared_ptr<scene2::Label>_levelDescrip;
+    /** the button node for play level */
+    std::shared_ptr<scene2::Button> _play;
+    /** the button node for dash tutorial level */
+    std::shared_ptr<scene2::Button> _level1;
+    /** the button node for melee button */
     std::shared_ptr<scene2::Button> _level2;
-    /** the button node for settings button */
-    std::shared_ptr<scene2::Button> _settings;
+    /** the button node for range tutorial level */
+    std::shared_ptr<scene2::Button> _level3;
+    /** the button node for parry tutorial level */
+    std::shared_ptr<scene2::Button> _level4;
     
 #pragma mark - Internal Scene Helpers
     /**
      * turns on/off the buttons that are currently used by the active scene type
      */
     void activateScene(bool value);
+    
+    std::shared_ptr<scene2::PolygonNode> _screenshot;
+    std::shared_ptr<Texture> _screenshotDash;
+    std::shared_ptr<Texture> _screenshotMelee;
+    std::shared_ptr<Texture> _screenshotRange;
+    std::shared_ptr<Texture> _screenshotParry;
     
 public:
     
@@ -96,6 +115,11 @@ public:
      * returns selected tutorial level.
      */
     int getSelectedLevel(){return _selectedLevel;}
+    
+    /**
+     * sets the text screen on screen.
+     */
+    void setScreenText();
         
     /**
      * activates this menu scene which includes toggling button visibility and functionality.
