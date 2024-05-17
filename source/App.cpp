@@ -212,7 +212,7 @@ void App::updatePauseScene(float dt) {
 void App::setTitleScene(){
     _scene = TITLE;
     bool hasSave = SaveData::hasGameSave();
-    CULog("previous save available: %s", (hasSave ? "true" : "false"));
+//    CULog("previous save available: %s", (hasSave ? "true" : "false"));
     auto sceneType = hasSave ? TitleScene::SceneType::WITH_CONTINUE : TitleScene::SceneType::WITHOUT_CONTINUE;
     _title.setSceneType(sceneType);
     _title.setActive(true);
@@ -235,7 +235,7 @@ void App::updateTitleScene(float dt){
         case TitleScene::CONTINUE:
             _title.setActive(false);
             _gameplay.setActive(true);
-            CULog("loading lv %d", save.level);
+//            CULog("loading lv %d", save.level);
             _gameplay.setTutorialActive(false);
             _gameplay.setLevel(save);
             _scene = GAME;

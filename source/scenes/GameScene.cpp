@@ -77,6 +77,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _levelNumber = 1;
     MAX_LEVEL = _assets->get<JsonValue>("constants")->getInt("max-level");
     _gameRenderer.init(_assets);
+    _gameRenderer.setGameCam(getCamera());
     std::function<bool (Vec2)> preprocessor = [this](Vec2 pos) {
         return _gameRenderer.isInputProcessed(pos) || _upgrades.isInputProcessed(pos);
     };
@@ -266,7 +267,7 @@ void GameScene::setLevel(SaveData::Data saveData){
     setDebug(isDebug());
     _AIController.init(_level);
     _collisionController.setLevel(_level);
-    _gameRenderer.setGameElements(getCamera(), _level);
+    _gameRenderer.setGameLevel(_level);
     
     auto p = _level->getPlayer();
     p->setMaxHPLevel(saveData.hpLvl);
@@ -522,9 +523,6 @@ void GameScene::processPlayerInput(){
                     break;
             }
         }
-    }
-    else {
-        CULog("knockback being applied");
     }
     
     // TODO: could remove, this is PC-only

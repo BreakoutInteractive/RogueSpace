@@ -77,9 +77,9 @@ void LevelModel::setDrawScale(Vec2 scale) {
     for (int ii = 0; ii < _healthpacks.size(); ii++) _healthpacks[ii]->setDrawScale(scale);
 }
 
-void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
+void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch, Rect camRect){
     for (int ii = 0; ii < _tileLayers.size(); ii++){
-        _tileLayers[ii]->draw(batch);
+        _tileLayers[ii]->draw(batch, camRect);
     }
     
     // indicators should be drawn between tile layers and objects

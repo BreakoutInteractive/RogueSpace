@@ -205,8 +205,11 @@ void GameRenderer::render(const std::shared_ptr<SpriteBatch> &batch){
     // using game camera, render the game
     if (_gameCam != nullptr){
         batch->begin(_gameCam->getCombined());
+        Size viewSize = (1/_gameCam->getZoom()) * _gameCam->getViewport().size;
+        Vec2 camPos = _gameCam->getPosition();
+        Rect camRect = Rect(camPos - viewSize/2, viewSize);
         if (_level != nullptr){
-            _level->render(batch);
+            _level->render(batch, camRect);
         }
         batch->end();
     }
