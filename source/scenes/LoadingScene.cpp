@@ -29,10 +29,6 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
     _brand = assets->get<scene2::SceneNode>("load_name");
-    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_play"));
-    _button->addListener([=](const std::string& name, bool down) {
-        this->_active = down;
-    });
     
     Application::get()->setClearColor(Color4(192,192,192,255));
     addChild(layer);
@@ -43,11 +39,6 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LoadingScene::dispose() {
-    // Deactivate the button (platform dependent)
-    if (isPending()) {
-        _button->deactivate();
-    }
-    _button = nullptr;
     _brand = nullptr;
     _bar = nullptr;
     _assets = nullptr;
@@ -71,21 +62,12 @@ void LoadingScene::update(float progress) {
             _progress = 1.0f;
             _bar->setVisible(false);
             _brand->setVisible(false);
-            _button->setVisible(true);
-            _button->activate();
+            this->_active = false;
         }
         _bar->setProgress(_progress);
     }
 }
 
-/**
- * Returns true if loading is complete, but the player has not pressed play
- *
- * @return true if loading is complete, but the player has not pressed play
- */
-bool LoadingScene::isPending( ) const {
-    return _button != nullptr && _button->isVisible();
-}
 
 /**
  * Returns the active screen size of this scene.

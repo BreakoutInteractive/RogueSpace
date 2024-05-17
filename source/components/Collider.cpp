@@ -36,6 +36,16 @@ std::shared_ptr<physics2::Obstacle> Collider::makeBox(std::shared_ptr<JsonValue>
     return box;
 }
 
+std::shared_ptr<physics2::Obstacle> Collider::makeWheel(std::shared_ptr<JsonValue> wheelColliderData, b2BodyType type, std::string name, bool is_sensor){
+    float radius = wheelColliderData->getFloat("radius");
+    Vec2 pos(wheelColliderData->getFloat("x"), wheelColliderData->getFloat("y"));
+    auto wheel = physics2::WheelObstacle::alloc(pos, radius);
+    wheel->setBodyType(type);
+    wheel->setSensor(is_sensor);
+    wheel->setName(name);
+    return wheel;
+}
+
 std::shared_ptr<physics2::Obstacle> Collider::makeCollider(std::shared_ptr<JsonValue> colliderData, b2BodyType type, std::string name, bool is_sensor){
     std::string colliderShape = colliderData->getString("shape");
     if (colliderShape == "polygon"){
@@ -43,6 +53,9 @@ std::shared_ptr<physics2::Obstacle> Collider::makeCollider(std::shared_ptr<JsonV
     }
     if (colliderShape == "box"){
         return makeBox(colliderData, type, name, is_sensor);
+    }
+    if (colliderShape == "circle"){
+        return makeWheel(colliderData, type, name, is_sensor);
     }
     CULogError("unsupported shape or missing shape information");
     return nullptr;

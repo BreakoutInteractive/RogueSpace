@@ -34,6 +34,7 @@ void App::onStartup() {
     AudioEngine::start(24);
     // must ensure assets are loaded in order of being used in scene graphs!
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadDirectoryAsync("json/scenes/textures.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/title.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/gameplay.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/hud.json", nullptr);
@@ -136,6 +137,7 @@ void App::preUpdate(float dt) {
             else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
                 _pause.setLabels(_gameplay.getPlayerLevels());
+                _pause.setConfirmationAlert(!_gameplay.isUpgradeRoom() && !_gameplay.isTutorial());
                 _gameplay.setActive(false);
             } else if(_gameplay.isTutorialComplete()){
                 _scene = State::TUTORIAL;
@@ -180,7 +182,6 @@ void App::postUpdate(float dt) {
 
 void App::updatePauseScene(float dt) {
     _pause.update(dt);
-    _pause.activateConfirmButtons(_pause.isConfirmActive());
     switch (_pause.getChoice()) {
         case PauseScene::Choice::BACK:
             _pause.setActive(false);
@@ -198,9 +199,7 @@ void App::updatePauseScene(float dt) {
             break;
         case PauseScene::Choice::RESUME:
             _pause.setActive(false);
-           _gameplay.getRenderer().setActive(true);
-           _gameplay.activateInputs(true);
-            // _gameplay.setActive(true); // using this turns off the upgrades menu too, so no.
+            _gameplay.setActive(true);
             _scene = State::GAME;
             break;
         case PauseScene::Choice::SETTINGS:
@@ -217,7 +216,7 @@ void App::updatePauseScene(float dt) {
 void App::setTitleScene(){
     _scene = TITLE;
     bool hasSave = SaveData::hasGameSave();
-    CULog("previous save available: %s", (hasSave ? "true" : "false"));
+//    CULog("previous save available: %s", (hasSave ? "true" : "false"));
     auto sceneType = hasSave ? TitleScene::SceneType::WITH_CONTINUE : TitleScene::SceneType::WITHOUT_CONTINUE;
     _title.setSceneType(sceneType);
     _title.setActive(true);
@@ -225,6 +224,7 @@ void App::setTitleScene(){
 
 void App::updateTitleScene(float dt){
     auto save = SaveData::getGameSave();
+    _title.activateConfirmButtons(_title.isConfirmActive());
     switch (_title.getChoice()){
         case TitleScene::NONE:
             break;
@@ -239,9 +239,8 @@ void App::updateTitleScene(float dt){
         case TitleScene::CONTINUE:
             _title.setActive(false);
             _gameplay.setActive(true);
-            CULog("loading lv %d", save.level);
+//            CULog("loading lv %d", save.level);
             _gameplay.setTutorialActive(false);
-            _gameplay.setUpgradeRoom(false);
             _gameplay.setLevel(save);
             _scene = GAME;
             _gamePrevScene = TITLE;

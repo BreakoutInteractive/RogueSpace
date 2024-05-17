@@ -346,5 +346,34 @@
             "tile",
             "project"
         ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": false,
+        "id": 17,
+        "members": [
+            {
+                "name": "damage",
+                "type": "float",
+                "value": 0.5
+            },
+            {
+                "name": "hp",
+                "type": "float",
+                "value": 40
+            },
+            {
+                "name": "path",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "Boss",
+        "type": "class",
+        "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
     }
 ]

@@ -9,7 +9,8 @@
         "hp_back": {
             "file": "textures/hud/hp_back.png",
             "atlas": {
-                "background" : [0, 0, 350, 25]
+                "background" : [0, 0, 350, 25],
+                "without_caps": [25, 0, 325, 25]
             }
         },
         "hp": {

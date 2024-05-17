@@ -22,14 +22,14 @@ protected:
     static float _sfx;
     static float _bgm;
     
-public:
-#pragma mark -
-#pragma mark Constructors
-
     /**
      * Default Constructor
     */
     AudioController(){}
+    
+public:
+#pragma mark -
+#pragma mark Constructors
 
     /**
      * Initializes the controller
@@ -51,9 +51,7 @@ public:
 //    }
     
     /**
-     * Get current track
-     *
-     * @param t  the proportion to change by
+     * @return get current track name
      */
     static std::string getCurrTrack() { return _currTrack; }
     

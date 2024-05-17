@@ -1,21 +1,4 @@
 {
-    "textures": {
-        "tutorial_background": {
-            "file":     "textures/title/title_background.png"
-        },
-        "title": {
-            "file":     "textures/title/title.png"
-        },
-        "title_button": {
-            "file":     "textures/title/title_button.png"
-        },
-        "title_tutorial_up": {
-            "file":     "textures/title/title_tutorial_up.png"
-        },
-        "title_tutorial_down": {
-            "file":     "textures/title/title_tutorial_down.png"
-        }
-    },
     "scene2s": {
         "tutorial": {
             "type": "Node",

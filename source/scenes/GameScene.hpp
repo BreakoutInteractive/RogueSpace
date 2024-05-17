@@ -242,6 +242,16 @@ public:
     bool isTutorialComplete(){return _isTutorial && _isTutorialComplete; }
     
     /**
+     * @return whether the running level is a tutorial
+     */
+    bool isTutorial(){return _isTutorial; }
+    
+    /**
+     * @return whether the active room is an upgrades room
+     */
+    bool isUpgradeRoom(){ return _isUpgradeRoom; }
+    
+    /**
      * Returns true if the level is completed.
      *
      * If true, the level will advance after a countdown
@@ -379,11 +389,6 @@ public:
      * returns the asset key for the given level
      */
     std::string getLevelKey(int level);
-    
-    /**
-     * sets whether this room is an upgrades room.
-     */
-    void setUpgradeRoom(bool value){ _isUpgradeRoom = value; }
     
     /**
      * Draws the game scene with the given sprite batch. Depending on the game internal state,

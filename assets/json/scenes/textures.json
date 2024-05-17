@@ -1,0 +1,67 @@
+{
+    "textures": {
+        "resume": {
+            "file": "textures/pause/resume.png"
+        },
+        "back": {
+            "file": "textures/pause/back.png"
+        },
+        "menuboard": {
+            "file": "textures/pause/menuboard.png"
+        },
+        "upgrade_atk": {
+            "file": "textures/upgrades-screen/upgrade_atk.png"
+        },
+        "upgrade_bow": {
+            "file": "textures/upgrades-screen/upgrade_bow.png"
+        },
+        "upgrade_dash": {
+            "file": "textures/upgrades-screen/upgrade_dash.png"
+        },
+        "upgrade_parry": {
+            "file": "textures/upgrades-screen/upgrade_parry.png"
+        },
+        "upgrade_shield": {
+            "file": "textures/upgrades-screen/upgrade_shield.png"
+        },
+        "upgrade_atkSpeed": {
+            "file": "textures/upgrades-screen/upgrade_atk_speed.png"
+        },
+        "upgrade_maxHealth": {
+            "file": "textures/upgrades-screen/upgrade_max_health.png"
+        },
+        "upgrade_up": {
+            "file": "textures/upgrades-screen/upgrade_up.png"
+        },
+        "upgrade_down": {
+            "file": "textures/upgrades-screen/upgrade_down.png"
+        },
+        "confirm": {
+            "file": "textures/upgrades-screen/confirm.png"
+        },
+        "title_background": {
+            "file":     "textures/title/title_background.png"
+        },
+        "title": {
+            "file":     "textures/title/title.png"
+        },
+        "title_button": {
+            "file":     "textures/title/title_button.png"
+        },
+        "title_tutorial_up": {
+            "file":     "textures/title/title_tutorial_up.png"
+        },
+        "title_tutorial_down": {
+            "file":     "textures/title/title_tutorial_down.png"
+        },
+        "confirm_board": {
+            "file": "textures/confirm/confirm_board.png"
+        },
+        "setting": {
+            "file": "textures/pause/setting.png"
+        },
+        "tutorial_background": {
+            "file":     "textures/title/title_background.png"
+        }
+    }
+}

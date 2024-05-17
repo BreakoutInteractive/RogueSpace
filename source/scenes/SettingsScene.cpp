@@ -90,6 +90,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     }
     else {
         _invert->setDown(true);
+        _invert->setToggle(true);
         auto volFront = _volBar->getChildByName("vol_front");
         for (int i = 5; i < 10; i++) {
             volFront->getChildByName("vol_front_"+ std::to_string(i))->setVisible(false);

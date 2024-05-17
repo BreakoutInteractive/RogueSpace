@@ -589,20 +589,20 @@
                  "y":675.958061414043
                 }, 
                 {
-                 "gid":255,
-                 "height":128,
-                 "id":99,
+                 "gid":257,
+                 "height":256,
+                 "id":100,
                  "name":"",
                  "properties":[
                         {
                          "name":"damage",
                          "type":"float",
-                         "value":2
+                         "value":1
                         }, 
                         {
                          "name":"hp",
                          "type":"float",
-                         "value":4
+                         "value":10
                         }, 
                         {
                          "name":"path",
@@ -610,11 +610,11 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"Slime",
+                 "type":"Boss",
                  "visible":true,
-                 "width":128,
-                 "x":949.056603773585,
-                 "y":682.867924528302
+                 "width":256,
+                 "x":891.111111111111,
+                 "y":759.111111111111
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -623,7 +623,7 @@
          "y":0
         }],
  "nextlayerid":14,
- "nextobjectid":100,
+ "nextobjectid":101,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

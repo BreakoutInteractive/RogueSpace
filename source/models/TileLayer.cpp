@@ -43,7 +43,6 @@ void Tile::loadAssets(const std::shared_ptr<cugl::AssetManager> &assets){
 void Tile::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Vec2& drawScale){
     if (_texture != nullptr){
         Vec2 origin(_texture->getWidth()/2, 0);
-        //CULog("size: %s", (_size * drawScale).toString().c_str());
         batch->draw(_texture, origin, _size * drawScale / _texture->getSize(), 0, _pos * drawScale);
     }
 }
@@ -57,9 +56,14 @@ void TileLayer::addTile(const std::shared_ptr<Tile> tile){
 }
 
 
-void TileLayer::draw(const std::shared_ptr<cugl::SpriteBatch> &batch){
+void TileLayer::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, Rect camRect){
     for (auto tile : _tiles){
-        tile->draw(batch, _drawScale);
+        Vec2 tileSize = tile->getSize();
+        Vec2 tileBottomLeft = (tile->getPosition().subtract(tileSize.x/2, 0));
+        Rect tileRect = Rect(tileBottomLeft * _drawScale, tileSize * _drawScale);
+        if (camRect.doesIntersect(tileRect)){
+            tile->draw(batch, _drawScale);
+        }
     }
 }
 

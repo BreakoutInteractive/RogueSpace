@@ -3,7 +3,7 @@
         "constants": "json/constants.json",
         "tutorial1": "json/tiled/exports/sc_tut_ranged.json",
         "tutorial2": "json/tiled/exports/sc_tut_parry.json",
-        "upgrades": "json/tiled/exports/sc_test_arena_upgrade.json",
+        "upgrades": "json/tiled/exports/sc_upgrades.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
         "level3": "json/tiled/exports/sc_lvl_02.json",
@@ -22,6 +22,7 @@
         "level16": "json/tiled/exports/sc_lvl_15.json",
         "level17": "json/tiled/exports/sc_lvl_16.json",
         "level18": "json/tiled/exports/sc_lvl_17.json",
+        "level19": "json/tiled/exports/sc_lvl_18.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
