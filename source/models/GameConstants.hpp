@@ -92,6 +92,15 @@ public:
     static float EXPLODE_PROX_RANGE;
     
 #pragma mark -
+#pragma mark Boss Constants
+    /** the number of seconds the storm takes to charge */
+    static float STORM_CHARGE_TIME;
+    /** the number of game frames the storm will last */
+    static int STORM_TIMER;
+    /** radius of storm */
+    static float STORM_RADIUS;
+    
+#pragma mark -
 #pragma mark Player Combat
     
     /** player initial HP */

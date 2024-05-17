@@ -47,6 +47,8 @@ protected:
     /** The death effect animation */
     std::shared_ptr<Animation> _deathEffect;
     
+    /** Enemy image's pixel height */
+    int _pixelHeight;
     /** Enemy's sight range */
     float _sightRange;
     /** Enemy's proximity range */
@@ -200,6 +202,11 @@ public:
      * Sets the current health of this enemy.
      */
     void setHealth(float value) { _health = value; }
+    
+    /**
+     * Gets the maximum health of this enemy.
+     */
+    float getMaxHealth() const { return _maxHealth; }
     
     /**
      * Sets the maximum health of this enemy.

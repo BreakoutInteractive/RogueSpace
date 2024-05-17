@@ -20,6 +20,7 @@
 #include "../models/RangedEnemy.hpp"
 #include "../models/RangedLizard.hpp"
 #include "../models/MageAlien.hpp"
+#include "../models/BossEnemy.hpp"
 #include "../models/ExplodingAlien.hpp"
 #include "../models/Wall.hpp"
 #include "../models/HealthPack.hpp"
@@ -666,7 +667,8 @@ void GameScene::preUpdate(float dt) {
             }
 
             if (enemy->getType() == "melee lizard" ||
-                enemy->getType() == "tank enemy") {
+                enemy->getType() == "tank enemy" ||
+                enemy->getType() == "boss enemy") {
                 std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
                 m->getAttack()->setEnabled(false);
             }
@@ -675,7 +677,8 @@ void GameScene::preUpdate(float dt) {
             enemy->_dropped = true;
         }
         if (enemy->getType() == "melee lizard" ||
-            enemy->getType() == "tank enemy") {
+            enemy->getType() == "tank enemy" ||
+            enemy->getType() == "boss enemy") {
             std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(enemy);
             if (m->isStunned()){
                 enemy->getCollider()->setLinearVelocity(Vec2::ZERO);
@@ -683,6 +686,15 @@ void GameScene::preUpdate(float dt) {
             }
         }
         if (enemy->isEnabled() && !enemy->isDying() && enemy->getHealth() > 0) {
+            // boss performs its second attack if already attacking
+            if (enemy->getType() == "boss enemy") {
+                std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
+                if (boss->secondAttack()) {
+                    boss->attack2(_assets);
+                    boss->setAttacking2();
+                    continue;
+                }
+            }
             // enemy can only begin an attack if not stunned and within range of player and can see them
             bool canBeginNewAttack = enemy->canBeginNewAttack();
             if (enemy->getType() == "exploding alien"){
@@ -700,7 +712,8 @@ void GameScene::preUpdate(float dt) {
             }
             if (canBeginNewAttack && enemy->getPosition().distance(player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                 if (enemy->getType() == "melee lizard" ||
-                    enemy->getType() == "tank enemy") {
+                    enemy->getType() == "tank enemy" ||
+                    enemy->getType() == "boss enemy") {
                     enemy->attack(_level, _assets);
                 }
                 enemy->setAttacking();
@@ -714,13 +727,31 @@ void GameScene::preUpdate(float dt) {
                     }
                 }
             }
+            if (enemy->getType() == "boss enemy") {
+                std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
+                if (boss->getStormState() == BossEnemy::StormState::CHARGED) {
+                    boss->summonStorm(_level, _assets);
+                }
+            }
         }
     }
 
 #pragma mark - Component Updates
     
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-        (*it)->updateCounters();
+        std::shared_ptr<MeleeEnemy> m;
+        if ((*it)->getType() == "melee lizard" || (*it)->getType() == "tank enemy"
+            || (*it)->getType() == "boss enemy") {
+            m = std::dynamic_pointer_cast<MeleeEnemy>(*it);
+            m->updateCounters();
+        }
+        else {
+            (*it)->updateCounters();
+        }
+        if ((*it)->getType() == "boss enemy") {
+            std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(*it);
+            boss->_stormTimer.decrement();
+        }
     }
     std::vector<std::shared_ptr<Projectile>> projs = _level->getProjectiles();
     for (auto it = projs.begin(); it != projs.end(); ++it) {
@@ -752,7 +783,9 @@ void GameScene::preUpdate(float dt) {
             // get current save, make new save based on selection
             SaveData::Data data = SaveData::getGameSave();
             data.upgradeAvailable = false;
-            data.weapon = player->getWeapon(); // easy to forget the weapon changes constantly
+            data.weapon = player->getWeapon();
+            data.level = _levelNumber;
+            data.isUpgradeRoom = true;
             // get the selected upgrade, apply to player
             float prevMaxHP = player->getMaxHP();
             int newLevel = _upgrades.getUpgradeLevel();
@@ -781,7 +814,6 @@ void GameScene::preUpdate(float dt) {
                     player->setMaxHPLevel(newLevel);
                     player->setHP(player->getHP() + player->getMaxHP() - prevMaxHP);
                     data.hpLvl = newLevel;
-                    data.hp = player->getHP();
                     break;
                 case SHIELD: case BLOCK:
                     player->setArmorLevel(_upgrades.getUpgradeLevel());
@@ -791,6 +823,7 @@ void GameScene::preUpdate(float dt) {
             }
             // turn off relic
             relic->setActive(false);
+            data.hp = player->getHP();
             SaveData::makeSave(data);
         }
     }
@@ -826,7 +859,8 @@ void GameScene::fixedUpdate(float step) {
             auto e = *it;
             e->syncPositions();
             if (e->getType() == "melee lizard"
-                || e->getType() == "tank enemy") {
+                || e->getType() == "tank enemy"
+                || e->getType() == "boss enemy") {
                 std::shared_ptr<MeleeEnemy> m = std::dynamic_pointer_cast<MeleeEnemy>(e);
                 m->getAttack()->setPosition(e->getPosition().add(0, 64 / e->getDrawScale().y)); //64 is half of the enemy pixel height
             }

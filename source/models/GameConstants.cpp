@@ -69,6 +69,15 @@ float GameConstants::EXPLODE_RADIUS = 2.3f;
 float GameConstants::EXPLODE_PROX_RANGE = 1.8f;
 
 #pragma mark -
+#pragma mark Boss Constants
+
+float GameConstants::STORM_CHARGE_TIME = 1.5f;
+
+int GameConstants::STORM_TIMER = 300;
+
+float GameConstants::STORM_RADIUS = 3.0f;
+
+#pragma mark -
 #pragma mark Player Combat
 
 float GameConstants::PLAYER_MAX_HP = 2.8; // must match level 0 of HP

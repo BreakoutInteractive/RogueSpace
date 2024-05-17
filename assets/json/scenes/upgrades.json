@@ -33,13 +33,13 @@
                             0.5
                         ],
                         "size": [
-                            758,
-                            254
+                            742,
+                            244
                         ],
                         "angle": 0,
                         "position": [
                             422,
-                            365
+                            370
                         ],
                         "visible": true
                     },
@@ -55,16 +55,17 @@
                                     1
                                 ],
                                 "size": [
-                                    478,
-                                    254
+                                    460,
+                                    244
                                 ],
                                 "angle": 0,
                                 "position": [
-                                    280,
+                                    282,
                                     0
                                 ],
                                 "visible": true,
-                                "upnode": "up"
+                                "upnode": "up",
+                                "downnode": "down"
                             },
                             "children": {
                                 "up": {
@@ -76,13 +77,13 @@
                                             0.5
                                         ],
                                         "size": [
-                                            442,
-                                            210
+                                            426,
+                                            202
                                         ],
                                         "angle": 0,
                                         "position": [
-                                            11,
-                                            26
+                                            10,
+                                            25
                                         ],
                                         "visible": true
                                     },
@@ -90,7 +91,7 @@
                                         "x_anchor": "center",
                                         "y_anchor": "middle",
                                         "absolute": false,
-                                        "x_offset": -0.01,
+                                        "x_offset": -0.02,
                                         "y_offset": 0.02
                                     }
                                 },
@@ -103,8 +104,8 @@
                                             0.5
                                         ],
                                         "size": [
-                                            478,
-                                            254
+                                            460,
+                                            244
                                         ],
                                         "angle": 0,
                                         "position": [
@@ -130,16 +131,16 @@
                                         ],
                                         "size": [
                                             213,
-                                            23
+                                            28
                                         ],
                                         "position": [
-                                            169,
-                                            67
+                                            167,
+                                            57
                                         ],
                                         "angle": 0,
                                         "visible": true,
-                                        "font": "robotoRegular20",
-                                        "text": "+ Sword damage",
+                                        "font": "robotoMedium24",
+                                        "text": "+ Sword Damage",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -148,7 +149,7 @@
                                             0,
                                             0
                                         ],
-                                        "valign": "top",
+                                        "valign": "middle",
                                         "halign": "center"
                                     },
                                     "children": {},
@@ -156,8 +157,8 @@
                                         "x_anchor": "center",
                                         "y_anchor": "bottom",
                                         "absolute": false,
-                                        "x_offset": 0.08,
-                                        "y_offset": 0.26
+                                        "x_offset": 0.09,
+                                        "y_offset": 0.23
                                     }
                                 },
                                 "tier": {
@@ -168,17 +169,17 @@
                                             0.5
                                         ],
                                         "size": [
-                                            74,
+                                            112,
                                             28
                                         ],
                                         "position": [
-                                            239,
-                                            109
+                                            218,
+                                            104
                                         ],
                                         "angle": 0,
                                         "visible": true,
                                         "font": "robotoMedium24",
-                                        "text": "LVL 2",
+                                        "text": "LVL 5",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -195,7 +196,7 @@
                                         "x_anchor": "center",
                                         "y_anchor": "middle",
                                         "absolute": false,
-                                        "x_offset": 0.08,
+                                        "x_offset": 0.1,
                                         "y_offset": -0.02
                                     }
                                 },
@@ -207,17 +208,17 @@
                                             1
                                         ],
                                         "size": [
-                                            142,
-                                            36
+                                            235,
+                                            41
                                         ],
                                         "position": [
-                                            205,
-                                            150
+                                            157,
+                                            142
                                         ],
                                         "angle": 0,
                                         "visible": true,
                                         "font": "geometosRegular36",
-                                        "text": "SWORD",
+                                        "text": "Defense",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -234,26 +235,26 @@
                                         "x_anchor": "center",
                                         "y_anchor": "top",
                                         "absolute": false,
-                                        "x_offset": 0.08,
-                                        "y_offset": -0.27
+                                        "x_offset": 0.1,
+                                        "y_offset": -0.25
                                     }
                                 },
                                 "icon": {
                                     "type": "Image",
                                     "data": {
-                                        "texture": "upgrade_atk",
+                                        "texture": "upgrade_maxHealth",
                                         "anchor": [
                                             0,
                                             0.5
                                         ],
                                         "size": [
-                                            63,
-                                            63
+                                            62,
+                                            62
                                         ],
                                         "angle": 0,
                                         "position": [
-                                            46,
-                                            89
+                                            43,
+                                            85
                                         ],
                                         "visible": true
                                     },
@@ -261,8 +262,8 @@
                                         "x_anchor": "left",
                                         "y_anchor": "middle",
                                         "absolute": false,
-                                        "x_offset": 0.1,
-                                        "y_offset": -0.03
+                                        "x_offset": 0.09,
+                                        "y_offset": -0.02
                                     }
                                 }
                             },
@@ -270,7 +271,7 @@
                                 "x_anchor": "left",
                                 "y_anchor": "top",
                                 "absolute": false,
-                                "x_offset": 0.37,
+                                "x_offset": 0.38,
                                 "y_offset": 0
                             }
                         },
@@ -291,7 +292,7 @@
                                 "angle": 0,
                                 "position": [
                                     0,
-                                    84
+                                    79
                                 ],
                                 "visible": true,
                                 "upnode": "title_button"
@@ -377,7 +378,7 @@
                         "x_anchor": "right",
                         "y_anchor": "middle",
                         "absolute": false,
-                        "x_offset": -0.08,
+                        "x_offset": -0.09,
                         "y_offset": 0.18
                     }
                 },
@@ -392,13 +393,13 @@
                             0.5
                         ],
                         "size": [
-                            758,
-                            254
+                            743,
+                            244
                         ],
                         "angle": 0,
                         "position": [
                             422,
-                            75
+                            90
                         ],
                         "visible": true
                     },
@@ -414,16 +415,17 @@
                                     1
                                 ],
                                 "size": [
-                                    478,
-                                    254
+                                    460,
+                                    244
                                 ],
                                 "angle": 0,
                                 "position": [
-                                    280,
+                                    283,
                                     0
                                 ],
                                 "visible": true,
-                                "upnode": "up"
+                                "upnode": "up",
+                                "downnode": "down"
                             },
                             "children": {
                                 "up": {
@@ -435,13 +437,13 @@
                                             0.5
                                         ],
                                         "size": [
-                                            442,
-                                            210
+                                            426,
+                                            202
                                         ],
                                         "angle": 0,
                                         "position": [
-                                            11,
-                                            26
+                                            10,
+                                            25
                                         ],
                                         "visible": true
                                     },
@@ -449,7 +451,7 @@
                                         "x_anchor": "center",
                                         "y_anchor": "middle",
                                         "absolute": false,
-                                        "x_offset": -0.01,
+                                        "x_offset": -0.02,
                                         "y_offset": 0.02
                                     }
                                 },
@@ -462,8 +464,8 @@
                                             0.5
                                         ],
                                         "size": [
-                                            478,
-                                            254
+                                            460,
+                                            244
                                         ],
                                         "angle": 0,
                                         "position": [
@@ -489,16 +491,16 @@
                                         ],
                                         "size": [
                                             213,
-                                            23
+                                            28
                                         ],
                                         "position": [
-                                            169,
-                                            67
+                                            166,
+                                            57
                                         ],
                                         "angle": 0,
                                         "visible": true,
-                                        "font": "robotoRegular20",
-                                        "text": "+ Sword damage",
+                                        "font": "robotoMedium24",
+                                        "text": "+ Armor + Block",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -507,7 +509,7 @@
                                             0,
                                             0
                                         ],
-                                        "valign": "top",
+                                        "valign": "middle",
                                         "halign": "center"
                                     },
                                     "children": {},
@@ -515,8 +517,8 @@
                                         "x_anchor": "center",
                                         "y_anchor": "bottom",
                                         "absolute": false,
-                                        "x_offset": 0.08,
-                                        "y_offset": 0.26
+                                        "x_offset": 0.09,
+                                        "y_offset": 0.23
                                     }
                                 },
                                 "tier": {
@@ -527,17 +529,17 @@
                                             0.5
                                         ],
                                         "size": [
-                                            74,
+                                            112,
                                             28
                                         ],
                                         "position": [
-                                            239,
-                                            109
+                                            217,
+                                            104
                                         ],
                                         "angle": 0,
                                         "visible": true,
                                         "font": "robotoMedium24",
-                                        "text": "LVL 2",
+                                        "text": "LVL 5",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -554,7 +556,7 @@
                                         "x_anchor": "center",
                                         "y_anchor": "middle",
                                         "absolute": false,
-                                        "x_offset": 0.08,
+                                        "x_offset": 0.09,
                                         "y_offset": -0.02
                                     }
                                 },
@@ -566,17 +568,17 @@
                                             1
                                         ],
                                         "size": [
-                                            142,
-                                            36
+                                            235,
+                                            41
                                         ],
                                         "position": [
-                                            205,
-                                            150
+                                            156,
+                                            142
                                         ],
                                         "angle": 0,
                                         "visible": true,
                                         "font": "geometosRegular36",
-                                        "text": "SWORD",
+                                        "text": "Defense",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -593,26 +595,26 @@
                                         "x_anchor": "center",
                                         "y_anchor": "top",
                                         "absolute": false,
-                                        "x_offset": 0.08,
-                                        "y_offset": -0.27
+                                        "x_offset": 0.09,
+                                        "y_offset": -0.25
                                     }
                                 },
                                 "icon": {
                                     "type": "Image",
                                     "data": {
-                                        "texture": "upgrade_atk",
+                                        "texture": "upgrade_maxHealth",
                                         "anchor": [
                                             0,
                                             0.5
                                         ],
                                         "size": [
-                                            63,
-                                            63
+                                            62,
+                                            62
                                         ],
                                         "angle": 0,
                                         "position": [
-                                            46,
-                                            89
+                                            43,
+                                            85
                                         ],
                                         "visible": true
                                     },
@@ -620,8 +622,8 @@
                                         "x_anchor": "left",
                                         "y_anchor": "middle",
                                         "absolute": false,
-                                        "x_offset": 0.1,
-                                        "y_offset": -0.03
+                                        "x_offset": 0.09,
+                                        "y_offset": -0.02
                                     }
                                 }
                             },
@@ -629,7 +631,7 @@
                                 "x_anchor": "left",
                                 "y_anchor": "top",
                                 "absolute": false,
-                                "x_offset": 0.37,
+                                "x_offset": 0.38,
                                 "y_offset": 0
                             }
                         },
@@ -641,7 +643,7 @@
                             "data": {
                                 "anchor": [
                                     0,
-                                    1
+                                    0.5
                                 ],
                                 "size": [
                                     250,
@@ -650,7 +652,7 @@
                                 "angle": 0,
                                 "position": [
                                     0,
-                                    84
+                                    79
                                 ],
                                 "visible": true,
                                 "upnode": "title_button"
@@ -725,10 +727,10 @@
                             },
                             "layout": {
                                 "x_anchor": "left",
-                                "y_anchor": "top",
+                                "y_anchor": "middle",
                                 "absolute": false,
                                 "x_offset": 0,
-                                "y_offset": -0.33
+                                "y_offset": 0
                             }
                         }
                     },
@@ -736,8 +738,8 @@
                         "x_anchor": "right",
                         "y_anchor": "middle",
                         "absolute": false,
-                        "x_offset": -0.08,
-                        "y_offset": -0.22
+                        "x_offset": -0.09,
+                        "y_offset": -0.21
                     }
                 }
             }

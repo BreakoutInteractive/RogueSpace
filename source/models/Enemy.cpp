@@ -47,6 +47,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
+    _pixelHeight = 128;
     _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
     _state = BehaviorState::DEFAULT;
@@ -101,7 +102,7 @@ void Enemy::setDrawScale(Vec2 scale) {
 void Enemy::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float scale) {    
     auto effSheet = effect->getSpriteSheet();
     Affine2 transform = Affine2::createScale(scale);
-    transform.translate((_position + Vec2(0, 64 / _drawScale.y)) * _drawScale); //64 is half of enemy pixel height
+    transform.translate((_position + Vec2(0, (_pixelHeight/2) / _drawScale.y)) * _drawScale); //64 is half of enemy pixel height
     Vec2 origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
     effSheet->draw(batch, origin, transform);
 }

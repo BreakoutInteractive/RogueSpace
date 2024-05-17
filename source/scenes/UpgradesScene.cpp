@@ -135,66 +135,46 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void UpgradesScene::setButtonText(UpgradeType upgrade, int level, int buttonType){
     std::string upgradeName;
     std::string upgradeDescription;
-    std::string upgradeType = "Lv. " + std::to_string(level);
-    Color4 typeColor = Color4("#FFE37E");
+    std::string upgradeType = "LVL " + std::to_string(level);
+    Color4 typeColor = Color4("#FFFFFF");
     std::shared_ptr<Texture> upgradeTexture;
     switch (upgrade) {
         case UpgradeType::SWORD:
             upgradeName = "SWORD";
-            upgradeDescription = "Increases melee attack";
+            upgradeDescription = "+ Sword Power";
             upgradeTexture = _swordTexture;
             break;
         case UpgradeType::PARRY:
             upgradeName = "PARRY";
-            upgradeDescription = "Increases enemy stun time";
+            upgradeDescription = "+ Stun Time";
             upgradeTexture = _parryTexture;
             break;
         case UpgradeType::SHIELD: case UpgradeType::BLOCK:
             upgradeName = "DEFENSE";
-            upgradeDescription = "Decreases damage taken";
+            upgradeDescription = "+ Armor + Block";
             upgradeTexture = _shieldTexture;
             break;
         case UpgradeType::ATK_SPEED:
-            upgradeName = "SPEED";
-            upgradeDescription = "Increases melee speed";
+            upgradeName = "SLASH";
+            upgradeDescription = "+ Sword Speed";
             upgradeTexture = _atkSdTexture;
             break;
         case UpgradeType::BOW:
             upgradeName = "BOW";
-            upgradeDescription = "Increases ranged attack";
+            upgradeDescription = "+ Shot Power";
             upgradeTexture = _bowTexture;
             break;
         case UpgradeType::DASH:
             upgradeName = "DASH";
-            upgradeDescription = "Increases dash frequency";
+            upgradeDescription = "+ Dash Stamina";
             upgradeTexture = _dashTexture;
             break;
         case UpgradeType::HEALTH:
             upgradeName = "Health";
-            upgradeDescription = "Increases max HP";
+            upgradeDescription = "+ Max HP";
             upgradeTexture = _healthTexture;
             break;
     }
-//    switch (level) {
-//        case RARE:
-//            upgradeType = "RARE";
-//            typeColor = Color4("#438EFF");
-//            break;
-//        case EPIC:
-//            upgradeType = "EPIC";
-//            typeColor = Color4("#AC43FF");
-//            break;
-//        case LEGENDARY:
-//            upgradeType = "LEGENDARY";
-//            typeColor = Color4("#FFE37E");
-//            break;
-//        case MAX:
-//            upgradeType = "ULTIMATE";
-//            typeColor = Color4("#E91818");
-//            break;
-//        default:
-//            break;
-//    }
     if (buttonType==0) {
         _option1Name->setText(upgradeName);
         _option1Descrip->setText(upgradeDescription);

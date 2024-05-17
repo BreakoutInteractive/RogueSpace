@@ -131,6 +131,8 @@ public:
     bool isStunned(){ return _stunAnimation->isActive() && getBehaviorState() == BehaviorState::STUNNED; }
     
     void updateAnimation(float dt) override;
+    
+    void updateCounters();
 };
 
 #endif /* MeleeEnemy_hpp */
