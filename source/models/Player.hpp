@@ -300,6 +300,8 @@ public:
     
     /** @return whether the player is charging or have charged the bow */
     bool isRangedAttackActive(){ return _state == CHARGING || _state == CHARGED; }
+    /** @return whether the bow is fully charged */
+    bool isCharged(){ return _state == CHARGED; }
 
 #pragma mark Player Combat State
     

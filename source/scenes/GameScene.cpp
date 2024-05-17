@@ -94,8 +94,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _camController.init(getCamera(), config);
     
     // necessary (starting at any actual level implies it is not an upgrade room)
-    setUpgradeRoom(false);
+    _isUpgradeRoom = false;
     _isTutorial = false;
+    _isTutorialComplete = false;
     
 #pragma mark - GameScene:: Scene Graph Initialization
     
@@ -216,7 +217,6 @@ void GameScene::activateTutorial(int level){
 }
 
 void GameScene::restart(){
-    _levelTransition.setActive(false);
     SaveData::removeSave();
     SaveData::Data data;
     data.level = 1;
@@ -229,7 +229,6 @@ void GameScene::restart(){
     data.upgradeOpt2 = indices.second.first;
     data.upgradeOpt2Level = indices.second.second;
     data.hp = GameConstants::PLAYER_MAX_HP;
-    SaveData::makeSave(data);
     setLevel(data);
 }
 
@@ -474,7 +473,7 @@ void GameScene::processPlayerInput(){
                         // handle downwards case, rotate counterclockwise by PI rads and add extra angle
                         ang = M_PI + acos(direction.rotate(M_PI).dot(Vec2::UNIT_X));
                     }
-                    std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), ang, _assets);
+                    std::shared_ptr<Projectile> p = Projectile::playerAlloc(player->getPosition().add(0, 64 / player->getDrawScale().y), player->getBowDamage(), player->isCharged(), ang, _assets);
                     p->setDrawScale(Vec2(_scale, _scale));
                     _level->addProjectile(p);
                     player->animateShot();
@@ -523,6 +522,9 @@ void GameScene::processPlayerInput(){
             }
         }
     }
+    else {
+        CULog("knockback being applied");
+    }
     
     // TODO: could remove, this is PC-only
     if (_input.didSwap()){
@@ -554,6 +556,7 @@ void GameScene::preUpdate(float dt) {
     
     // TODO: can be removed, but for pc devs to quickly reset
     if (_input.didReset()){
+        _levelTransition.setActive(false);
         restart();
         return;
     }

@@ -5,7 +5,7 @@
         "tutorial2": "json/tiled/exports/sc_tut_nextlevel.json",
         "tutorial3": "json/tiled/exports/sc_tut_ranged.json",
         "tutorial4": "json/tiled/exports/sc_tut_parry.json",
-        "upgrades": "json/tiled/exports/sc_test_arena_upgrade.json",
+        "upgrades": "json/tiled/exports/sc_upgrades.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
         "level3": "json/tiled/exports/sc_lvl_02.json",
