@@ -19,16 +19,7 @@ using namespace cugl;
 bool BossEnemy::init(std::shared_ptr<JsonValue> data) {
     MeleeEnemy::init(data);
     _attackRange = _attackRange*1.5f;
-    _attack = Hitbox::alloc(getCollider()->getPosition(), _attackRange);
-    b2Filter filter;
-    _attack->setSensor(true);
-    _attack->setName("enemy-attack");
-    _attack->setBodyType(b2_dynamicBody);
-    // this is an attack
-    filter.categoryBits = CATEGORY_ATTACK;
-    // since it is an enemy's attack, it can collide with the player
-    filter.maskBits = CATEGORY_PLAYER_HITBOX;
-    _attack->setFilterData(filter);
+    _attack->setRadius(_attackRange);
     
     _pixelHeight = 256;
     _secondAttack = false;
@@ -37,9 +28,14 @@ bool BossEnemy::init(std::shared_ptr<JsonValue> data) {
     _stormTimer.setMaxCount(GameConstants::STORM_TIMER);
     _stormState = StormState::INACTIVE;
     _stormHitbox = Hitbox::alloc(getCollider()->getPosition(), GameConstants::STORM_RADIUS);
+    b2Filter filter;
     _stormHitbox->setSensor(true);
     _stormHitbox->setName("enemy-attack");
     _stormHitbox->setBodyType(b2_dynamicBody);
+    // this is an attack
+    filter.categoryBits = CATEGORY_ATTACK;
+    // since it is an enemy's attack, it can collide with the player
+    filter.maskBits = CATEGORY_PLAYER_HITBOX;
     _stormHitbox->setFilterData(filter);
     return true;
 }
