@@ -29,6 +29,13 @@ protected:
     /** The enemy health bar foreground */
     std::shared_ptr<cugl::Texture> _healthFG;
     
+    /** how tall the healthbar should be */
+    float _healthbarHeight = 5;
+    /** the healthbar at 1x multiplier is the width of the idle animation */
+    float _healthbarWidthMultiplier = 1;
+    /** the healthbar is drawn at the top of the sprite, this adds additional vertical space*/
+    float _healthbarExtraOffsetY = 3;
+    
 #pragma mark - Animation Assets
     /** The animation to use while idle */
     std::shared_ptr<Animation> _idleAnimation;

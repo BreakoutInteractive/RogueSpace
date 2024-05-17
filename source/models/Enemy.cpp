@@ -121,10 +121,11 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     //enemy health bar
     float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
+    float healthbarWidth = idleWidth * _healthbarWidthMultiplier;
     Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
-    
-    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
-    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
+    float healthbarOriginX = idleOrigin.x - healthbarWidth/2;
+    Rect healthBGRect = Rect(healthbarOriginX, spriteSheet->getFrameSize().height + _healthbarExtraOffsetY, healthbarWidth, _healthbarHeight);
+    Rect healthFGRect = Rect(healthbarOriginX, spriteSheet->getFrameSize().height + _healthbarExtraOffsetY, healthbarWidth*(_health/_maxHealth), _healthbarHeight);
 
     batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
@@ -142,8 +143,8 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    _healthBG =  assets->get<Texture>("hp_back_without_caps");
+    _healthFG =  assets->get<Texture>("hp_foreground");
     // override loadAssets to load individual assets
 }
 

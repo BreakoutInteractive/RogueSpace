@@ -253,8 +253,8 @@
                                         ],
                                         "angle": 0,
                                         "position": [
-                                            43,
-                                            85
+                                            43.5,
+                                            85.5
                                         ],
                                         "visible": true
                                     },
@@ -613,8 +613,8 @@
                                         ],
                                         "angle": 0,
                                         "position": [
-                                            43,
-                                            85
+                                            43.5,
+                                            85.5
                                         ],
                                         "visible": true
                                     },
