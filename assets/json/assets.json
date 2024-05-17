@@ -108,7 +108,7 @@
         "dash": {
             "type":     "sample",
             "file":     "sounds/player/dash.wav",
-            "volume":   1.0
+            "volume":   0.8
         },
         "envWinds": {
             "type":     "sample",
