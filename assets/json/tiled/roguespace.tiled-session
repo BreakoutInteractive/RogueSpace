@@ -53,6 +53,14 @@
                 "y": 1040.890455804583
             }
         },
+        "exports/example_level.json": {
+            "scale": 0.19296875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 992.3886639676113,
+                "y": 816.1943319838057
+            }
+        },
         "exports/ob_lvl_00.json": {
             "expandedGroupLayers": [
                 48
@@ -117,19 +125,123 @@
         },
         "exports/sc_lvl_00.json": {
             "expandedGroupLayers": [
-                137,
-                145,
-                138,
-                144,
                 112,
+                144,
+                137,
+                138,
+                145,
                 23,
                 116
             ],
             "scale": 0.24066342213114753,
             "selectedLayer": 46,
             "viewCenter": {
-                "x": 1473.0115480815284,
-                "y": 964.0019158107602
+                "x": 1876.0640732265447,
+                "y": 870.5103506998032
+            }
+        },
+        "exports/sc_lvl_01.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1840.5955334987596,
+                "y": 800.4806059814546
+            }
+        },
+        "exports/sc_lvl_02.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_lvl_03.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_lvl_04.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_lvl_05.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 953.4386835575287
+            }
+        },
+        "exports/sc_lvl_07.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_lvl_08.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_lvl_09.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 984.0302990727437
+            }
+        },
+        "exports/sc_lvl_16.json": {
+            "scale": 0.07385223765432099,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2593.0155413347265,
+                "y": 1144.176570458404
+            }
+        },
+        "exports/sc_lvl_17.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 984.0302990727437
+            }
+        },
+        "exports/sc_lvl_18.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_tut_ranged.json": {
+            "scale": 0.09806608606557377,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1952.7647903878806,
+                "y": 851.466631840146
+            }
+        },
+        "exports/sc_upgrades.json": {
+            "scale": 0.10494791666666667,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 1824.7146401985112,
+                "y": 976.6749379652601
             }
         },
         "tilesets/entities.json": {
@@ -374,24 +486,24 @@
     },
     "last.exportedFilePath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/exports",
     "last.imagePath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/images",
-    "last.objectTypesPath": "/Users/zhiyuan/Documents/GDIAC-5152/BreakoutInteractive/RogueSpace/assets/json/tiled/custom/propertytypes.json",
+    "last.objectTypesPath": "/Users/dylanmcintyre/Desktop/CS 4152/RogueSpace/assets/json/tiled/custom/propertytypes.json",
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "openFiles": [
     ],
     "project": "roguespace.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "working/example_level.json",
-        "working/sc_upgrades.json",
-        "working/sc_tut_ranged.json",
-        "working/sc_tut_parry.json",
-        "working/sc_tut_nextlevel.json",
-        "working/sc_test_arena_slime.json",
-        "working/sc_template_01.json",
-        "working/sc_template_00.json",
-        "working/sc_lvl_18.json",
-        "working/sc_lvl_17.json",
-        "working/sc_lvl_16.json",
-        "working/sc_lvl_15.json"
+        "exports/sc_lvl_00.json",
+        "exports/sc_tut_ranged.json",
+        "exports/sc_upgrades.json",
+        "exports/sc_lvl_16.json",
+        "exports/sc_lvl_17.json",
+        "exports/sc_lvl_18.json",
+        "exports/sc_lvl_09.json",
+        "exports/sc_lvl_08.json",
+        "exports/sc_lvl_07.json",
+        "exports/sc_lvl_05.json",
+        "exports/sc_lvl_04.json",
+        "exports/sc_lvl_03.json"
     ]
 }
