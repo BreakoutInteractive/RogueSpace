@@ -67,7 +67,6 @@ void CollisionController::beginContact(b2Contact* contact){
                 // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
                 if (player->getMeleeHitbox()->hits(eptr, ang)){
                     (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
-                    AudioController::playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
                     if (meleeHitbox->hitCount() == 1){
                         // the hitbox is active and this is the first hit of the frame
@@ -89,7 +88,6 @@ void CollisionController::beginContact(b2Contact* contact){
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();
-                        //AudioController::playPlayerFX("attackHit"); //enemy projectile hit sfx
                     }
                 }
             }
@@ -138,15 +136,13 @@ void CollisionController::beginContact(b2Contact* contact){
                         player->playParryEffect();
                     }
                     else {
-                        if (body1->GetUserData().pointer == aptr) {
-                            physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-                            AudioController::playEnemyFX("attackHit", data1->getName());
-                        }
-                        else {
-                            //body1 userdata pointer = pptr
-                            physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-                            AudioController::playEnemyFX("attackHit", data2->getName());
-                        }
+//                        if (body1->GetUserData().pointer == aptr) {
+//                            physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+//                        }
+//                        else {
+//                            //body1 userdata pointer = pptr
+//                            physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+//                        }
                         player->hit(dir, (*it)->getDamage());
                         CULog("Player took damage!");
                     }
@@ -165,7 +161,6 @@ void CollisionController::beginContact(b2Contact* contact){
                 p->setExploding();
                 if (!player->isParrying()) {
                     player->hit(dir, p->getDamage());
-                    //AudioController::playPlayerFX("attackHit"); //player projectile hit sfx
                     CULog("Player got shot!");
                 }
                 else player->playParryEffect();

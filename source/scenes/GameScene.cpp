@@ -446,6 +446,7 @@ void GameScene::processPlayerInput(){
                             player->enableMeleeAttack(ang);
                             player->animateAttack();
                             player->resetAttackCooldown();
+                            AudioController::playPlayerFX("attackHit");
                         }
                         break;
                 case Player::Weapon::RANGED:
@@ -491,6 +492,7 @@ void GameScene::processPlayerInput(){
                 if (player->isBlocking()) {
                     CULog("parried");
                     player->animateParry();
+                    AudioController::playPlayerFX("parry");
                 }
                 else player->animateDefault();
             }

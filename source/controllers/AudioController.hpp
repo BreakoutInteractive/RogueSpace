@@ -16,6 +16,7 @@ protected:
     static std::shared_ptr<cugl::AssetManager> _assets;
     
     static std::string _currTrack;
+    static bool _looping;
     
     static float _master;
     static float _sfx;
@@ -120,7 +121,7 @@ public:
      *
      * @param  key1  the reference key for the event
      */
-    static void playMusic(const std::string key);
+    static void updateMusic(const std::string key);
     
     /**
      * Pause all sound associated with game.

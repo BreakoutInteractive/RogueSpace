@@ -5,6 +5,7 @@
 
 #include "AudioController.hpp"
 #include <stdio.h>
+#include <ctime>
 
 using namespace cugl;
 
@@ -13,6 +14,7 @@ using namespace cugl;
 
 std::shared_ptr<cugl::AssetManager> AudioController::_assets;
 std::string AudioController::_currTrack;
+bool AudioController::_looping;
 float AudioController::_master;
 float AudioController::_sfx;
 float AudioController::_bgm;
@@ -28,7 +30,9 @@ void AudioController::init(std::shared_ptr<cugl::AssetManager> assets, SaveData:
     _master = p.vol / 10.0;
     _sfx = p.SFXvol / 10.0;
     _bgm = p.BGMvol / 10.0;
-    CULog("%f", _bgm);
+    _looping = false;
+    _currTrack = "";
+    std::srand(std::time(0));
 }
         
 #pragma mark -
@@ -58,11 +62,9 @@ void AudioController::playPlayerFX(const std::string action){
     if (!AudioEngine::get()->isActive(action+"player")) {
         std::shared_ptr<Sound> source; // TODO: might be bad to create a <Sound> instead of <AudioSample>
         bool loop = false;
-        if (action == "attackMiss") {
-            source = _assets->get<Sound>("airSlash");
-        } 
-        else if (action == "attackHit") {
-            source = _assets->get<Sound>("playerAttack");
+        if (action == "attackHit") {
+            int randn = std::rand() % 3 + 1;
+            source = _assets->get<Sound>("playerAttack" + std::to_string(randn));
         }
         else if (action == "drawBow") {
             source = _assets->get<Sound>("bowDraw");
@@ -73,6 +75,9 @@ void AudioController::playPlayerFX(const std::string action){
         }
         else if (action == "shootBow") {
             source = _assets->get<Sound>("bowFire");
+        }
+        else if (action == "parry") {
+            source = _assets->get<Sound>("parryMelee");
         }
         else {
             CULogError("player sound action not found");
@@ -100,10 +105,19 @@ void AudioController::clearPlayerFX(const std::string action){
      */
 void AudioController::playEnemyFX(const std::string action, const std::string key){
     if (!AudioEngine::get()->isActive(action+key)) {
-        if (action == "attackHit") {
-            auto source = _assets->get<Sound>("enemyMelee");
-            AudioEngine::get()->play(action+key, source, false, source->getVolume() * _master * _sfx);
+        std::shared_ptr<Sound> source; // TODO: might be bad to create a <Sound> instead of <AudioSample>
+        bool loop = false;
+        if (action == "attack") {
+            int randn = std::rand() % 4 + 1;
+            source = _assets->get<Sound>("playerAttack" + std::to_string(randn));
         }
+        else if (action == "drawBow") {
+            source = _assets->get<Sound>("bowDraw");
+        }
+        else {
+            CULogError("player sound action not found");
+        }
+        AudioEngine::get()->play(action+key, source, loop, source->getVolume() * _master * _sfx);
     }
 }
 
@@ -130,29 +144,45 @@ void AudioController::playUiFX(const std::string action){
      *
      * @param  key1  the reference key for the event
      */
-void AudioController::playMusic(const std::string key) {
-    if (!AudioEngine::get()->isActive("music")) {
+void AudioController::updateMusic(const std::string key) {
+    std::shared_ptr<AudioQueue> m = AudioEngine::get()->getMusicQueue();
+    std::shared_ptr<Sound> source;
+    bool loop = false;
+    if (_currTrack == "") {
         if (key == "title") {
-            auto source = _assets->get<Sound>("title");
-            AudioEngine::get()->play("music", source, true, source->getVolume() * _master * _bgm);
-        } else if (key == "oasis") {
-            auto source = _assets->get<Sound>("oasis");
-            AudioEngine::get()->play("music", source, true, source->getVolume() * _master * _bgm);
+            loop = true;
+            source = _assets->get<Sound>(key);
         }
+        else {
+            CULogError("track not found or not eligible");
+        }
+        _looping = loop;
         _currTrack = key;
+        m->enqueue(source, loop, 0.5 * _master * _bgm);
+        CULog("annyeong!");
     } else if (_currTrack != key) {
-        if (key == "clear") {
-            AudioEngine::get()->clear("music");
-        } 
+        if (key == "oasis") {
+            loop = true;
+            source = _assets->get<Sound>(key);
+        }
         else if (key == "title") {
-            AudioEngine::get()->clear("music");
+            loop = true;
+            source = _assets->get<Sound>(key);
         }
-        else if (key == "oasis") {
-            AudioEngine::get()->clear("music");
+        else if (key == "") {
+            source = _assets->get<Sound>(key);
         }
+        else {
+            CULogError("track not found or not eligible");
+        }
+        _looping = loop;
         _currTrack = key;
-    } else if (AudioEngine::get()->getVolume("music") != 0.5 * _master * _bgm) {
-        AudioEngine::get()->setVolume("music", 0.5 * _master * _bgm);
+        m->enqueue(source, loop, 0.5 * _master * _bgm);
+        m->advance();
+        CULog("aharro!");
+    } else if (m->getVolume() != _bgm) { // to remove
+        m->setVolume(0.5 * _master * _bgm);
+        return;
     }
 }
     

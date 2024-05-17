@@ -57,9 +57,19 @@
             "file":     "sounds/weapons/sword_03.wav",
             "volume":   1.0
         },
-        "playerAttack": {
+        "playerAttack1": {
             "type":     "sample",
-            "file":     "sounds/weapons/sword_01.wav",
+            "file":     "sounds/weapons/slash_02.wav",
+            "volume":   1.0
+        },
+        "playerAttack2": {
+            "type":     "sample",
+            "file":     "sounds/weapons/slash_05.wav",
+            "volume":   1.0
+        },
+        "playerAttack3": {
+            "type":     "sample",
+            "file":     "sounds/weapons/slash_06.wav",
             "volume":   1.0
         },
         "wallMelee": {
@@ -84,7 +94,7 @@
         },
         "parryMelee": {
             "type":     "sample",
-            "file":     "sounds/weapons/steel_04.wav",
+            "file":     "sounds/impact/impact_07.wav",
             "volume":   1.0
         },
         "envWinds": {
