@@ -12,7 +12,7 @@
 #include <iostream>
 #include <sstream>
 #include "../models/Upgradeable.hpp"
-
+#include "../controllers/AudioController.hpp"
 
 using namespace cugl;
 

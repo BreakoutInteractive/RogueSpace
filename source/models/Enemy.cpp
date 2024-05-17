@@ -47,6 +47,7 @@ bool Enemy::init(std::shared_ptr<JsonValue> data) {
     _sensor->setDebugColor(Color4::RED);
     
     // initialize enemy properties
+    _pixelHeight = 128;
     _aggroLoc = Vec2::ZERO; // default value = hasn't been aggro'd
     _isAligned = false;
     _state = BehaviorState::DEFAULT;
@@ -101,7 +102,7 @@ void Enemy::setDrawScale(Vec2 scale) {
 void Enemy::drawEffect(const std::shared_ptr<cugl::SpriteBatch>& batch, const std::shared_ptr<Animation>& effect, float scale) {    
     auto effSheet = effect->getSpriteSheet();
     Affine2 transform = Affine2::createScale(scale);
-    transform.translate((_position + Vec2(0, 64 / _drawScale.y)) * _drawScale); //64 is half of enemy pixel height
+    transform.translate((_position + Vec2(0, (_pixelHeight/2) / _drawScale.y)) * _drawScale); //64 is half of enemy pixel height
     Vec2 origin = Vec2(effSheet->getFrameSize().width / 2, effSheet->getFrameSize().height / 2);
     effSheet->draw(batch, origin, transform);
 }
@@ -120,10 +121,11 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     
     //enemy health bar
     float idleWidth = _idleAnimation->getSpriteSheet()->getFrameSize().width;
+    float healthbarWidth = idleWidth * _healthbarWidthMultiplier;
     Vec2 idleOrigin = Vec2(_idleAnimation->getSpriteSheet()->getFrameSize().width / 2, 0);
-    
-    Rect healthBGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth, 5);
-    Rect healthFGRect = Rect(0, spriteSheet->getFrameSize().height, idleWidth*(_health/_maxHealth), 5);
+    float healthbarOriginX = idleOrigin.x - healthbarWidth/2;
+    Rect healthBGRect = Rect(healthbarOriginX, spriteSheet->getFrameSize().height + _healthbarExtraOffsetY, healthbarWidth, _healthbarHeight);
+    Rect healthFGRect = Rect(healthbarOriginX, spriteSheet->getFrameSize().height + _healthbarExtraOffsetY, healthbarWidth*(_health/_maxHealth), _healthbarHeight);
 
     batch->draw(_healthBG, healthBGRect, idleOrigin, transform);
     batch->draw(_healthFG, healthFGRect, idleOrigin, transform);
@@ -141,8 +143,8 @@ void Enemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
 }
 
 void Enemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    _healthBG =  assets->get<Texture>("hp_back_without_caps");
+    _healthFG =  assets->get<Texture>("hp_foreground");
     // override loadAssets to load individual assets
 }
 

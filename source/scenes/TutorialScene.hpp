@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
+
 using namespace cugl;
 
 class TutorialScene : public Scene2 {

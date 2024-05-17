@@ -166,6 +166,52 @@ bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_p
     return true;
 }
 
+bool Projectile::bossInit(Vec2 pos, float damage, float ang, const std::shared_ptr<AssetManager>& assets) {//init fields
+    _enabled = true;
+    _position = pos;
+    _tint = Color4::WHITE;
+    _drawScale.set(1.0f, 1.0f);
+    _damage = damage;
+    _state = FLYING;
+    _initPos = Vec2(pos.x, pos.y);
+    _isFullyCharged = true;
+
+    //init hitbox
+    //TODO: modify shape and size
+    std::shared_ptr<physics2::WheelObstacle> obs = physics2::WheelObstacle::alloc(pos, GameConstants::PROJ_RADIUS_BOSS);
+    obs->setName("boss-projectile-collider");
+    obs->setPosition(pos);
+    b2Filter filter;
+    //projectiles are attacks. they can hit players and are destroyed on contact with a tall wall.
+    filter.categoryBits = CATEGORY_PROJECTILE;
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_PLAYER_HITBOX | CATEGORY_TALL_WALL;
+    obs->setFilterData(filter);
+    obs->setEnabled(true);
+    obs->setAwake(true);
+    //might need this depending on projectile speed
+    // obs->setBullet(true);
+    _collider = obs;
+
+    std::shared_ptr<physics2::WheelObstacle> shadow = physics2::WheelObstacle::alloc(pos, GameConstants::PROJ_RADIUS_BOSS * GameConstants::PROJ_SHADOW_SCALE);
+    shadow->setBodyType(b2_kinematicBody);
+    shadow->setPosition(pos.x, pos.y - GameConstants::PROJ_SIZE_P_HALF
+        + 0.5f * GameConstants::PROJ_SHADOW_SCALE * GameConstants::PROJ_SIZE_P_HALF);
+    //the projectile shadow hits tall walls
+    filter.categoryBits = CATEGORY_PROJECTILE_SHADOW;
+    filter.maskBits = CATEGORY_TALL_WALL;
+    shadow->setFilterData(filter);
+    _colliderShadow = shadow;
+
+    std::shared_ptr<Texture> t = assets->get<Texture>("boss-projectile");
+    //TODO: modify this to use the right frames
+    _flyingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 7.0f / 24.0f, true, 5, 9); //24fps
+    _explodingAnimation = Animation::alloc(SpriteSheet::alloc(t, 3, 5), 7.0f / 24.0f, false, 10, 14); //make time really small because there is no explosion effect
+    setFlying();
+    setAngle(ang);
+    setVelocity(Vec2(GameConstants::PROJ_SPEED_E * 2, 0).rotate(ang));
+    return true;
+}
+
 void Projectile::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     if (_currAnimation->isActive()) {
         auto spriteSheet = _currAnimation->getSpriteSheet();

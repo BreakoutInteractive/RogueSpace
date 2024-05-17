@@ -9,6 +9,8 @@
 #define TitleScene_hpp
 
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
+
 using namespace cugl;
 
 class TitleScene : public Scene2 {

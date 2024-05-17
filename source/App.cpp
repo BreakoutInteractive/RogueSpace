@@ -47,7 +47,9 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
 
-
+    SaveData::hasPreferences();
+    AudioController::init(_assets, SaveData::getPreferences());
+    
     Application::onStartup(); // this is required
 }
 
@@ -58,6 +60,7 @@ void App::onShutdown() {
     _settings.dispose();
     _title.dispose();
     _death.dispose();
+    AudioController::dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -110,6 +113,7 @@ void App::preUpdate(float dt) {
             // only for intermediate loading screens
             break;
         case TITLE:
+            AudioController::updateMusic("title", 1);
             updateTitleScene(dt);
             break;
         case PAUSE:
@@ -121,6 +125,7 @@ void App::preUpdate(float dt) {
             updateSettingsScene(dt);
             break;
         case TUTORIAL:
+            AudioController::updateMusic("title", 1);
             _tutorial.setActive(true);
             updateTutorialScene(dt);
             break;
@@ -212,7 +217,7 @@ void App::updatePauseScene(float dt) {
 void App::setTitleScene(){
     _scene = TITLE;
     bool hasSave = SaveData::hasGameSave();
-    CULog("previous save available: %s", (hasSave ? "true" : "false"));
+//    CULog("previous save available: %s", (hasSave ? "true" : "false"));
     auto sceneType = hasSave ? TitleScene::SceneType::WITH_CONTINUE : TitleScene::SceneType::WITHOUT_CONTINUE;
     _title.setSceneType(sceneType);
     _title.setActive(true);
@@ -235,7 +240,7 @@ void App::updateTitleScene(float dt){
         case TitleScene::CONTINUE:
             _title.setActive(false);
             _gameplay.setActive(true);
-            CULog("loading lv %d", save.level);
+//            CULog("loading lv %d", save.level);
             _gameplay.setTutorialActive(false);
             _gameplay.setLevel(save);
             _scene = GAME;
@@ -276,39 +281,38 @@ void App::updateTutorialScene(float dt){
 void App::updateSettingsScene(float dt) {
     _settings.update(dt);
     switch (_settings.getChoice()) {
-    case SettingsScene::Choice::CLOSE:
-        _settings.setActive(false);
-        switch (_prevScene) {
-        case PAUSE:
-            _pause.setActive(true);
-            _scene = PAUSE; // switch to pause scene
+        case SettingsScene::Choice::CLOSE:
+            _settings.setActive(false);
+            switch (_prevScene) {
+            case PAUSE:
+                _pause.setActive(true);
+                _scene = PAUSE; // switch to pause scene
+                break;
+            case TITLE:
+                setTitleScene();
+                _scene = TITLE;
+                break;
+            default: //should never be here since you can only access settings from pause and title scenes
+                break;
+            }
             break;
-        case TITLE:
-            setTitleScene();
-            _scene = TITLE;
+        case SettingsScene::Choice::VOLUP:
             break;
-        default: //should never be here since you can only access settings from pause and title scenes
+        case SettingsScene::Choice::VOLDOWN:
             break;
-        }
-        break;
-    //TODO: control volume when music/sfx are implemented
-    case SettingsScene::Choice::VOLUP:
-        break;
-    case SettingsScene::Choice::VOLDOWN:
-        break;
-    case SettingsScene::Choice::SFXUP:
-        break;
-    case SettingsScene::Choice::SFXDOWN:
-        break;
-    case SettingsScene::Choice::MUSICUP:
-        break;
-    case SettingsScene::Choice::MUSICDOWN:
-        break;
-    case SettingsScene::Choice::INVERT:
-        _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
-        break;
-    case SettingsScene::Choice::NONE:
-        break;
+        case SettingsScene::Choice::SFXUP:
+            break;
+        case SettingsScene::Choice::SFXDOWN:
+            break;
+        case SettingsScene::Choice::MUSICUP:
+            break;
+        case SettingsScene::Choice::MUSICDOWN:
+            break;
+        case SettingsScene::Choice::INVERT:
+            _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
+            break;
+        case SettingsScene::Choice::NONE:
+            break;
     }
 }
 

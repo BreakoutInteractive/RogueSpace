@@ -35,7 +35,7 @@ void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
     }
     
     setCharged(false);
-    std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition().add(0, 64 / getDrawScale().y), getDamage(), ang, assets);
+    std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition() + Vec2(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), ang, assets);
     p->setDrawScale(level->getDrawScale());
     level->addProjectile(p);
 }
@@ -45,8 +45,7 @@ void MageAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<
 #pragma mark Animation
 
 void MageAlien::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    Enemy::loadAssets(assets); // health bar
     auto idleTexture = assets->get<Texture>("mage-idle");
     auto walkTexture = assets->get<Texture>("mage-walk");
     auto attackTexture = assets->get<Texture>("mage-attack");

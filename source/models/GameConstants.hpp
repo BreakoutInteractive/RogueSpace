@@ -75,6 +75,8 @@ public:
     static float PROJ_RADIUS_LIZARD;
     /** the radius of a mage enemy projectile */
     static float PROJ_RADIUS_MAGE;
+    /** the radius of a boss enemy projectile */
+    static float PROJ_RADIUS_BOSS;
     /** the distance the enemy projectile travels, not including the explosion animation */
     static float PROJ_DIST_E;
     /** the fraction of damage the tank enemy takes when not stunned */
@@ -90,6 +92,15 @@ public:
     static float EXPLODE_RADIUS;
     /** range of detection from slime */
     static float EXPLODE_PROX_RANGE;
+    
+#pragma mark -
+#pragma mark Boss Constants
+    /** the number of seconds the storm takes to charge */
+    static float STORM_CHARGE_TIME;
+    /** the number of game frames the storm will last */
+    static int STORM_TIMER;
+    /** radius of storm */
+    static float STORM_RADIUS;
     
 #pragma mark -
 #pragma mark Player Combat

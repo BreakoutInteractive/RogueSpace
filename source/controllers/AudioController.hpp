@@ -2,33 +2,44 @@
 //  AudioController.hpp
 //  RS
 //
-//  Created by Brie Smith on 3/11/24.
-//
 
 #ifndef AudioController_hpp
 #define AudioController_hpp
 
 #include <cugl/cugl.h>
 #include <stdio.h>
+#include "../utility/SaveData.hpp"
 
 class AudioController {
 protected:
     /** The asset manager for this audio controller. */
-    std::shared_ptr<cugl::AssetManager> _assets;
+    static std::shared_ptr<cugl::AssetManager> _assets;
+    
+    static std::string _currTrack;
+    static bool _looping;
+    
+    static float _master;
+    static float _sfx;
+    static float _bgm;
+    
+    /**
+     * Default Constructor
+    */
+    AudioController(){}
     
 public:
 #pragma mark -
 #pragma mark Constructors
 
     /**
-     * Default Constructor
-    */
-    AudioController(){}
-
-    /**
      * Initializes the controller
      */
-    void init(std::shared_ptr<cugl::AssetManager> assets);
+    static void init(std::shared_ptr<cugl::AssetManager> assets, SaveData::Preferences p);
+    
+    /**
+     * @note should only be called once and remove reference to assets.
+     */
+    static void dispose(){ _assets = nullptr; }
 
 #pragma mark -
 #pragma mark audio
@@ -45,19 +56,52 @@ public:
 //    }
     
     /**
+     * @return get current track name
+     */
+    static std::string getCurrTrack() { return _currTrack; }
+    
+    /**
+     * Change master volume
+     *
+     * @param t  the proportion to change by
+     */
+    static void changeMasterVolume(float t);
+    
+    /**
+     * Change SFX volume
+     *
+     * @param t  the proportion to change by
+     */
+    static void changeSFXVolume(float t);
+    
+    /**
+     * Change music volume
+     *
+     * @param t  the proportion to change by
+     */
+    static void changeBGMVolume(float t);
+    
+    /**
      * Plays sound associated with collision bodies.
      *
      * @param  key1  the reference key for the sound effect
      * @param  key2  the reference key for the sound effect
      */
-    void playCollisionFX(const std::string key1, const std::string key2);
+    static void playCollisionFX(const std::string key1, const std::string key2);
     
     /**
      * Plays sound associated with player action.
      *
      * @param  action  the action key for the player
      */
-    void playPlayerFX(const std::string action);
+    static void playPlayerFX(const std::string action);
+    
+    /**
+     * Plays sound associated with player action.
+     *
+     * @param  action  the action key for the player
+     */
+    static void clearPlayerFX(const std::string action);
     
     /**
      * Plays sound associated with action of eney type.
@@ -65,38 +109,46 @@ public:
      * @param  action  the action key for the enemy
      * @param  key  the reference key for the enemy type
      */
-    void playEnemyFX(const std::string action, const std::string key);
+    static void playEnemyFX(const std::string action, const std::string key);
+    
+    /**
+     * Plays sound associated with UI actions.
+     *
+     * @param  action  the action key for the enemy
+     * @param  key  the reference key for the enemy type
+     */
+    static void playUiFX(const std::string action);
     
     /**
      * Plays music associated with scene.
      *
      * @param  key1  the reference key for the event
      */
-    void playMusic(const std::string key);
+    static void updateMusic(const std::string key, float fade);
     
     /**
-     * Paise all sound associated with game.
+     * Pause all sound associated with game.
      *
      * @param  key1  the reference key for the event
      */
-    void PauseSound(); 
+    static void PauseSound();
     
     /**
      * Plause all effects associated with level.
      */
-    void PauseFX();
+    static void PauseFX();
     
     /**
      * Resume all sound associated with game.
      *
      * @param  key1  the reference key for the event
      */
-    void resumeSound();
+    static void resumeSound();
     
     /**
      * Resume all effects associated with level.
      */
-    void resumeFX();
+    static void resumeFX();
     
 };
 

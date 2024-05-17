@@ -29,6 +29,13 @@ protected:
     /** The enemy health bar foreground */
     std::shared_ptr<cugl::Texture> _healthFG;
     
+    /** how tall the healthbar should be */
+    float _healthbarHeight = 5;
+    /** the healthbar at 1x multiplier is the width of the idle animation */
+    float _healthbarWidthMultiplier = 1;
+    /** the healthbar is drawn at the top of the sprite, this adds additional vertical space*/
+    float _healthbarExtraOffsetY = 3;
+    
 #pragma mark - Animation Assets
     /** The animation to use while idle */
     std::shared_ptr<Animation> _idleAnimation;
@@ -47,6 +54,8 @@ protected:
     /** The death effect animation */
     std::shared_ptr<Animation> _deathEffect;
     
+    /** Enemy image's pixel height */
+    int _pixelHeight;
     /** Enemy's sight range */
     float _sightRange;
     /** Enemy's proximity range */
@@ -200,6 +209,11 @@ public:
      * Sets the current health of this enemy.
      */
     void setHealth(float value) { _health = value; }
+    
+    /**
+     * Gets the maximum health of this enemy.
+     */
+    float getMaxHealth() const { return _maxHealth; }
     
     /**
      * Sets the maximum health of this enemy.

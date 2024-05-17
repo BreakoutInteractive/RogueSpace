@@ -12,17 +12,21 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     if (assets == nullptr) {
         return false;
     }
-    // Initialize the scene to a locked height
     _scene1 = assets->get<scene2::SceneNode>("menu1");
-    _scene2 = assets->get<scene2::SceneNode>("menu2");
-    std::shared_ptr<scene2::SceneNode> confirmationNode = assets->get<scene2::SceneNode>("confirmation");
-    
+    // Initialize the scene to a locked height
     auto height = _scene1->getSize().height;
     Size dimen = Application::get()->getDisplaySize();
+    float aspect_ratio = dimen.width / dimen.height;
     dimen *= height/dimen.height;
     if (!Scene2::init(dimen)) {
         return false;
     }
+    
+    std::string layoutName = aspect_ratio >= 1.5 ? "menu2" : "menu2_tablet";
+    _scene2 = assets->get<scene2::SceneNode>(layoutName);
+    std::shared_ptr<scene2::SceneNode> confirmationNode = assets->get<scene2::SceneNode>("confirmation");
+    
+
     _backgroundTexture = assets->get<Texture>("title_background");
     _backgroundScale = std::max(dimen.width / _backgroundTexture->getWidth(), dimen.height/_backgroundTexture->getHeight());
     
@@ -45,19 +49,21 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _tutorial = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu1_title_selection_tutorial"));
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu1_setting"));
     
-    _continue = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_continue"));
-    _newGame2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_new_game"));
-    _tutorial2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_title_selection_tutorial"));
-    _settings2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_setting"));
+    // pick between mobile and tablet layouts, threshold at 1.47 (rounded to 1.5)
+    _continue = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>(layoutName + "_title_selection_continue"));
+    _newGame2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>(layoutName + "_title_selection_new_game"));
+    _tutorial2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>(layoutName + "_title_selection_tutorial"));
+    _settings2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>(layoutName + "_setting"));
     _back2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmation_confirmation_back"));
     _confirm2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmation_confirmation_confirm"));
 
     // attach listeners
-    scene2::Button::Listener newGameListener = [this](std::string name, bool down){ _choice = NEW;};
-    scene2::Button::Listener newGame2Listener = [this](std::string name, bool down){ _confirmationScene.setActive(true); _newGame2->setDown(false);};
-    auto tutorialListener = [this](std::string name, bool down){ _choice = TUTORIAL;};
-    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS;};
-    auto continueListener = [this](std::string name, bool down){ _choice = CONTINUE;};
+
+    scene2::Button::Listener newGameListener = [this](std::string name, bool down){ _choice = NEW; AudioController::playUiFX("menuClick");};
+    scene2::Button::Listener newGame2Listener = [this](std::string name, bool down){ _confirmationScene.setActive(true); _newGame2->setDown(false); AudioController::playUiFX("menuClick");};
+    auto tutorialListener = [this](std::string name, bool down){ _choice = TUTORIAL; AudioController::playUiFX("menuClick"); };
+    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; AudioController::playUiFX("menuClick"); };
+    auto continueListener = [this](std::string name, bool down){ _choice = CONTINUE; AudioController::playUiFX("menuClick"); };
     auto backListener = [this](std::string name, bool down){ _confirmationScene.setActive(false); _back2->setDown(false);};
     
     _newGame->addListener(newGameListener);

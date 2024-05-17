@@ -29,18 +29,14 @@ bool DeathScene::init(const std::shared_ptr<cugl::AssetManager> &assets){
     // get scene nodes
     _cape = std::dynamic_pointer_cast<scene2::SpriteNode>(_assets->get<scene2::SceneNode>("death_dead_animation"));
     _capeAnimation = scene2::Animate::alloc(0, _cape->getSpan()-1, 2.0f);
-    _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_try_again"));
-    _main = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_main_menu"));
+    _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_dead_selection_try_again"));
+    _main = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_dead_selection_main_menu"));
     // program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _choice = Choice::RESTART;
-        }
+        if (down) { _choice = Choice::RESTART; AudioController::playUiFX("menuClick");}
     });
     _main->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _choice = Choice::MAIN_MENU;
-        }
+        if (down) { _choice = Choice::MAIN_MENU; AudioController::playUiFX("menuClick");}
     });
     
     // add an overlay layer to separate game background from UI
@@ -71,6 +67,7 @@ void DeathScene::setActive(bool value){
         _choice = NONE;
         Scene2::setActive(value);
         if (value){
+            AudioController::updateMusic("lose", 1);
             _main->activate();
             _restart->activate();
             _cape->setFrame(0);

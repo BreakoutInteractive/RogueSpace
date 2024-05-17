@@ -51,7 +51,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
     // set up collider
-    auto collider = Collider::makePolygon(colliderData, b2_dynamicBody, "player-collider");
+    auto collider = Collider::makeCollider(colliderData, b2_dynamicBody, "player-collider");
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
@@ -60,7 +60,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     _collider = collider;                   // attach Component
     
     // set the player collider-shadow
-    auto colliderShadow = Collider::makePolygon(colliderData, b2_kinematicBody, "player-collider-shadow");
+    auto colliderShadow = Collider::makeCollider(colliderData, b2_kinematicBody, "player-collider-shadow");
     colliderShadow->setBodyType(b2_kinematicBody);
     filter.categoryBits = CATEGORY_PLAYER_SHADOW;
     filter.maskBits = CATEGORY_ENEMY;
@@ -520,6 +520,7 @@ void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (!_hitEffect->isActive() && _state != DODGE) {
         float reduction = _damageReduction.getCurrentValue() + (isBlocking() ? _blockReduction.getCurrentValue() : 0);
+        _iframeCounter.reset();
         _hp = std::fmax(0, (_hp - damage * (1 - reduction)));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);
@@ -629,11 +630,11 @@ void Player::setDebugNode(const std::shared_ptr<scene2::SceneNode> &debug){
 void Player::syncPositions(){
     GameObject::syncPositions();
     // move the melee hitbox with the player
-    _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
+    _meleeHitbox->setPosition(getPosition() + Vec2(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }
 
 void Player::enableMeleeAttack(float angle){
     _meleeHitbox->setEnabled(true);
     _meleeHitbox->setAngle(angle);
-    _meleeHitbox->setPosition(getPosition().add(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
+    _meleeHitbox->setPosition(getPosition() + Vec2(0, 64 / getDrawScale().y)); //64 is half of the pixel height of the player
 }

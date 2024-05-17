@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <cugl/cugl.h>
+#include "../controllers/AudioController.hpp"
 
 using namespace cugl;
 
