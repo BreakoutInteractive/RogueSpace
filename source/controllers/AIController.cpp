@@ -264,7 +264,9 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
         std::shared_ptr<Enemy> enemy = *it;
-        if (enemy->isDying() || !enemy->isEnabled()) {
+        // skip AI updates for dying/dead enemies and for dummies
+        if (enemy->isDying() || !enemy->isEnabled()
+            || enemy->getType() == "melee dummy" || enemy->getType() == "ranged dummy") {
             continue;
         }
         if (enemy->getType() == "boss enemy") {
