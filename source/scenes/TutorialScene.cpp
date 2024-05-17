@@ -89,7 +89,7 @@ void TutorialScene::setScreenText(){
     switch (levelType) {
         case DASH:
             tutName = "DASH";
-            tutDescription = "Dash to avoid damage and phase through \nenemies.";
+            tutDescription = "Dash to avoid damage and phase through enemies.";
             levelSS = _screenshotDash;
             break;
         case MELEE:
@@ -109,7 +109,7 @@ void TutorialScene::setScreenText(){
             break;
     }
     _levelLabel->setText(tutName);
-    _levelDescrip->setText(tutDescription);
+    _levelDescrip->setText(tutDescription, true);
     _screenshot->setTexture(levelSS);
 
 }
