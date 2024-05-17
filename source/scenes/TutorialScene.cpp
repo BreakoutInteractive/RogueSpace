@@ -35,10 +35,10 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _settings = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("tutorial_setting"));
 
     // attach listeners
-    scene2::Button::Listener backListener = [this](std::string name, bool down){ _choice = BACK;};
-    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS;};
-    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 1;};
-    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 2;};
+    scene2::Button::Listener backListener = [this](std::string name, bool down){ _choice = BACK; AudioController::playUiFX("menuClick");};
+    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; AudioController::playUiFX("menuClick");};
+    auto level1Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 1; AudioController::playUiFX("menuClick");};
+    auto level2Listener = [this](std::string name, bool down){ _choice = LEVEL; _selectedLevel = 2; AudioController::playUiFX("menuClick");};
     
     _back->addListener(backListener);
     _settings->addListener(settingsListener);

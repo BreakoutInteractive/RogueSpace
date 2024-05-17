@@ -70,8 +70,6 @@ protected:
     CameraController _camController;
     /** Controller for handling collisions */
     CollisionController _collisionController;
-    /** Controller to play sounds */
-    std::shared_ptr<AudioController> _audioController;
 
 #pragma mark Scenes
     /** custom renderer for this scene */

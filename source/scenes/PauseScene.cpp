@@ -62,16 +62,19 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             } else{
                 _choice = Choice::BACK;
             }
+            AudioController::playUiFX("menuClick");
         }
     });
     _resume->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::RESUME;
+            AudioController::playUiFX("menuClick");
         }
     });
     _settings->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::SETTINGS;
+            AudioController::playUiFX("menuClick");
         }
     });
 
@@ -79,11 +82,13 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         if (down) {
             _confirmationScene.setActive(false);
             _confirmBack->setDown(false);
+            AudioController::playUiFX("menuClick");
         }
     });
     _confirmConfirm->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::BACK;
+            AudioController::playUiFX("menuClick");
         }
     });
     

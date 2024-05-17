@@ -58,11 +58,12 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _confirm2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmation_confirmation_confirm"));
 
     // attach listeners
-    scene2::Button::Listener newGameListener = [this](std::string name, bool down){ _choice = NEW;};
-    scene2::Button::Listener newGame2Listener = [this](std::string name, bool down){ _confirmationScene.setActive(true); _newGame2->setDown(false);};
-    auto tutorialListener = [this](std::string name, bool down){ _choice = TUTORIAL;};
-    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS;};
-    auto continueListener = [this](std::string name, bool down){ _choice = CONTINUE;};
+
+    scene2::Button::Listener newGameListener = [this](std::string name, bool down){ _choice = NEW; AudioController::playUiFX("menuClick");};
+    scene2::Button::Listener newGame2Listener = [this](std::string name, bool down){ _confirmationScene.setActive(true); _newGame2->setDown(false); AudioController::playUiFX("menuClick");};
+    auto tutorialListener = [this](std::string name, bool down){ _choice = TUTORIAL; AudioController::playUiFX("menuClick"); };
+    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; AudioController::playUiFX("menuClick"); };
+    auto continueListener = [this](std::string name, bool down){ _choice = CONTINUE; AudioController::playUiFX("menuClick"); };
     auto backListener = [this](std::string name, bool down){ _confirmationScene.setActive(false); _back2->setDown(false);};
     
     _newGame->addListener(newGameListener);

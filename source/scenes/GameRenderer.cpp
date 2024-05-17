@@ -45,6 +45,7 @@ bool GameRenderer::init(const std::shared_ptr<AssetManager>& assets){
         if (down){
             _paused=true;
             hideJoysticks();
+            AudioController::playUiFX("menuClick");
         }
     });
     

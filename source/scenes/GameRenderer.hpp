@@ -18,6 +18,7 @@
 #include <cugl/physics2/CUObstacleWorld.h>
 #include <vector>
 #include <cugl/assets/CUAsset.h>
+#include "../controllers/AudioController.hpp"
 
 using namespace cugl;
 

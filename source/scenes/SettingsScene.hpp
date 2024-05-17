@@ -9,6 +9,7 @@
 #include <cugl/cugl.h>
 
 #include "../utility/SaveData.hpp"
+#include "../controllers/AudioController.hpp"
 
 /**
  *
