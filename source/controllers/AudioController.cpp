@@ -9,6 +9,15 @@
 using namespace cugl;
 
 #pragma mark -
+#pragma mark Static member variables
+
+std::shared_ptr<cugl::AssetManager> AudioController::_assets;
+std::string AudioController::_currTrack;
+float AudioController::_master;
+float AudioController::_sfx;
+float AudioController::_bgm;
+
+#pragma mark -
 #pragma mark Constructors
 
     /**

@@ -46,9 +46,8 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
 
-    _audioController = std::make_shared<AudioController>();
     SaveData::hasPreferences();
-    _audioController->init(_assets, SaveData::getPreferences());
+    AudioController::init(_assets, SaveData::getPreferences());
     
     Application::onStartup(); // this is required
 }
@@ -93,12 +92,12 @@ void App::update(float dt){
         _loading.update(0.01f);
     } else {
         _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets, _audioController); // this makes GameScene active
-        _pause.init(_assets, _audioController);
-        _settings.init(_assets, _audioController);
-        _title.init(_assets, _audioController);
-        _death.init(_assets, _audioController);
-        _tutorial.init(_assets, _audioController);
+        _gameplay.init(_assets); // this makes GameScene active
+        _pause.init(_assets);
+        _settings.init(_assets);
+        _title.init(_assets);
+        _death.init(_assets);
+        _tutorial.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
         setTitleScene();
@@ -112,7 +111,7 @@ void App::preUpdate(float dt) {
             // only for intermediate loading screens
             break;
         case TITLE:
-            _audioController->playMusic("title");
+            AudioController::playMusic("title");
             updateTitleScene(dt);
             break;
         case PAUSE:
@@ -128,7 +127,7 @@ void App::preUpdate(float dt) {
             updateTutorialScene(dt);
             break;
         case GAME:
-            _audioController->playMusic("oasis");
+            AudioController::playMusic("oasis");
             if (_gameplay.getExitCode() == GameScene::ExitCode::DEATH){
                 _scene = State::DEATH;
                 _gameplay.setActive(false);
@@ -150,7 +149,7 @@ void App::preUpdate(float dt) {
             }
             break;
         case DEATH:
-            _audioController->playMusic("clear");
+            AudioController::playMusic("clear");
             updateDeathScene(dt);
             break;
     }

@@ -70,8 +70,6 @@ protected:
     CameraController _camController;
     /** Controller for handling collisions */
     CollisionController _collisionController;
-    /** Controller to play sounds */
-    std::shared_ptr<AudioController> _audioController;
 
 #pragma mark Scenes
     /** custom renderer for this scene */
@@ -190,7 +188,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
     
 #pragma mark -
 #pragma mark State Access

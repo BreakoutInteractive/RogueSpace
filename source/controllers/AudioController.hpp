@@ -13,13 +13,13 @@
 class AudioController {
 protected:
     /** The asset manager for this audio controller. */
-    std::shared_ptr<cugl::AssetManager> _assets;
+    static std::shared_ptr<cugl::AssetManager> _assets;
     
-    std::string _currTrack;
+    static std::string _currTrack;
     
-    float _master;
-    float _sfx;
-    float _bgm;
+    static float _master;
+    static float _sfx;
+    static float _bgm;
     
 public:
 #pragma mark -
@@ -33,7 +33,7 @@ public:
     /**
      * Initializes the controller
      */
-    void init(std::shared_ptr<cugl::AssetManager> assets, SaveData::Preferences p);
+    static void init(std::shared_ptr<cugl::AssetManager> assets, SaveData::Preferences p);
 
 #pragma mark -
 #pragma mark audio
@@ -54,28 +54,28 @@ public:
      *
      * @param t  the proportion to change by
      */
-    std::string getCurrTrack() { return _currTrack; }
+    static std::string getCurrTrack() { return _currTrack; }
     
     /**
      * Change master volume
      *
      * @param t  the proportion to change by
      */
-    void changeMasterVolume(float t);
+    static void changeMasterVolume(float t);
     
     /**
      * Change SFX volume
      *
      * @param t  the proportion to change by
      */
-    void changeSFXVolume(float t);
+    static void changeSFXVolume(float t);
     
     /**
      * Change music volume
      *
      * @param t  the proportion to change by
      */
-    void changeBGMVolume(float t);
+    static void changeBGMVolume(float t);
     
     /**
      * Plays sound associated with collision bodies.
@@ -83,21 +83,21 @@ public:
      * @param  key1  the reference key for the sound effect
      * @param  key2  the reference key for the sound effect
      */
-    void playCollisionFX(const std::string key1, const std::string key2);
+    static void playCollisionFX(const std::string key1, const std::string key2);
     
     /**
      * Plays sound associated with player action.
      *
      * @param  action  the action key for the player
      */
-    void playPlayerFX(const std::string action);
+    static void playPlayerFX(const std::string action);
     
     /**
      * Plays sound associated with player action.
      *
      * @param  action  the action key for the player
      */
-    void clearPlayerFX(const std::string action);
+    static void clearPlayerFX(const std::string action);
     
     /**
      * Plays sound associated with action of eney type.
@@ -105,7 +105,7 @@ public:
      * @param  action  the action key for the enemy
      * @param  key  the reference key for the enemy type
      */
-    void playEnemyFX(const std::string action, const std::string key);
+    static void playEnemyFX(const std::string action, const std::string key);
     
     /**
      * Plays sound associated with UI actions.
@@ -113,38 +113,38 @@ public:
      * @param  action  the action key for the enemy
      * @param  key  the reference key for the enemy type
      */
-    void playUiFX(const std::string action);
+    static void playUiFX(const std::string action);
     
     /**
      * Plays music associated with scene.
      *
      * @param  key1  the reference key for the event
      */
-    void playMusic(const std::string key);
+    static void playMusic(const std::string key);
     
     /**
      * Pause all sound associated with game.
      *
      * @param  key1  the reference key for the event
      */
-    void PauseSound(); 
+    static void PauseSound();
     
     /**
      * Plause all effects associated with level.
      */
-    void PauseFX();
+    static void PauseFX();
     
     /**
      * Resume all sound associated with game.
      *
      * @param  key1  the reference key for the event
      */
-    void resumeSound();
+    static void resumeSound();
     
     /**
      * Resume all effects associated with level.
      */
-    void resumeFX();
+    static void resumeFX();
     
 };
 

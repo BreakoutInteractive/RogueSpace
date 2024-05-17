@@ -52,8 +52,6 @@ protected:
     std::shared_ptr<scene2::Button> _confirmConfirm;
     /** confirmation scene**/
     Scene2 _confirmationScene;
-    /** Controller to play sounds */
-    std::shared_ptr<AudioController> _audioController;
     
 #pragma mark - Icon Labels
     
@@ -103,7 +101,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<AudioController> audio);
+    bool init(const std::shared_ptr<AssetManager>& assets);
 
 #pragma mark - Scene Functionality
     /**

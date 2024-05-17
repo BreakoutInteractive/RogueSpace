@@ -10,7 +10,7 @@
 
 using namespace cugl;
 
-bool DeathScene::init(const std::shared_ptr<cugl::AssetManager> &assets, std::shared_ptr<AudioController> audio){
+bool DeathScene::init(const std::shared_ptr<cugl::AssetManager> &assets){
     if (assets == nullptr) {
         return false;
     }
@@ -33,10 +33,10 @@ bool DeathScene::init(const std::shared_ptr<cugl::AssetManager> &assets, std::sh
     _main = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_main_menu"));
     // program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
-        if (down) { _choice = Choice::RESTART; _audioController->playUiFX("menuClick");}
+        if (down) { _choice = Choice::RESTART; AudioController::playUiFX("menuClick");}
     });
     _main->addListener([this](const std::string& name, bool down) {
-        if (down) { _choice = Choice::MAIN_MENU; _audioController->playUiFX("menuClick");}
+        if (down) { _choice = Choice::MAIN_MENU; AudioController::playUiFX("menuClick");}
     });
     
     // add an overlay layer to separate game background from UI
@@ -46,7 +46,6 @@ bool DeathScene::init(const std::shared_ptr<cugl::AssetManager> &assets, std::sh
     addChild(scene);
     setActive(false);
     _choice = Choice::NONE;
-    _audioController = audio;
     return true;
 }
 

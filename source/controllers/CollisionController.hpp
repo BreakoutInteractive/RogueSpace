@@ -32,9 +32,6 @@ private:
     /** reference to assets directory */
     std::shared_ptr<AssetManager> _assets;
     
-    /** Controller to play sounds */
-    std::shared_ptr<AudioController> _audioController;
-    
     /** whether a triple combo has been initiated (eg. the third hit strikes a target) */
     bool _comboStriked = false;
 
@@ -52,7 +49,7 @@ public:
     /**
      * loads the necessary assets for the controller
      */
-    void setAssets(const std::shared_ptr<AssetManager>& assets, const std::shared_ptr<AudioController>& audio);
+    void setAssets(const std::shared_ptr<AssetManager>& assets);
     
     /**
      * This is a poll-like method. By reading this value, the data is then set to false (cleared).

@@ -8,7 +8,7 @@
 #include "TitleScene.hpp"
 #include <cugl/cugl.h>
 
-bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<AudioController> audio) {
+bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     if (assets == nullptr) {
         return false;
     }
@@ -35,10 +35,10 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sh
     _settings2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("menu2_setting"));
 
     // attach listeners
-    scene2::Button::Listener newGameListener = [this](std::string name, bool down){ _choice = NEW; _audioController->playUiFX("menuClick");};
-    auto tutorialListener = [this](std::string name, bool down){ _choice = TUTORIAL; _audioController->playUiFX("menuClick"); };
-    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; _audioController->playUiFX("menuClick"); };
-    auto continueListener = [this](std::string name, bool down){ _choice = CONTINUE; _audioController->playUiFX("menuClick"); };
+    scene2::Button::Listener newGameListener = [this](std::string name, bool down){ _choice = NEW; AudioController::playUiFX("menuClick");};
+    auto tutorialListener = [this](std::string name, bool down){ _choice = TUTORIAL; AudioController::playUiFX("menuClick"); };
+    auto settingsListener = [this](std::string name, bool down){ _choice = SETTINGS; AudioController::playUiFX("menuClick"); };
+    auto continueListener = [this](std::string name, bool down){ _choice = CONTINUE; AudioController::playUiFX("menuClick"); };
     _newGame->addListener(newGameListener);
     _newGame2->addListener(newGameListener);
     _settings->addListener(settingsListener);
@@ -59,7 +59,6 @@ bool TitleScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sh
     setActive(false);
     _choice = NONE;
     _type = WITHOUT_CONTINUE;
-    _audioController = audio;
     return true;
 }
 

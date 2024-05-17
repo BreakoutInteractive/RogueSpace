@@ -33,9 +33,8 @@ void CollisionController::setLevel(std::shared_ptr<LevelModel> level){
     _level = level;
 }
 
-void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets, const std::shared_ptr<AudioController>& audio) {
+void CollisionController::setAssets(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
-    _audioController = audio;
 }
 
 bool CollisionController::isComboContact(){
@@ -68,7 +67,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 // make sure this enemy isn't already hit by asking whether the hitbox hits the enemy
                 if (player->getMeleeHitbox()->hits(eptr, ang)){
                     (*it)->hit(dir, false, player->getMeleeDamage(), !player->isComboStrike() ? GameConstants::KNOCKBACK : GameConstants::KNOCKBACK_PWR_ATK);
-                    _audioController->playPlayerFX("attackHit");
+                    AudioController::playPlayerFX("attackHit");
                     CULog("Hit an enemy!");
                     if (meleeHitbox->hitCount() == 1){
                         // the hitbox is active and this is the first hit of the frame
@@ -90,7 +89,7 @@ void CollisionController::beginContact(b2Contact* contact){
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage());
                         CULog("Shot an enemy!");
                         p->setExploding();
-                        //_audioController->playPlayerFX("attackHit"); //enemy projectile hit sfx
+                        //AudioController::playPlayerFX("attackHit"); //enemy projectile hit sfx
                     }
                 }
             }
@@ -141,12 +140,12 @@ void CollisionController::beginContact(b2Contact* contact){
                     else {
                         if (body1->GetUserData().pointer == aptr) {
                             physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-                            _audioController->playEnemyFX("attackHit", data1->getName());
+                            AudioController::playEnemyFX("attackHit", data1->getName());
                         }
                         else {
                             //body1 userdata pointer = pptr
                             physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-                            _audioController->playEnemyFX("attackHit", data2->getName());
+                            AudioController::playEnemyFX("attackHit", data2->getName());
                         }
                         player->hit(dir, (*it)->getDamage());
                         CULog("Player took damage!");
@@ -166,7 +165,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 p->setExploding();
                 if (!player->isParrying()) {
                     player->hit(dir, p->getDamage());
-                    //_audioController->playPlayerFX("attackHit"); //player projectile hit sfx
+                    //AudioController::playPlayerFX("attackHit"); //player projectile hit sfx
                     CULog("Player got shot!");
                 }
                 else player->playParryEffect();

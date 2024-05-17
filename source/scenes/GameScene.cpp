@@ -59,7 +59,7 @@ GameScene::GameScene() : Scene2(),
 _complete(false), _defeat(false), _debug(false){}
 
 
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<AudioController> audio) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
@@ -82,8 +82,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_pt
     _input.init(preprocessor);
     _input.setMinDragRadius(_gameRenderer.getJoystickScreenRadius() / 4);
     activateInputs(false);
-    _audioController = audio;
-    _collisionController.setAssets(_assets, _audioController);
+    _collisionController.setAssets(_assets);
     
     CameraController::CameraConfig config;
     config.speed = GameConstants::GAME_CAMERA_SPEED;
@@ -181,7 +180,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_pt
         this->setLevel(data);
     });
     
-    _upgrades.init(assets, audio);
+    _upgrades.init(assets);
   
 #pragma mark - Game State Initialization
     setActive(false);
@@ -450,7 +449,7 @@ void GameScene::processPlayerInput(){
                         }
                         break;
                 case Player::Weapon::RANGED:
-                        _audioController->playPlayerFX("loopBow");
+                        AudioController::playPlayerFX("loopBow");
                         player->animateCharge();
                         player->getCollider()->setLinearVelocity(Vec2::ZERO);
                         break;
@@ -464,8 +463,8 @@ void GameScene::processPlayerInput(){
                 }
             }
             else if (_input.didShoot() && player->getWeapon() == Player::Weapon::RANGED) {
-                _audioController->clearPlayerFX("loopBow");
-                _audioController->playPlayerFX("shootBow");
+                AudioController::clearPlayerFX("loopBow");
+                AudioController::playPlayerFX("shootBow");
                 Vec2 direction = Vec2::ZERO;
                 float ang = 0;
                 if (player->isRangedAttackActive()) {
