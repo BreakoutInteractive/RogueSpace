@@ -2052,7 +2052,6 @@
         {
          "draworder":"topdown",
          "id":257,
-         "locked":true,
          "name":"Obstacles",
          "objects":[
                 {
@@ -3983,24 +3982,6 @@
                  "width":128,
                  "x":1792,
                  "y":928
-                }, 
-                {
-                 "gid":173,
-                 "height":128,
-                 "id":2803,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"tall",
-                         "type":"bool",
-                         "value":false
-                        }],
-                 "rotation":0,
-                 "type":"Wall",
-                 "visible":true,
-                 "width":128,
-                 "x":2048,
-                 "y":992
                 }, 
                 {
                  "gid":174,

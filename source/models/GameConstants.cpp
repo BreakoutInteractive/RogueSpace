@@ -95,7 +95,7 @@ float GameConstants::CHARGE_TIME = 0.66f;
 float GameConstants::PLAYER_PROJ_KNOCKBACK = 1.4f;
 
 float GameConstants::PLAYER_MELEE_ATK_RANGE = 1.36f; // previously 1.4
-float GameConstants::COMBO_TIME = 0.8f;
+float GameConstants::COMBO_TIME = 0.9f;
 float GameConstants::COMBO_DMG_MUL = 2;
 float GameConstants::PLAYER_PARRY_TIME = 0.6f; //previously 0.5, do not confuse with the stun time.
 
