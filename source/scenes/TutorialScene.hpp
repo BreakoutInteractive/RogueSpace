@@ -22,9 +22,7 @@ public:
         /** User wants to play a tutorial level */
         LEVEL,
         /** User wants to go back to Main */
-        BACK,
-        /** User wants to go to settings */
-        SETTINGS
+        BACK
     };
     
     enum Level {

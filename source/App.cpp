@@ -270,12 +270,6 @@ void App::updateTutorialScene(float dt){
             _gamePrevScene = TUTORIAL;
             _scene = GAME; // switch to game scene
             break;
-        case TutorialScene::SETTINGS:
-            _tutorial.setActive(false);
-            _settings.setActive(true);
-            _scene = SETTINGS; // switch to settings scene
-            _prevScene = TUTORIAL;
-            break;
     }
 }
 
@@ -292,10 +286,6 @@ void App::updateSettingsScene(float dt) {
         case TITLE:
             setTitleScene();
             _scene = TITLE;
-            break;
-        case TUTORIAL:
-            _tutorial.setActive(true);
-            _scene = TUTORIAL;
             break;
         default: //should never be here since you can only access settings from pause and title scenes
             break;
