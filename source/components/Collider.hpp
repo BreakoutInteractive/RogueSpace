@@ -31,6 +31,19 @@ public:
     static std::shared_ptr<physics2::Obstacle> makePolygon(std::shared_ptr<JsonValue> polyColliderData, b2BodyType type, std::string name, bool is_sensor = false);
     
     /**
+     * construct a wheel/circle collider with the given data and assign the collider with the given type, sensor, and name.
+     *
+     * {
+     *  shape : "circle"
+     *  radius : float
+     *  x : float
+     *  y : float
+     * }
+     *
+     */
+    static std::shared_ptr<physics2::Obstacle> makeWheel(std::shared_ptr<JsonValue> wheelColliderData, b2BodyType type, std::string name, bool is_sensor = false);
+    
+    /**
      * construct a box collider with the given data and assign the collider with the given type, sensor, and name.
      *
      * {

@@ -51,7 +51,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
     // set up collider
-    auto collider = Collider::makePolygon(colliderData, b2_dynamicBody, "player-collider");
+    auto collider = Collider::makeCollider(colliderData, b2_dynamicBody, "player-collider");
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
@@ -60,7 +60,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     _collider = collider;                   // attach Component
     
     // set the player collider-shadow
-    auto colliderShadow = Collider::makePolygon(colliderData, b2_kinematicBody, "player-collider-shadow");
+    auto colliderShadow = Collider::makeCollider(colliderData, b2_kinematicBody, "player-collider-shadow");
     colliderShadow->setBodyType(b2_kinematicBody);
     filter.categoryBits = CATEGORY_PLAYER_SHADOW;
     filter.maskBits = CATEGORY_ENEMY;
