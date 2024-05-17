@@ -22,6 +22,7 @@
         "level16": "json/tiled/exports/sc_lvl_15.json",
         "level17": "json/tiled/exports/sc_lvl_16.json",
         "level18": "json/tiled/exports/sc_lvl_17.json",
+        "level19": "json/tiled/exports/sc_lvl_18.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     

@@ -63,19 +63,19 @@ float GameConstants::STUN_DMG_BONUS = 2.34f; // previously 1.6
 #pragma mark -
 #pragma mark Slime Constants
 
-int GameConstants::EXPLODE_TIMER = 60;
+int GameConstants::EXPLODE_TIMER = 42;
 // note radius needs to be larger than proximity otherwise player won't necessarily take damage
-float GameConstants::EXPLODE_RADIUS = 2.3f;
-float GameConstants::EXPLODE_PROX_RANGE = 1.8f;
+float GameConstants::EXPLODE_RADIUS = 2.6f;
+float GameConstants::EXPLODE_PROX_RANGE = 1.6f;
 
 #pragma mark -
 #pragma mark Boss Constants
 
-float GameConstants::STORM_CHARGE_TIME = 1.5f;
+float GameConstants::STORM_CHARGE_TIME = 1.8f;
 
-int GameConstants::STORM_TIMER = 300;
+int GameConstants::STORM_TIMER = 420;
 
-float GameConstants::STORM_RADIUS = 3.0f;
+float GameConstants::STORM_RADIUS = 2.4f;
 
 #pragma mark -
 #pragma mark Player Combat
