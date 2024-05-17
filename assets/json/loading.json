@@ -1,31 +1,18 @@
 {
     "textures": {
-        "logo": {
-            "file":      "textures/loading/planet_1.png",
+        "gameName": {
+            "file":      "textures/loading/loadingScreen_RS_Mapped.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
         },
-        "name": {
-            "file":      "textures/loading/transparent_logo_white.png",
+        "globe": {
+            "file":      "textures/loading/loadingScreen_GlobeSprite.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
-        },
-        "progress": {
-            "file":      "textures/loading/progress.png",
-            "wrapS":     "clamp",
-            "wrapT":     "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear",
-            "atlas":     {
-                "background" : [0,    0, 320, 45],
-                "foreground" : [24,  45, 296, 90],
-                "leftcap"    : [0,   45,  24, 90],
-                "rightcap"   : [296, 45, 320, 90]
-            }
         }
     },
     "scene2s" : {
@@ -38,15 +25,15 @@
                 "color": [0,0,0,255]
             },
             "children"  : {
-                "logo"  : {
+                "gameName"  : {
                     "type"   : "Image",
                     "format"    : {
                         "type" : "Anchored"
                     },
                     "data"   : {
-                        "texture"  : "logo",
+                        "texture"  : "gameName",
                         "anchor"   : [0.5,0.5],
-                        "scale"    : 0.15
+                        "scale"    : 0.50
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -55,36 +42,28 @@
                         "absolute" : true
                     }
                 },
-                "name"  : {
-                    "type"   : "Image",
+                "globe"  : {
+                    "type"   : "Sprite",
                     "format"    : {
                         "type" : "Anchored"
                     },
                     "data"   : {
-                        "texture"  : "name",
+                        "texture"  : "globe",
                         "anchor"   : [0.5,0.5],
-                        "scale"    : 0.15
+                        "scale"    : 0.75,
+                        "size": [
+                            0,0, 200,192, 200,192, 0,192
+                        ],
+                        "angle": 0,
+                        "visible": false,
+                        "span": 14,
+                        "cols": 7,
+                        "frame": 0
                     },
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
                         "y_offset" : -70,
-                        "absolute" : true
-                    }
-                },
-                "bar"  : {
-                    "type"   : "Progress",
-                    "data"   : {
-                        "anchor"     : [0.5,0.5],
-                        "background" : "progress_background",
-                        "foreground" : "progress_foreground",
-                        "left_cap"   : "progress_leftcap",
-                        "right_cap"  : "progress_rightcap"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "y_offset" : -175,
                         "absolute" : true
                     }
                 }
