@@ -184,7 +184,7 @@ void ExplodingAlien::updateAnimation(float dt){
     // TODO: need a sync position implementation for enemies ...
     // make sure hitbox debug node is hidden when not active
     _attack->getDebugNode()->setVisible(_attack->isEnabled());
-    _attack->setPosition(_position + Vec2(0, 64 / _drawScale.y));
+    _attack->setPosition(_position + Vec2(0, (_pixelHeight/2) / _drawScale.y));
 }
 
 void ExplodingAlien::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
