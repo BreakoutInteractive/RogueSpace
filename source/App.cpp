@@ -111,7 +111,7 @@ void App::preUpdate(float dt) {
             // only for intermediate loading screens
             break;
         case TITLE:
-            AudioController::updateMusic("title");
+            AudioController::updateMusic("title", 1);
             updateTitleScene(dt);
             break;
         case PAUSE:
@@ -123,12 +123,11 @@ void App::preUpdate(float dt) {
             updateSettingsScene(dt);
             break;
         case TUTORIAL:
-            AudioController::updateMusic("title");
+            AudioController::updateMusic("title", 1);
             _tutorial.setActive(true);
             updateTutorialScene(dt);
             break;
         case GAME:
-            AudioController::updateMusic("oasis");
             if (_gameplay.getExitCode() == GameScene::ExitCode::DEATH){
                 _scene = State::DEATH;
                 _gameplay.setActive(false);

@@ -104,6 +104,7 @@ void CollisionController::beginContact(b2Contact* contact){
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == hptr)) {
             //don't pick up the health pack if at full hp
             if (player->getHP() < player->getMaxHP()) {
+                AudioController::playUiFX("upgrade");
                 float maxHP = player->getMaxHP();
                 float newHP = player->getHP() + maxHP * GameConstants::HEALTHPACK_HEAL_AMT;
                 if (newHP > maxHP) newHP = maxHP;

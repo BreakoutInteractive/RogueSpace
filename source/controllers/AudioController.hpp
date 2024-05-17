@@ -121,7 +121,7 @@ public:
      *
      * @param  key1  the reference key for the event
      */
-    static void updateMusic(const std::string key);
+    static void updateMusic(const std::string key, float fade);
     
     /**
      * Pause all sound associated with game.

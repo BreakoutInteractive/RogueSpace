@@ -232,9 +232,29 @@
             "file":     "sounds/music/rs_stranded_loop.ogg",
             "volume":   1.0
         },
+        "pursuit": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_pursuit_loop.ogg",
+            "volume":   1.0
+        },
+        "lose": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_play_lose.ogg",
+            "volume":   1.0
+        },
+        "win": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_play_win.ogg",
+            "volume":   1.0
+        },
         "upgrade": {
             "type":     "sample",
             "file":     "sounds/music/rs_play_heal.ogg",
+            "volume":   1.0
+        },
+        "boss": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_xenocide_loop.ogg",
             "volume":   1.0
         }
     },

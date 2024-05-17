@@ -157,7 +157,7 @@ void AudioController::playUiFX(const std::string action){
      *
      * @param  key1  the reference key for the event
      */
-void AudioController::updateMusic(const std::string key) {
+void AudioController::updateMusic(const std::string key, float fade) {
     std::shared_ptr<AudioQueue> m = AudioEngine::get()->getMusicQueue();
     std::shared_ptr<Sound> source;
     bool loop = false;
@@ -167,11 +167,11 @@ void AudioController::updateMusic(const std::string key) {
             source = _assets->get<Sound>(key);
         }
         else {
-            CULogError("track not found or not eligible");
+            CULogError("track not found or not eligible: without track");
         }
         _looping = loop;
         _currTrack = key;
-        m->enqueue(source, loop, 0.5 * _master * _bgm);
+        m->enqueue(source, loop, 0.5 * _master * _bgm, fade);
     } else if (_currTrack != key) {
         if (key == "oasis") {
             loop = true;
@@ -181,15 +181,26 @@ void AudioController::updateMusic(const std::string key) {
             loop = true;
             source = _assets->get<Sound>(key);
         }
-        else if (key == "") {
+        else if (key == "pursuit") {
+            loop = true;
+            source = _assets->get<Sound>(key);
+        }
+        else if (key == "strand") {
+            loop = true;
+            source = _assets->get<Sound>(key);
+        }
+        else if (key == "lose") {
+            source = _assets->get<Sound>(key);
+        }
+        else if (key == "win") {
             source = _assets->get<Sound>(key);
         }
         else {
-            CULogError("track not found or not eligible");
+            CULogError("track not found or not eligible: from existing track");
         }
         _looping = loop;
         _currTrack = key;
-        m->enqueue(source, loop, 0.5 * _master * _bgm);
+        m->enqueue(source, loop, 0.5 * _master * _bgm, fade);
         m->advance();
     } else if (m->getVolume() != _bgm) { // to remove
         m->setVolume(0.5 * _master * _bgm);

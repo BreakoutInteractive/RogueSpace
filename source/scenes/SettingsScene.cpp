@@ -114,7 +114,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             CULog("master volume down (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeMasterVolume(-0.1);
-            AudioController::updateMusic(AudioController::getCurrTrack());
+            AudioController::updateMusic(AudioController::getCurrTrack(), 0);
         }
     });
     _volUp->addListener([this](const std::string& name, bool down) {
@@ -126,7 +126,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             CULog("master volume up (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeMasterVolume(0.1);
-            AudioController::updateMusic(AudioController::getCurrTrack());
+            AudioController::updateMusic(AudioController::getCurrTrack(), 0);
         }
     });
     _sfxDown->addListener([this](const std::string& name, bool down) {
@@ -160,7 +160,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             CULog("music volume down (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeBGMVolume(-0.1);
-            AudioController::updateMusic(AudioController::getCurrTrack());
+            AudioController::updateMusic(AudioController::getCurrTrack(), 0);
         }
     });
     _musicUp->addListener([this](const std::string& name, bool down) {
@@ -172,7 +172,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             CULog("music volume up (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeBGMVolume(0.1);
-            AudioController::updateMusic(AudioController::getCurrTrack());
+            AudioController::updateMusic(AudioController::getCurrTrack(), 0);
         }
     });
     _invert->addListener([this](const std::string& name, bool down) {

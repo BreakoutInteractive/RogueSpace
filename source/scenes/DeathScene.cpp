@@ -67,6 +67,7 @@ void DeathScene::setActive(bool value){
         _choice = NONE;
         Scene2::setActive(value);
         if (value){
+            AudioController::updateMusic("lose", 1);
             _main->activate();
             _restart->activate();
             _cape->setFrame(0);

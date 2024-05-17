@@ -242,12 +242,15 @@ void GameScene::setLevel(SaveData::Data saveData){
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
         _isTutorial = false;
+        AudioController::updateMusic("oasis", 1.0f);
     } else if (_isTutorial){
         levelToParse = getLevelKey(_levelNumber);
+        AudioController::updateMusic("oasis", 0.0f);
     }
     else{
         levelToParse = getLevelKey(_levelNumber);
         _isTutorial = false;
+        AudioController::updateMusic("pursuit", 1.0f);
     }
     
     CULog("currLevel %d", _levelNumber);
@@ -586,6 +589,7 @@ void GameScene::preUpdate(float dt) {
                 // no more enemies remain, but there were enemies initially
                 _actionManager.remove(AREA_CLEAR_KEY);
                 _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);
+                AudioController::updateMusic("strand", 1.0f);
             }
         }
     }
