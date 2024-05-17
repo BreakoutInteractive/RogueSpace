@@ -81,7 +81,7 @@ void BossEnemy::summonStorm(std::shared_ptr<LevelModel> level, const std::shared
     }
     for (int i = 0; i < 8; i++) {
         float a = ang + M_PI_4 * i;
-        std::shared_ptr<Projectile> p = Projectile::mageAlloc(getPosition() + Vec2(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), a, assets);
+        std::shared_ptr<Projectile> p = Projectile::bossAlloc(getPosition() + Vec2(0, (_pixelHeight/2) / getDrawScale().y), getDamage(), a, assets);
         p->setDrawScale(level->getDrawScale());
         level->addProjectile(p);
     }
@@ -94,6 +94,9 @@ void BossEnemy::summonStorm(std::shared_ptr<LevelModel> level, const std::shared
 
 void BossEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     MeleeEnemy::draw(batch);
+    if (_stormState == StormState::CHARGING) {
+        drawEffect(batch, _rockEffect);
+    }
     if (_stormHitbox->isEnabled()) {
         drawEffect(batch, _stormEffect);
     }
@@ -107,6 +110,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackTexture2 = assets->get<Texture>("boss-attack-2");
     auto chargeTexture = assets->get<Texture>("boss-charge-storm");
     auto stunTexture = assets->get<Texture>("boss-idle"); // same as idle for now
+    auto rockEffect = assets->get<Texture>("boss-projectile");
     auto stormEffect = assets->get<Texture>("explosion-effect");
     auto meleeHitEffect = assets->get<Texture>("melee-hit-effect");
     auto bowHitEffect = assets->get<Texture>("bow-hit-effect");
@@ -119,6 +123,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     auto attackSheet2 = SpriteSheet::alloc(attackTexture2, 8, 9);
     auto chargeSheet = SpriteSheet::alloc(chargeTexture, 8, 10);
     auto stunSheet = SpriteSheet::alloc(stunTexture, 8, 9);
+    auto rockSheet = SpriteSheet::alloc(rockEffect, 3, 5);
     auto stormSheet = SpriteSheet::alloc(stormEffect, 2, 4);
     auto meleeHitSheet = SpriteSheet::alloc(meleeHitEffect, 2, 3);
     auto bowHitSheet = SpriteSheet::alloc(bowHitEffect, 2, 3);
@@ -131,6 +136,7 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
     _attackAnimation2 = Animation::alloc(attackSheet2, GameConstants::ENEMY_MELEE_ATK_SPEED, false, 0, 8);
     _chargeAnimation = Animation::alloc(chargeSheet, GameConstants::STORM_CHARGE_TIME, false, 0, 9);
     _stunAnimation = Animation::alloc(stunSheet, 1.25f, false, 0, 8);
+    _rockEffect = Animation::alloc(rockSheet, GameConstants::STORM_CHARGE_TIME * 0.75f, false, 0, 4);
     _stormEffect = Animation::alloc(stormSheet, 0.625f, true, 4, 7);
     _meleeHitEffect = Animation::alloc(meleeHitSheet, 0.25f, false);
     _bowHitEffect = Animation::alloc(bowHitSheet, 0.25f, false);
@@ -183,12 +189,19 @@ void BossEnemy::loadAssets(const std::shared_ptr<AssetManager> &assets){
         setIdling();
     });
     
-    _chargeAnimation->addCallback(GameConstants::STORM_CHARGE_TIME * 0.75f, [this](){
+    _rockEffect->onComplete([this](){
         if (isEnabled() && _health > 0) {
+            _rockEffect->reset();
             _stormState = StormState::CHARGED;
             _stormHitbox->setEnabled(true);
             _stormHitbox->setAwake(true);
             _stormTimer.reset();
+        }
+    });
+    
+    _chargeAnimation->addCallback(0.0f, [this](){
+        if (isEnabled() && _health > 0) {
+            _rockEffect->start();
         }
     });
     
@@ -302,6 +315,9 @@ void BossEnemy::updateAnimation(float dt){
                 _attack->setEnabled(false);
                 _attack->setAwake(false);
             }
+            if (isDying()) {
+                _rockEffect->reset();
+            }
             break;
         case StormState::ACTIVE:
             // attack animation must play to completion, as long as enemy is alive.
@@ -332,6 +348,7 @@ void BossEnemy::updateAnimation(float dt){
     }
 
     _stunEffect->update(dt);
+    _rockEffect->update(dt);
     _stormEffect->update(dt);
     _hitboxAnimation->update(dt);
     

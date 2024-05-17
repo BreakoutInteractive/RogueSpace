@@ -75,6 +75,8 @@ public:
     static float PROJ_RADIUS_LIZARD;
     /** the radius of a mage enemy projectile */
     static float PROJ_RADIUS_MAGE;
+    /** the radius of a boss enemy projectile */
+    static float PROJ_RADIUS_BOSS;
     /** the distance the enemy projectile travels, not including the explosion animation */
     static float PROJ_DIST_E;
     /** the fraction of damage the tank enemy takes when not stunned */

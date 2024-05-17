@@ -54,6 +54,8 @@ float GameConstants::PROJ_RADIUS_LIZARD = 0.32f; //previously 0.3
 
 float GameConstants::PROJ_RADIUS_MAGE = 0.26f; //previously 0.4
 
+float GameConstants::PROJ_RADIUS_BOSS = 0.5f;
+
 float GameConstants::PROJ_DIST_E = 8.0f; //previously 9.0
 
 float GameConstants::TANK_ENEMY_DR = 0.1f;
