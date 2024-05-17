@@ -29,8 +29,8 @@ bool DeathScene::init(const std::shared_ptr<cugl::AssetManager> &assets){
     // get scene nodes
     _cape = std::dynamic_pointer_cast<scene2::SpriteNode>(_assets->get<scene2::SceneNode>("death_dead_animation"));
     _capeAnimation = scene2::Animate::alloc(0, _cape->getSpan()-1, 2.0f);
-    _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_try_again"));
-    _main = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_main_menu"));
+    _restart = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_dead_selection_try_again"));
+    _main = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("death_dead_selection_main_menu"));
     // program the buttons
     _restart->addListener([this](const std::string& name, bool down) {
         if (down) {
