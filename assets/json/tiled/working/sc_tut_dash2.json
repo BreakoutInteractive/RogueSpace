@@ -3,8 +3,7 @@
     {
      "export":
         {
-         "format":"json",
-         "target":"..\/exports\/sc_tut_dash.json"
+         "format":"json"
         }
     },
  "height":60,
