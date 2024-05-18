@@ -55,45 +55,40 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     _choice = Choice::NONE;
     _close = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_close_setting"));
-    _volDown = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_down"));
-    _volBar = _assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_bar");
-    _volUp = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_up"));
-    _sfxDown = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_down_7"));
-    _sfxBar = _assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_bar_6");
-    _sfxUp = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_up_5"));
-    _musicDown = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_down_10"));
-    _musicBar = _assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_bar_9");
-    _musicUp = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_vol_up_8"));
+    _volDown = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_vol_down"));
+    _volBar = _assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_vol_front");
+    _volUp = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_vol_up"));
+    _sfxDown = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_2_vol_down"));
+    _sfxBar = _assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_2_vol_front");
+    _sfxUp = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_2_vol_up"));
+    _musicDown = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_3_vol_down"));
+    _musicBar = _assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_3_vol_front");
+    _musicUp = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_volume_change_3_vol_up"));
     _invert = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("setting_menu_setting_menu_setting_selection"));
     _invert->setToggle(true);
     if (SaveData::hasPreferences()) {
         _prefs = SaveData::getPreferences();
         _invert->setDown(_prefs.inverted);
         //master volume bar
-        auto volFront = _volBar->getChildByName("vol_front");
         CUAssertLog(_prefs.vol >= 0 && _prefs.vol <= 10, "master volume out of range (0-10)");
         for (int i = _prefs.vol; i < 10; i++) {
-            volFront->getChildByName("vol_front" + (i == 0 ? "" : "_" + std::to_string(i)))->setVisible(false);
+            _volBar->getChildByName("vol_front" + (i == 0 ? "" : "_" + std::to_string(i)))->setVisible(false);
         }
         //music volume bar
-        auto musicFront = _musicBar->getChildByName("vol_front");
         CUAssertLog(_prefs.BGMvol >= 0 && _prefs.BGMvol <= 10, "music volume out of range (0-10)");
         for (int i = _prefs.BGMvol; i < 10; i++) {
-            musicFront->getChildByName("vol_front" + (i == 0 ? "" : "_" + std::to_string(i)))->setVisible(false);
+            _musicBar->getChildByName("vol_front" + (i == 0 ? "" : "_" + std::to_string(i)))->setVisible(false);
         }
         //sfx volume bar
-        auto sfxFront = _sfxBar->getChildByName("vol_front");
         CUAssertLog(_prefs.SFXvol >= 0 && _prefs.SFXvol <= 10, "sfx volume out of range (0-10)");
         for (int i = _prefs.SFXvol; i < 10; i++) {
-            sfxFront->getChildByName("vol_front" + (i == 0 ? "" : "_" + std::to_string(i)))->setVisible(false);
+            _sfxBar->getChildByName("vol_front" + (i == 0 ? "" : "_" + std::to_string(i)))->setVisible(false);
         }
     }
     else {
         _invert->setDown(true);
-        _invert->setToggle(true);
-        auto volFront = _volBar->getChildByName("vol_front");
         for (int i = 5; i < 10; i++) {
-            volFront->getChildByName("vol_front_"+ std::to_string(i))->setVisible(false);
+            _volBar->getChildByName("vol_front_" + std::to_string(i))->setVisible(false);
         }
     }
 
@@ -111,7 +106,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::VOLDOWN;
             if (_prefs.vol > 0) _prefs.vol--;
             std::string key = "vol_front" + (_prefs.vol == 0 ? "" : "_" + std::to_string(_prefs.vol));
-            _volBar->getChildByName("vol_front")->getChildByName(key)->setVisible(false);
+            _volBar->getChildByName(key)->setVisible(false);
             CULog("master volume down (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeMasterVolume(-0.1);
@@ -123,7 +118,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::VOLUP;
             if (_prefs.vol < 10) _prefs.vol++;
             std::string key = "vol_front" + (_prefs.vol - 1 == 0 ? "" : "_" + std::to_string(_prefs.vol - 1));
-            _volBar->getChildByName("vol_front")->getChildByName(key)->setVisible(true);
+            _volBar->getChildByName(key)->setVisible(true);
             CULog("master volume up (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeMasterVolume(0.1);
@@ -135,7 +130,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::SFXDOWN;
             if (_prefs.SFXvol > 0) _prefs.SFXvol--;
             std::string key = "vol_front" + (_prefs.SFXvol == 0 ? "" : "_" + std::to_string(_prefs.SFXvol));
-            _sfxBar->getChildByName("vol_front")->getChildByName(key)->setVisible(false);
+            _sfxBar->getChildByName(key)->setVisible(false);
             CULog("sfx volume down (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeSFXVolume(-0.1);
@@ -146,7 +141,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::SFXUP;
             if (_prefs.SFXvol < 10) _prefs.SFXvol++;
             std::string key = "vol_front" + (_prefs.SFXvol - 1 == 0 ? "" : "_" + std::to_string(_prefs.SFXvol - 1));
-            _sfxBar->getChildByName("vol_front")->getChildByName(key)->setVisible(true);
+            _sfxBar->getChildByName(key)->setVisible(true);
             CULog("sfx volume up (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeSFXVolume(0.1);
@@ -157,7 +152,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::MUSICDOWN;
             if (_prefs.BGMvol > 0) _prefs.BGMvol--;
             std::string key = "vol_front" + (_prefs.BGMvol == 0 ? "" : "_" + std::to_string(_prefs.BGMvol));
-            _musicBar->getChildByName("vol_front")->getChildByName(key)->setVisible(false);
+            _musicBar->getChildByName(key)->setVisible(false);
             CULog("music volume down (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeBGMVolume(-0.1);
@@ -169,7 +164,7 @@ bool SettingsScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::MUSICUP;
             if (_prefs.BGMvol < 10) _prefs.BGMvol++;
             std::string key = "vol_front" + (_prefs.BGMvol - 1 == 0 ? "" : "_" + std::to_string(_prefs.BGMvol - 1));
-            _musicBar->getChildByName("vol_front")->getChildByName(key)->setVisible(true);
+            _musicBar->getChildByName(key)->setVisible(true);
             CULog("music volume up (settings screen)");
             AudioController::playUiFX("menuClick");
             AudioController::changeBGMVolume(0.1);
