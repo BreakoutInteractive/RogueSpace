@@ -7,12 +7,12 @@
             {
                 "name": "damage",
                 "type": "float",
-                "value": 1
+                "value": 0.5
             },
             {
                 "name": "hp",
                 "type": "float",
-                "value": 10
+                "value": 40
             },
             {
                 "name": "path",
@@ -111,6 +111,20 @@
             "tile",
             "project"
         ]
+    },
+    {
+        "id": 17,
+        "name": "Gesture",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "MOVE",
+            "DASH",
+            "SHOOT",
+            "ATTACK",
+            "PARRY"
+        ],
+        "valuesAsFlags": false
     },
     {
         "color": "#ffff2600",
@@ -288,6 +302,29 @@
         "name": "TankEnemy",
         "type": "class",
         "useAs": [
+            "object",
+            "tile",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffff9300",
+        "drawFill": true,
+        "id": 16,
+        "members": [
+            {
+                "name": "gesture",
+                "propertyType": "Gesture",
+                "type": "string",
+                "value": "MOVE"
+            }
+        ],
+        "name": "TutorialRegion",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
             "object",
             "tile",
             "project"

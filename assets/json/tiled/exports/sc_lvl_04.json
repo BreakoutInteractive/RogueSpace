@@ -2167,7 +2167,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -3129,7 +3129,7 @@
                  "value":1
                 }],
          "type":"group",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -7328,8 +7328,8 @@
                                                  "type":"Caster",
                                                  "visible":true,
                                                  "width":128,
-                                                 "x":1472,
-                                                 "y":864
+                                                 "x":1216,
+                                                 "y":832
                                                 }, 
                                                 {
                                                  "gid":252,
@@ -8319,7 +8319,6 @@
                          "x":0,
                          "y":0
                         }],
-                 "locked":true,
                  "name":"Spawns",
                  "opacity":1,
                  "properties":[

@@ -91,9 +91,9 @@ private:
     const std::shared_ptr<JsonValue> parseEnemy(const std::shared_ptr<JsonValue>& json, std::string enemyType);
     
     /**
-     * parses a collider detached from any object. These form the customized boundaries of the map.
+     * parses a collider used to denote the regions of gestures
      */
-    const std::shared_ptr<JsonValue> parseCustomCollision(const std::shared_ptr<JsonValue>& json);
+    const std::shared_ptr<JsonValue> parseTutorialColliders(const std::shared_ptr<JsonValue>& json);
     
     /**
      * parses a path (list of nodes) starting with the given node as the first node.
@@ -120,6 +120,15 @@ private:
      * @param objectSize the size of the object placed (may be the same as tileSize if no scaling applied)
      */
     const std::shared_ptr<JsonValue> parsePolyCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize);
+    
+    /**
+     * parses a circular collider component (this is NOT elliptical)
+     * @param colliderJson the raw json data for a circle
+     * @param tileSize the dimensions of the tile (image)
+     * @param tilePos where the tile object is placed in cartesian world
+     * @param objectSize the size of the object placed (may be the same as tileSize if no scaling applied)
+     */
+    const std::shared_ptr<JsonValue> parseCircleCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize);
     
     /**
      * parses a box collider component

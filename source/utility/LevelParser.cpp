@@ -288,8 +288,8 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type== CLASS_RELIC){
             data = parseRelic(object);
         }
-        else if (type == CLASS_COLLIDER){
-            data = parseCustomCollision(object);
+        else if (type == CLASS_TUTORIAL_REGION){
+            data = parseTutorialColliders(object);
         }
         else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD || type == CLASS_SLIME || type == CLASS_BOSS){
             data = parseEnemy(object, type);
@@ -455,7 +455,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<J
     return enemyData;
 }
 
-const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::shared_ptr<JsonValue> &json){
+const std::shared_ptr<JsonValue> LevelParser::parseTutorialColliders(const std::shared_ptr<JsonValue> &json){
 
     // load collider properties
     Vec2 pos(json->getFloat("x"), _mapHeight - json->getFloat("y"));
@@ -472,12 +472,15 @@ const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::sh
     
     // finalize data
     std::shared_ptr<JsonValue> data = JsonValue::allocObject();
-    // TODO: support other shapes if necessary
     data->appendChild("shape", JsonValue::alloc(std::string("polygon")));
     data->appendChild("vertices", convertVerticesToJSON(vertices));
     data->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
     data->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
-    // TODO: assign class to custom collisions (if still needed)
+    data->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_TUTORIAL_REGION)));
+    
+    auto gesture = getPropertyValueByName(json->get("properties"), "gesture");
+    CUAssertLog(gesture != nullptr, "gesture needs to be specified");
+    data->appendChild("gesture", JsonValue::alloc(gesture->asString()));
     return data;
 }
 
@@ -559,7 +562,10 @@ const std::shared_ptr<JsonValue> LevelParser::parseGenericCollider(const std::sh
         return parsePolyCollider(colliderJson, tileSize, tilePos, objectSize);
     }
     if (colliderJson->has("ellipse")){
-        CULogError("ellipse shapes cannot be supported");
+        float width = colliderJson->getFloat("width");
+        float height = colliderJson->getFloat("height");
+        CUAssertLog(width == height, "ellipse(%f, %f) cannot be supported, but circles can", width, height);
+        return parseCircleCollider(colliderJson, tileSize, tilePos, objectSize);
     }
     return parseBoxCollider(colliderJson, tileSize, tilePos, objectSize);
 }
@@ -578,6 +584,27 @@ const std::shared_ptr<JsonValue> LevelParser::parsePolyCollider(const std::share
     std::shared_ptr<JsonValue> collisionData = JsonValue::allocObject();
     collisionData->appendChild("shape", JsonValue::alloc(std::string("polygon")));
     collisionData->appendChild("vertices", convertVerticesToJSON(vertices));
+    collisionData->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
+    collisionData->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
+    return collisionData;
+}
+
+const std::shared_ptr<JsonValue> LevelParser::parseCircleCollider(const std::shared_ptr<JsonValue>& colliderJson, Size tileSize, Vec2 tilePos, Size objectSize){
+
+    Vec2 origin(colliderJson->getFloat("x"), colliderJson->getFloat("y"));
+    Vec2 dimension(colliderJson->getFloat("width"), colliderJson->getFloat("height"));
+    Vec2 scaleFactor = (Vec2) (objectSize / tileSize);
+    // for some design-choice reason, the tiled circle position is at its leftmost point, so we have to adjust by half the horizontal dimension
+    origin.add(dimension.x/2, 0); // this is still tiled coordinates (screen space in tile)
+    // invert, set collider origin to the bottom center of tile
+    origin.set(origin.x - tileSize.width/2, tileSize.height - origin.y); // cartesian with respect to bottom center of a tile
+    origin.scale(scaleFactor); // scale the origin vector
+    dimension.scale(scaleFactor);
+    origin.add(tilePos); // adding the tile position to the origin gives world position of circle
+    // set collider data (for physics)
+    std::shared_ptr<JsonValue> collisionData = JsonValue::allocObject();
+    collisionData->appendChild("shape", JsonValue::alloc(std::string("circle")));
+    collisionData->appendChild("radius", JsonValue::alloc(dimension.x/_tileDimension));
     collisionData->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
     collisionData->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
     return collisionData;

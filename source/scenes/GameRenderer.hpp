@@ -18,6 +18,7 @@
 #include <cugl/physics2/CUObstacleWorld.h>
 #include <vector>
 #include <cugl/assets/CUAsset.h>
+#include "../controllers/AudioController.hpp"
 
 using namespace cugl;
 
@@ -59,7 +60,7 @@ private:
 #pragma mark Game Components
     
     /** Reference to the game camera  */
-    std::shared_ptr<Camera> _gameCam;
+    std::shared_ptr<OrthographicCamera> _gameCam;
     /** Reference to the level to be rendered */
     std::shared_ptr<LevelModel> _level;
     /** whether the pause button has been clicked */
@@ -107,13 +108,20 @@ public:
     bool getPaused(){return _paused;}
     
     /**
-     * sets the game scene camera and level to be used to render the game
+     * sets the game scene camera
      *
      * @param gameCam   The camera from the game scene
      * @param level         The level to be rendered
      */
-    void setGameElements(std::shared_ptr<Camera> gameCam, std::shared_ptr<LevelModel> level){
-        _gameCam = gameCam;
+    void setGameCam(std::shared_ptr<Camera> camera){
+        _gameCam = std::dynamic_pointer_cast<OrthographicCamera>(camera);
+    }
+    
+    /**
+     * sets the level to be rendered.
+     * @pre `setGameCam` must have been given a camera.
+     */
+    void setGameLevel(std::shared_ptr<LevelModel> level){
         _level = level;
     }
     

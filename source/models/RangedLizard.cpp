@@ -46,8 +46,7 @@ void RangedLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_p
 #pragma mark Animation
 
 void RangedLizard::loadAssets(const std::shared_ptr<AssetManager> &assets){
-    _healthBG =  assets->get<Texture>("hp_back");
-    _healthFG =  assets->get<Texture>("hp");
+    Enemy::loadAssets(assets); // health bar
     auto idleTexture = assets->get<Texture>("lizard-ranged-idle");
     auto walkTexture = assets->get<Texture>("lizard-ranged-walk");
     auto attackTexture = assets->get<Texture>("lizard-ranged-attack");

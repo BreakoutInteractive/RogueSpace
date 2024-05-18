@@ -15,7 +15,9 @@
 #include "scenes/TitleScene.hpp"
 #include "scenes/SettingsScene.hpp"
 #include "scenes/DeathScene.hpp"
+#include "scenes/WinScene.hpp"
 #include "scenes/TutorialScene.hpp"
+#include "controllers/AudioController.hpp"
 
 /**
  * This class represents the application root for the ship demo.
@@ -37,7 +39,9 @@ protected:
         /** The turtorial scene */
         TUTORIAL,
         /** The scene to show options when game over */
-        DEATH
+        DEATH,
+        /** The scene to show options when game won */
+        VICTORY
     };
     
     /** The global sprite batch for drawing (only want one of these) */
@@ -60,6 +64,8 @@ protected:
     SettingsScene _settings;
     /** The game over scene */
     DeathScene _death;
+    /** The game won scene */
+    WinScene _win;
     /** The current active scene */
     State _scene;
     /** The previously active scene before the game (this could be a tutorial menu or the title screen) */
@@ -293,5 +299,10 @@ private:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void updateDeathScene(float dt);
+    /**
+     * Inidividualized update method for the game won scene
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void updateVictoryScene(float dt);
 };
 #endif /* __APP_H__ */

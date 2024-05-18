@@ -21,12 +21,13 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
                      "id":2,
-                     "name":"collider",
+                     "name":"",
                      "polygon":[
                             {
                              "x":0,
@@ -45,7 +46,7 @@
                              "y":-11.3523985951912
                             }],
                      "rotation":0,
-                     "type":"Collider",
+                     "type":"",
                      "visible":true,
                      "width":0,
                      "x":64,
@@ -61,6 +62,18 @@
                      "width":18.7685455919629,
                      "x":54.8385695514136,
                      "y":32.2780199708803
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":20,
+                     "id":4,
+                     "name":"Collider",
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":20,
+                     "x":54,
+                     "y":101.25
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -78,12 +91,13 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
                      "id":1,
-                     "name":"collider",
+                     "name":"",
                      "polygon":[
                             {
                              "x":0,
@@ -102,7 +116,7 @@
                              "y":-11.3523985951912
                             }],
                      "rotation":0,
-                     "type":"Collider",
+                     "type":"",
                      "visible":true,
                      "width":0,
                      "x":32,
@@ -118,6 +132,18 @@
                      "width":27.3525128891338,
                      "x":17.5134794757763,
                      "y":8.46156873548742
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":20,
+                     "id":3,
+                     "name":"Collider",
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":20,
+                     "x":22,
+                     "y":102.622856725772
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -134,7 +160,8 @@
          "imagewidth":64,
          "objectgroup":
             {
-             "draworder":"topdown",
+             "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -151,7 +178,7 @@
                     {
                      "height":0,
                      "id":2,
-                     "name":"collider",
+                     "name":"",
                      "polygon":[
                             {
                              "x":0,
@@ -170,11 +197,23 @@
                              "y":-11.3523985951912
                             }],
                      "rotation":0,
-                     "type":"Collider",
+                     "type":"",
                      "visible":true,
                      "width":0,
                      "x":32,
                      "y":123.916508300482
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":20,
+                     "id":3,
+                     "name":"Collider",
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":20,
+                     "x":22,
+                     "y":103
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -192,12 +231,13 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
                      "id":1,
-                     "name":"collider",
+                     "name":"",
                      "polygon":[
                             {
                              "x":0,
@@ -216,7 +256,7 @@
                              "y":-12.1312026636637
                             }],
                      "rotation":0,
-                     "type":"Collider",
+                     "type":"",
                      "visible":true,
                      "width":0,
                      "x":64,
@@ -232,6 +272,18 @@
                      "width":23.6305824478782,
                      "x":52.6650447543008,
                      "y":0.397386112767094
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":20,
+                     "id":3,
+                     "name":"Collider",
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":20,
+                     "x":54,
+                     "y":102.5
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -249,12 +301,13 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
                      "id":1,
-                     "name":"collider",
+                     "name":"",
                      "polygon":[
                             {
                              "x":0,
@@ -273,7 +326,7 @@
                              "y":-11.3524
                             }],
                      "rotation":0,
-                     "type":"Collider",
+                     "type":"",
                      "visible":true,
                      "width":0,
                      "x":64,
@@ -302,6 +355,18 @@
                      "width":0,
                      "x":98.5044865403789,
                      "y":57.4277168494516
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":20,
+                     "id":9,
+                     "name":"Collider",
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":20,
+                     "x":54,
+                     "y":104.971323093151
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -319,12 +384,13 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
                      "id":2,
-                     "name":"collider",
+                     "name":"",
                      "polygon":[
                             {
                              "x":0,
@@ -343,7 +409,7 @@
                              "y":-12.1312026636637
                             }],
                      "rotation":0,
-                     "type":"Collider",
+                     "type":"",
                      "visible":true,
                      "width":0,
                      "x":64,
@@ -408,6 +474,18 @@
                      "width":0,
                      "x":62.5302415602784,
                      "y":8.93289165146834
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":20,
+                     "id":4,
+                     "name":"Collider",
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":20,
+                     "x":54,
+                     "y":102.5
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -462,67 +540,67 @@
                      "name":"",
                      "polygon":[
                             {
-                             "x":0,
-                             "y":0
+                             "x":5.71332549151403,
+                             "y":6.04940346160309
                             }, 
                             {
-                             "x":-30.1133211823441,
-                             "y":12.679293129408
+                             "x":-31.9449164443714,
+                             "y":20.1012972793925
                             }, 
                             {
-                             "x":-42.7926143117521,
-                             "y":37.2454235676361
+                             "x":-49.6936679331405,
+                             "y":43.2518961640297
                             }, 
                             {
-                             "x":-49.9247166970441,
-                             "y":55.4719074411602
+                             "x":-57.9759459219973,
+                             "y":64.4177176911082
                             }, 
                             {
-                             "x":-49.9247166970441,
-                             "y":68.9436563911562
+                             "x":-59.9924137425316,
+                             "y":80.0620205589487
                             }, 
                             {
-                             "x":-41.2077026705761,
-                             "y":89.5475077264443
+                             "x":-47.8531617133946,
+                             "y":103.988601415646
                             }, 
                             {
-                             "x":-36.4529677470481,
-                             "y":110.151359061732
+                             "x":-39.6430192934443,
+                             "y":127.915182272343
                             }, 
                             {
-                             "x":-12.679293129408,
-                             "y":124.415563832316
+                             "x":-14.7240497579675,
+                             "y":144.479738250056
                             }, 
                             {
-                             "x":2.37736746176401,
-                             "y":126.000475473492
+                             "x":2.76075932961892,
+                             "y":146.320244469802
                             }, 
                             {
-                             "x":16.6415722323481,
-                             "y":117.283461447024
+                             "x":23.0221729783122,
+                             "y":138.886084021912
                             }, 
                             {
-                             "x":31.6982328235201,
-                             "y":98.2645217529123
+                             "x":52.6057889891048,
+                             "y":108.734138102824
                             }, 
                             {
-                             "x":53.0945399793961,
-                             "y":64.1889214676282
+                             "x":70.0589076137157,
+                             "y":75.5487358099781
                             }, 
                             {
-                             "x":58.6417307235122,
-                             "y":33.2831444646961
+                             "x":68.7708860707782,
+                             "y":38.986708584754
                             }, 
                             {
-                             "x":34.0756002852841,
-                             "y":15.056660591172
+                             "x":39.5708837245379,
+                             "y":17.4848090875864
                             }],
                      "rotation":0,
                      "type":"Hitbox",
                      "visible":true,
                      "width":0,
-                     "x":118.8683730882,
-                     "y":38.8303352088121
+                     "x":112.436075411914,
+                     "y":30.0923079864965
                     }],
              "opacity":1,
              "type":"objectgroup",

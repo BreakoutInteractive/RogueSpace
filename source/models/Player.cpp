@@ -51,16 +51,16 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     _position.set(playerData->getFloat("x"), playerData->getFloat("y"));
     std::shared_ptr<JsonValue> colliderData = playerData->get("collider");
     // set up collider
-    auto collider = Collider::makePolygon(colliderData, b2_dynamicBody, "player-collider");
+    auto collider = Collider::makeCollider(colliderData, b2_dynamicBody, "player-collider");
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
-    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC | CATEGORY_HEALTHPACK;
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_HEALTHPACK | CATEGORY_TUTORIAL_COLLIDER;
     collider->setFilterData(filter);
     _collider = collider;                   // attach Component
     
     // set the player collider-shadow
-    auto colliderShadow = Collider::makePolygon(colliderData, b2_kinematicBody, "player-collider-shadow");
+    auto colliderShadow = Collider::makeCollider(colliderData, b2_kinematicBody, "player-collider-shadow");
     colliderShadow->setBodyType(b2_kinematicBody);
     filter.categoryBits = CATEGORY_PLAYER_SHADOW;
     filter.maskBits = CATEGORY_ENEMY;
@@ -124,8 +124,7 @@ void Player::drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const
     Vec2 loc = rayEnd;
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
-        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE 
-            && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE_SHADOW && !fixture->IsSensor()) {
+        if (fixture->GetFilterData().categoryBits == CATEGORY_TALL_WALL) {
             if (fraction < frac){
                 frac = fraction;
                 loc = point;
@@ -520,6 +519,7 @@ void Player::hit(Vec2 atkDir, float damage, float knockback_scl) {
     //only get hit if not dodging and not in hitstun
     if (!_hitEffect->isActive() && _state != DODGE) {
         float reduction = _damageReduction.getCurrentValue() + (isBlocking() ? _blockReduction.getCurrentValue() : 0);
+        _iframeCounter.reset();
         _hp = std::fmax(0, (_hp - damage * (1 - reduction)));
         _tint = Color4::RED;
         _collider->setLinearVelocity(atkDir * knockback_scl);

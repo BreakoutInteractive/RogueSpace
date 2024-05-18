@@ -1,8 +1,10 @@
 {
     "jsons": {
         "constants": "json/constants.json",
-        "tutorial1": "json/tiled/exports/sc_tut_ranged.json",
-        "tutorial2": "json/tiled/exports/sc_tut_parry.json",
+        "tutorial1": "json/tiled/exports/sc_tut_dash.json",
+        "tutorial2": "json/tiled/exports/sc_tut_melee.json",
+        "tutorial3": "json/tiled/exports/sc_tut_ranged.json",
+        "tutorial4": "json/tiled/exports/sc_tut_parry.json",
         "upgrades": "json/tiled/exports/sc_upgrades.json",
         "level1": "json/tiled/exports/sc_lvl_00.json",
         "level2": "json/tiled/exports/sc_lvl_01.json",
@@ -22,6 +24,7 @@
         "level16": "json/tiled/exports/sc_lvl_15.json",
         "level17": "json/tiled/exports/sc_lvl_16.json",
         "level18": "json/tiled/exports/sc_lvl_17.json",
+        "level19": "json/tiled/exports/sc_lvl_18.json",
         "assets-tileset": "json/assets-tileset.json"
     },
     
@@ -49,48 +52,68 @@
     "sounds": {
         "airSlash": {
             "type":     "sample",
-            "file":     "sounds/impact/slash_01.wav",
-            "volume":   0.4
+            "file":     "sounds/weapons/slash_06.wav",
+            "volume":   1.0
         },
         "enemyMelee": {
             "type":     "sample",
             "file":     "sounds/weapons/sword_03.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
-        "playerAttack": {
+        "playerAttack1": {
+            "type":     "sample",
+            "file":     "sounds/weapons/slash_02.wav",
+            "volume":   1.0
+        },
+        "playerAttack2": {
+            "type":     "sample",
+            "file":     "sounds/weapons/slash_04.wav",
+            "volume":   1.0
+        },
+        "playerAttack3": {
             "type":     "sample",
             "file":     "sounds/weapons/sword_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "wallMelee": {
             "type":     "sample",
             "file":     "sounds/impact/impact_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "bowDraw": {
             "type":     "sample",
             "file":     "sounds/weapons/bow_pull.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "bowCharge": {
             "type":     "sample",
             "file":     "sounds/weapons/bow_chargeloop.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "bowFire": {
             "type":     "sample",
             "file":     "sounds/weapons/bow_fire.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "parryMelee": {
             "type":     "sample",
-            "file":     "sounds/weapons/steel_04.wav",
-            "volume":   0.5
+            "file":     "sounds/weapons/steel_03.wav",
+            "volume":   1.0
+        },
+        "playerDmg": {
+            "type":     "sample",
+            "file":     "sounds/impact/impact_05.wav",
+            "volume":   1.0
+        },
+        "dash": {
+            "type":     "sample",
+            "file":     "sounds/player/dash.wav",
+            "volume":   0.8
         },
         "envWinds": {
             "type":     "sample",
             "file":     "sounds/env/env_wind_01.wav",
-            "volume":   0.5
+            "volume":   1.0
         },
         "p-AlienGrowl1": {
             "type":     "sample",
@@ -112,29 +135,54 @@
             "file":     "sounds/alien/aggressive/alien_aggro_00.wav",
             "volume":   0.5
         },
-        "a-AlienGrowl2": {
+        "enemyAttack1": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_02.wav",
             "volume":   0.5
         },
-        "a-AlienGrowl3": {
+        "enemyAttack2": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_03.wav",
             "volume":   0.5
         },
-        "lizardHitLanded": {
-            "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_08.wav",
-            "volume":   0.5
-        },
-        "meleeHitLanded1": {
+        "enemyAttack3": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_01.wav",
             "volume":   0.5
         },
-        "meleeHitLanded2": {
+        "enemyAttack4": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_06.wav",
+            "volume":   0.5
+        },
+        "enemyAttack5": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_08.wav",
+            "volume":   0.5
+        },
+        "enemyAttack6": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_12.wav",
+            "volume":   0.5
+        },
+        "enemyAggro1": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "volume":   0.5
+        },
+        "enemyAggro2": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "volume":   0.5
+        },
+        "enemyAggro3": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_05.wav",
+            "volume":   0.5
+        },
+        "enemyAggro4": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_09.wav",
             "volume":   0.5
         },
         "lizardDeath": {
@@ -142,30 +190,93 @@
             "file":     "sounds/alien/death/alien_death_00.wav",
             "volume":   0.5
         },
-        "meleeDeath1": {
+        "alienDeath1": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_01.wav",
             "volume":   0.5
         },
-        "meleeDeath2": {
+        "alienDeath2": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_02.wav",
             "volume":   0.5
+        },
+        "alienDeath3": {
+            "type":     "sample",
+            "file":     "sounds/alien/death/alien_death_03.wav",
+            "volume":   0.5
+        },
+        "alienDeath4": {
+            "type":     "sample",
+            "file":     "sounds/alien/death/alien_death_04.wav",
+            "volume":   0.5
+        },
+        "alienImpact": {
+            "type":     "sample",
+            "file":     "sounds/env/rummaging_03.wav",
+            "volume":   1.0
+        },
+        "menuClick": {
+            "type":     "sample",
+            "file":     "sounds/impact/impact_08.wav",
+            "volume":   1.0
+        },
+        "title": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_title.ogg",
+            "volume":   1.0
+        },
+        "oasis": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_oasis_loop.ogg",
+            "volume":   1.0
+        },
+        "strand": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_stranded_loop.ogg",
+            "volume":   1.0
+        },
+        "pursuit": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_pursuit_loop.ogg",
+            "volume":   1.0
+        },
+        "lose": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_play_lose.ogg",
+            "volume":   1.0
+        },
+        "win": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_play_win.ogg",
+            "volume":   1.0
+        },
+        "upgrade": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_play_heal.ogg",
+            "volume":   1.0
+        },
+        "boss": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_xenocide_loop.ogg",
+            "volume":   1.0
         }
-        
     },
 	"fonts": {
 		"retro": {
 			"file":     "fonts/RetroGame.ttf",
 			"size":     64
 		},
+        "geometosRegular36": {
+            "file": "fonts/Geometos.ttf",
+            "size": 36
+        },
         "geometosRegular48": {
             "file": "fonts/Geometos.ttf",
             "size": 48
         },
-        "geometosRegular36": {
+        "geometosRegular96": {
             "file": "fonts/Geometos.ttf",
-            "size": 36
+            "size": 96
         },
         "robotoRegular16": {
             "file": "fonts/Roboto-Regular.ttf",
@@ -210,6 +321,10 @@
         "robotoBold40": {
             "file": "fonts/Roboto-Bold.ttf",
             "size": 40
+        },
+        "robotoBold48": {
+            "file": "fonts/Roboto-Bold.ttf",
+            "size": 48
         }
 	}
 }

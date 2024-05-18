@@ -20,6 +20,7 @@
 #include "CollisionConstants.hpp"
 #include "GameConstants.hpp"
 #include <random>
+#include "../components/Collider.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
@@ -77,9 +78,9 @@ void LevelModel::setDrawScale(Vec2 scale) {
     for (int ii = 0; ii < _healthpacks.size(); ii++) _healthpacks[ii]->setDrawScale(scale);
 }
 
-void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch){
+void LevelModel::render(const std::shared_ptr<cugl::SpriteBatch>& batch, Rect camRect){
     for (int ii = 0; ii < _tileLayers.size(); ii++){
-        _tileLayers[ii]->draw(batch);
+        _tileLayers[ii]->draw(batch, camRect);
     }
     
     // indicators should be drawn between tile layers and objects
@@ -168,9 +169,9 @@ void LevelModel::setDebugNode(const std::shared_ptr<scene2::SceneNode> & node) {
         _walls[ii]->getCollider()->setDebugColor(Color4::WHITE);
     }
     
-    for (int ii = 0; ii < _boundaries.size(); ii++){
-        _boundaries[ii]->setDebugScene(_debugNode);
-        _boundaries[ii]->setDebugColor(Color4::WHITE);
+    for (int ii = 0; ii < _tutorialCollisions.size(); ii++){
+        _tutorialCollisions[ii]->getCollider()->setDebugScene(_debugNode);
+        _tutorialCollisions[ii]->getCollider()->setDebugColor(Color4::ORANGE);
     }
 
     for (int ii = 0; ii < _projectiles.size(); ii++) {
@@ -287,8 +288,8 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
         _dynamicObjects.push_back(_relic);
     }
     
-    for (int ii = 0; ii < _boundaries.size(); ii++){
-        addObstacle(_boundaries[ii]);
+    for (int ii = 0; ii < _tutorialCollisions.size(); ii++){
+        _tutorialCollisions[ii]->addObstaclesToWorld(_world);
     }
 	return true;
 }
@@ -302,8 +303,8 @@ void LevelModel::unload() {
         for(auto it = _walls.begin(); it != _walls.end(); ++it) {
             (*it)->removeObstaclesFromWorld(_world);
         }
-        for(auto it = _boundaries.begin(); it != _boundaries.end(); ++it) {
-            _world->removeObstacle(*it);
+        for(auto it = _tutorialCollisions.begin(); it != _tutorialCollisions.end(); ++it) {
+            (*it)->removeObstaclesFromWorld(_world);
         }
     }
     if (_relic!=nullptr){
@@ -368,6 +369,9 @@ bool LevelModel::loadGameComponent(const std::shared_ptr<JsonValue> constants, c
     }
     else if (objectClass == CLASS_RELIC){
         loadRelic(json);
+    }
+    else if (objectClass == CLASS_TUTORIAL_REGION){
+        loadTutorialCollisions(json);
     }
     else {
         CUAssertLog(false, "unrecognized data type to load");
@@ -512,34 +516,10 @@ bool LevelModel::loadRelic(const std::shared_ptr<JsonValue>& json) {
     return success;
 }
 
-bool LevelModel::loadBoundary(const std::shared_ptr<JsonValue>& json) {
-    bool success = true;
-    
-    Vec2 pos(json->getFloat("x"), json->getFloat("y"));
-    std::vector<float> vertices = json->get("vertices")->asFloatArray();
-    success = vertices.size() >= 2 && vertices.size() % 2 == 0;
-    
-    Vec2* verts = reinterpret_cast<Vec2*>(&vertices[0]);
-    Poly2 polygon(verts,(int)vertices.size()/2);
-    EarclipTriangulator triangulator;
-    triangulator.set(polygon.vertices);
-    triangulator.calculate();
-    polygon.setIndices(triangulator.getTriangulation());
-    triangulator.clear();
-    
-    // Get the object, which is automatically retained
-    if (success){
-        auto p = std::make_shared<physics2::PolygonObstacle>();
-        p->PolygonObstacle::init(polygon, pos);
-        b2Filter filter;
-        // this is a wall
-        filter.categoryBits = CATEGORY_TALL_WALL;
-        // a wall can collide with a player or an enemy
-        filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
-        p->setFilterData(filter);
-        _boundaries.push_back(p);
-    }
-    return success;
+bool LevelModel::loadTutorialCollisions(const std::shared_ptr<JsonValue>& json) {
+    auto tutorialCollision = std::make_shared<TutorialCollision>(json);
+    _tutorialCollisions.push_back(tutorialCollision);
+    return true;
 }
 
 

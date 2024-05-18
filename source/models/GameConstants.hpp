@@ -75,6 +75,8 @@ public:
     static float PROJ_RADIUS_LIZARD;
     /** the radius of a mage enemy projectile */
     static float PROJ_RADIUS_MAGE;
+    /** the radius of a boss enemy projectile */
+    static float PROJ_RADIUS_BOSS;
     /** the distance the enemy projectile travels, not including the explosion animation */
     static float PROJ_DIST_E;
     /** the fraction of damage the tank enemy takes when not stunned */
@@ -119,6 +121,8 @@ public:
     static float PLAYER_MELEE_ATK_RANGE;
     /** the maximum time before restting the combo */
     static float COMBO_TIME;
+    /** the damage multiplier applied to the last hit of the combo */
+    static float COMBO_DMG_MUL;
     /** the length of the parry animation */
     static float PLAYER_PARRY_TIME;
     

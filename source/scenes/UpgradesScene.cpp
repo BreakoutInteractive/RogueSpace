@@ -85,6 +85,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _upgrade = _displayedAttribute1.first;
             _level = _displayedAttribute1.second;
             _selectedUpgrade = true;
+            AudioController::playUiFX("upgrade");
         }
     });
     _confirm2->addListener([this](const std::string& name, bool down) {
@@ -92,6 +93,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _upgrade = _displayedAttribute2.first;
             _level = _displayedAttribute2.second;
             _selectedUpgrade = true;
+            AudioController::playUiFX("upgrade");
         }
     });
     
@@ -106,6 +108,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _option1->setToggle(true);
             _confirm1->setVisible(true);
             _confirm1->activate();
+            AudioController::playUiFX("menuClick");
         } else{
             _confirm1->setVisible(false);
             _confirm1->deactivate();
@@ -121,6 +124,7 @@ bool UpgradesScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _option2->setToggle(true);
             _confirm2->setVisible(true);
             _confirm2->activate();
+            AudioController::playUiFX("menuClick");
         } else{
             _confirm2->setVisible(false);
             _confirm2->deactivate();

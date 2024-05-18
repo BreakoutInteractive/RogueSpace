@@ -90,4 +90,36 @@ public:
 };
 
 
+#pragma mark -
+class TutorialCollision : public GameObject {
+
+protected:
+    /** number of collisions with this object */
+    int _contacts;
+    
+    std::string _gestureName;
+
+public:
+    /**
+     * constructs a tutorial gesture detecter from the given data containing x,y and polygon shape
+     */
+    TutorialCollision(std::shared_ptr<JsonValue> data);
+    
+    std::string getGestureName(){ return _gestureName; }
+    
+    /** whether the collision sensor detects a collision */
+    bool isActive(){ return _contacts >= 1; }
+    
+    /** increment number of contacts by 1*/
+    void makeContact(){ _contacts++; }
+    
+    /** decrement  number of contacts by 1*/
+    void endContact(){ _contacts--; }
+    
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+        // does nothing, no drawing.
+    }
+    
+};
+
 #endif /* Wall_hpp */
