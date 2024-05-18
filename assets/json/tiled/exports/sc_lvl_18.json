@@ -2554,6 +2554,13 @@
  "nextlayerid":205,
  "nextobjectid":2017,
  "orientation":"staggered",
+ "properties":[
+        {
+         "name":"music",
+         "propertytype":"SoundTrack",
+         "type":"string",
+         "value":"boss"
+        }],
  "renderorder":"right-down",
  "staggeraxis":"y",
  "staggerindex":"odd",
