@@ -18,12 +18,12 @@
                 {
                     "name": "damage",
                     "type": "float",
-                    "value": 1
+                    "value": 0.5
                 },
                 {
                     "name": "hp",
                     "type": "float",
-                    "value": 10
+                    "value": 40
                 },
                 {
                     "name": "path",
