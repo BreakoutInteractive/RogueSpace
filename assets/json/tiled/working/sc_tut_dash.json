@@ -933,6 +933,30 @@
                  "width":128,
                  "x":2112,
                  "y":704
+                }, 
+                {
+                 "gid":89,
+                 "height":128,
+                 "id":3250,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":128,
+                 "x":1856,
+                 "y":896
+                }, 
+                {
+                 "gid":89,
+                 "height":128,
+                 "id":3251,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":128,
+                 "x":1728,
+                 "y":832
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -944,30 +968,7 @@
          "draworder":"topdown",
          "id":284,
          "name":"enemy",
-         "objects":[
-                {
-                 "gid":251,
-                 "height":128,
-                 "id":3248,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"hp",
-                         "type":"float",
-                         "value":1
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":2048,
-                 "y":736
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -1037,7 +1038,7 @@
          "y":0
         }],
  "nextlayerid":286,
- "nextobjectid":3250,
+ "nextobjectid":3252,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

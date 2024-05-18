@@ -160,6 +160,8 @@ public:
     
 #pragma mark -
 #pragma mark Accessors
+    
+    
     /**
      * @return the sight range applied to this enemy
      */
@@ -301,6 +303,12 @@ public:
      */
     virtual bool canBeginNewAttack(){ return true; }
     
+    /**
+     * @note this allows customization for whether a given enemy must be defeated, allowing
+     * enabled enemies that are simultaneously defeated.
+     * @return whether this enemy has been defeated
+     */
+    virtual bool isDefeated(){ return !isEnabled(); }
     
 #pragma mark -
 #pragma mark Physics
@@ -345,7 +353,7 @@ public:
     /** whether enemy is stunned */
     bool isStunned(){ return _state == BehaviorState::STUNNED; }
     /** whether enemy is dying */
-    bool isDying() { return _deathEffect->isActive() && _state == BehaviorState::DYING; }
+    virtual bool isDying() { return _deathEffect->isActive() && _state == BehaviorState::DYING; }
     
     /**
      * Retrieve all needed assets (textures, filmstrips) from the asset directory AFTER all assets are loaded.
