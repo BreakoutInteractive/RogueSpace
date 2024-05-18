@@ -97,6 +97,7 @@ void SaveData::removeSave(){
     writer->writeJson(json);
     writer->flush();
     writer->close();
+    dataCache = SaveData::Data();
 }
 
 bool SaveData::hasPreferences() {
