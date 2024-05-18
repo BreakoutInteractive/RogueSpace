@@ -30,6 +30,61 @@
                 "visible": true
             },
             "children": {
+                "deadBody": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "deadBody",
+                        "anchor": [
+                            0.5,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 425,0, 425,105, 0,105
+                        ],
+                        "angle": 0,
+                        "position": [
+                            453,
+                            -21
+                        ],
+                        "visible": true
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0.02,
+                        "y_offset": -0.03
+                    }
+                },
+                "dead_animation": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "dead_animation",
+                        "anchor": [
+                            0.5,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 560,0, 560,540, 0,540
+                        ],
+                        "angle": 0,
+                        "position": [
+                            386,
+                            -60
+                        ],
+                        "visible": true,
+                        "span": 18,
+                        "cols": 6,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "center",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0.02,
+                        "y_offset": -0.08
+                    }
+                },
                 "dead_selection": {
                     "type": "Node",
                     "format": {
@@ -223,7 +278,7 @@
                                         "angle": 0,
                                         "visible": true,
                                         "font": "robotoBold36",
-                                        "text": "Restart",
+                                        "text": "Try Again",
                                         "foreground": "#ffffffff",
                                         "background": "#00000000",
                                         "padding": [
@@ -262,61 +317,6 @@
                         "absolute": false,
                         "x_offset": 0,
                         "y_offset": 0.33
-                    }
-                },
-                "deadBody": {
-                    "type": "Image",
-                    "data": {
-                        "texture": "deadBody",
-                        "anchor": [
-                            0.5,
-                            0
-                        ],
-                        "polygon": [
-                            0,0, 425,0, 425,105, 0,105
-                        ],
-                        "angle": 0,
-                        "position": [
-                            453,
-                            -21
-                        ],
-                        "visible": true
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "bottom",
-                        "absolute": false,
-                        "x_offset": 0.02,
-                        "y_offset": -0.03
-                    }
-                },
-                "dead_animation": {
-                    "type": "Sprite",
-                    "data": {
-                        "texture": "dead_animation",
-                        "anchor": [
-                            0.5,
-                            0
-                        ],
-                        "polygon": [
-                            0,0, 560,0, 560,540, 0,540
-                        ],
-                        "angle": 0,
-                        "position": [
-                            386,
-                            -60
-                        ],
-                        "visible": true,
-                        "frame": 0,
-                        "span": 18,
-                        "cols": 6
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "bottom",
-                        "absolute": false,
-                        "x_offset": 0.02,
-                        "y_offset": -0.08
                     }
                 }
             }
