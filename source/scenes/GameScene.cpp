@@ -451,7 +451,7 @@ void GameScene::processPlayerInput(){
                             player->enableMeleeAttack(ang);
                             player->animateAttack();
                             player->resetAttackCooldown();
-                            AudioController::playPlayerFX("attackHit");
+                            !player->isComboStrike() ? AudioController::playPlayerFX("attackHit") : AudioController::playPlayerFX("attackHitPower");
                         }
                         break;
                 case Player::Weapon::RANGED:
@@ -723,7 +723,13 @@ void GameScene::preUpdate(float dt) {
                     enemy->getType() == "tank enemy" ||
                     enemy->getType() == "boss enemy") {
                     enemy->attack(_level, _assets);
-                    AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
+                    if (enemy->getType() == "melee lizard") {
+                        AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
+                    }
+                    else {
+                        std::string s = enemy->getType() == "tank enemy" ? "tank" : "boss";
+                        AudioController::playEnemyFX(s + "Attack", std::to_string(enemyIndex));
+                    }
                 }
                 enemy->setAttacking();
             }
@@ -733,7 +739,7 @@ void GameScene::preUpdate(float dt) {
                     std::shared_ptr<RangedEnemy> r = std::dynamic_pointer_cast<RangedEnemy>(enemy);
                     if (r->getCharged()) {
                         enemy->attack(_level, _assets);
-                        AudioController::playEnemyFX("attack", std::to_string(enemyIndex));
+                        AudioController::playEnemyFX((enemy->getType() == "mage alien" ? "casterAttack" : "attack"), std::to_string(enemyIndex));
                     }
                 }
             }
@@ -741,6 +747,7 @@ void GameScene::preUpdate(float dt) {
                 std::shared_ptr<BossEnemy> boss = std::dynamic_pointer_cast<BossEnemy>(enemy);
                 if (boss->getStormState() == BossEnemy::StormState::CHARGED) {
                     boss->summonStorm(_level, _assets);
+                    AudioController::playEnemyFX("bossStorm", std::to_string(enemyIndex));
                 }
             }
         }

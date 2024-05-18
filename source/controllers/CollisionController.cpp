@@ -70,7 +70,8 @@ void CollisionController::beginContact(b2Contact* contact){
                 if (player->getMeleeHitbox()->hits(eptr, ang)){
                     if (!player->isComboStrike()) (*it)->hit(dir, false, player->getMeleeDamage());
                     else (*it)->hit(dir, false, player->getMeleeDamage() * GameConstants::COMBO_DMG_MUL, GameConstants::KNOCKBACK_PWR_ATK);
-                    AudioController::playEnemyFX("damaged", std::to_string(enemyIndex));
+                    std::string stunInfo = (*it)->isStunned() && (*it)->getType() == "tank alien"? " stun" : "";
+                    AudioController::playDamagedEnemy((*it)->getType() + stunInfo, std::to_string(enemyIndex));
                     CULog("Hit an enemy!");
                     if (meleeHitbox->hitCount() == 1){
                         // the hitbox is active and this is the first hit of the frame
@@ -93,7 +94,8 @@ void CollisionController::beginContact(b2Contact* contact){
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage(), knockback);
                         CULog("Shot an enemy!");
                         p->setExploding();
-                        AudioController::playEnemyFX("damaged", std::to_string(enemyIndex));
+                        AudioController::playPlayerFX("projOnHit");
+                        AudioController::playDamagedEnemy((*it)->getType(), std::to_string(enemyIndex));
                     }
                 }
             }
@@ -107,7 +109,7 @@ void CollisionController::beginContact(b2Contact* contact){
             (body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == hptr)) {
             //don't pick up the health pack if at full hp
             if (player->getHP() < player->getMaxHP()) {
-                AudioController::playUiFX("upgrade");
+                AudioController::playUiFX("health");
                 float maxHP = player->getMaxHP();
                 float newHP = player->getHP() + maxHP * GameConstants::HEALTHPACK_HEAL_AMT;
                 if (newHP > maxHP) newHP = maxHP;
@@ -117,6 +119,7 @@ void CollisionController::beginContact(b2Contact* contact){
         }
     }
     // enemy melee attack
+    enemyIndex = 0;
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
         std::shared_ptr<MeleeEnemy> melee;
         std::shared_ptr<ExplodingAlien> explode;
@@ -141,6 +144,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 Vec2 dir = player->getPosition() * player->getDrawScale() - (*it)->getPosition() * (*it)->getDrawScale();
                 dir.normalize();
                 float ang = acos(dir.dot(Vec2::UNIT_X));
+                if ((*it)->getType() == "exploding alien") AudioController::playEnemyFX("slimeExplode", std::to_string(enemyIndex));
                 if (player->getPosition().y * player->getDrawScale().y < (*it)->getPosition().y * (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
                 if (attack->hits(pptr, ang)){
                     if (player->isParrying() && melee != nullptr) {
@@ -163,6 +167,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 }
             }
         }
+        enemyIndex++;
     }
     // boss storm attack
     for (auto it = enemies.begin(); it != enemies.end(); ++it) {
@@ -197,7 +202,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 p->setExploding();
                 if (!player->isParrying()) {
                     player->hit(dir, p->getDamage());
-                    AudioController::playPlayerFX("damaged");
+                    AudioController::onEnemyProjImpact(p->getOrigin());
                     CULog("Player got shot!");
                 }
                 else player->playParryEffect();

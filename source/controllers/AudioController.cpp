@@ -66,6 +66,9 @@ void AudioController::playPlayerFX(const std::string action){
             int randn = std::rand() % 3 + 1;
             source = _assets->get<Sound>("playerAttack" + std::to_string(randn));
         }
+        else if (action == "attackHitPower") {
+            source = _assets->get<Sound>("playerAttackPower");
+        }
         else if (action == "drawBow") {
             source = _assets->get<Sound>("bowDraw");
         }
@@ -85,10 +88,28 @@ void AudioController::playPlayerFX(const std::string action){
         else if (action == "dash") {
             source = _assets->get<Sound>("dash");
         }
+        else if (action == "projOnHit") { 
+            source = _assets->get<Sound>("projOnHit");
+        }
         else {
             CULogError("player sound action not found");
         }
         AudioEngine::get()->play(action+"player", source, loop, source->getVolume() * _master * _sfx);
+    }
+}
+
+void AudioController::onEnemyProjImpact(const std::string enemyType) {
+    if (!AudioEngine::get()->isActive(enemyType+"proj")) {
+        std::shared_ptr<Sound> source;
+        if (enemyType == "caster") {
+        source = _assets->get<Sound>("casterImpact");
+        }
+        else if (enemyType == "lizard") {
+            source = _assets->get<Sound>("rlizardImpact");
+        }
+        else if (enemyType == "boss") {
+            source = _assets->get<Sound>("bossImpact");
+        }
     }
 }
 
@@ -111,26 +132,67 @@ void AudioController::clearPlayerFX(const std::string action){
      */
 void AudioController::playEnemyFX(const std::string action, const std::string key){
     if (!AudioEngine::get()->isActive(action+key)) {
-        std::shared_ptr<Sound> source; // TODO: might be bad to create a <Sound> instead of <AudioSample>
+        std::shared_ptr<Sound> source;
         if (action == "attack") {
             int randn = std::rand() % 6 + 1;
             source = _assets->get<Sound>("enemyAttack" + std::to_string(randn));
         }
         else if (action == "death") {
-            int randn = std::rand() % 4 + 1;
-            source = _assets->get<Sound>("alienDeath" + std::to_string(randn));
+            if (key == "boss enemy") {
+                source = _assets->get<Sound>("bossDeath");
+            } else if (key == "mage alien") {
+                int randn = std::rand() % 3 + 1;
+                source = _assets->get<Sound>("casterDeath" + std::to_string(randn));
+            } else {
+                int randn = std::rand() % 4 + 1;
+                source = _assets->get<Sound>("alienDeath" + std::to_string(randn));
+            }
         }
         else if (action == "aggro") {
             int randn = std::rand() % 4 + 1;
             source = _assets->get<Sound>("enemyAggro" + std::to_string(randn));
         }
-        else if (action == "damaged") {
-            source = _assets->get<Sound>("alienImpact");
+        else if (action == "casterAttack") {
+            int randn = std::rand() % 3 + 1;
+            source = _assets->get<Sound>("casterAttack" + std::to_string(randn));
+        }
+        else if (action == "tankAttack") {
+            source = _assets->get<Sound>("tankAttack");
+        }
+        else if (action == "bossAttack") {
+            int randn = std::rand() % 3 + 1;
+            source = _assets->get<Sound>("bossAttack" + std::to_string(randn));
+        }
+        else if (action == "bossStorm") {
+            source = _assets->get<Sound>("bossStorm");
+        }
+        else if (action == "slimeExplode") {
+            source = _assets->get<Sound>("slimeExplode");
         }
         else {
             CULogError("player sound action not found");
         }
         AudioEngine::get()->play(action+key, source, false, source->getVolume() * _master * _sfx);
+    }
+}
+
+void AudioController::playDamagedEnemy(const std::string enemyType, const std::string key) {
+    std::shared_ptr<Sound> source;
+    if (!AudioEngine::get()->isActive("damaged"+key)) {
+        if (enemyType == "mage alien") {
+            int randn = std::rand() % 2 + 1;
+            source = _assets->get<Sound>("casterDamaged" + std::to_string(randn));
+        } else if (enemyType == "tank enemy stunned") {
+            source = _assets->get<Sound>("tankHitNoArmor");
+        } else if (enemyType == "tank enemy") {
+            source = _assets->get<Sound>("tankHitArmored");
+        } else if (enemyType == "boss enemy") {
+            int randn = std::rand() % 3 + 1;
+            source = _assets->get<Sound>("bossDamaged" + std::to_string(randn));
+        } else {
+            source = _assets->get<Sound>("alienImpact");
+        }
+        AudioEngine::get()->play("damaged"+key, source, false, source->getVolume() * _master * _sfx);
     }
 }
 
@@ -145,19 +207,19 @@ void AudioController::playUiFX(const std::string action){
             auto source = _assets->get<Sound>("menuClick");
             AudioEngine::get()->play(action+"ui", source, false, source->getVolume() * _master * _sfx);
         }
-        else if (action == "upgrade") {
+        else if (action == "upgrade" || action == "health") {
             auto source = _assets->get<Sound>("upgrade");
             AudioEngine::get()->play(action+"ui", source, false, source->getVolume() * _master * _sfx);
         }
         else if (action == "environment") {
             int randn = std::rand();
             if (randn % 500 == 0) {
-                CULog("ht");
                 randn = randn % 4 + 1;
                 auto source = _assets->get<Sound>("env" + std::to_string(randn));
                 AudioEngine::get()->play(action+"ui", source, false, source->getVolume() * _master * _sfx);
             }
         }
+
     }
 }
     
