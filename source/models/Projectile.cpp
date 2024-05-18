@@ -11,6 +11,7 @@ bool Projectile::playerInit(Vec2 pos, float damage, bool charged, float ang, con
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
     _isFullyCharged = charged;
+    _origin = "player";
 
     //init hitbox
     std::vector<Vec2> v;
@@ -83,6 +84,7 @@ bool Projectile::lizardInit(Vec2 pos, float damage, float ang, const std::shared
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
     _isFullyCharged = true;
+    _origin = "lizard";
 
     //init hitbox
     //TODO: modify shape and size
@@ -129,6 +131,7 @@ bool Projectile::mageInit(Vec2 pos, float damage, float ang, const std::shared_p
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
     _isFullyCharged = true;
+    _origin = "caster";
 
     //init hitbox
     //TODO: modify shape and size
@@ -175,6 +178,7 @@ bool Projectile::bossInit(Vec2 pos, float damage, float ang, const std::shared_p
     _state = FLYING;
     _initPos = Vec2(pos.x, pos.y);
     _isFullyCharged = true;
+    _origin = "boss";
 
     //init hitbox
     //TODO: modify shape and size

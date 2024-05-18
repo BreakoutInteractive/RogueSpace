@@ -112,6 +112,20 @@ public:
     static void playEnemyFX(const std::string action, const std::string key);
     
     /**
+     * Plays sound associated when enemy takes damage
+     *
+     * @param  action  the action key for the enemy
+     * @param  key  the reference key for the enemy type
+     */
+    static void playDamagedEnemy(const std::string enemyType, const std::string key);
+    
+    /**
+     * Plays sound associated with projectile impact of enemy type.
+     */
+    
+    static void onEnemyProjImpact(const std::string enemyType);
+    
+    /**
      * Plays sound associated with UI actions.
      *
      * @param  action  the action key for the enemy
