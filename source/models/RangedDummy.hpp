@@ -69,6 +69,7 @@ public:
     static std::shared_ptr<RangedDummy> alloc(std::shared_ptr<JsonValue> data) {
         auto result = std::make_shared<RangedDummy>();
         return (result->init(data) ? result : nullptr);
+    }
         
 #pragma mark -
 #pragma mark Accessors

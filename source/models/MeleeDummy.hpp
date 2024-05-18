@@ -69,6 +69,7 @@ public:
     static std::shared_ptr<MeleeDummy> alloc(std::shared_ptr<JsonValue> data) {
         auto result = std::make_shared<MeleeDummy>();
         return (result->init(data) ? result : nullptr);
+    }
         
 #pragma mark -
 #pragma mark Accessors
