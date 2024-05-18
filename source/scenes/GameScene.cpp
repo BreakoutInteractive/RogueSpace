@@ -232,15 +232,12 @@ void GameScene::setLevel(SaveData::Data saveData){
     if (_isUpgradeRoom){
         levelToParse = "upgrades";
         _isTutorial = false;
-        AudioController::updateMusic("oasis", 1.0f);
     } else if (_isTutorial){
         levelToParse = getLevelKey(_levelNumber);
-        AudioController::updateMusic("oasis", 0.0f);
     }
     else{
         levelToParse = getLevelKey(_levelNumber);
         _isTutorial = false;
-        AudioController::updateMusic("pursuit", 1.0f);
     }
     
     CULog("currLevel %d", _levelNumber);
@@ -249,6 +246,7 @@ void GameScene::setLevel(SaveData::Data saveData){
 
     _level = LevelModel::alloc(_assets->get<JsonValue>("constants"), parsed);
     _level->setAssets(_assets);
+    AudioController::updateMusic(_level->getMusicName(), 1.0f);
     
     auto scales = dimen/_level->getViewBounds();
     _scale = dimen.width == SCENE_WIDTH ? scales.width : scales.height;

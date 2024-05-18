@@ -229,6 +229,8 @@ bool LevelModel::init(const std::shared_ptr<JsonValue>& constants, std::shared_p
         CUAssertLog(false, "Failed to load level file");
         return false;
     }
+    // basic properties
+    _musicName = parsedJson->getString(MUSIC_KEY, "pursuit");
 	// Initial geometry
 	float w = parsedJson->get(WIDTH_FIELD)->asFloat();
 	float h = parsedJson->get(HEIGHT_FIELD)->asFloat();

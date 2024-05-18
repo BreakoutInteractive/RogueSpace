@@ -259,6 +259,11 @@
             "type":     "sample",
             "file":     "sounds/music/rs_xenocide_loop.ogg",
             "volume":   1.0
+        },
+        "transmission": {
+            "type":     "sample",
+            "file":     "sounds/music/rs_transmission_loop.wav",
+            "volume":   1.0
         }
     },
 	"fonts": {

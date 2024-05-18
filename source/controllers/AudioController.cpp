@@ -195,6 +195,14 @@ void AudioController::updateMusic(const std::string key, float fade) {
         else if (key == "win") {
             source = _assets->get<Sound>(key);
         }
+        else if (key == "boss"){
+            loop = true;
+            source = _assets->get<Sound>(key);
+        }
+        else if (key == "transmission"){
+            loop = true;
+            source = _assets->get<Sound>(key);
+        }
         else {
             CULogError("track not found or not eligible: from existing track");
         }
