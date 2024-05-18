@@ -72,7 +72,7 @@
         },
         "playerAttackPower": {
             "type":     "sample",
-            "file":     "sounds/weapons/sword_01.wav",
+            "file":     "sounds/weapons/sword_04.wav",
             "volume":   1.0
         },
         "bowDraw": {
@@ -212,7 +212,7 @@
         },
         "rlizardImpact": {
             "type":     "sample",
-            "file":     "sounds/env/rummaging_03.wav",
+            "file":     "sounds/weapons/sword_03.wav",
             "volume":   1.0
         },
         "bossImpact": {
