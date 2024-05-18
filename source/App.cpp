@@ -98,6 +98,7 @@ void App::update(float dt){
     } else {
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
+        if (SaveData::hasPreferences()) _gameplay.getInput().setInverted(SaveData::getPreferences().inverted);
         _pause.init(_assets);
         _settings.init(_assets);
         _title.init(_assets);
@@ -292,38 +293,24 @@ void App::updateTutorialScene(float dt){
 void App::updateSettingsScene(float dt) {
     _settings.update(dt);
     switch (_settings.getChoice()) {
-        case SettingsScene::Choice::CLOSE:
-            _settings.setActive(false);
-            switch (_prevScene) {
-            case PAUSE:
-                _pause.setActive(true);
-                _scene = PAUSE; // switch to pause scene
-                break;
-            case TITLE:
-                setTitleScene();
-                _scene = TITLE;
-                break;
-            default: //should never be here since you can only access settings from pause and title scenes
-                break;
-            }
+    case SettingsScene::Choice::CLOSE:
+        _settings.setActive(false);
+        switch (_prevScene) {
+        case PAUSE:
+            _pause.setActive(true);
+            _scene = PAUSE; // switch to pause scene
             break;
-        case SettingsScene::Choice::VOLUP:
+        case TITLE:
+            setTitleScene();
+            _scene = TITLE;
             break;
-        case SettingsScene::Choice::VOLDOWN:
+        default: //should never be here since you can only access settings from pause and title scenes
             break;
-        case SettingsScene::Choice::SFXUP:
-            break;
-        case SettingsScene::Choice::SFXDOWN:
-            break;
-        case SettingsScene::Choice::MUSICUP:
-            break;
-        case SettingsScene::Choice::MUSICDOWN:
-            break;
-        case SettingsScene::Choice::INVERT:
-            _gameplay.getInput().setInverted(!_gameplay.getInput().getInverted());
-            break;
-        case SettingsScene::Choice::NONE:
-            break;
+        }
+        _gameplay.getInput().setInverted(SaveData::getPreferences().inverted);
+        break;
+    default:
+        break;
     }
 }
 
