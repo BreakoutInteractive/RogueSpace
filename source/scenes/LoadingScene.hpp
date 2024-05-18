@@ -4,13 +4,13 @@
 //  This module provides a very barebones loading screen.
 //
 //  Author: Walker White and Anthony Perello (3/12/17)
-//  Modified: Zhiyuan Chen
+//  Modified: Zhiyuan Chen and Dasha Griffiths
 //  Version: 2/17/24
 
 #ifndef __LOADING_SCENE_H__
 #define __LOADING_SCENE_H__
 #include <cugl/cugl.h>
-
+#include "../components/Animation.hpp"
 
 /**
  * This class is a simple loading screen for asychronous asset loading.
@@ -31,10 +31,9 @@ protected:
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     
     // VIEW
-    /** The animated progress bar */
-    std::shared_ptr<cugl::scene2::ProgressBar>  _bar;
-    /** The engine name */
-    std::shared_ptr<cugl::scene2::SceneNode>  _brand;
+    std::shared_ptr<scene2::SpriteNode> _planetNode;
+    /** reference to the spinning globe animation */
+    std::shared_ptr<Animation> _planetEffect;
     
     // MODEL
     /** The progress displayed on the screen */
