@@ -102,7 +102,7 @@
         },
         "projOnHit": {
             "type":     "sample",
-            "file":     "sounds/impact/impact_05.wav",
+            "file":     "sounds/player/bow_hit.wav",
             "volume":   1.0
         },
         "dash": {
@@ -207,7 +207,7 @@
         },
         "casterImpact": {
             "type":     "sample",
-            "file":     "sounds/env/rummaging_03.wav",
+            "file":     "sounds/caster/cast_proj.wav",
             "volume":   1.0
         },
         "rlizardImpact": {
