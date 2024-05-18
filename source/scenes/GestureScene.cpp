@@ -57,12 +57,12 @@ bool GestureScene::init(std::shared_ptr<AssetManager> assets){
 void GestureScene::update(float dt){
     _actionManager.update(dt);
     // still transitioning
-    if (isActive() != this->_active){
-        if (this->_active && !_actionManager.isActive(FADE_IN_KEY)){
+    if (isActive() != this->_activeFlag){
+        if (this->_activeFlag && !_actionManager.isActive(FADE_IN_KEY)){
             // done fading in
             Scene2::setActive(true);
         }
-        else if (!this->_active && !_actionManager.isActive(FADE_OUT_KEY)){
+        else if (!this->_activeFlag && !_actionManager.isActive(FADE_OUT_KEY)){
             // done fading out
             _actionManager.remove(ANIMATE_KEY);
             _activeGesture->setVisible(false);
@@ -99,7 +99,7 @@ void GestureScene::setGesture(Gesture g){
         case Gesture::MOVE:
             _activeOverlay = _leftOverlay;
             _activeGesture = _moveGesture;
-            _animateAction->init(0, 6, 2.0f);
+            _animateAction->init(0, 6, 2.0f); // first frame index, last frame index, duration
             break;
         case Gesture::DASH:
             _activeOverlay = _rightOverlay;
@@ -143,7 +143,7 @@ GestureScene::Gesture GestureScene::getGestureFromName(std::string name){
 
 void GestureScene::reset(){
     Scene2::setActive(false);
-    this->_active = false;
+    this->_activeFlag = false;
     _actionManager.remove(FADE_IN_KEY);
     _actionManager.remove(FADE_OUT_KEY);
     _actionManager.remove(FADE_IN_GESTURE_KEY);
@@ -159,8 +159,8 @@ void GestureScene::reset(){
 }
 
 void GestureScene::setActive(bool value){
-    if (isActive() != value && this->_active != value){
-        this->_active = value;
+    if (isActive() != value && this->_activeFlag != value){
+        this->_activeFlag = value;
         if (value){
             // fade in, remove fade out effects
             _actionManager.remove(FADE_OUT_KEY);
