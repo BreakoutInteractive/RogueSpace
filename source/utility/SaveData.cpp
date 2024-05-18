@@ -81,7 +81,7 @@ void SaveData::makeSave(Data data){
     json->appendChild("opt2level", JsonValue::alloc((long)data.upgradeOpt2Level));
     
     auto path = Application::get()->getSaveDirectory() + SAVEFILE;
-    CULog("savefile %s", std::string(path).c_str());
+    //CULog("savefile %s", std::string(path).c_str());
     auto writer = JsonWriter::alloc(path);
     writer->writeJson(json);
     writer->flush();
@@ -130,7 +130,7 @@ void SaveData::savePreferences(Preferences prefs) {
     json->appendChild("sfx", JsonValue::alloc((long)prefs.SFXvol));
     json->appendChild("inverted", JsonValue::alloc(prefs.inverted));
     auto path = Application::get()->getSaveDirectory() + PREFS;
-    CULog("prefsfile %s", std::string(path).c_str());
+    //CULog("prefsfile %s", std::string(path).c_str());
     auto writer = JsonWriter::alloc(path);
     writer->writeJson(json);
     writer->flush();
