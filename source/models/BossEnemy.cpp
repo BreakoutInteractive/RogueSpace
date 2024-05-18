@@ -44,7 +44,7 @@ bool BossEnemy::init(std::shared_ptr<JsonValue> data) {
 #pragma mark Physics
 
 void BossEnemy::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
-    Vec2 direction = level->getPlayer()->getPosition() * level->getPlayer()->getDrawScale() - getPosition() * getDrawScale();
+    Vec2 direction = getFacingDir();
     direction.normalize();
     _attackDir = direction;
     float ang = acos(direction.dot(Vec2::UNIT_X));
