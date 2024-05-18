@@ -951,7 +951,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1085,32 +1084,27 @@
              "name":"",
              "objects":[
                     {
-                     "height":0,
-                     "id":1,
-                     "name":"collider",
-                     "polygon":[
-                            {
-                             "x":0,
-                             "y":0
-                            }, 
-                            {
-                             "x":64,
-                             "y":-32
-                            }, 
-                            {
-                             "x":0,
-                             "y":-64
-                            }, 
-                            {
-                             "x":-64,
-                             "y":-32
-                            }],
+                     "height":64.7948164146868,
+                     "id":3,
+                     "name":"does not matter",
+                     "rotation":0,
+                     "type":"Hitbox",
+                     "visible":true,
+                     "width":22.1005575367924,
+                     "x":48.2193982620925,
+                     "y":12.8082776633683
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":30,
+                     "id":4,
+                     "name":"",
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
-                     "width":0,
-                     "x":64,
-                     "y":128
+                     "width":30,
+                     "x":46.9636847656839,
+                     "y":81.8725199658446
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1118,14 +1112,13 @@
              "x":0,
              "y":0
             },
-         "type":"Wall"
+         "type":"DummyEnemy"
         }, 
         {
          "id":89,
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

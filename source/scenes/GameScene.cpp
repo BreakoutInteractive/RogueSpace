@@ -561,10 +561,14 @@ void GameScene::preUpdate(float dt) {
     if (!isComplete() && !isDefeat()){
         // game not won or lost, check if any enemies active
         int activeCount = 0;
+        int initialCount = 0;
         auto enemies = _level->getEnemies();
         for (auto it = enemies.begin(); it != enemies.end(); ++it) {
-            if ((*it)->isEnabled()) {
+            if (!(*it)->isDefeated()) {
                 activeCount += 1;
+            }
+            if ((*it)->getMaxHealth() > 0){
+                initialCount += 1;
             }
         }
         // player finishes current level
@@ -574,7 +578,7 @@ void GameScene::preUpdate(float dt) {
             for (auto it = energyWalls.begin(); it != energyWalls.end(); ++it) {
                 (*it)->deactivate();
             }
-            if (_level->getEnemies().size() > 0){
+            if (initialCount > 0){
                 // no more enemies remain, but there were enemies initially
                 _actionManager.remove(AREA_CLEAR_KEY);
                 _actionManager.activate(AREA_CLEAR_KEY, _areaClearAnimation, _areaClearNode);

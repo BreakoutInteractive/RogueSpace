@@ -102,6 +102,36 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 20,
+            "members": [
+                {
+                    "name": "damage",
+                    "type": "float",
+                    "value": 0
+                },
+                {
+                    "name": "hp",
+                    "type": "float",
+                    "value": 0
+                },
+                {
+                    "name": "path",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "DummyEnemy",
+            "type": "class",
+            "useAs": [
+                "object",
+                "tile",
+                "tileset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 4,
             "members": [
                 {

@@ -291,7 +291,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type == CLASS_TUTORIAL_REGION){
             data = parseTutorialColliders(object);
         }
-        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD || type == CLASS_SLIME || type == CLASS_BOSS){
+        else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD || type == CLASS_SLIME || type == CLASS_BOSS || type == CLASS_DUMMY_ENEMY){
             data = parseEnemy(object, type);
         }
         if (data != nullptr){
@@ -451,7 +451,11 @@ const std::shared_ptr<JsonValue> LevelParser::parsePlayer(const std::shared_ptr<
 }
 
 const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<JsonValue>& json, std::string enemyType){
-    std::shared_ptr<JsonValue> enemyData = parsePhysicsObject(json, false, true, true);
+    bool parseAsset = false; // normally don't need to know the texture from tiled because enemies have animations
+    if (enemyType == CLASS_DUMMY_ENEMY){
+        parseAsset = true;
+    }
+    std::shared_ptr<JsonValue> enemyData = parsePhysicsObject(json, parseAsset, true, true);
     std::shared_ptr<JsonValue> enemyPathData = parsePath(json);
     enemyData->appendChild("type", JsonValue::alloc(std::string(enemyType)));
     enemyData->appendChild("path", enemyPathData);
