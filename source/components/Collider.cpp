@@ -37,7 +37,7 @@ std::shared_ptr<physics2::Obstacle> Collider::makeBox(std::shared_ptr<JsonValue>
 }
 
 std::shared_ptr<physics2::Obstacle> Collider::makeWheel(std::shared_ptr<JsonValue> wheelColliderData, b2BodyType type, std::string name, bool is_sensor){
-    float radius = wheelColliderData->getFloat("radius") * 2 / 3;
+    float radius = wheelColliderData->getFloat("radius");
     Vec2 pos(wheelColliderData->getFloat("x"), wheelColliderData->getFloat("y"));
     auto wheel = physics2::WheelObstacle::alloc(pos, radius);
     wheel->setBodyType(type);
