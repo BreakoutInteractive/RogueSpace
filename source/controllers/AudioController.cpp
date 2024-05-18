@@ -205,6 +205,8 @@ void AudioController::playAggroEnemy(const std::string enemyType) {
         } else if (enemyType != "exploding alien") {
             int randn = std::rand() % 4 + 1;
             source = _assets->get<Sound>("enemyAggro" + std::to_string(randn));
+        } else {
+            return;
         }
         AudioEngine::get()->play("aggro"+enemyType, source, false, source->getVolume() * _master * _sfx);
     }
