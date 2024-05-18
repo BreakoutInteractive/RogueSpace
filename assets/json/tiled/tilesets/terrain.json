@@ -947,6 +947,50 @@
          "type":"Wall"
         }, 
         {
+         "id":74,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"collider",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":64,
+                             "y":-32
+                            }, 
+                            {
+                             "x":0,
+                             "y":-64
+                            }, 
+                            {
+                             "x":-64,
+                             "y":-32
+                            }],
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":0,
+                     "x":64,
+                     "y":128
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"Wall"
+        }, 
+        {
          "id":78,
          "objectgroup":
             {
@@ -994,6 +1038,94 @@
          "objectgroup":
             {
              "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"collider",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":64,
+                             "y":-32
+                            }, 
+                            {
+                             "x":0,
+                             "y":-64
+                            }, 
+                            {
+                             "x":-64,
+                             "y":-32
+                            }],
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":0,
+                     "x":64,
+                     "y":128
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"Wall"
+        }, 
+        {
+         "id":88,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"collider",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":64,
+                             "y":-32
+                            }, 
+                            {
+                             "x":0,
+                             "y":-64
+                            }, 
+                            {
+                             "x":-64,
+                             "y":-32
+                            }],
+                     "rotation":0,
+                     "type":"Collider",
+                     "visible":true,
+                     "width":0,
+                     "x":64,
+                     "y":128
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"Wall"
+        }, 
+        {
+         "id":89,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
