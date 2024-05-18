@@ -48,6 +48,7 @@
 #define CLASS_RELIC         "Relic"
 #define CLASS_COLLIDER      "Collider"
 #define CLASS_HITBOX        "Hitbox"
+#define CLASS_TUTORIAL_REGION      "TutorialRegion"
 
 #pragma mark -
 #pragma mark Enemy Stat Fields

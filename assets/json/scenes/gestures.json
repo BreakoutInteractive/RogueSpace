@@ -1,0 +1,190 @@
+{
+    "textures": {
+        "move_gesture": {
+            "file":     "textures/tutorial/move_gesture.png"
+        },
+        "dash_gesture": {
+            "file":     "textures/tutorial/dash_gesture.png"
+        },
+        "attack_gesture": {
+            "file":      "textures/tutorial/attack_gesture.png"
+        },
+        "shoot_gesture": {
+            "file":      "textures/tutorial/shoot_gesture.png"
+        },
+        "parry_gesture": {
+            "file":      "textures/tutorial/parry_gesture.png"
+        }
+    },
+    "scene2s": {
+        "gestures": {
+            "type": "Node",
+            "format": {
+                "type": "Anchored"
+            },
+            "data": {
+                "anchor": [
+                    0,
+                    0
+                ],
+                "size": [
+                    1280,
+                    720
+                ],
+                "angle": 0,
+                "position": [
+                    0,
+                    0
+                ],
+                "visible": true
+            },
+            "children": {
+                "move_gesture": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "move_gesture",
+                        "anchor": [
+                            0,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 297,0, 297,270, 0,270
+                        ],
+                        "angle": 0,
+                        "position": [
+                            50,
+                            50
+                        ],
+                        "visible": true,
+                        "span": 7,
+                        "cols": 7,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "left",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0.04,
+                        "y_offset": 0.07
+                    }
+                },
+                "shoot_gesture": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "shoot_gesture",
+                        "anchor": [
+                            1,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 512,0, 512,427, 0,427
+                        ],
+                        "angle": 0,
+                        "position": [
+                            769,
+                            5
+                        ],
+                        "visible": true,
+                        "span": 8,
+                        "cols": 8,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "right",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": 0,
+                        "y_offset": 0.01
+                    }
+                },
+                "dash_gesture": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "dash_gesture",
+                        "anchor": [
+                            1,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 442,0, 442,354, 0,354
+                        ],
+                        "angle": 0,
+                        "position": [
+                            821,
+                            0
+                        ],
+                        "visible": true,
+                        "span": 10,
+                        "cols": 5,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "right",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": -0.01,
+                        "y_offset": 0
+                    }
+                },
+                "attack_gesture": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "attack_gesture",
+                        "anchor": [
+                            1,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 286,0, 286,260, 0,260
+                        ],
+                        "angle": 0,
+                        "position": [
+                            969,
+                            74
+                        ],
+                        "visible": true,
+                        "span": 10,
+                        "cols": 5,
+                        "frame": 0
+                    },
+                    "layout": {
+                        "x_anchor": "right",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": -0.02,
+                        "y_offset": 0.1
+                    }
+                },
+                "parry_gesture": {
+                    "type": "Sprite",
+                    "data": {
+                        "texture": "parry_gesture",
+                        "anchor": [
+                            1,
+                            0
+                        ],
+                        "polygon": [
+                            0,0, 351,0, 351,307, 0,307
+                        ],
+                        "angle": 0,
+                        "position": [
+                            921,
+                            32
+                        ],
+                        "visible": true,
+                        "span": 10,
+                        "cols":5,
+                        "frame":0
+                    },
+                    "layout": {
+                        "x_anchor": "right",
+                        "y_anchor": "bottom",
+                        "absolute": false,
+                        "x_offset": -0.01,
+                        "y_offset": 0.04
+                    }
+                }
+            }
+        }
+    }
+}

@@ -55,7 +55,7 @@ bool Player::init(std::shared_ptr<JsonValue> playerData, std::shared_ptr<JsonVal
     // this is a player and can collide with an enemy "shadow", wall, or attack
     b2Filter filter;
     filter.categoryBits = CATEGORY_PLAYER;
-    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_RELIC | CATEGORY_HEALTHPACK;
+    filter.maskBits = CATEGORY_ENEMY_SHADOW | CATEGORY_TALL_WALL | CATEGORY_SHORT_WALL | CATEGORY_ATTACK | CATEGORY_PROJECTILE | CATEGORY_HEALTHPACK | CATEGORY_TUTORIAL_COLLIDER;
     collider->setFilterData(filter);
     _collider = collider;                   // attach Component
     
@@ -124,8 +124,7 @@ void Player::drawRangeIndicator(const std::shared_ptr<SpriteBatch>& batch, const
     Vec2 loc = rayEnd;
     std::function<float(b2Fixture*, const Vec2, const Vec2, float)> callback
         = [&frac, &loc](b2Fixture* fixture, const Vec2 point, const Vec2 normal, float fraction) {
-        if (fixture->GetFilterData().categoryBits != CATEGORY_SHORT_WALL && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE 
-            && fixture->GetFilterData().categoryBits != CATEGORY_PROJECTILE_SHADOW && !fixture->IsSensor()) {
+        if (fixture->GetFilterData().categoryBits == CATEGORY_TALL_WALL) {
             if (fraction < frac){
                 frac = fraction;
                 loc = point;

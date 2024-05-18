@@ -9,6 +9,7 @@
 #include "GameObject.hpp"
 #include <cugl/cugl.h>
 #include "CollisionConstants.hpp"
+#include "../components/Collider.hpp"
 
 Wall::Wall(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 origin) : GameObject(){
     _jsonData = data;
@@ -91,4 +92,17 @@ void EnergyWall::deactivate(){
         _currAnimation->start();
         getCollider()->setSensor(true);
     }
+}
+
+#pragma mark-
+TutorialCollision::TutorialCollision(std::shared_ptr<JsonValue> data){
+    bool sensor = true;
+    auto p = Collider::makePolygon(data, b2_dynamicBody, "gesture-activator", sensor);
+    b2Filter filter;
+    filter.categoryBits = CATEGORY_TUTORIAL_COLLIDER;
+    filter.maskBits = CATEGORY_PLAYER;
+    p->setFilterData(filter);
+    _collider = p;
+    _contacts = 0;
+    _gestureName = data->getString("gesture", "");
 }

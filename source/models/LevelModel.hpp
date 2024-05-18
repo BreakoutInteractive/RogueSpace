@@ -81,8 +81,9 @@ protected:
     
     /** Reference to all energy walls*/
     std::vector<std::shared_ptr<EnergyWall>> _energyWalls;
-    /** Reference to all custom boundaries (box2d obstacles) */
-    std::vector<std::shared_ptr<physics2::Obstacle>> _boundaries;
+    
+    /** Reference to all custom tutorial region collisions */
+    std::vector<std::shared_ptr<TutorialCollision>> _tutorialCollisions;
     
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -157,13 +158,10 @@ protected:
     bool loadWall(const std::shared_ptr<JsonValue>& json);
     
     /**
-     * Loads a single collision object
-     *
-     * @param  reader   a JSON reader with cursor ready to read the custom boundary
-     *
+     * Loads a single collision object for tutorial activation
      * @return true if the collision object was successfully loaded
      */
-    bool loadBoundary(const std::shared_ptr<JsonValue>& json);
+    bool loadTutorialCollisions(const std::shared_ptr<JsonValue>& json);
     
     bool loadRelic(const std::shared_ptr<JsonValue>& json);
 
@@ -261,6 +259,11 @@ public:
     const std::vector<std::shared_ptr<GameObject>>& getDynamicObjects() {
         return _dynamicObjects;
     }
+    
+    /**
+     * @return the reference to all colliders that activates tutorial gestures
+     */
+    const std::vector<std::shared_ptr<TutorialCollision>>& getTutorialCollisions() { return _tutorialCollisions; }
 
 #pragma mark Physics Attributes
     /** 

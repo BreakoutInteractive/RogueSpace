@@ -225,11 +225,21 @@ void CollisionController::beginContact(b2Contact* contact){
             }
         }
     }
+    // player and upgrade artifact collision
     if (_level->getRelic() != nullptr){
         intptr_t relptr = reinterpret_cast<intptr_t>(_level->getRelic().get());
         if (((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
             (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) && (_level->getRelic()->getActive())) {
             _level->getRelic()->contactMade.increment();
+        }
+    }
+    
+    // player and tutorial sensor collision
+    for (auto& tutorialSensors : _level->getTutorialCollisions()){
+        intptr_t tptr = reinterpret_cast<intptr_t>(tutorialSensors.get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == tptr) ||
+            (body1->GetUserData().pointer == tptr && body2->GetUserData().pointer == pptr)) {
+            tutorialSensors->makeContact();
         }
     }
 }
@@ -246,6 +256,15 @@ void CollisionController::endContact(b2Contact* contact){
         if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == relptr) ||
             (body1->GetUserData().pointer == relptr && body2->GetUserData().pointer == pptr)) {
             _level->getRelic()->contactMade.decrement();
+        }
+    }
+    
+    // player and tutorial sensor end of collision
+    for (auto& tutorialSensors : _level->getTutorialCollisions()){
+        intptr_t tptr = reinterpret_cast<intptr_t>(tutorialSensors.get());
+        if ((body1->GetUserData().pointer == pptr && body2->GetUserData().pointer == tptr) ||
+            (body1->GetUserData().pointer == tptr && body2->GetUserData().pointer == pptr)) {
+            tutorialSensors->endContact();
         }
     }
 }
