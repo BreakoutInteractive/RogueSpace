@@ -25,10 +25,10 @@ Relic::Relic(std::shared_ptr<JsonValue> data, const Poly2& poly, const Vec2 orig
     p->PolygonObstacle::init(poly, origin);
     _collider = p;
     b2Filter filter;
-    // this is a Relic
-    filter.categoryBits = CATEGORY_RELIC;
+    // this is a Relic (eg, a short wall)
+    filter.categoryBits = CATEGORY_SHORT_WALL;
     // a Relic can collide with a player or an enemy
-    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_PROJECTILE_SHADOW;
+    filter.maskBits = CATEGORY_PLAYER | CATEGORY_ENEMY;
     p->setFilterData(filter);
 }
 

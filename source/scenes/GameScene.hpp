@@ -28,6 +28,7 @@
 #include "../components/Animation.hpp"
 #include "TransitionScene.hpp"
 #include "UpgradesScene.hpp"
+#include "GestureScene.hpp"
 #include "../utility/SaveData.hpp"
 
 /**
@@ -80,6 +81,8 @@ protected:
     TransitionScene _levelTransition;
     /** the upgrades menu  */
     UpgradesScene _upgrades;
+    /** the gesture tutorial overlay */
+    GestureScene _gestureScene;
     
     /**
      * @note the order is irrelevant. The function `generateUpgradeIndices` make up for this lack of specification.

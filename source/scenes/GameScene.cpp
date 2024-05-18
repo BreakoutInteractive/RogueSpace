@@ -93,8 +93,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     config.maxZoom = GameConstants::GAME_CAMERA_MAX_ZOOM_OUT;
     _camController.init(getCamera(), config);
     
-    // necessary (starting at any actual level implies it is not an upgrade room)
-    _isUpgradeRoom = false;
     _isTutorial = false;
     _isTutorialComplete = false;
     
@@ -184,6 +182,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     });
     
     _upgrades.init(assets);
+    _gestureScene.init(assets);
   
 #pragma mark - Game State Initialization
     setActive(false);
@@ -788,6 +787,20 @@ void GameScene::preUpdate(float dt) {
     _levelTransition.update(dt); // does nothing when not active
     _gameRenderer.update(dt);
     
+#pragma mark - Tutorial Gestures
+    if (_isTutorial){
+        bool anyActive = false;
+        for (auto tutorialSensor : _level->getTutorialCollisions()){
+            if (tutorialSensor->isActive()){
+                _gestureScene.setGesture(_gestureScene.getGestureFromName(tutorialSensor->getGestureName()));
+                anyActive = true;
+                break;
+            }
+        }
+        _gestureScene.setActive(anyActive);
+        _gestureScene.update(dt); // update gestures
+    }
+    
 #pragma mark - Upgrade System
     
     if (_isUpgradeRoom && _level->getRelic() != nullptr){
@@ -918,6 +931,7 @@ void GameScene::setActive(bool value){
         activateInputs(value);
         _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
         _upgrades.setActive(false); // upgrades is only on by interaction
+        _gestureScene.reset();
     }
 }
 
@@ -927,6 +941,7 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
     if (_upgrades.isActive()){
         _upgrades.render(batch);
     }
+    _gestureScene.render(batch);
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
     }
