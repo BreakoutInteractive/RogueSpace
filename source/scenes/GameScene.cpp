@@ -105,16 +105,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setVisible(true);
   
-    // TODO: This works as starter but victory screens are usually separate game modes (scenes)
     // We make this game scene inactive and transition to other scenes
-    _winNode = scene2::Label::allocWithText("VICTORY!",_assets->get<Font>(PRIMARY_FONT));
-    _winNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _winNode->setPosition(dimen/2.0f);
-    _winNode->setForeground(Color4::YELLOW);
-    _winNode->setVisible(false);
-      
     addChild(_debugNode);  //this we keep
-    addChild(_winNode);   //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     
@@ -197,7 +189,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 void GameScene::dispose() {
     _input.dispose();
     _debugNode = nullptr;
-    _winNode = nullptr; // TODO: remove
     _level = nullptr;
     _complete = false;
     _defeat = false;
@@ -233,7 +224,6 @@ void GameScene::restart(){
 
 void GameScene::setLevel(SaveData::Data saveData){
     _debugNode->removeAllChildren();
-    _winNode->setVisible(false);
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
@@ -628,8 +618,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
         else{
-            _winNode->setVisible(true); // for now
-            // TODO: save data: save game is won by setting level to be greater than max level?
+            _exitCode = VICTORY;
         }
     }
     
@@ -872,7 +861,6 @@ void GameScene::fixedUpdate(float step) {
         else _camController.setZoomSpeed(-GameConstants::GAME_CAMERA_ZOOM_SPEED);
         
         _camController.update(step);
-        _winNode->setPosition(_camController.getPosition());
         
         if (!hitPauseCounter.isZero()){
             if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){

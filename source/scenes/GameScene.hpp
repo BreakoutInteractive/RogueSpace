@@ -98,8 +98,6 @@ protected:
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
-    /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winNode;
 
     /** the node which renders the area clear sprite */
     std::shared_ptr<scene2::SpriteNode> _areaClearNode;
