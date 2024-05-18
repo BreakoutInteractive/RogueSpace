@@ -120,6 +120,14 @@ public:
     static void playDamagedEnemy(const std::string enemyType, const std::string key);
     
     /**
+     * Plays sound associated when enemy takes aggro
+     *
+     * @param  action  the action key for the enemy
+     * @param  key  the reference key for the enemy type
+     */
+    static void playAggroEnemy(const std::string enemyType);
+    
+    /**
      * Plays sound associated with projectile impact of enemy type.
      */
     

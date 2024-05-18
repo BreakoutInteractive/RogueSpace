@@ -148,10 +148,6 @@ void AudioController::playEnemyFX(const std::string action, const std::string ke
                 source = _assets->get<Sound>("alienDeath" + std::to_string(randn));
             }
         }
-        else if (action == "aggro") {
-            int randn = std::rand() % 4 + 1;
-            source = _assets->get<Sound>("enemyAggro" + std::to_string(randn));
-        }
         else if (action == "casterAttack") {
             int randn = std::rand() % 3 + 1;
             source = _assets->get<Sound>("casterAttack" + std::to_string(randn));
@@ -193,6 +189,24 @@ void AudioController::playDamagedEnemy(const std::string enemyType, const std::s
             source = _assets->get<Sound>("alienImpact");
         }
         AudioEngine::get()->play("damaged"+key, source, false, source->getVolume() * _master * _sfx);
+    }
+}
+
+void AudioController::playAggroEnemy(const std::string enemyType) {
+    std::shared_ptr<Sound> source;
+    if (!AudioEngine::get()->isActive("aggro"+enemyType)) {
+        int randn = std::rand() % 2 + 1;
+        if (enemyType == "mage alien") {
+            source = _assets->get<Sound>("casterAggro" + std::to_string(randn));
+        } else if (enemyType == "tank enemy") {
+            source = _assets->get<Sound>("tankAggro" + std::to_string(randn));
+        } else if (enemyType == "boss enemy") {
+            source = _assets->get<Sound>("bossAggro" + std::to_string(randn));
+        } else if (enemyType != "exploding alien") {
+            int randn = std::rand() % 4 + 1;
+            source = _assets->get<Sound>("enemyAggro" + std::to_string(randn));
+        }
+        AudioEngine::get()->play("aggro"+enemyType, source, false, source->getVolume() * _master * _sfx);
     }
 }
 

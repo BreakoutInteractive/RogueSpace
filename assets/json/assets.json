@@ -180,6 +180,36 @@
             "file":     "sounds/alien/aggressive/alien_growl_09.wav",
             "volume":   0.5
         },
+        "casterAggro1": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "volume":   0.5
+        },
+        "casterAggro2": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "volume":   0.5
+        },
+        "tankAggro1": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "volume":   0.5
+        },
+        "tankAggro2": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "volume":   0.5
+        },
+        "bossAggro1": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "volume":   0.5
+        },
+        "bossAggro2": {
+            "type":     "sample",
+            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "volume":   0.5
+        },
         "alienDeath1": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_01.wav",
