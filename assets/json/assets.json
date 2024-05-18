@@ -182,32 +182,32 @@
         },
         "casterAggro1": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "file":     "sounds/caster/cast_aggro1.wav",
             "volume":   0.5
         },
         "casterAggro2": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "file":     "sounds/caster/cast_aggro2.wav",
             "volume":   0.5
         },
         "tankAggro1": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "file":     "sounds/env/env_intake_01.wav",
             "volume":   0.5
         },
         "tankAggro2": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "file":     "sounds/env/env_intake_01.wav",
             "volume":   0.5
         },
         "bossAggro1": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
+            "file":     "sounds/boss/boss_aggro1.wav",
             "volume":   0.5
         },
         "bossAggro2": {
             "type":     "sample",
-            "file":     "sounds/alien/aggressive/alien_growl_03.wav",
+            "file":     "sounds/boss/boss_aggro2.wav",
             "volume":   0.5
         },
         "alienDeath1": {
