@@ -28,6 +28,7 @@
 #include "../components/Animation.hpp"
 #include "TransitionScene.hpp"
 #include "UpgradesScene.hpp"
+#include "GestureScene.hpp"
 #include "../utility/SaveData.hpp"
 
 /**
@@ -80,6 +81,8 @@ protected:
     TransitionScene _levelTransition;
     /** the upgrades menu  */
     UpgradesScene _upgrades;
+    /** the gesture tutorial overlay */
+    GestureScene _gestureScene;
     
     /**
      * @note the order is irrelevant. The function `generateUpgradeIndices` make up for this lack of specification.
@@ -95,8 +98,6 @@ protected:
 #pragma mark Scene Nodes
     /** Reference to the physics node of this scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
-    /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winNode;
 
     /** the node which renders the area clear sprite */
     std::shared_ptr<scene2::SpriteNode> _areaClearNode;

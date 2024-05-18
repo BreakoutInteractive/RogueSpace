@@ -50,10 +50,70 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     //if user exits tutorial screen, reset to first option
     auto playListener = [this](std::string name, bool down){ _choice = LEVEL; AudioController::playUiFX("menuClick");};
     //if they play a level, same level should be selected
-    auto level1Listener = [this](std::string name, bool down){_selectedLevel = 1; setScreenText(); AudioController::playUiFX("menuClick");};
-    auto level2Listener = [this](std::string name, bool down){_selectedLevel = 2; setScreenText(); AudioController::playUiFX("menuClick");};
-    auto level3Listener = [this](std::string name, bool down){_selectedLevel = 3; setScreenText(); AudioController::playUiFX("menuClick");};
-    auto level4Listener = [this](std::string name, bool down){_selectedLevel = 4; setScreenText(); AudioController::playUiFX("menuClick");};
+    auto level1Listener = [this](std::string name, bool down){
+        if (down) {
+            if (_selectedLevel!=1) {
+                AudioController::playUiFX("menuClick");
+                _selectedLevel = 1;
+            }
+            
+            setScreenText();
+            _level1->setDown(true);
+            _level2->setDown(false);
+            _level3->setDown(false);
+            _level4->setDown(false);
+        } else if (_selectedLevel==1){
+            _level1->setDown(true);
+        }
+    };
+    auto level2Listener = [this](std::string name, bool down){
+        if (down) {
+            if (_selectedLevel!=2) {
+                AudioController::playUiFX("menuClick");
+                _selectedLevel = 2;
+            }
+            
+            setScreenText();
+            _level1->setDown(false);
+            _level2->setDown(true);
+            _level3->setDown(false);
+            _level4->setDown(false);
+        } else if (_selectedLevel==2){
+            _level2->setDown(true);
+        }
+    };
+    auto level3Listener = [this](std::string name, bool down){
+        if (down) {
+            if (_selectedLevel!=3) {
+                AudioController::playUiFX("menuClick");
+                _selectedLevel = 3;
+            }
+
+            setScreenText();
+            _level1->setDown(false);
+            _level2->setDown(false);
+            _level3->setDown(true);
+            _level4->setDown(false);
+        } else if (_selectedLevel==3){
+            _level3->setDown(true);
+        }
+    };
+    auto level4Listener = [this](std::string name, bool down){
+        if (down) {
+            if (_selectedLevel!=4) {
+                AudioController::playUiFX("menuClick");
+                _selectedLevel = 4;
+            }
+
+            setScreenText();
+            _level1->setDown(false);
+            _level2->setDown(false);
+            _level3->setDown(false);
+            _level4->setDown(true);
+        } else if (_selectedLevel==4){
+            _level4->setDown(true);
+        }
+    };
     
     _back->addListener(backListener);
     _play->addListener(playListener);
@@ -91,21 +151,25 @@ void TutorialScene::setScreenText(){
             tutName = "DASH";
             tutDescription = "Dash to avoid damage and phase through enemies.";
             levelSS = _screenshotDash;
+            _level1->setDown(true);
             break;
         case MELEE:
             tutName = "MELEE";
             tutDescription = "Attack enemies up close to deplete their health.";
             levelSS = _screenshotMelee;
+            _level2->setDown(true);
             break;
         case RANGE:
             tutName = "RANGE";
             tutDescription = "Equip the bow. Charge and fire a bolt of energy \nat distant foes.";
             levelSS = _screenshotRange;
+            _level3->setDown(true);
             break;
         case PARRY:
             tutName = "PARRY";
             tutDescription = "Hold the blocking stance. Let go before being \nhit to stun melee enemies.";
             levelSS = _screenshotParry;
+            _level4->setDown(true);
             break;
     }
     _levelLabel->setText(tutName);

@@ -1,41 +1,18 @@
 {
     "textures": {
-        "title_background": {
-            "file": "textures/title/title_background.png"
-        },
-        "logo": {
-            "file": "textures/loading/cugl-logo.png",
-            "wrapS": "clamp",
-            "wrapT": "clamp",
+        "gameName": {
+            "file":      "textures/loading/loadingScreen_RS_Mapped.png",
+            "wrapS":     "clamp",
+            "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
         },
-        "name": {
-            "file": "textures/loading/cugl-name.png",
-            "wrapS": "clamp",
-            "wrapT": "clamp",
+        "globe": {
+            "file":      "textures/loading/loadingScreen_GlobeSprite.png",
+            "wrapS":     "clamp",
+            "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
-        },
-        "play": {
-            "file": "textures/loading/cugl-play.png",
-            "wrapS": "clamp",
-            "wrapT": "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear"
-        },
-        "progress": {
-            "file": "textures/loading/progress.png",
-            "wrapS": "clamp",
-            "wrapT": "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear",
-            "atlas": {
-                "background": [ 0, 0, 320, 45 ],
-                "foreground": [ 24, 45, 296, 90 ],
-                "leftcap": [ 0, 45, 24, 90 ],
-                "rightcap": [ 296, 45, 320, 90 ]
-            }
         }
     },
     "scene2s" : {
@@ -45,109 +22,49 @@
                 "type" : "Anchored"
             },
             "data" : {
-                "color": [58, 61, 76,255]
+                "color": [0,0,0,255]
             },
-            "children": {
-                "title_background": {
-                    "type": "Image",
-                    "data": {
-                        "texture": "title_background",
-                        "anchor": [
-                            0.5,
-                            0.5
-                        ],
+            "children"  : {
+                "gameName"  : {
+                    "type"   : "Image",
+                    "format"    : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "texture"  : "gameName",
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.50
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "y_offset" : 115,
+                        "absolute" : true
+                    }
+                },
+                "globe"  : {
+                    "type"   : "Sprite",
+                    "format"    : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "texture"  : "globe",
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.75,
                         "size": [
-                            1280,
-                            720
+                            0,0, 200,192, 200,192, 0,192
                         ],
                         "angle": 0,
-                        "position": [
-                            0,
-                            0
-                        ],
-                        "visible": true
-                    },
-                    "layout": {
-                        "x_anchor": "fill",
-                        "y_anchor": "fill",
-                        "absolute": false,
-                        "x_offset": 0,
-                        "y_offset": 0
-                    }
-                },
-                "logo": {
-                    "type": "Image",
-                    "format": {
-                        "type": "Anchored"
-                    },
-                    "data": {
-                        "texture": "logo",
-                        "anchor": [ 0.5, 0.5 ],
-                        "scale": 0.75
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "middle",
-                        "y_offset": 115,
-                        "absolute": true
-                    }
-                },
-                "name": {
-                    "type": "Image",
-                    "format": {
-                        "type": "Anchored"
-                    },
-                    "data": {
-                        "texture": "name",
-                        "anchor": [ 0.5, 0.5 ],
-                        "scale": 0.75
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "middle",
-                        "y_offset": -55,
-                        "absolute": true
-                    }
-                },
-                "play": {
-                    "type": "Button",
-                    "data": {
-                        "upnode": "up",
-                        "pushable": [ 144, 280, 240, 184, 280, 144, 320, 184, 416, 280, 320, 376, 280, 416, 184, 376 ],
                         "visible": false,
-                        "pushsize": true,
-                        "anchor": [ 0.5, 0.5 ],
-                        "scale": 0.8
+                        "span": 14,
+                        "cols": 7,
+                        "frame": 0
                     },
-                    "children": {
-                        "up": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "play"
-                            }
-                        }
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "middle",
-                        "y_offset": -115,
-                        "absolute": true
-                    }
-                },
-                "bar": {
-                    "type": "Progress",
-                    "data": {
-                        "anchor": [ 0.5, 0.5 ],
-                        "background": "progress_background",
-                        "foreground": "progress_foreground",
-                        "left_cap": "progress_leftcap",
-                        "right_cap": "progress_rightcap"
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "middle",
-                        "y_offset": -175,
-                        "absolute": true
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "y_offset" : -70,
+                        "absolute" : true
                     }
                 }
             }

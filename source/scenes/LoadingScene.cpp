@@ -27,8 +27,9 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     
-    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-    _brand = assets->get<scene2::SceneNode>("load_name");
+    _planetNode = std::dynamic_pointer_cast<scene2::SpriteNode>(_assets->get<scene2::SceneNode>("load_globe"));
+    _planetEffect = Animation::alloc(SpriteSheet::alloc(_assets->get<Texture>("globe"), 2, 7), 1.0f, true);
+    _planetEffect->start();
     
     Application::get()->setClearColor(Color4(192,192,192,255));
     addChild(layer);
@@ -39,10 +40,11 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LoadingScene::dispose() {
-    _brand = nullptr;
-    _bar = nullptr;
+    _planetNode = nullptr;
+    _planetEffect = nullptr;
     _assets = nullptr;
     _progress = 0.0f;
+    removeAllChildren();
 }
 
 
@@ -58,13 +60,15 @@ void LoadingScene::dispose() {
 void LoadingScene::update(float progress) {
     if (_progress < 1) {
         _progress = _assets->progress();
+        _planetEffect->update(progress);
+        _planetNode->setFrame(_planetEffect->getFrame());
+        _planetNode->setVisible(true);
         if (_progress >= 1) {
             _progress = 1.0f;
-            _bar->setVisible(false);
-            _brand->setVisible(false);
+            _planetNode->setVisible(false);
+            _planetEffect->reset();
             this->_active = false;
         }
-        _bar->setProgress(_progress);
     }
 }
 

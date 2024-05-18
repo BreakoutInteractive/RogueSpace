@@ -266,13 +266,17 @@
 			"file":     "fonts/RetroGame.ttf",
 			"size":     64
 		},
+        "geometosRegular36": {
+            "file": "fonts/Geometos.ttf",
+            "size": 36
+        },
         "geometosRegular48": {
             "file": "fonts/Geometos.ttf",
             "size": 48
         },
-        "geometosRegular36": {
+        "geometosRegular96": {
             "file": "fonts/Geometos.ttf",
-            "size": 36
+            "size": 96
         },
         "robotoRegular16": {
             "file": "fonts/Roboto-Regular.ttf",

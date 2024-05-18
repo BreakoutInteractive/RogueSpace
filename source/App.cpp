@@ -41,8 +41,10 @@ void App::onStartup() {
     _assets->loadDirectoryAsync("json/scenes/pause.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/upgrades.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/tutorial.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/gestures.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/settings.json", nullptr);
     _assets->loadDirectoryAsync("json/scenes/death.json", nullptr);
+    _assets->loadDirectoryAsync("json/scenes/win.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/player.json", nullptr);
     _assets->loadDirectoryAsync("json/animations/enemy.json", nullptr);
     _assets->loadDirectoryAsync("json/assets-tileset.json", nullptr);
@@ -60,6 +62,7 @@ void App::onShutdown() {
     _settings.dispose();
     _title.dispose();
     _death.dispose();
+    _win.dispose();
     AudioController::dispose();
     _assets = nullptr;
     _batch = nullptr;
@@ -100,6 +103,7 @@ void App::update(float dt){
         _settings.init(_assets);
         _title.init(_assets);
         _death.init(_assets);
+        _win.init(_assets);
         _tutorial.init(_assets);
         // finish loading -> go to title/main menu
         _scene = State::TITLE;
@@ -135,6 +139,10 @@ void App::preUpdate(float dt) {
                 _scene = State::DEATH;
                 _gameplay.setActive(false);
                 _death.setActive(true);
+            } else if (_gameplay.getExitCode() == GameScene::ExitCode::VICTORY){
+                _scene = State::VICTORY;
+                _gameplay.setActive(false);
+                _win.setActive(true);
             }
             else if(_gameplay.getRenderer().getPaused()){
                 _scene = State::PAUSE;
@@ -154,6 +162,9 @@ void App::preUpdate(float dt) {
             break;
         case DEATH:
             updateDeathScene(dt);
+            break;
+        case VICTORY:
+            updateVictoryScene(dt);
             break;
     }
 }
@@ -321,6 +332,24 @@ void App::updateDeathScene(float dt){
     }
 }
 
+void App::updateVictoryScene(float dt){
+    _win.update(dt);
+    switch(_win.getChoice()){
+        case WinScene::NONE:
+            break;
+        case WinScene::RESTART:
+            _win.setActive(false);
+            _gameplay.setActive(true);
+            _gameplay.restart();
+            _scene = GAME;
+            break;
+        case WinScene::MAIN_MENU:
+            _win.setActive(false);
+            setTitleScene();
+            break;
+    }
+}
+
 
 void App::draw() {
     switch (_scene) {
@@ -360,6 +389,9 @@ void App::draw() {
         case DEATH:
             _gameplay.render(_batch);
             _death.render(_batch);
+            break;
+        case VICTORY:
+            _win.render(_batch);            
     }
 }
 

@@ -93,8 +93,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     config.maxZoom = GameConstants::GAME_CAMERA_MAX_ZOOM_OUT;
     _camController.init(getCamera(), config);
     
-    // necessary (starting at any actual level implies it is not an upgrade room)
-    _isUpgradeRoom = false;
     _isTutorial = false;
     _isTutorialComplete = false;
     
@@ -107,16 +105,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _debugNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugNode->setVisible(true);
   
-    // TODO: This works as starter but victory screens are usually separate game modes (scenes)
     // We make this game scene inactive and transition to other scenes
-    _winNode = scene2::Label::allocWithText("VICTORY!",_assets->get<Font>(PRIMARY_FONT));
-    _winNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _winNode->setPosition(dimen/2.0f);
-    _winNode->setForeground(Color4::YELLOW);
-    _winNode->setVisible(false);
-      
     addChild(_debugNode);  //this we keep
-    addChild(_winNode);   //TODO: remove
 
     _debugNode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     
@@ -184,6 +174,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     });
     
     _upgrades.init(assets);
+    _gestureScene.init(assets);
   
 #pragma mark - Game State Initialization
     setActive(false);
@@ -198,7 +189,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 void GameScene::dispose() {
     _input.dispose();
     _debugNode = nullptr;
-    _winNode = nullptr; // TODO: remove
     _level = nullptr;
     _complete = false;
     _defeat = false;
@@ -234,7 +224,6 @@ void GameScene::restart(){
 
 void GameScene::setLevel(SaveData::Data saveData){
     _debugNode->removeAllChildren();
-    _winNode->setVisible(false);
     std::string levelToParse;
     auto level = saveData.level;
     _levelNumber = level;
@@ -629,8 +618,7 @@ void GameScene::preUpdate(float dt) {
             }
         }
         else{
-            _winNode->setVisible(true); // for now
-            // TODO: save data: save game is won by setting level to be greater than max level?
+            _exitCode = VICTORY;
         }
     }
     
@@ -788,6 +776,20 @@ void GameScene::preUpdate(float dt) {
     _levelTransition.update(dt); // does nothing when not active
     _gameRenderer.update(dt);
     
+#pragma mark - Tutorial Gestures
+    if (_isTutorial){
+        bool anyActive = false;
+        for (auto tutorialSensor : _level->getTutorialCollisions()){
+            if (tutorialSensor->isActive()){
+                _gestureScene.setGesture(_gestureScene.getGestureFromName(tutorialSensor->getGestureName()));
+                anyActive = true;
+                break;
+            }
+        }
+        _gestureScene.setActive(anyActive);
+        _gestureScene.update(dt); // update gestures
+    }
+    
 #pragma mark - Upgrade System
     
     if (_isUpgradeRoom && _level->getRelic() != nullptr){
@@ -859,7 +861,6 @@ void GameScene::fixedUpdate(float step) {
         else _camController.setZoomSpeed(-GameConstants::GAME_CAMERA_ZOOM_SPEED);
         
         _camController.update(step);
-        _winNode->setPosition(_camController.getPosition());
         
         if (!hitPauseCounter.isZero()){
             if (hitPauseCounter.getCount() <= GameConstants::HIT_PAUSE_FRAMES){
@@ -918,6 +919,7 @@ void GameScene::setActive(bool value){
         activateInputs(value);
         _levelTransition.setActive(false); // transition should always be off when scene is first on and when game scene is turned off.
         _upgrades.setActive(false); // upgrades is only on by interaction
+        _gestureScene.reset();
     }
 }
 
@@ -927,6 +929,7 @@ void GameScene::render(const std::shared_ptr<SpriteBatch> &batch){
     if (_upgrades.isActive()){
         _upgrades.render(batch);
     }
+    _gestureScene.render(batch);
     if (_levelTransition.isActive()){
         _levelTransition.render(batch);
     }
