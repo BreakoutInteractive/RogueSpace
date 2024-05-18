@@ -8937,7 +8937,7 @@
          "name":"music",
          "propertytype":"SoundTrack",
          "type":"string",
-         "value":"transmission"
+         "value":"strand"
         }],
  "renderorder":"right-down",
  "staggeraxis":"y",

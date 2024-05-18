@@ -6004,6 +6004,13 @@
  "nextlayerid":185,
  "nextobjectid":1775,
  "orientation":"staggered",
+ "properties":[
+        {
+         "name":"music",
+         "propertytype":"SoundTrack",
+         "type":"string",
+         "value":"strand"
+        }],
  "renderorder":"right-down",
  "staggeraxis":"y",
  "staggerindex":"odd",

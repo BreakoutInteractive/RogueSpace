@@ -191,7 +191,7 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
         case Enemy::BehaviorState::DEFAULT:
             // if we see or are close to the player, chase them
             if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
-                AudioController::playEnemyFX("aggro", e->getType());
+                AudioController::playAggroEnemy(e->getType());
                 e->setChasing();
             }
             // if we take damage from the player, search where the damage came from
@@ -203,7 +203,7 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
         case Enemy::BehaviorState::SEEKING:
             // if we find the player, chase them
             if (!intersection.isZero() || p->getPosition().distance(e->getPosition()) <= e->getProximityRange()) {
-                AudioController::playEnemyFX("aggro", e->getType());
+                AudioController::playAggroEnemy(e->getType());
                 e->setChasing();
             }
             // if we reach the aggro location without finding the player, return to default
