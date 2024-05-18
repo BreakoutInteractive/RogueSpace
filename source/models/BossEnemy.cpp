@@ -19,6 +19,8 @@ using namespace cugl;
 bool BossEnemy::init(std::shared_ptr<JsonValue> data) {
     MeleeEnemy::init(data);
     _attackRange = _attackRange*1.5f;
+    _sightRange = _sightRange*2;
+    _proximityRange = _proximityRange*2;
     _attack->setRadius(_attackRange);
     
     _pixelHeight = 256;
