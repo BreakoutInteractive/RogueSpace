@@ -27,7 +27,7 @@ bool MeleeLizard::init(std::shared_ptr<JsonValue> data) {
 #pragma mark Physics
 
 void MeleeLizard::attack(std::shared_ptr<LevelModel> level, const std::shared_ptr<AssetManager> &assets) {
-    Vec2 direction = level->getPlayer()->getPosition() * level->getPlayer()->getDrawScale() - getPosition() * getDrawScale();
+    Vec2 direction = getFacingDir();
     direction.normalize();
     float ang = acos(direction.dot(Vec2::UNIT_X));
     if (direction.y < 0){

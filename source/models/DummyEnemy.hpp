@@ -41,6 +41,8 @@ public:
     
 #pragma mark Enemy Functionality
     
+    std::string getType() override { return "dummy enemy"; };
+    
     /**
      * this enemy does not require player to defeat so should be treated as an already defeated mob.
      */

@@ -208,8 +208,8 @@ void Enemy::hit(cugl::Vec2 atkDir, bool ranged, float damage, float knockback_sc
         if (ranged) _bowHitEffect->start();
         else _meleeHitEffect->start();
         _collider->setLinearVelocity(atkDir * knockback_scl);
-        // allows for a "revenge" attack if the enemy is attacked from behind
-        if (!_playerInSight) {
+        // allows for a "revenge" attack if the enemy is attacked from behind (and not already attacking)
+        if (!_playerInSight && getBehaviorState() != BehaviorState::ATTACKING) {
             _facingDirection = -atkDir;
         }
     }

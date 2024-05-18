@@ -21,7 +21,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -135,15 +134,15 @@
                     }, 
                     {
                      "ellipse":true,
-                     "height":20,
+                     "height":14,
                      "id":3,
                      "name":"Collider",
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
-                     "width":20,
-                     "x":22,
-                     "y":102.622856725772
+                     "width":14,
+                     "x":25.2403482504259,
+                     "y":105.722589643502
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -205,15 +204,15 @@
                     }, 
                     {
                      "ellipse":true,
-                     "height":20,
-                     "id":3,
+                     "height":14,
+                     "id":4,
                      "name":"Collider",
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
-                     "width":20,
-                     "x":22,
-                     "y":103
+                     "width":14,
+                     "x":25.2403482504259,
+                     "y":105.722589643502
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -275,15 +274,15 @@
                     }, 
                     {
                      "ellipse":true,
-                     "height":20,
+                     "height":14,
                      "id":3,
                      "name":"Collider",
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
-                     "width":20,
-                     "x":54,
-                     "y":102.5
+                     "width":14,
+                     "x":57.1591252660598,
+                     "y":106.103389564967
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -358,15 +357,15 @@
                     }, 
                     {
                      "ellipse":true,
-                     "height":20,
+                     "height":14,
                      "id":9,
                      "name":"Collider",
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
-                     "width":20,
-                     "x":54,
-                     "y":104.971323093151
+                     "width":14,
+                     "x":56.9685571234292,
+                     "y":107.482341086092
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -477,15 +476,15 @@
                     }, 
                     {
                      "ellipse":true,
-                     "height":20,
+                     "height":14,
                      "id":4,
                      "name":"Collider",
                      "rotation":0,
                      "type":"Collider",
                      "visible":true,
-                     "width":20,
-                     "x":54,
-                     "y":102.5
+                     "width":14,
+                     "x":56.9999437510547,
+                     "y":105.562442579202
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -503,7 +502,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

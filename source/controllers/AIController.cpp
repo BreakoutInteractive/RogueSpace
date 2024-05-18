@@ -267,7 +267,9 @@ void AIController::changeState(std::shared_ptr<Enemy> e, std::shared_ptr<Player>
 void AIController::update(float dt) {
     for (auto it = _enemies.begin(); it != _enemies.end(); ++it) {
         std::shared_ptr<Enemy> enemy = *it;
-        if (enemy->isDying() || !enemy->isEnabled()) {
+        // skip AI updates for dying/dead enemies and for dummies
+        if (enemy->isDying() || !enemy->isEnabled()
+            || enemy->getType() == "melee dummy" || enemy->getType() == "ranged dummy") {
             continue;
         }
         if (enemy->getType() == "boss enemy") {
@@ -376,7 +378,7 @@ void AIController::update(float dt) {
                 }
                 break;
             case Enemy::BehaviorState::CHASING:
-                if (enemy->getPosition().distance(_player->getPosition()) <= enemy->getAttackRange()) {
+                if (enemy->getPosition().distance(_player->getPosition()) <= enemy->getAttackRange() && enemy->getPlayerInSight()) {
                     dir = _player->getPosition() - enemy->getPosition();
                     dir.normalize();
                     enemy->setFacingDir(dir);

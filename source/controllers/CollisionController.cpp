@@ -310,8 +310,11 @@ void CollisionController::beforeSolve(b2Contact* contact, const b2Manifold* oldM
                         contact->SetEnabled(false);
                     }
                 }
-                if ((*it)->getCollider()->getLinearVelocity().isZero() ||
-                    (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+                // if idle, cancel collision if neither is a dummy enemy
+                if ((*it)->getType() != "dummy enemy" && (*iter)->getType() != "dummy enemy"){
+                    if ((*it)->getCollider()->getLinearVelocity().isZero() ||
+                        (*iter)->getCollider()->getLinearVelocity().isZero()) contact->SetEnabled(false);
+                }
             }
         }
         if (body1->GetUserData().pointer == eptr ||body2->GetUserData().pointer == eptr)

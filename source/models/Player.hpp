@@ -191,9 +191,15 @@ public:
     /** @return player current HP */
     float getHP() { return _hp; }
     void setHP(float hp){
-        CUAssertLog(hp >= 0, "hp cannot be negative");
-        CUAssertLog(hp <= _maxHP.getCurrentValue(), "hp cannot be greater than max hp");
-        _hp = hp;
+        if (hp <= 0){
+            _hp = 0;
+        }
+        else if (hp > _maxHP.getCurrentValue()){
+            _hp = _maxHP.getCurrentValue();
+        }
+        else {
+            _hp = hp;
+        }
     }
     
     /** @return player passive damage reduction */
