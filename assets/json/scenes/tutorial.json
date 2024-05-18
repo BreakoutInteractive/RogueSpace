@@ -1,8 +1,5 @@
 {
       "textures": {
-            "tutorial_background": {
-               "file": "textures/title/title_background.png"
-            },
            "tutorial_seperate": {
                 "file": "textures/tutorial/tutorial_seperate.png"
             },
@@ -12,7 +9,7 @@
             "tutorial_button": {
                 "file":     "textures/title/title_button.png"
             },
-            "tutorial_back": {
+            "back": {
                 "file": "textures/pause/back.png"
             },
             "screenshot_bar": {
