@@ -359,7 +359,7 @@ public:
      *
      * @return true if the player wants to go toggle the debug mode.
      */
-    bool didDebug() const { return _debugPressed; }
+    bool didDebug() const { return false; }
     
     /**
      * Returns true if the exit button was pressed.

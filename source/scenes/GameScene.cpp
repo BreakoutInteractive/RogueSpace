@@ -240,7 +240,7 @@ void GameScene::setLevel(SaveData::Data saveData){
         _isTutorial = false;
     }
     
-    CULog("currLevel %d", _levelNumber);
+    //CULog("currLevel %d", _levelNumber);
     auto parsed = _parser.parseTiled(_assets->get<JsonValue>(levelToParse));
     Size dimen = computeActiveSize();
 
@@ -482,7 +482,7 @@ void GameScene::processPlayerInput(){
             }
             else if (_input.didParryRelease() && player->getWeapon() == Player::Weapon::MELEE) {
                 if (player->isBlocking()) {
-                    CULog("parried");
+                    //CULog("parried");
                     player->animateParry();
                 }
                 else player->animateDefault();
@@ -537,11 +537,11 @@ void GameScene::preUpdate(float dt) {
     
     // Process the toggled key commands
     if (_input.didDebug()) {
-        CULog("debug toggled");
+        //CULog("debug toggled");
         setDebug(!isDebug());
     }
     if (_input.didExit())  {
-        CULog("Shutting down");
+        //CULog("Shutting down");
         Application::get()->quit();
         // _level->getPlayer()->setHP(0); // could use as a toggle to auto-kill player
     }

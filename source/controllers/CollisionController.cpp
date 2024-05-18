@@ -72,7 +72,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     else (*it)->hit(dir, false, player->getMeleeDamage() * GameConstants::COMBO_DMG_MUL, GameConstants::KNOCKBACK_PWR_ATK);
                     std::string stunInfo = (*it)->isStunned() && (*it)->getType() == "tank alien"? " stun" : "";
                     AudioController::playDamagedEnemy((*it)->getType() + stunInfo, std::to_string(enemyIndex));
-                    CULog("Hit an enemy!");
+                    //CULog("Hit an enemy!");
                     if (meleeHitbox->hitCount() == 1){
                         // the hitbox is active and this is the first hit of the frame
                         if (player->isComboStrike()){
@@ -92,7 +92,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     if (!p->isExploding() && (*it)->isEnabled() && (*it)->getHealth() > 0) { //need to check isEnabled because projectiles hit corpses for some reason
                         float knockback = p->isFullyCharged() ? GameConstants::PLAYER_PROJ_KNOCKBACK : 0;
                         (*it)->hit(((*it)->getPosition() - p->getPosition()).getNormalization(), true, p->getDamage(), knockback);
-                        CULog("Shot an enemy!");
+                        //CULog("Shot an enemy!");
                         p->setExploding();
                         AudioController::playPlayerFX("projOnHit");
                         AudioController::playDamagedEnemy((*it)->getType(), std::to_string(enemyIndex));
@@ -162,7 +162,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     else {
                         player->hit(dir, (*it)->getDamage());
                         AudioController::playPlayerFX("damaged");
-                        CULog("Player took damage!");
+                        //CULog("Player took damage!");
                     }
                 }
             }
@@ -186,7 +186,7 @@ void CollisionController::beginContact(b2Contact* contact){
                     if (player->getPosition().y * player->getDrawScale().y < (*it)->getPosition().y * (*it)->getDrawScale().y) ang = 2 * M_PI - ang;
                     AudioController::playPlayerFX("damaged");
                     player->hit(dir, (*it)->getDamage());
-                    CULog("Player took damage!");
+                    //CULog("Player took damage!");
                 }
             }
         }
@@ -203,7 +203,7 @@ void CollisionController::beginContact(b2Contact* contact){
                 if (!player->isParrying()) {
                     player->hit(dir, p->getDamage());
                     AudioController::onEnemyProjImpact(p->getOrigin());
-                    CULog("Player got shot!");
+                    //CULog("Player got shot!");
                 }
                 else player->playParryEffect();
             }
