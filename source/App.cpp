@@ -95,6 +95,7 @@ void App::update(float dt){
     } else {
         _loading.dispose(); // Disables the input listeners in this mode
         _gameplay.init(_assets); // this makes GameScene active
+        if (SaveData::hasPreferences()) _gameplay.getInput().setInverted(SaveData::getPreferences().inverted);
         _pause.init(_assets);
         _settings.init(_assets);
         _title.init(_assets);
