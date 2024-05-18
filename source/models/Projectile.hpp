@@ -18,6 +18,7 @@ private:
 	state _state;
 	float _damage;
 	Vec2 _initPos;
+    std::string _origin;
     /**
      * whether the projectile was spawn from maximum charge
      * @note this will be true for enemies.
@@ -106,6 +107,7 @@ public:
 	void syncPositions() override;
 
 	const float getDamage() { return _damage; }
+    const std::string getOrigin() { return _origin; }
 
 	void setAngle(float ang) { 
 		_collider->setAngle(ang);
