@@ -1347,6 +1347,35 @@
         }, 
         {
          "draworder":"topdown",
+         "id":284,
+         "name":"melee dummy",
+         "objects":[
+                {
+                 "gid":90,
+                 "height":128,
+                 "id":3237,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"tall",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"Wall",
+                 "visible":true,
+                 "width":128,
+                 "x":1600,
+                 "y":960
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":282,
          "name":"player",
          "objects":[
@@ -1368,8 +1397,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":284,
- "nextobjectid":3236,
+ "nextlayerid":285,
+ "nextobjectid":3240,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",

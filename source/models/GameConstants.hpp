@@ -121,6 +121,8 @@ public:
     static float PLAYER_MELEE_ATK_RANGE;
     /** the maximum time before restting the combo */
     static float COMBO_TIME;
+    /** the damage multiplier applied to the last hit of the combo */
+    static float COMBO_DMG_MUL;
     /** the length of the parry animation */
     static float PLAYER_PARRY_TIME;
     

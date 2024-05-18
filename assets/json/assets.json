@@ -1,8 +1,8 @@
 {
     "jsons": {
         "constants": "json/constants.json",
-        "tutorial1": "json/tiled/exports/sc_test_arena.json",
-        "tutorial2": "json/tiled/exports/sc_tut_nextlevel.json",
+        "tutorial1": "json/tiled/exports/sc_tut_dash.json",
+        "tutorial2": "json/tiled/exports/sc_tut_melee.json",
         "tutorial3": "json/tiled/exports/sc_tut_ranged.json",
         "tutorial4": "json/tiled/exports/sc_tut_parry.json",
         "upgrades": "json/tiled/exports/sc_upgrades.json",
@@ -52,7 +52,7 @@
     "sounds": {
         "airSlash": {
             "type":     "sample",
-            "file":     "sounds/impact/slash_01.wav",
+            "file":     "sounds/weapons/slash_06.wav",
             "volume":   1.0
         },
         "enemyMelee": {
@@ -67,12 +67,12 @@
         },
         "playerAttack2": {
             "type":     "sample",
-            "file":     "sounds/weapons/slash_05.wav",
+            "file":     "sounds/weapons/slash_04.wav",
             "volume":   1.0
         },
         "playerAttack3": {
             "type":     "sample",
-            "file":     "sounds/weapons/slash_06.wav",
+            "file":     "sounds/weapons/sword_01.wav",
             "volume":   1.0
         },
         "wallMelee": {
@@ -97,18 +97,18 @@
         },
         "parryMelee": {
             "type":     "sample",
-            "file":     "sounds/impact/impact_07.wav",
+            "file":     "sounds/weapons/steel_03.wav",
             "volume":   1.0
         },
         "playerDmg": {
             "type":     "sample",
-            "file":     "sounds/impact/impact_02.wav",
+            "file":     "sounds/impact/impact_05.wav",
             "volume":   1.0
         },
         "dash": {
             "type":     "sample",
             "file":     "sounds/player/dash.wav",
-            "volume":   1.0
+            "volume":   0.8
         },
         "envWinds": {
             "type":     "sample",
@@ -118,101 +118,101 @@
         "p-AlienGrowl1": {
             "type":     "sample",
             "file":     "sounds/alien/passive/alien_quiet_00.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "p-AlienGrowl2": {
             "type":     "sample",
             "file":     "sounds/alien/passive/alien_quiet_01.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "p-AlienGrowl3": {
             "type":     "sample",
             "file":     "sounds/alien/passive/alien_quiet_02.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "a-AlienGrowl1": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_00.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAttack1": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_02.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAttack2": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_03.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAttack3": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_01.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAttack4": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_06.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAttack5": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_08.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAttack6": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_12.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAggro1": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_aggro_04.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAggro2": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_03.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAggro3": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_05.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "enemyAggro4": {
             "type":     "sample",
             "file":     "sounds/alien/aggressive/alien_growl_09.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "lizardDeath": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_00.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "alienDeath1": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_01.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "alienDeath2": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_02.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "alienDeath3": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_03.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "alienDeath4": {
             "type":     "sample",
             "file":     "sounds/alien/death/alien_death_04.wav",
-            "volume":   1.0
+            "volume":   0.5
         },
         "alienImpact": {
             "type":     "sample",
-            "file":     "sounds/impact/impact_06.wav",
+            "file":     "sounds/env/rummaging_03.wav",
             "volume":   1.0
         },
         "menuClick": {

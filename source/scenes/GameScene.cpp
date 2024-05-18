@@ -679,7 +679,11 @@ void GameScene::preUpdate(float dt) {
                 m->getAttack()->setEnabled(false);
             }
 
-            if (enemy->isEnabled() && !enemy->isDying()) enemy->setDying();
+            if (enemy->isEnabled() && !enemy->isDying()) { 
+                enemy->setDying(); 
+                enemy->getCollider()->setEnabled(false);
+                enemy->getColliderShadow()->setEnabled(false);
+            }
             enemy->_dropped = true;
         }
         if (enemy->getType() == "melee lizard" ||
