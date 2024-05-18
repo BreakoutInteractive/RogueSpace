@@ -186,7 +186,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"EnergyWall"
         }, 
@@ -409,7 +409,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"EnergyWall"
         }, 
@@ -635,7 +635,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"EnergyWall"
         }, 
@@ -813,7 +813,7 @@
                 {
                  "name":"tall",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }],
          "type":"EnergyWall"
         }, 
@@ -1080,7 +1080,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
