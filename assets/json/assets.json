@@ -367,7 +367,7 @@
         },
         "strand": {
             "type":     "sample",
-            "file":     "sounds/music/rs_stranded_loop.ogg",
+            "file":     "sounds/music/rs_stranded_loop.wav",
             "volume":   1.0
         },
         "pursuit": {
@@ -402,7 +402,7 @@
         },
         "transmission": {
             "type":     "sample",
-            "file":     "sounds/music/rs_transmission_loop.wav",
+            "file":     "sounds/music/rs_transmission_loop.ogg",
             "volume":   1.0
         }
     },
