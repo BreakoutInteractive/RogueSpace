@@ -398,6 +398,17 @@ const std::shared_ptr<JsonValue> LevelParser::parseTiled(const std::shared_ptr<J
     auto contents = parseGroupLayer(json); // entire map is a group
     auto mapData = contents->removeChild("contents");
     levelData->appendChild(MAP_FIELD, mapData);
+    
+    // parse the music
+    auto musicValue = getPropertyValueByName(json->get("properties"), MUSIC_KEY);
+    std::string musicName;
+    if (musicValue == nullptr){
+        musicName = "pursuit"; // default music
+    }
+    else {
+        musicName = musicValue->asString();
+    }
+    levelData->appendChild(MUSIC_KEY, JsonValue::alloc(musicName));
     return levelData;
 }
 

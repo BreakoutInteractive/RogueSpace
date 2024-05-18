@@ -67,5 +67,6 @@
 #define TYPE                "type"
 #define VISIBLE             "visible"
 #define FIRSTGID            "firstgid"
+#define MUSIC_KEY           "music"
 
 #endif /* defined(__LEVEL_CONSTANTS_H__) */

@@ -1,4 +1,5 @@
-{ "compressionlevel":-1,
+{ "class":"RSMap",
+ "compressionlevel":-1,
  "height":94,
  "infinite":false,
  "layers":[
@@ -9108,6 +9109,13 @@
  "nextlayerid":333,
  "nextobjectid":4468,
  "orientation":"staggered",
+ "properties":[
+        {
+         "name":"music",
+         "propertytype":"SoundTrack",
+         "type":"string",
+         "value":"oasis"
+        }],
  "renderorder":"right-down",
  "staggeraxis":"y",
  "staggerindex":"odd",

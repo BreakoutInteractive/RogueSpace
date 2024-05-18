@@ -252,6 +252,25 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
+        "id": 19,
+        "members": [
+            {
+                "name": "music",
+                "propertyType": "SoundTrack",
+                "type": "string",
+                "value": "oasis"
+            }
+        ],
+        "name": "RSMap",
+        "type": "class",
+        "useAs": [
+            "map",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
         "id": 14,
         "members": [
             {
@@ -277,6 +296,20 @@
             "tile",
             "project"
         ]
+    },
+    {
+        "id": 18,
+        "name": "SoundTrack",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "oasis",
+            "pursuit",
+            "strand",
+            "boss",
+            "transmission"
+        ],
+        "valuesAsFlags": false
     },
     {
         "color": "#ffa0a0a4",
@@ -323,7 +356,6 @@
         "type": "class",
         "useAs": [
             "property",
-            "map",
             "layer",
             "object",
             "tile",

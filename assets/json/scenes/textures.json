@@ -3,8 +3,8 @@
         "resume": {
             "file": "textures/pause/resume.png"
         },
-        "back": {
-            "file": "textures/pause/back.png"
+        "home": {
+            "file": "textures/pause/home.png"
         },
         "menuboard": {
             "file": "textures/pause/menuboard.png"

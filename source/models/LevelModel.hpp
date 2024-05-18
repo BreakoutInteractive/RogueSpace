@@ -100,6 +100,9 @@ protected:
     std::mt19937 generator;
     /** the random number distribution (uniform distribution) */
     std::uniform_real_distribution<double> distribution;
+    
+    /** the name of the soundtrack to play for this level */
+    std::string _musicName;
 
 #pragma mark Internal Helper Methods
     
@@ -186,6 +189,8 @@ protected:
 
 public:
 #pragma mark Model Access
+    
+    const std::string getMusicName(){ return _musicName; }
     
     /**
      * @return whether player has completed the level and is exiting the barriers
