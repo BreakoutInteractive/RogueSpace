@@ -14,12 +14,12 @@
 #define CATEGORY_ENEMY_SHADOW        0x0008
 #define CATEGORY_SHORT_WALL          0x0010
 #define CATEGORY_TALL_WALL           0x0020
-#define CATEGORY_RELIC               0x0022
 #define CATEGORY_ATTACK              0x0040
 #define CATEGORY_PLAYER_HITBOX       0x0080
 #define CATEGORY_ENEMY_HITBOX        0x0100
 #define CATEGORY_PROJECTILE          0x0200
 #define CATEGORY_PROJECTILE_SHADOW   0x0400
 #define CATEGORY_HEALTHPACK			 0x0800
+#define CATEGORY_TUTORIAL_COLLIDER   0x1000
 
 #endif /* CollisionConstants_h */

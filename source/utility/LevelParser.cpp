@@ -288,8 +288,8 @@ const std::shared_ptr<JsonValue> LevelParser::parseObjectLayer(const std::shared
         else if (type== CLASS_RELIC){
             data = parseRelic(object);
         }
-        else if (type == CLASS_COLLIDER){
-            data = parseCustomCollision(object);
+        else if (type == CLASS_TUTORIAL_REGION){
+            data = parseTutorialColliders(object);
         }
         else if (type == CLASS_LIZARD || type == CLASS_CASTER || type == CLASS_TANK || type == CLASS_RANGEDLIZARD || type == CLASS_SLIME || type == CLASS_BOSS){
             data = parseEnemy(object, type);
@@ -455,7 +455,7 @@ const std::shared_ptr<JsonValue> LevelParser::parseEnemy(const std::shared_ptr<J
     return enemyData;
 }
 
-const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::shared_ptr<JsonValue> &json){
+const std::shared_ptr<JsonValue> LevelParser::parseTutorialColliders(const std::shared_ptr<JsonValue> &json){
 
     // load collider properties
     Vec2 pos(json->getFloat("x"), _mapHeight - json->getFloat("y"));
@@ -472,12 +472,15 @@ const std::shared_ptr<JsonValue> LevelParser::parseCustomCollision(const std::sh
     
     // finalize data
     std::shared_ptr<JsonValue> data = JsonValue::allocObject();
-    // TODO: support other shapes if necessary
     data->appendChild("shape", JsonValue::alloc(std::string("polygon")));
     data->appendChild("vertices", convertVerticesToJSON(vertices));
     data->appendChild("x", JsonValue::alloc(origin.x/_tileDimension));
     data->appendChild("y", JsonValue::alloc(origin.y/_tileDimension));
-    // TODO: assign class to custom collisions (if still needed)
+    data->appendChild(CLASS, JsonValue::alloc(std::string(CLASS_TUTORIAL_REGION)));
+    
+    auto gesture = getPropertyValueByName(json->get("properties"), "gesture");
+    CUAssertLog(gesture != nullptr, "gesture needs to be specified");
+    data->appendChild("gesture", JsonValue::alloc(gesture->asString()));
     return data;
 }
 

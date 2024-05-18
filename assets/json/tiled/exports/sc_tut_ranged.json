@@ -1825,6 +1825,41 @@
                  "width":0,
                  "x":2752,
                  "y":736
+                }, 
+                {
+                 "height":0,
+                 "id":3120,
+                 "name":"Shoot Gesture",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":-336.479277800574,
+                         "y":160.032827246615
+                        }, 
+                        {
+                         "x":-168.239638900287,
+                         "y":252.359458350431
+                        }, 
+                        {
+                         "x":155.929421419778,
+                         "y":108.740254411161
+                        }],
+                 "properties":[
+                        {
+                         "name":"gesture",
+                         "propertytype":"Gesture",
+                         "type":"string",
+                         "value":"SHOOT"
+                        }],
+                 "rotation":0,
+                 "type":"TutorialRegion",
+                 "visible":true,
+                 "width":0,
+                 "x":2429.21624948707,
+                 "y":752.974969224456
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1932,6 +1967,49 @@
                  "width":64,
                  "x":2816,
                  "y":736
+                }, 
+                {
+                 "height":0,
+                 "id":3119,
+                 "name":"Move Gesture",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":-272.310929570491,
+                         "y":-144.819903453398
+                        }, 
+                        {
+                         "x":-480.257457606139,
+                         "y":-42.0844163881668
+                        }, 
+                        {
+                         "x":-392.375293972026,
+                         "y":8.664438668152
+                        }, 
+                        {
+                         "x":-330.486446342369,
+                         "y":-27.2310929570491
+                        }, 
+                        {
+                         "x":-152.246565168957,
+                         "y":87.8821636341131
+                        }],
+                 "properties":[
+                        {
+                         "name":"gesture",
+                         "propertytype":"Gesture",
+                         "type":"string",
+                         "value":"MOVE"
+                        }],
+                 "rotation":0,
+                 "type":"TutorialRegion",
+                 "visible":true,
+                 "width":0,
+                 "x":2012.62532491645,
+                 "y":924.619383587078
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1940,7 +2018,7 @@
          "y":0
         }],
  "nextlayerid":277,
- "nextobjectid":3118,
+ "nextobjectid":3121,
  "orientation":"staggered",
  "renderorder":"right-down",
  "staggeraxis":"y",
