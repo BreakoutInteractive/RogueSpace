@@ -110,9 +110,24 @@
             "file":     "sounds/player/dash.wav",
             "volume":   0.8
         },
-        "envWinds": {
+        "env1": {
             "type":     "sample",
             "file":     "sounds/env/env_wind_01.wav",
+            "volume":   1.0
+        },
+        "env2": {
+            "type":     "sample",
+            "file":     "sounds/env/env_wind_03.wav",
+            "volume":   1.0
+        },
+        "env3": {
+            "type":     "sample",
+            "file":     "sounds/env/env_rumble_01.wav",
+            "volume":   1.0
+        },
+        "env4": {
+            "type":     "sample",
+            "file":     "sounds/env/env_hollow.wav",
             "volume":   1.0
         },
         "p-AlienGrowl1": {

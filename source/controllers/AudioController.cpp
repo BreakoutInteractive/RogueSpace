@@ -122,7 +122,7 @@ void AudioController::playEnemyFX(const std::string action, const std::string ke
         }
         else if (action == "aggro") {
             int randn = std::rand() % 4 + 1;
-            source = _assets->get<Sound>("alienAggro" + std::to_string(randn));
+            source = _assets->get<Sound>("enemyAggro" + std::to_string(randn));
         }
         else if (action == "damaged") {
             source = _assets->get<Sound>("alienImpact");
@@ -148,6 +148,15 @@ void AudioController::playUiFX(const std::string action){
         else if (action == "upgrade") {
             auto source = _assets->get<Sound>("upgrade");
             AudioEngine::get()->play(action+"ui", source, false, source->getVolume() * _master * _sfx);
+        }
+        else if (action == "environment") {
+            int randn = std::rand();
+            if (randn % 500 == 0) {
+                CULog("ht");
+                randn = randn % 4 + 1;
+                auto source = _assets->get<Sound>("env" + std::to_string(randn));
+                AudioEngine::get()->play(action+"ui", source, false, source->getVolume() * _master * _sfx);
+            }
         }
     }
 }

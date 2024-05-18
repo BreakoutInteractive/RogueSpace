@@ -649,6 +649,7 @@ void GameScene::preUpdate(float dt) {
 
     if (!isDefeat()){
         processPlayerInput();
+        AudioController::playUiFX("environment");
     }
     else {
         // make sure to stop player from moving
