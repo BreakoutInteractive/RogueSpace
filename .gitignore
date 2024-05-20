@@ -38,4 +38,9 @@ build/
 # Mac
 **/.DS_Store
 
+# Tiled
 *.tiled-session
+
+# Python
+__pycache__
+*.pyc
