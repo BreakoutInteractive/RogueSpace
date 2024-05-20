@@ -264,6 +264,7 @@ bool Application::getInput() {
                 }
                 break;
             case SDL_APP_DIDENTERFOREGROUND:
+                onResume();
                 _state = State::FOREGROUND;
                 break;
             case SDL_QUIT:
