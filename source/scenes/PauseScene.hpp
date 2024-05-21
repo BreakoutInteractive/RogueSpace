@@ -38,18 +38,49 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The player choice */
     Choice _choice;
+    
+    scene2::ActionManager _actionManager;
 
-#pragma mark - Menu Buttons
+#pragma mark - Menu UI
     /** The button for going back to main */
     std::shared_ptr<scene2::Button> _back;
     /** The button for going back to game */
     std::shared_ptr<scene2::Button> _resume;
     /** The button for in-game settings */
     std::shared_ptr<scene2::Button> _settings;
+    
+#pragma mark - Menu Animation
+    /** The scene node root of the pause menu */
+    std::shared_ptr<scene2::SceneNode> _scene;
+    /** The scene node container for the menu */
+    std::shared_ptr<scene2::SceneNode> _pauseMenuNode;
+    /** The position vector difference between UP and DOWN states of the menu */
+    Vec2 _translateDown;
+    /** The translation animation */
+    std::shared_ptr<scene2::MoveBy> _translateAction;
+    /** The key to query the animation */
+    std::string TRANSLATE_KEY = "TRANSLATE";
+    const float TRANSLATE_DOWN_DURATION = 0.5f;
+    const float TRANSLATE_UP_DURATION = 0.3f;
+    
+    /**
+     * Animation Direction
+     */
+    enum Direction {
+        /** Move Menu Upwards*/
+        UP,
+        /** Move Menu Downwards*/
+        DOWN
+    };
+    Direction _translateDirection;
+
+    
+#pragma mark - Confirmation UI
     /** Exit confirmation menu**/
     std::shared_ptr<scene2::Button> _confirmBack;
     /** Exit to main menu**/
     std::shared_ptr<scene2::Button> _confirmConfirm;
+    
     /** confirmation scene**/
     Scene2 _confirmationScene;
     /** whether a confirmation pop up is needed (for the back button) */
@@ -76,6 +107,11 @@ protected:
      * @param active whether to activate the button listeners on pause menu
      */
     void activatePauseMenuButtons(bool active);
+    
+    /**
+     * resets the pause menu to be hidden above the scene
+     */
+    void resetPauseMenuPosition();
     
 public:
 #pragma mark -

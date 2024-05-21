@@ -19,18 +19,18 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         return false;
     }
     // Acquire the scene built by the asset loader
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("pause");
+    _scene = _assets->get<scene2::SceneNode>("pause");
     std::shared_ptr<scene2::SceneNode> confirmationNode = _assets->get<scene2::SceneNode>("confirmationMenu");
     // Initialize the scene to a locked height
     Size dimen = Application::get()->getDisplaySize();
-    dimen *= scene->getContentSize().height/dimen.height;
+    dimen *= _scene->getContentSize().height/dimen.height;
     if (!Scene2::init(dimen)) {
         return false;
     }
     
     // resize the pause menu scene
-    scene->setContentSize(dimen);
-    scene->doLayout();
+    _scene->setContentSize(dimen);
+    _scene->doLayout();
     
     // separate scene root for confirmation nodes
     _confirmationScene.init(dimen);
@@ -52,7 +52,6 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _confirmBack = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_back"));
     _confirmConfirm = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("confirmationMenu_confirmation_confirm"));
 
-    _activateConfirmation = false;
     // Program the buttons
     _back->addListener([this](const std::string& name, bool down) {
         if (down) {
@@ -61,13 +60,20 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
                 _back->setDown(false);
             } else{
                 _choice = Choice::BACK;
+                resetPauseMenuPosition();
             }
             AudioController::playUiFX("menuClick");
         }
     });
     _resume->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _choice = Choice::RESUME;
+            _translateAction->setDelta(-_translateDown);
+            _translateAction->setOnCompleteCallback([this](){
+                _choice = Choice::RESUME;
+                _translateDirection = DOWN;
+            });
+            _translateAction->setDuration(TRANSLATE_UP_DURATION);
+            _actionManager.activate(TRANSLATE_KEY, _translateAction, _pauseMenuNode, EasingFunction::quadOut);
             AudioController::playUiFX("menuClick");
         }
     });
@@ -88,6 +94,7 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _confirmConfirm->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::BACK;
+            resetPauseMenuPosition();
             AudioController::playUiFX("menuClick");
         }
     });
@@ -101,9 +108,20 @@ bool PauseScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _parry = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("pause_pausemenu_parry_level"));
     _maxHealth = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("pause_pausemenu_maxHealth_level"));
     
-    addChild(scene);
+    addChild(_scene);
+    
+    // get the entire pause menu component for animation
+    _pauseMenuNode = _assets->get<scene2::SceneNode>("pause_pausemenu");
+    float menuY = _pauseMenuNode->getPositionY();
+    float verticalTranslate = _scene->getHeight() - menuY + _pauseMenuNode->getHeight();
+    resetPauseMenuPosition(); // hide the pause menu
+    _translateDown = Vec2(0, -verticalTranslate);
+    _translateAction = scene2::MoveBy::alloc(_translateDown, TRANSLATE_DOWN_DURATION);
+    
     _confirmationScene.setActive(false);
     setActive(false);
+    _translateDirection = DOWN;
+    _activateConfirmation = false;
     return true;
 }
 
@@ -136,6 +154,13 @@ void PauseScene::activateConfirmMenu(bool active){
     }
 }
 
+void PauseScene::resetPauseMenuPosition(){
+    if (_pauseMenuNode != nullptr && _scene != nullptr){
+        _pauseMenuNode->setPositionY(_scene->getHeight() + _pauseMenuNode->getHeight());
+        _translateDirection = DOWN;
+    }
+}
+
 #pragma mark - Public API
 void PauseScene::setLabels(std::vector<int> levels){
     _atk->setText("LVL " + std::to_string(levels[0]));
@@ -150,10 +175,26 @@ void PauseScene::setLabels(std::vector<int> levels){
 void PauseScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
-        activatePauseMenuButtons(value);
-        if (!value){
+        if (value){
+            // if the menu is hidden and needs to be shown, translate down
+            if (_translateDirection == DOWN){
+                _translateAction->setDelta(_translateDown);
+                _translateAction->setDuration(TRANSLATE_DOWN_DURATION);
+                _translateAction->setOnCompleteCallback([this](){
+                    activatePauseMenuButtons(true);
+                    _translateDirection = UP;
+                });
+                _actionManager.activate(TRANSLATE_KEY, _translateAction, _pauseMenuNode, EasingFunction::cubicOut);
+            }
+            else {
+                // menu visible (eg. transitioned from settings screen), simply turn on buttons.
+                activatePauseMenuButtons(true);
+            }
+        }
+        else {
             _confirmationScene.setActive(false);
             activateConfirmMenu(false);
+            activatePauseMenuButtons(false);
         }
         _back->setDown(false);
         _resume->setDown(false);
@@ -165,13 +206,20 @@ void PauseScene::setActive(bool value) {
 }
 
 void PauseScene::update(float dt){
-    if (_confirmationScene.isActive()){
+    _actionManager.update(dt);
+    if (_actionManager.isActive(TRANSLATE_KEY)){
+        // buttons must not be interactable while moving
         activatePauseMenuButtons(false);
-        activateConfirmMenu(true);
     }
     else {
-        activatePauseMenuButtons(true);
-        activateConfirmMenu(false);
+        if (_confirmationScene.isActive()){
+            activatePauseMenuButtons(false);
+            activateConfirmMenu(true);
+        }
+        else {
+            activatePauseMenuButtons(true);
+            activateConfirmMenu(false);
+        }
     }
 }
 

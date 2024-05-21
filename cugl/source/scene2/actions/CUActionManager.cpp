@@ -184,6 +184,7 @@ void ActionManager::update(float dt) {
     
     for (auto it = completed.begin(); it != completed.end(); ++it) {
         ActionInstance* instance = (*it)->second;
+        instance->action->executeOnCompleteCallback();
         instance->action->stop(instance->target, &(instance->state));
         delete instance;
         (*it)->second = nullptr;

@@ -77,6 +77,9 @@ class Action {
 protected:
     /** The duration (in seconds) of the animation */
     float _duration;
+    
+    /** The callback function when animation completes */
+    std::function<void(void)> _completionCallback = [](){};
 
 #pragma mark -
 #pragma mark Constructors
@@ -157,6 +160,21 @@ public:
      */
     virtual void update(const std::shared_ptr<SceneNode>& target, void* state, float dt) {}
 
+    /**
+     * Sets the callback to be executed when the animation completes in its entirety. A partially
+     * completed animation that is stoppped/removed will not execute this callback.
+     * @param callback function to execute when the animation completes.
+     */
+    virtual void setOnCompleteCallback(std::function<void(void)> callback){
+        _completionCallback = callback;
+    }
+    
+    /**
+     * Executes the callback attached to the completion event of this animation.
+     */
+    virtual void executeOnCompleteCallback(){
+        _completionCallback();
+    }
     
 #pragma mark -
 #pragma mark Debugging Methods
